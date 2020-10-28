@@ -123,6 +123,7 @@ public:
             return;
         }
         ULSBusObjectBase *pxObj = _obj_list;
+
         while(pxObj->next != __null){
             pxObj = pxObj->next;
         }

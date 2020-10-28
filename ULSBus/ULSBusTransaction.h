@@ -8,7 +8,9 @@
 
 class ULSBusTransaction{
 public:
-    ULSBusTransaction(){close();};
+    ULSBusTransaction()
+    {
+        close();};
     void library(ULSBusObjectsLibrary    *library)
     {
         _library = library;
@@ -228,7 +230,7 @@ public:
             _connection->interface()->txBufInstance.lenght = ULSBUS_HEADER_SIZE_AOI_SOT;
 
             if(_connection->interface()->send()){
-                _state = ULSBUST_AOI_TRANSMIT_SOT_WAIT_ACK;
+                _state = ULSBUST_AOI_TRANSMIT_F;
                 _timeout = ULSBUS_TIMEOUT; // keep active
             }else{
                 // Error interface buffer full repeat later
@@ -682,7 +684,17 @@ public:
         }
         return __null;
     }
+    uint32_t openedTransactions()
+    {
+        uint32_t n=0;
+        for(int i=0;i<SIZE;i++)
+        {
+            if(_transaction[i].state()!=ULSBUST_EMPTY)n++;
+        }
+        return n;
+    }
 private:
     ULSBusTransaction _transaction[SIZE];
+    uint32_t _openedTransactions;
 };
 #endif // ULSBUSTRANSACTION_H

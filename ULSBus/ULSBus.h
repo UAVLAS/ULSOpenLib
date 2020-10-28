@@ -60,9 +60,14 @@ public:
     {
         _ulsbus_packet  *pxPack = (_ulsbus_packet *)(pxConnection->interface()->rxBufInstance.buf);
 
-//        uint8_t self_id = pxPack->ack.self_id;
-//        uint8_t remote_id = pxPack->ack.remote_id;
+        uint8_t self_id = pxPack->ack.self_id;
+        uint8_t remote_id = pxPack->ack.remote_id;
 
+        // Redirect if it is not our device;
+        if(!_library->findDevices(remote_id,0))
+        {
+            _connections.redirect(pxConnection);
+        }
 
         switch(pxPack->ack.ackcmd){
         case ULSBUS_ACK_RWOI_SFT_OK:{
@@ -115,6 +120,13 @@ public:
             break;
         case ULSBUS_ACK_RROI_OBJECT_SIZE_MISMUCH:{
 
+        }
+            break;
+        case USBUS_ACK_AOI_SOT_COMPLITE:
+        case USBUS_ACK_AOI_SFT_COMPLITE:{
+            // All done close transaction
+            ULSBusTransaction* transaction = _tarnsactions.find(pxConnection,self_id,remote_id,ULSBUST_AOI_TRANSMIT_COMPLITE_WAIT_ACK);
+            if(transaction)transaction->close();
         }
             break;
 
@@ -502,6 +514,11 @@ public:
             //case    ULSBUS_AOI_C:    //Answer OI complete (AIO-C)
         }
         return false;
+
+    }
+    uint32_t openedTransactions()
+    {
+        return _tarnsactions.openedTransactions();
     }
 private:
     ULSBusTransactionsList<64> _tarnsactions;
