@@ -149,7 +149,7 @@ public:
                 }else{
                     return ULSBUS_OBJECT_FIND_OBJECT_SIZE_MISMUCH;
                 }
-            }return ULSBUS_OBJECT_FIND_OBJECT_NOTFOUND;
+            }
         pxObj = pxObj->next;
         }
         return ULSBUS_OBJECT_FIND_OBJECT_NOTFOUND;

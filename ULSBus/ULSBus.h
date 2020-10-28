@@ -249,7 +249,7 @@ public:
             if(rez == ULSBUS_OBJECT_FIND_OK){
                 ULSBusObjectBase *obj =  _library->getObject(remote_id,0,obj_id); // Looking for object in library
                 // check if we found object
-                if(!obj)return false;
+                if(!obj){return false;}
                 obj->setData(obj_data);
                 // Send Ack - we have received data
                 currentConnection->sendAck(ULSBUS_ACK_RWOI_SFT_OK,self_id,remote_id);
@@ -266,7 +266,7 @@ public:
             if(rez == ULSBUS_OBJECT_FIND_DEVICE_NOTFOUND){
                 // check if we have devices connected to us with corresponding ID
                 ULSBusConnection* connection =  _connections.findId(remote_id);
-                if(!connection) return true; //  connection not found
+                if(!connection){return true;} //  connection not found
 
                 // Create Transaction Buffer
                 ULSBusObjectBuffer* buffer =_oBuf.open(obj_id,obj_size);
