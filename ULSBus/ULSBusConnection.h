@@ -107,7 +107,7 @@ public:
     };
     void task()
     {
-        for(int i=0;i<_connectionsNum;i++){
+        for(uint32_t i=0;i<_connectionsNum;i++){
             _connection[i].task();
         }
     };

@@ -30,7 +30,7 @@
 #define ULSBUS_HEADER_SIZE_RWOI_SOT    (12)
 #define ULSBUS_HEADER_SIZE_RWOI_F      (4)
 
-#define ULSBUS_HEADER_SIZE_RROI        (6)
+#define ULSBUS_HEADER_SIZE_RROI        (8)
 #define ULSBUS_HEADER_SIZE_AOI_SFT     (6)
 #define ULSBUS_HEADER_SIZE_AOI_SOT     (12)
 #define ULSBUS_HEADER_SIZE_AOI_F       (4)

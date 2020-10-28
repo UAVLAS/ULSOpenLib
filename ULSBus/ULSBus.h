@@ -60,8 +60,8 @@ public:
     {
         _ulsbus_packet  *pxPack = (_ulsbus_packet *)(pxConnection->interface()->rxBufInstance.buf);
 
-        uint8_t self_id = pxPack->ack.self_id;
-        uint8_t remote_id = pxPack->ack.remote_id;
+//        uint8_t self_id = pxPack->ack.self_id;
+//        uint8_t remote_id = pxPack->ack.remote_id;
 
 
         switch(pxPack->ack.ackcmd){
@@ -175,7 +175,7 @@ public:
                 // Set data with current object
                 buffer->setData(obj_data,obj_size);
                 // Create Transaction for each interface
-                for(int i=0;i<_connections.connectionsNum();i++)
+                for(uint32_t i=0;i<_connections.connectionsNum();i++)
                 {
                     ULSBusConnection* connection =  _connections.connection(i);
                     if(!connection) return true; // all connections processed
