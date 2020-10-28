@@ -2,27 +2,8 @@
 #define ULSBUSOBJECT_H
 #include <inttypes.h>
 #include <string.h>
+#include "OsSupport.h"
 #include "ULSBusTypes.h"
-
-#ifndef OS_DISABLE_IRQ
-#define OS_DISABLE_IRQ {}
-#endif
-
-#ifndef OS_ENABLE_IRQ
-#define OS_ENABLE_IRQ {}
-#endif
-
-#ifndef OS_ENTER_CRITICAL
-#define OS_ENTER_CRITICAL {}
-#endif
-
-#ifndef OS_EXIT_CRITICAL
-#define OS_EXIT_CRITICAL {}
-#endif
-
-#ifndef OS_DISABLE_IRQ
-#define OS_DISABLE_IRQ {}
-#endif
 
 template<typename T>
 class ObjData
