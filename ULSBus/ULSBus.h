@@ -394,7 +394,6 @@ public:
                 return true;
             }
             if(rez == ULSBUS_OBJECT_FIND_OBJECT_SIZE_MISMUCH){
-                            while(1);
                 currentConnection->sendAck(ULSBUS_ACK_RROI_OBJECT_SIZE_MISMUCH,self_id,remote_id);
                 return true;
             }
