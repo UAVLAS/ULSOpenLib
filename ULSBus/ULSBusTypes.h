@@ -3,8 +3,6 @@
 #include <inttypes.h>
 #include "IfBase.h"
 
-
-
 #define ULSBUS_FRAMESIZE_MAX    256
 #define ULSBUS_FRAMES           8
 #define ULSBUS_TIMEOUT          50

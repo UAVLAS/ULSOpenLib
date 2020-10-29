@@ -2,6 +2,12 @@
 #define ULSDEVICEBASE_H
 #include "ULSBusObject.h"
 
+#define __DEVICE_CLASS_ULSQR1 0x0010
+#define __DEVICE_HW_ULSQR1_R1 0x0001
+
+#define __DEVICE_CLASS_ULSQT1 0x0020
+#define __DEVICE_HW_ULSQT1_R1 0x0001
+
 
 typedef struct __attribute__((packed)){
     char hw[32];
@@ -38,11 +44,15 @@ typedef struct __attribute__((packed)){
     uint8_t  buf[128];
 }__ulsdb_sys_flash;
 
-class ULSDeviceBase
+class ULSDeviceBase: public ULSBusObjectsDictionary
 {
 public:
-    ULSDeviceBase(){};
-    void init(ULSBusObjectsDictionary *dic);
+    ULSDeviceBase(uint8_t selfId,uint8_t remoteId,uint16_t devClass,uint16_t hardware);
+
+    ULSBusObject<__ulsdb_signature> signature;
+    ULSBusObject<__ulsdbt_sys_cmd>   sys_cmd;
+    ULSBusObject<__ulsdbt_sys_status> sys_status;
+    ULSBusObject<__ulsdb_sys_flash> sys_flash;
 };
 
 

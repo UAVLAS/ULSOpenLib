@@ -45,6 +45,10 @@ public:
         _val = val;
         OS_ENABLE_IRQ;
     }
+    inline T* val()
+    {
+        return &_val;
+    }
 private:
     T _val;
 };
@@ -62,7 +66,6 @@ public:
     uint16_t size();
     uint8_t* data();
 
-private:
     void lock();
     void unlock();
 
@@ -79,8 +82,8 @@ class ULSBusObjectArray: public ULSBusObjectBase
 {
 public :
     ULSBusObjectArray(uint16_t id, const char* pxDescription,_ulsbus_obj_permitions permition):
-        ULSBusObjectBase(id,pxDescription,permition,SIZE*sizeof(T) ,(uint8_t*)&data){};
-    ObjData<T> data[SIZE];
+        ULSBusObjectBase(id,pxDescription,permition,SIZE*sizeof(T) ,(uint8_t*)&var){};
+    ObjData<T> var[SIZE];
 };
 
 template<typename T>
@@ -88,8 +91,8 @@ class ULSBusObject: public ULSBusObjectBase
 {
 public :
     ULSBusObject(uint16_t id, const char* pxDescription,_ulsbus_obj_permitions permition):
-        ULSBusObjectBase(id,pxDescription,permition,sizeof(T) ,(uint8_t*)&data){};
-    ObjData<T> data;
+        ULSBusObjectBase(id,pxDescription,permition,sizeof(T) ,(uint8_t*)&var){};
+    ObjData<T> var;
 };
 
 class ULSBusObjectsDictionary:public ULSList<ULSBusObjectBase>, public ULSListItem
