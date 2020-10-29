@@ -302,5 +302,58 @@ typedef union{
 }__attribute__((packed))_ulsbus_packet;
 
 
+class ULSListItem{
+public:
+    ULSListItem():_next(__null){};
+    ULSListItem* next(){return _next;};
+    void next(ULSListItem* nextItem){_next = nextItem;};
+private:
+ ULSListItem* _next;
+};
+
+template<class T>
+class ULSList{
+public:
+    ULSList():_head(__null){};
+
+    void add(T* item){
+        if(_head == __null){
+            _head = item; //add first item;
+            _head->next(__null);
+        }else{
+             ULSListItem *px = (ULSListItem *)_head;
+            while(px->next() != __null){
+                px = px->next();
+            }
+            px->next(item); //add item;
+            px->next(__null);
+        }
+    };
+    uint32_t count()
+    {
+        uint32_t count = 0;
+        ULSListItem *px = (ULSListItem *)_head;
+        while(px != __null){
+            count++;
+            px = px->next();
+        }
+        return count;
+    };
+    bool find(T* item)
+    {
+        ULSListItem *px = (ULSListItem *)_head;
+        while(px != __null){
+            if(px == item){return true;}
+            px = px->next();
+        }
+        return false;
+    };
+    T* head(){return _head;};
+private:
+    T *_head;
+};
+
+
+
 #endif // ULSBUSTYPES_H
 

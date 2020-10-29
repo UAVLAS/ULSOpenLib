@@ -6,7 +6,7 @@
 #include "ULSBusObjectBuffer.h"
 
 
-class ULSBusTransaction{
+class ULSBusTransaction:public ULSListItem{
 public:
     ULSBusTransaction()
     {
@@ -614,87 +614,99 @@ private:
     //    uint16_t _crc;
 
 };
-template<int SIZE>
-class ULSBusTransactionsList{
+
+class ULSBusTransactionsList:public ULSList<ULSBusTransaction>{
 public:
-    ULSBusTransactionsList()
+    ULSBusTransactionsList():ULSList()
     {
-        for(int i=0;i<SIZE;i++)
-        {
-            _transaction[i].close();
-        }
+        ULSBusTransaction *px = head();
+        while(px){
+            px->close();
+            px = (ULSBusTransaction *)px->next();
+        };
     };
+
     void library(ULSBusObjectsLibrary    *library){
-        for(int i=0;i<SIZE;i++)
-        {
-            _transaction[i].library(library);
-        }
+        ULSBusTransaction *px = head();
+        while(px){
+            px->library(library);
+            px = (ULSBusTransaction *)px->next();
+        };
     }
     void task(){
-        for(int i=0;i<SIZE;i++)
-        {
-            _transaction[i].task();
-        }
+        ULSBusTransaction *px = head();
+        while(px){
+            px->task();
+            px = (ULSBusTransaction *)px->next();
+        };
     }
     ULSBusTransaction* open(ULSBusConnection* connection,uint8_t self_id,uint8_t remote_id)
     {
-        for(int i=0;i<SIZE;i++)
-        {
-            if(_transaction[i].open(connection,self_id,remote_id) )return &_transaction[i];
-        }
+        ULSBusTransaction *px = head();
+        while(px){
+            if(px->open(connection,self_id,remote_id) )return px;
+            px = (ULSBusTransaction *)px->next();
+        };
         return __null;
     }
 
     ULSBusTransaction* open(ULSBusConnection* connection,uint8_t self_id,uint8_t remote_id,ULSBusObjectBuffer* buf,_ulsbus_transaction_state state)
     {
-        for(int i=0;i<SIZE;i++)
-        {
-            if(_transaction[i].open(connection,self_id,remote_id) ){
-                if(buf){
-                    _transaction[i].connectBuffer(buf);
-                }
-                _transaction[i].state(state);
-                _transaction[i].processPacket();
-                return &_transaction[i];
+
+        ULSBusTransaction *px = head();
+        while(px){
+            if(px->open(connection,self_id,remote_id) ){
+             if(buf){
+                px->connectBuffer(buf);
+             }
+             px->state(state);
+             px->processPacket();
+             return px;
             }
-        }
+            px = (ULSBusTransaction *)px->next();
+        };
         return __null;
     }
 
     ULSBusTransaction* open(ULSBusConnection* connection,ULSBusConnection* connectionGate,uint8_t self_id,uint8_t remote_id,ULSBusObjectBuffer* buf,_ulsbus_transaction_state state)
     {
-        for(int i=0;i<SIZE;i++)
-        {
-            if(_transaction[i].open(connection,connectionGate,self_id,remote_id) ){
-                if(buf){
-                    _transaction[i].connectBuffer(buf);
-                }
-                _transaction[i].state(state);
-                _transaction[i].processPacket();
-                return &_transaction[i];
+
+        ULSBusTransaction *px = head();
+        while(px){
+            if(px->open(connection,connectionGate,self_id,remote_id) ){
+             if(buf){
+                px->connectBuffer(buf);
+             }
+             px->state(state);
+             px->processPacket();
+             return px;
             }
-        }
+            px = (ULSBusTransaction *)px->next();
+        };
         return __null;
     }
     ULSBusTransaction* find(ULSBusConnection* connection,uint8_t self_id,uint8_t remote_id,_ulsbus_transaction_state state)
     {
-        for(int i=0;i<SIZE;i++)
-        {
-            if(_transaction[i].check(connection,self_id,remote_id,state))return &_transaction[i];
-        }
+        ULSBusTransaction *px = head();
+        while(px){
+            if(px->check(connection,self_id,remote_id,state))return px;
+            px = (ULSBusTransaction *)px->next();
+        };
         return __null;
     }
     uint32_t openedTransactions()
     {
-        uint32_t n=0;
-        for(int i=0;i<SIZE;i++)
-        {
-            if(_transaction[i].state()!=ULSBUST_EMPTY)n++;
-        }
+        uint32_t n = 0;
+        ULSBusTransaction *px = head();
+        while(px){
+            if(px->state()!=ULSBUST_EMPTY)n++;
+            px = (ULSBusTransaction *)px->next();
+        };
         return n;
     }
 private:
-    ULSBusTransaction _transaction[SIZE];
-    uint32_t _openedTransactions;
+  //  ULSBusTransaction* _tr_list;
+  //  ULSBusTransaction _transaction[SIZE];
+  //  uint32_t _openedTransactions;
 };
 #endif // ULSBUSTRANSACTION_H

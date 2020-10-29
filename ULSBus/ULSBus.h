@@ -7,7 +7,6 @@
 #include "ULSBusConnection.h"
 #include "ULSBusObject.h"
 
-template<int TP_NUM>
 class ULSBus
 {
 public:
@@ -20,25 +19,20 @@ public:
         _nmTimeout++;
         _connections.task();
         _tarnsactions.task();
-        for(uint32_t i=0;i<_connections.connectionsNum();i++){
-           ULSBusConnection *pxConnection = _connections.connection(i);
-            if(pxConnection){
-                if( pxConnection->read() != 0){
+        ULSBusConnection *pxConnection = _connections.head();
+        while(pxConnection){
+            if( pxConnection->read() != 0){
                 processPacket(pxConnection);
-                }
-
             }
+            pxConnection = (ULSBusConnection*)pxConnection->next();
         }
+
         // Send NM packet
         if(_nmTimeout >= ULSBUS_NM_INTERVAL){
             sendNM();
             _nmTimeout = 0;
         }
 
-    }
-    void addInterface(IfBase* pxIf,uint32_t frameSize)
-    {
-        _connections.add(pxIf,frameSize);
     }
     void open()
     {
@@ -140,30 +134,29 @@ public:
     bool processPacket(ULSBusConnection *pxConnection)
     {
         _ulsbus_packet  *pxPack = (_ulsbus_packet *)(pxConnection->interface()->rxBufInstance.buf);
-        ULSBusConnection* currentConnection = pxConnection;
-        if(!currentConnection)return false; // WTF ?
+        if(!pxConnection)return false; // WTF ?
         uint8_t cmd = pxPack->hdr.cmd;//
         uint32_t  packLenght = pxConnection->interface()->rxBufInstance.lenght;
 
         switch(cmd){
         case ULSBUS_RTSP://RealTime SYNC Pulse (RTSP)
             // If master need to add do device lists
-            _connections.redirect(currentConnection);
+            _connections.redirect(pxConnection);
             return true; // No need to return data
             break;
         case    ULSBUS_SEC: //System Emergency Command (SEC)
-            _connections.redirect(currentConnection);
+            _connections.redirect(pxConnection);
             return true; // No need to return data
             break;
         case    ULSBUS_NM://Network management (NM) - heart beat
             // Interface refresh device timeout
-            _connections.refresh(currentConnection,pxPack->nm.self_id);
+            _connections.refresh(pxConnection,pxPack->nm.self_id);
             // Send NM pack to all other interfaces
-            _connections.redirect(currentConnection);
+            _connections.redirect(pxConnection);
             return true; // No need to return data
             break;
         case    ULSBUS_ACK://Operation ACK (ACK)
-            return processAck(currentConnection);
+            return processAck(pxConnection);
             break;
         case    ULSBUS_RLF:
             break;
@@ -187,17 +180,16 @@ public:
                 // Set data with current object
                 buffer->setData(obj_data,obj_size);
                 // Create Transaction for each interface
-                for(uint32_t i=0;i<_connections.connectionsNum();i++)
-                {
-                    ULSBusConnection* connection =  _connections.connection(i);
-                    if(!connection) return true; // all connections processed
-                    if(connection != currentConnection){ // if not current interface
-                        ULSBusTransaction* transaction = _tarnsactions.open(connection,currentConnection,self_id,0,buffer,ULSBUST_BOI_TRANSMIT_START);
+                ULSBusConnection *px = _connections.head();
+                while(px){
+                    if(px != pxConnection){ // if not current interface
+                        ULSBusTransaction* transaction = _tarnsactions.open(px,pxConnection,self_id,0,buffer,ULSBUST_BOI_TRANSMIT_START);
                         if(!transaction){
                             // No ACK
                             return false;
                         }
                     }
+                    px = (ULSBusConnection*)px->next();
                 }
             }
             return true;
@@ -216,23 +208,24 @@ public:
             if(!buffer) return false; // No ack for broadcast
 
             // Create Transaction for current connection
-            ULSBusTransaction* transaction = _tarnsactions.open(currentConnection,self_id,0,buffer,ULSBUST_BOI_RECEIVE_START);
+            ULSBusTransaction* transaction = _tarnsactions.open(pxConnection,self_id,0,buffer,ULSBUST_BOI_RECEIVE_START);
             if(!transaction) return false;// No ack for broadcast
+            ULSBusConnection *px = _connections.head();
+            while(px){
 
-            for(int i=0;i<8;i++)
-            {
-                ULSBusConnection* connection =  _connections.connection(i);
-                if(!connection) return true; // all connections processed
-                if(connection != currentConnection){ // if not current interface
-                    ULSBusTransaction* transaction = _tarnsactions.open(connection,currentConnection,self_id,0,buffer,ULSBUST_BOI_TRANSMIT_START);
-                    if(!transaction) return false;// No ack for broadcast
+                if(px != pxConnection){ // if not current interface
+                    ULSBusTransaction* transaction = _tarnsactions.open(px,pxConnection,self_id,0,buffer,ULSBUST_BOI_TRANSMIT_START);
+                    if(!transaction){
+                        // No ACK
+                        return false;
+                    }
                 }
-
+                px = (ULSBusConnection*)px->next();
             }
         }
             break;
         case    ULSBUS_BOI_F :{   //Broadcast OI Frame - (BOI-F)
-            ULSBusTransaction* transaction = _tarnsactions.find(currentConnection,pxPack->boi_f.self_id,0,ULSBUST_BOI_RECEIVE_F);
+            ULSBusTransaction* transaction = _tarnsactions.find(pxConnection,pxPack->boi_f.self_id,0,ULSBUST_BOI_RECEIVE_F);
             if(transaction) transaction->processPacket();
         }
             break;
@@ -252,15 +245,15 @@ public:
                 if(!obj){return false;}
                 obj->setData(obj_data);
                 // Send Ack - we have received data
-                currentConnection->sendAck(ULSBUS_ACK_RWOI_SFT_OK,self_id,remote_id);
+                pxConnection->sendAck(ULSBUS_ACK_RWOI_SFT_OK,self_id,remote_id);
                 return true;
             }
             if(rez == ULSBUS_OBJECT_FIND_OBJECT_NOTFOUND){
-                currentConnection->sendAck(ULSBUS_ACK_RWOI_SFT_OBJECT_NOTFOUND,self_id,remote_id);
+                pxConnection->sendAck(ULSBUS_ACK_RWOI_SFT_OBJECT_NOTFOUND,self_id,remote_id);
                 return false;
             }
             if(rez == ULSBUS_OBJECT_FIND_OBJECT_SIZE_MISMUCH){
-                currentConnection->sendAck(ULSBUS_ACK_RWOI_SFT_OBJECT_SIZE_MISNUCH,self_id,remote_id);
+                pxConnection->sendAck(ULSBUS_ACK_RWOI_SFT_OBJECT_SIZE_MISNUCH,self_id,remote_id);
                 return false;
             }
             if(rez == ULSBUS_OBJECT_FIND_DEVICE_NOTFOUND){
@@ -271,14 +264,14 @@ public:
                 // Create Transaction Buffer
                 ULSBusObjectBuffer* buffer =_oBuf.open(obj_id,obj_size);
                 if(!buffer){
-                    currentConnection->sendAck(ULSBUS_ACK_RWOI_SFT_OBJECT_BUFFER_FULL,self_id,remote_id);
+                    pxConnection->sendAck(ULSBUS_ACK_RWOI_SFT_OBJECT_BUFFER_FULL,self_id,remote_id);
                     return false;
                 }
                 // fill buffer with received data
                 buffer->setData(obj_data,obj_size);
-                ULSBusTransaction* transaction = _tarnsactions.open(connection,currentConnection,self_id,remote_id,buffer,ULSBUST_RWOI_TRANSMIT_START);
+                ULSBusTransaction* transaction = _tarnsactions.open(connection,pxConnection,self_id,remote_id,buffer,ULSBUST_RWOI_TRANSMIT_START);
                 if(!transaction){
-                    currentConnection->sendAck(ULSBUS_ACK_RWOI_SFT_OBJECT_BUFFER_FULL,self_id,remote_id);
+                    pxConnection->sendAck(ULSBUS_ACK_RWOI_SFT_OBJECT_BUFFER_FULL,self_id,remote_id);
                     return false;
                 }
                 return true;
@@ -296,13 +289,13 @@ public:
                 // Create Transaction Buffer
                 ULSBusObjectBuffer* buffer =_oBuf.open(obj_id,obj_size);
                 if(!buffer){
-                    currentConnection->sendAck(ULSBUS_ACK_RWOI_SOT_OBJECT_BUFFER_FULL,self_id,remote_id);
+                    pxConnection->sendAck(ULSBUS_ACK_RWOI_SOT_OBJECT_BUFFER_FULL,self_id,remote_id);
                     return false;
                 }
                 // Create Transaction for current interface
-                ULSBusTransaction* transaction = _tarnsactions.open(currentConnection,0,remote_id,buffer,ULSBUST_RWOI_RECEIVE_START);
+                ULSBusTransaction* transaction = _tarnsactions.open(pxConnection,0,remote_id,buffer,ULSBUST_RWOI_RECEIVE_START);
                 if(!transaction){
-                    currentConnection->sendAck(ULSBUS_ACK_RWOI_SOT_OBJECT_BUFFER_FULL,self_id,remote_id);
+                    pxConnection->sendAck(ULSBUS_ACK_RWOI_SOT_OBJECT_BUFFER_FULL,self_id,remote_id);
                     return false;
                 }
                 return true;
@@ -312,33 +305,33 @@ public:
                 ULSBusConnection* connection =  _connections.findId(remote_id);
                 if(!connection) return false; // connection with device not found
                 // Redirect request to next device;
-                connection->send(&(currentConnection->interface()->rxBufInstance));
+                connection->send(&(pxConnection->interface()->rxBufInstance));
                 // Create Transaction Buffer
                 ULSBusObjectBuffer* buffer =_oBuf.open(obj_id,obj_size);
                 if(!buffer){
-                    currentConnection->sendAck(ULSBUS_ACK_RWOI_SOT_OBJECT_BUFFER_FULL,self_id,remote_id);
+                    pxConnection->sendAck(ULSBUS_ACK_RWOI_SOT_OBJECT_BUFFER_FULL,self_id,remote_id);
                     return false;
                 }
                 // Create Transaction for current interface to receive data
-                ULSBusTransaction* transaction = _tarnsactions.open(currentConnection,currentConnection,self_id,remote_id,buffer,ULSBUST_RWOI_RECEIVE_START);
+                ULSBusTransaction* transaction = _tarnsactions.open(connection,pxConnection,self_id,remote_id,buffer,ULSBUST_RWOI_RECEIVE_START);
                 if(!transaction){
-                    currentConnection->sendAck(ULSBUS_ACK_RWOI_SOT_OBJECT_BUFFER_FULL,self_id,remote_id);
+                    pxConnection->sendAck(ULSBUS_ACK_RWOI_SOT_OBJECT_BUFFER_FULL,self_id,remote_id);
                     return false;
                 }
                 // create transction to transmit data
                 transaction = _tarnsactions.open(connection,self_id,remote_id,buffer,ULSBUST_RWOI_TRANSMIT_START);
                 if(!transaction){
-                    currentConnection->sendAck(ULSBUS_ACK_RWOI_SOT_OBJECT_BUFFER_FULL,self_id,remote_id);
+                    pxConnection->sendAck(ULSBUS_ACK_RWOI_SOT_OBJECT_BUFFER_FULL,self_id,remote_id);
                     return false;
                 }
                 return true;
             }
             if(rez == ULSBUS_OBJECT_FIND_OBJECT_NOTFOUND){
-                currentConnection->sendAck(ULSBUS_ACK_RWOI_SFT_OBJECT_NOTFOUND,self_id,remote_id);
+                pxConnection->sendAck(ULSBUS_ACK_RWOI_SFT_OBJECT_NOTFOUND,self_id,remote_id);
                 return true;
             }
             if(rez == ULSBUS_OBJECT_FIND_OBJECT_SIZE_MISMUCH){
-                currentConnection->sendAck(ULSBUS_ACK_RWOI_SFT_OBJECT_NOTFOUND,self_id,remote_id);
+                pxConnection->sendAck(ULSBUS_ACK_RWOI_SFT_OBJECT_NOTFOUND,self_id,remote_id);
                 return true;
             }
 
@@ -346,7 +339,7 @@ public:
             break;
         case    ULSBUS_RWOI_F:{   //Request Write OI Frame (RWOI-F)
             // Find receiving transaction
-            ULSBusTransaction* transaction = _tarnsactions.find(currentConnection,pxPack->aoi_f.self_id,pxPack->aoi_f.remote_id,ULSBUST_RWOI_RECEIVE_F);
+            ULSBusTransaction* transaction = _tarnsactions.find(pxConnection,pxPack->aoi_f.self_id,pxPack->aoi_f.remote_id,ULSBUST_RWOI_RECEIVE_F);
             if(transaction) transaction->processPacket();
         }
             break;
@@ -364,7 +357,7 @@ public:
                 ULSBusObjectBuffer* buffer =_oBuf.open(obj_id,obj_size);
 
                 if(!buffer){
-                    currentConnection->sendAck(ULSBUS_ACK_RROI_OBJECT_SIZE_MISMUCH,self_id,remote_id);
+                    pxConnection->sendAck(ULSBUS_ACK_RROI_OBJECT_SIZE_MISMUCH,self_id,remote_id);
                     return false;
                 }
 
@@ -374,9 +367,9 @@ public:
                 if(!obj)return false;
                 buffer->setData(obj->data(),obj->size());
                 // Create Transaction for current interface to transmit data
-                ULSBusTransaction* transaction = _tarnsactions.open(currentConnection,self_id,remote_id,buffer,ULSBUST_AOI_TRANSMIT_START);
+                ULSBusTransaction* transaction = _tarnsactions.open(pxConnection,self_id,remote_id,buffer,ULSBUST_AOI_TRANSMIT_START);
                 if(!transaction){
-                    currentConnection->sendAck(ULSBUS_ACK_RROI_OBJECT_BUFFER_FULL,self_id,remote_id);
+                    pxConnection->sendAck(ULSBUS_ACK_RROI_OBJECT_BUFFER_FULL,self_id,remote_id);
                     return false;
                 }
                 return true;
@@ -387,26 +380,26 @@ public:
                 ULSBusConnection* connection =  _connections.findId(remote_id);
                 if(!connection) return true; // connection with device not found
                 // Redirect request to next device;
-                connection->send(&(currentConnection->interface()->rxBufInstance));
+                connection->send(&(pxConnection->interface()->rxBufInstance));
                 // Create Transaction Buffer
                 ULSBusObjectBuffer* buffer =_oBuf.open(obj_id,obj_size);
                 if(!buffer){
-                    currentConnection->sendAck(ULSBUS_ACK_RROI_OBJECT_BUFFER_FULL,self_id,remote_id);
+                    pxConnection->sendAck(ULSBUS_ACK_RROI_OBJECT_BUFFER_FULL,self_id,remote_id);
                     return false;
                 }
                 // Create Transaction for current interface to transmit data
-                ULSBusTransaction* transaction = _tarnsactions.open(currentConnection,self_id,remote_id,buffer,ULSBUST_AOI_TRANSMIT_START);
+                ULSBusTransaction* transaction = _tarnsactions.open(pxConnection,self_id,remote_id,buffer,ULSBUST_AOI_TRANSMIT_START);
                 if(!transaction){
-                    currentConnection->sendAck(ULSBUS_ACK_RROI_OBJECT_BUFFER_FULL,self_id,remote_id);
+                    pxConnection->sendAck(ULSBUS_ACK_RROI_OBJECT_BUFFER_FULL,self_id,remote_id);
                     return false;
                 }
             }
             if(rez == ULSBUS_OBJECT_FIND_OBJECT_NOTFOUND){
-                currentConnection->sendAck(ULSBUS_ACK_RROI_OBJECT_NOTFOUND,self_id,remote_id);
+                pxConnection->sendAck(ULSBUS_ACK_RROI_OBJECT_NOTFOUND,self_id,remote_id);
                 return true;
             }
             if(rez == ULSBUS_OBJECT_FIND_OBJECT_SIZE_MISMUCH){
-                currentConnection->sendAck(ULSBUS_ACK_RROI_OBJECT_SIZE_MISMUCH,self_id,remote_id);
+                pxConnection->sendAck(ULSBUS_ACK_RROI_OBJECT_SIZE_MISMUCH,self_id,remote_id);
                 return true;
             }
         }
@@ -464,7 +457,7 @@ public:
                     return false;
                 }
                 // Create Transaction for current interface
-                ULSBusTransaction* transaction = _tarnsactions.open(currentConnection,self_id,remote_id,buffer,ULSBUST_AOI_RECEIVE_START);
+                ULSBusTransaction* transaction = _tarnsactions.open(pxConnection,self_id,remote_id,buffer,ULSBUST_AOI_RECEIVE_START);
                 if(!transaction){
                     //NO ACK for reading command
                     return false;
@@ -476,7 +469,7 @@ public:
                 ULSBusConnection* connection =  _connections.findId(remote_id);
                 if(!connection) return false; // connection with device not found
                 // Redirect request to next device;
-                connection->send(&(currentConnection->interface()->rxBufInstance));
+                connection->send(&(pxConnection->interface()->rxBufInstance));
                 // Create Transaction Buffer
                 ULSBusObjectBuffer* buffer =_oBuf.open(obj_id,obj_size);
                 if(!buffer){
@@ -484,7 +477,7 @@ public:
                     return false;
                 }
                 // Create Transaction for current interface to receive data
-                ULSBusTransaction* transaction = _tarnsactions.open(currentConnection,self_id,remote_id,buffer,ULSBUST_AOI_RECEIVE_START);
+                ULSBusTransaction* transaction = _tarnsactions.open(pxConnection,self_id,remote_id,buffer,ULSBUST_AOI_RECEIVE_START);
                 if(!transaction){
                     //NO ACK for reading command
                     return false;
@@ -507,7 +500,7 @@ public:
             }
         }
         case    ULSBUS_AOI_F: {   //Answer OI frame (AIO-F)
-            ULSBusTransaction* transaction = _tarnsactions.find(currentConnection,pxPack->aoi_f.self_id,pxPack->aoi_f.remote_id,ULSBUST_AOI_RECEIVE_F);
+            ULSBusTransaction* transaction = _tarnsactions.find(pxConnection,pxPack->aoi_f.self_id,pxPack->aoi_f.remote_id,ULSBUST_AOI_RECEIVE_F);
             if(transaction) transaction->processPacket();
         }
             break;
@@ -520,12 +513,47 @@ public:
     {
         return _tarnsactions.openedTransactions();
     }
+    void add(ULSBusTransaction* transaction)
+    {
+        _tarnsactions.add(transaction);
+    }
+    void add(ULSBusConnection* connection)
+    {
+        _connections.add(connection);
+    }
+    void add(ULSBusObjectBuffer* buf)
+    {
+        _oBuf.add(buf);
+    }
+    void add(ULSBusTransaction* transaction, uint32_t len)
+    {
+        while(len--){
+            _tarnsactions.add(transaction);
+            transaction++;
+
+        }
+    }
+    void add(ULSBusConnection* connection, uint32_t len)
+    {
+        while(len--){
+            _connections.add(connection);
+            connection++;
+
+        }
+    }
+    void add(ULSBusObjectBuffer* buf, uint32_t len)
+    {
+        while(len--){
+            _oBuf.add(buf);
+            buf++;
+        }
+    }
 private:
-    ULSBusTransactionsList<64> _tarnsactions;
-    ULSBusConnectionsList<4> _connections;
+    ULSBusTransactionsList _tarnsactions;
+    ULSBusConnectionsList _connections;
 
     ULSBusObjectsLibrary    *_library;
-    ULSBusObjectBufferList<10> _oBuf;
+    ULSBusObjectBufferList  _oBuf;
 
     uint32_t _nmTimeout;
 

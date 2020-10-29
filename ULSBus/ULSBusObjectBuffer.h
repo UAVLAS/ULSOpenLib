@@ -1,10 +1,10 @@
 #ifndef ULSBUSOBJECTBUFFER_H
 #define ULSBUSOBJECTBUFFER_H
-#include<inttypes.h>
+#include "ULSBusTypes.h"
 
-class ULSBusObjectBuffer{
+class ULSBusObjectBuffer:public ULSListItem{
 public:
-    ULSBusObjectBuffer():
+    ULSBusObjectBuffer():ULSListItem(),
         _interfacesConnected(0),
         _id(0),
         _size(0),
@@ -44,7 +44,7 @@ public:
             uint32_t idx = start + i;
             uint32_t maskFrame = idx/8;
             if( ( frameValidMask[maskFrame/32] & (1<<(idx%32))) != 0){
-                 *buf++ = _buf[idx];
+                *buf++ = _buf[idx];
             }else{
                 return false; // data not ready;
             }
@@ -95,21 +95,21 @@ private:
 };
 
 
-template<int SIZE>
-class ULSBusObjectBufferList
+class ULSBusObjectBufferList:public ULSList<ULSBusObjectBuffer>
 {
 public:
-    ULSBusObjectBufferList(){};
+    ULSBusObjectBufferList():ULSList(){};
 
     ULSBusObjectBuffer* open(uint16_t id,uint16_t size)
     {
-        for(int i=0 ; i < SIZE ; i++){
-            if(_objectBuffer[i].open(id,size))return &_objectBuffer[i];
-        }
+        ULSBusObjectBuffer *px = head();
+        while(px){
+            if(px->open(id,size))return px;
+            px = (ULSBusObjectBuffer *)px->next();
+        };
         return __null;
     }
 private:
-    ULSBusObjectBuffer _objectBuffer[SIZE];
 };
 
 

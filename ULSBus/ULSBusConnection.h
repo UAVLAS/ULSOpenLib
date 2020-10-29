@@ -2,10 +2,15 @@
 #define ULSBUSCONNECTION_H
 #include "ULSBusTypes.h"
 
-class ULSBusConnection
+class ULSBusConnection:public ULSListItem
 {
 public:
-    ULSBusConnection();
+    ULSBusConnection(IfBase* interface = __null,uint16_t maxFarameSize = 0):ULSListItem(),
+        _interface(interface),
+        _maxFarameSize(maxFarameSize)
+    {
+
+    };
     void refresh(uint8_t id)
     {
         _timeout[id] = ULSBUS_NM_TIMEOUT;
@@ -32,7 +37,7 @@ public:
     }
     void send()
     {
-      if(_interface)_interface->send();
+        if(_interface)_interface->send();
     }
     bool sendAck(_ulsbus_ack ackcmd,uint8_t self_id,uint8_t remote_id)
     {
@@ -72,77 +77,60 @@ private:
     uint32_t _timeout[256];
     uint16_t _maxFarameSize;
 };
-template<int SIZE>
-class ULSBusConnectionsList
+
+
+class ULSBusConnectionsList:public ULSList<ULSBusConnection>
 {
 public:
-    ULSBusConnectionsList(){};
-
-    void add(IfBase* interface,uint32_t maxFrameSize)
-    {
-        for(int i=0;i<SIZE;i++){
-            if(!_connection[i].interface()){
-                interface->enableEscIfSupprted(true);
-                _connection[i].interface(interface);
-                _connection[i].maxFrameSize(maxFrameSize);
-                _connectionsNum++;
-                return;
-            }
-        }
-    };
+    ULSBusConnectionsList():ULSList(){};
 
     void redirect(ULSBusConnection* pxConnection) // redirect incoming pachet from interface to other
     {
-        for(int i=0;i<SIZE;i++){
-            if( &_connection[i] != pxConnection){
-                _connection[i].send(&(pxConnection->interface()->rxBufInstance));
+        ULSBusConnection *px = head();
+        while(px){
+            if( px != pxConnection){
+                px->send(&(pxConnection->interface()->rxBufInstance));
             }
-        }
+            px = (ULSBusConnection *)px->next();
+        };
     };
     void sendNM(_ulsbus_device_status *dev)
     {
-        for(int i=0;i<SIZE;i++){
-            _connection[i].sendNM(dev);
-        }
+        ULSBusConnection *px = head();
+        while(px){
+            px->sendNM(dev);
+            px = (ULSBusConnection *)px->next();
+        };
     };
     void task()
     {
-        for(uint32_t i=0;i<_connectionsNum;i++){
-            _connection[i].task();
-        }
+        ULSBusConnection *px = head();
+        while(px){
+            px->task();
+            px = (ULSBusConnection *)px->next();
+        };
     };
     void refresh(ULSBusConnection* pxConnection,uint8_t id)
     {
-        for(int i=0;i<SIZE;i++){
-            if(&_connection[i] == pxConnection) _connection[i].refresh(id);
-        }
+        ULSBusConnection *px = head();
+        while(px){
+            if(px == pxConnection) px->refresh(id);
+            px = (ULSBusConnection *)px->next();
+        };
     };
-    ULSBusConnection* connection(uint32_t i)
-    {
-        if(i>255) return __null;
-        return &_connection[i];
-    }
-    ULSBusConnection* findIfc(ULSBusConnection* pxConnection)
-    {
 
-        for(int i=0;i<SIZE;i++){
-            if(&_connection[i] == pxConnection) return &_connection[i];
-        }
-        return __null;
-    }
     ULSBusConnection* findId(uint8_t id)
     {
-
-        for(int i=0;i<SIZE;i++){
-            if(_connection[i].deviceConnected(id)) return &_connection[i];
-        }
+        ULSBusConnection *px = head();
+        while(px){
+            if(px->deviceConnected(id)) return px;
+            px = (ULSBusConnection *)px->next();
+        };
         return __null;
     }
-    uint32_t connectionsNum(){return _connectionsNum;};
 
 private:
-    ULSBusConnection _connection[SIZE];
-    uint32_t _connectionsNum;
+
 };
 
 
