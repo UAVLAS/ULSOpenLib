@@ -9,8 +9,8 @@ static ULSBusObject<__ulsdb_sys_flash> sys_flash(0x0100,"Device flash page",ULSB
 
 void ULSDeviceBase::init(ULSBusObjectsDictionary *dic)
 {
-    dic->addObject(&signature);
-    dic->addObject(&sys_cmd);
-    dic->addObject(&sys_status);
-    dic->addObject(&sys_flash);
+    dic->add(&signature);
+    dic->add(&sys_cmd);
+    dic->add(&sys_status);
+    dic->add(&sys_flash);
 }

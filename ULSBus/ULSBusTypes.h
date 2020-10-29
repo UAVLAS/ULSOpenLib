@@ -326,7 +326,6 @@ public:
                 px = px->next();
             }
             px->next(item); //add item;
-            px->next(__null);
         }
     };
     uint32_t count()
@@ -349,6 +348,11 @@ public:
         return false;
     };
     T* head(){return _head;};
+    T* forward(T* item)
+    {
+        item = (T*)item->next();
+        return item;
+    };
 private:
     T *_head;
 };
