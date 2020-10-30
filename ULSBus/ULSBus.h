@@ -34,6 +34,7 @@ class ULSBus
 {
 public:
     ULSBus();
+    virtual void addDevice(uint8_t id, uint16_t dev_class){(void)id;(void)dev_class;};
     void task();
     void open();
     void sendNM();

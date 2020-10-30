@@ -23,14 +23,14 @@
 #define ULSDEVICEBASE_H
 #include "ULSBusObject.h"
 
-#define __DEVICE_CLASS_X     0x0000
-#define __DEVICE_HW_X        0x0000
+#define __DEVICE_CLASS_X     (0x0000)
+#define __DEVICE_HW_X        (0x0000)
 
-#define __DEVICE_CLASS_ULSQR1 0x0010
-#define __DEVICE_HW_ULSQR1_R1 0x0001
+#define __DEVICE_CLASS_ULSQR1 (0x0010)
+#define __DEVICE_HW_ULSQR1_R1 (0x0001)
 
-#define __DEVICE_CLASS_ULSQT1 0x0020
-#define __DEVICE_HW_ULSQT1_R1 0x0001
+#define __DEVICE_CLASS_ULSQT1 (0x0020)
+#define __DEVICE_HW_ULSQT1_R1 (0x0001)
 
 
 typedef struct __attribute__((packed)){

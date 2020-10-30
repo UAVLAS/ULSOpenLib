@@ -1,5 +1,5 @@
-#ifndef ULSDEVICE_ULSQR1_H
-#define ULSDEVICE_ULSQR1_H
+#ifndef ULSDEVICE_ULSQX_H
+#define ULSDEVICE_ULSQX_H
 
 #include "ULSDeviceBase.h"
 
@@ -34,5 +34,15 @@ public:
     ULSBusObjectArray<tmpConfig,2> o_tcfgA;
     ULSBusObject<tmpConfig> o_tcfg;
 };
+class ULSDevice_ULSQT1_R1:public ULSDevice_ULSX
+{
+public:
+    ULSDevice_ULSQT1_R1(uint8_t selfId,uint8_t remoteId);
 
-#endif // ULSDEVICE_ULSQR1_H
+    ULSBusObject<__ulsd_ulsqr_status> o_status;
+    ULSBusObjectArray<uint8_t,2000> o_array2000;;
+    ULSBusObjectArray<uint8_t,2048> o_array2048;
+    ULSBusObjectArray<tmpConfig,2> o_tcfgA;
+    ULSBusObject<tmpConfig> o_tcfg;
+};
+#endif // ULSDEVICE_ULSQX_H

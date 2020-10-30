@@ -164,18 +164,22 @@ bool ULSBus::processPacket(ULSBusConnection *pxConnection)
         _connections.refresh(pxConnection,pxPack->nm.self_id);
         // Send NM pack to all other interfaces
         _connections.redirect(pxConnection);
-        // Update diectionaries
+        // Update devices
+
         ULSDeviceBase* dev = _library.head(); //m self_id = 0 -> from any devices
         while(dev){
             if(dev->status()->dev_class == pxPack->nm.dev_class)
             {
-                if(dev->remote_id()==0xff){ // Update device with undefined ID
-                    dev->remote_id(pxPack->nm.self_id);
-                 return true;
+                if(dev->remote_id()==pxPack->nm.self_id){
+                    if(!dev->connected())dev->connected(true); // Connect device
+                    // Device found - all ok
+                    return true;
                 }
             }
             dev = _library.forward(dev);
         }
+        // No defined
+        addDevice(pxPack->nm.self_id,pxPack->nm.dev_class);
 
         return true; // No need to return data
     }
@@ -543,6 +547,7 @@ void ULSBus::add(ULSBusTransaction* transaction)
 }
 void ULSBus::add(ULSBusConnection* pxc)
 {
+    pxc->interface()->enableEscIfSupprted(true);
     _connections.add(pxc);
 }
 void ULSBus::add(ULSBusObjectBuffer* buf)
