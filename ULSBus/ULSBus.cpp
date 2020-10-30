@@ -34,7 +34,7 @@ void ULSBus::task()// call every ms
     _tarnsactions.task();
     ULSBusConnection *pxConnection = _connections.head();
     while(pxConnection){
-        if( pxConnection->read() != 0){
+        while( pxConnection->read() != 0){ // read all packets from connection
             processPacket(pxConnection);
         }
         pxConnection = _connections.forward(pxConnection);
