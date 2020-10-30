@@ -37,7 +37,7 @@ ULSBusTransaction::ULSBusTransaction():
 {
     close();
 }
-void ULSBusTransaction::library(ULSBusObjectsLibrary    *library)
+void ULSBusTransaction::library(ULSDevicesLibrary    *library)
 {
     _library = library;
 }
@@ -636,7 +636,7 @@ ULSBusTransactionsList::ULSBusTransactionsList():ULSList()
     };
 };
 
-void ULSBusTransactionsList::library(ULSBusObjectsLibrary    *library){
+void ULSBusTransactionsList::library(ULSDevicesLibrary    *library){
     ULSBusTransaction *px = head();
     while(px){
         px->library(library);

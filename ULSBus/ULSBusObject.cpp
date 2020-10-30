@@ -78,14 +78,11 @@ uint8_t* ULSBusObjectBase::data()
     return _pxData;
 };
 
-ULSBusObjectsDictionary::ULSBusObjectsDictionary(uint8_t selfId,uint8_t remoteId,uint16_t devClass,uint16_t hardware):
+ULSBusObjectsDictionary::ULSBusObjectsDictionary():
     ULSList(),
     ULSListItem()
 {
-    _devStatus.self_id = selfId;
-    _devStatus.remote_id = remoteId;
-    _devStatus.dev_class = devClass;
-    _devStatus.hardware = hardware;
+
 };
 
 ULSBusObjectBase* ULSBusObjectsDictionary::getObject(uint16_t id)
@@ -113,69 +110,9 @@ _ulsbus_obj_find_rezult ULSBusObjectsDictionary::find(uint16_t obj_id,uint16_t s
     };
     return ULSBUS_OBJECT_FIND_OBJECT_NOTFOUND;
 }
-uint8_t  ULSBusObjectsDictionary::self_id()
-{
-    return _devStatus.self_id;
-}
-uint8_t  ULSBusObjectsDictionary::remote_id()
-{
-    return _devStatus.remote_id;
-}
-void   ULSBusObjectsDictionary::self_id(uint8_t id)
-{
-    _devStatus.self_id = id;
-}
-void   ULSBusObjectsDictionary::remote_id(uint8_t id)
-{
-    _devStatus.remote_id = id;
-}
-void   ULSBusObjectsDictionary::devStatus(_ulsbus_device_status *status)
-{
-    _devStatus = *status;
-}
-_ulsbus_device_status* ULSBusObjectsDictionary::devStatus()
-{
-    return &_devStatus;
-}
 
-ULSBusObjectsLibrary::ULSBusObjectsLibrary():ULSList()
-{
 
-};
-ULSBusObjectBase* ULSBusObjectsLibrary::getObject(uint8_t self_id,uint8_t remote_id,uint16_t obj_id)
-{
-    ULSBusObjectsDictionary *px = head();
-    while(px){
-        if(((px->self_id() == self_id)||(px->self_id() == 0)) &&
-                ((px->remote_id() == remote_id)||(px->remote_id() == 0))){
-            return px->getObject(obj_id);
-        }
-        px = forward(px);
-    };
-    return __null;
-}
-_ulsbus_obj_find_rezult ULSBusObjectsLibrary::find(uint8_t self_id,uint8_t remote_id,uint16_t obj_id,uint16_t size)
-{
-    ULSBusObjectsDictionary *px = head();
-    while(px){
-        if((px->remote_id() == remote_id) && (px->self_id() == self_id)){
-            return px->find(obj_id,size);
-        }
-        px = forward(px);
-    };
-    return ULSBUS_OBJECT_FIND_DEVICE_NOTFOUND;
-}
-_ulsbus_device_status* ULSBusObjectsLibrary::findDevices(uint8_t self_id,uint8_t remote_id)
-{
-    ULSBusObjectsDictionary *px = head();
-    while(px){
-        if((px->remote_id() == remote_id) && (px->self_id() == self_id)){
-            return px->devStatus();
-        }
-        px = forward(px);
-    };
-    return __null;
-}
+
 
 
 

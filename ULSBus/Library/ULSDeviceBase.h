@@ -23,6 +23,9 @@
 #define ULSDEVICEBASE_H
 #include "ULSBusObject.h"
 
+#define __DEVICE_CLASS_X     0x0000
+#define __DEVICE_HW_X        0x0000
+
 #define __DEVICE_CLASS_ULSQR1 0x0010
 #define __DEVICE_HW_ULSQR1_R1 0x0001
 
@@ -65,16 +68,36 @@ typedef struct __attribute__((packed)){
     uint8_t  buf[128];
 }__ulsdb_sys_flash;
 
-class ULSDeviceBase: public ULSBusObjectsDictionary
+class ULSDeviceBase:public ULSBusObjectsDictionary
 {
 public:
     ULSDeviceBase(uint8_t selfId,uint8_t remoteId,uint16_t devClass,uint16_t hardware);
-
-    ULSBusObject<__ulsdb_signature> signature;
-    ULSBusObject<__ulsdbt_sys_cmd>   sys_cmd;
-    ULSBusObject<__ulsdbt_sys_status> sys_status;
-    ULSBusObject<__ulsdb_sys_flash> sys_flash;
+    void connected(bool connected);
+    bool connected();
+    uint8_t self_id();
+    uint8_t remote_id();
+    void  self_id(uint8_t id);
+    void  remote_id(uint8_t id);
+    void  status(_ulsbus_device_status *st);
+    _ulsbus_device_status   *status();
+private:
+    bool _connected;
+    _ulsbus_device_status _status;
 };
+
+class ULSDevice_ULSX:public ULSDeviceBase
+{
+public:
+    ULSDevice_ULSX(uint8_t selfId,uint8_t remoteId,uint16_t devClass,uint16_t hardware);
+
+    ULSBusObject<__ulsdb_signature> o_signature;
+    ULSBusObject<__ulsdbt_sys_cmd>   o_sys_cmd;
+    ULSBusObject<__ulsdbt_sys_status> o_sys_status;
+    ULSBusObject<__ulsdb_sys_flash> o_sys_flash;
+};
+
+
+
 
 
 #endif // ULSDEVICEBASE_H

@@ -23,16 +23,16 @@ typedef struct __attribute__((packed)){
     uint32_t devclass;
 }__ulsd_ulsqr_status;  // Total 128 bytes;
 
-class ULSDevice_ULSQR1_R1:public ULSDeviceBase
+class ULSDevice_ULSQR1_R1:public ULSDevice_ULSX
 {
 public:
     ULSDevice_ULSQR1_R1(uint8_t selfId,uint8_t remoteId);
 
-    ULSBusObject<__ulsd_ulsqr_status> status;
-    ULSBusObjectArray<uint8_t,2000> array2000;;
-    ULSBusObjectArray<uint8_t,2048> array2048;
-    ULSBusObjectArray<tmpConfig,2> tcfgA;
-    ULSBusObject<tmpConfig> tcfg;
+    ULSBusObject<__ulsd_ulsqr_status> o_status;
+    ULSBusObjectArray<uint8_t,2000> o_array2000;;
+    ULSBusObjectArray<uint8_t,2048> o_array2048;
+    ULSBusObjectArray<tmpConfig,2> o_tcfgA;
+    ULSBusObject<tmpConfig> o_tcfg;
 };
 
 #endif // ULSDEVICE_ULSQR1_H

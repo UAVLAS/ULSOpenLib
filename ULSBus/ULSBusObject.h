@@ -98,27 +98,11 @@ public :
 class ULSBusObjectsDictionary:public ULSList<ULSBusObjectBase>, public ULSListItem
 {
 public:
-    ULSBusObjectsDictionary(uint8_t selfId,uint8_t remoteId,uint16_t devClass,uint16_t hardware);
+    ULSBusObjectsDictionary();
     ULSBusObjectBase* getObject(uint16_t id);
     _ulsbus_obj_find_rezult find(uint16_t obj_id,uint16_t size);
-    uint8_t self_id();
-    uint8_t remote_id();
-    void  self_id(uint8_t id);
-    void  remote_id(uint8_t id);
-    void  devStatus(_ulsbus_device_status *status);
-    _ulsbus_device_status   *devStatus();
-
-protected:
-    _ulsbus_device_status _devStatus;
 };
 
-class ULSBusObjectsLibrary:public ULSList<ULSBusObjectsDictionary>
-{
-public:
-    ULSBusObjectsLibrary();
-    ULSBusObjectBase* getObject(uint8_t self_id,uint8_t remote_id,uint16_t obj_id);
-    _ulsbus_obj_find_rezult find(uint8_t self_id,uint8_t remote_id,uint16_t obj_id,uint16_t size);
-    _ulsbus_device_status *findDevices(uint8_t self_id,uint8_t remote_id);
-};
+
 
 #endif // ULSBUSOBJECT_H

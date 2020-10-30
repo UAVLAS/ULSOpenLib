@@ -28,11 +28,12 @@
 #include "ULSBusTransaction.h"
 #include "ULSBusConnection.h"
 #include "ULSBusObject.h"
+#include "ULSDevicesLibrary.h"
 
 class ULSBus
 {
 public:
-    ULSBus(ULSBusObjectsLibrary *library);
+    ULSBus();
     void task();
     void open();
     void sendNM();
@@ -45,11 +46,11 @@ public:
     void add(ULSBusTransaction* transaction, uint32_t len);
     void add(ULSBusConnection* connection, uint32_t len);
     void add(ULSBusObjectBuffer* buf, uint32_t len);
-
+    void add(ULSDeviceBase* device);
 private:
     ULSBusTransactionsList _tarnsactions;
     ULSBusConnectionsList _connections;
-    ULSBusObjectsLibrary    *_library;
+    ULSDevicesLibrary     _library;
     ULSBusObjectBufferList  _oBuf;
 
     uint32_t _nmTimeout;

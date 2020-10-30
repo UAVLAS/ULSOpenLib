@@ -24,14 +24,14 @@
 #define ULSBUSTRANSACTION_H
 #include "IfBase.h"
 #include "ULSBusConnection.h"
-#include "ULSBusObject.h"
 #include "ULSBusObjectBuffer.h"
+#include "ULSDevicesLibrary.h"
 
 
 class ULSBusTransaction:public ULSListItem{
 public:
     ULSBusTransaction();
-    void library(ULSBusObjectsLibrary    *library);
+    void library(ULSDevicesLibrary    *library);
 
     bool open(ULSBusConnection* connection,uint8_t selfId,uint8_t remoteId);
     bool open(ULSBusConnection* connection,ULSBusConnection* connectionGate,uint8_t selfId,uint8_t remoteId);
@@ -55,7 +55,7 @@ private:
     ULSBusConnection *_connection; // Pointer to main Connection
     ULSBusConnection *_connectionGate; // Pointer to gate connection Connection
 
-    ULSBusObjectsLibrary    *_library;
+    ULSDevicesLibrary    *_library;
     _ulsbus_transaction_state _state;
     uint32_t _timeout;
     uint8_t  _cmd;
@@ -72,7 +72,7 @@ class ULSBusTransactionsList:public ULSList<ULSBusTransaction>{
 public:
     ULSBusTransactionsList();
 
-    void library(ULSBusObjectsLibrary    *library);
+    void library(ULSDevicesLibrary    *library);
     void task();
     ULSBusTransaction* open(ULSBusConnection* connection,uint8_t self_id,uint8_t remote_id);
 

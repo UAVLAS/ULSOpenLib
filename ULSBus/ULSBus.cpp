@@ -22,11 +22,10 @@
 
 #include "ULSBus.h"
 
-ULSBus::ULSBus(ULSBusObjectsLibrary *library):
-    _library(library),
+ULSBus::ULSBus():
     _nmTimeout(0)
 {
-    _tarnsactions.library(_library);
+    _tarnsactions.library(&_library);
 };
 void ULSBus::task()// call every ms
 {
@@ -52,13 +51,13 @@ void ULSBus::open()
 }
 void ULSBus::sendNM()
 {
-    ULSBusObjectsDictionary *dic = _library->head();
-    while(dic)
+    ULSDeviceBase *dev = _library.head();
+    while(dev)
     {
-        if((dic->remote_id() == 0)){ // remote_id == 0 for all current devices
-            _connections.sendNM(dic->devStatus());
+        if((dev->remote_id() == 0)){ // remote_id == 0 for all current devices
+            _connections.sendNM(dev->status());
         }
-        dic = _library->forward(dic);
+        dev = _library.forward(dev);
     }
 }
 
@@ -70,7 +69,7 @@ bool ULSBus::processAck(ULSBusConnection* pxConnection)
     uint8_t remote_id = pxPack->ack.remote_id;
 
     // Redirect if it is not our device;
-    if(!_library->findDevices(remote_id,0))
+    if(!_library.findDevices(remote_id,0))
     {
         _connections.redirect(pxConnection);
     }
@@ -160,12 +159,26 @@ bool ULSBus::processPacket(ULSBusConnection *pxConnection)
         _connections.redirect(pxConnection);
         return true; // No need to return data
         break;
-    case    ULSBUS_NM://Network management (NM) - heart beat
+    case    ULSBUS_NM:{//Network management (NM) - heart beat
         // Interface refresh device timeout
         _connections.refresh(pxConnection,pxPack->nm.self_id);
         // Send NM pack to all other interfaces
         _connections.redirect(pxConnection);
+        // Update diectionaries
+        ULSDeviceBase* dev = _library.head(); //m self_id = 0 -> from any devices
+        while(dev){
+            if(dev->status()->dev_class == pxPack->nm.dev_class)
+            {
+                if(dev->remote_id()==0xff){ // Update device with undefined ID
+                    dev->remote_id(pxPack->nm.self_id);
+                 return true;
+                }
+            }
+            dev = _library.forward(dev);
+        }
+
         return true; // No need to return data
+    }
         break;
     case    ULSBUS_ACK://Operation ACK (ACK)
         return processAck(pxConnection);
@@ -179,7 +192,7 @@ bool ULSBus::processPacket(ULSBusConnection *pxConnection)
         uint16_t obj_id = pxPack->boi_sft.obj_id;
         uint8_t  *obj_data = pxPack->boi_sft.data;
 
-        ULSBusObjectBase *obj =  _library->getObject(0x0,self_id,obj_id); // Looking for object in library
+        ULSBusObjectBase *obj =  _library.getObject(0x0,self_id,obj_id); // Looking for object in library
         if(obj){ // check if we found object
             if(obj->size() == obj_size){ // check size match
                 obj->setData(obj_data);
@@ -248,10 +261,10 @@ bool ULSBus::processPacket(ULSBusConnection *pxConnection)
         uint16_t obj_id = pxPack->rwoi_sft.obj_id;
         uint8_t  *obj_data = pxPack->rwoi_sft.data;
 
-        _ulsbus_obj_find_rezult rez = _library->find(remote_id,0,obj_id,obj_size); //m self_id = 0 -> from any devices
+        _ulsbus_obj_find_rezult rez = _library.find(remote_id,0,obj_id,obj_size); //m self_id = 0 -> from any devices
 
         if(rez == ULSBUS_OBJECT_FIND_OK){
-            ULSBusObjectBase *obj =  _library->getObject(remote_id,0,obj_id); // Looking for object in library
+            ULSBusObjectBase *obj =  _library.getObject(remote_id,0,obj_id); // Looking for object in library
             // check if we found object
             if(!obj){return false;}
             obj->setData(obj_data);
@@ -295,7 +308,7 @@ bool ULSBus::processPacket(ULSBusConnection *pxConnection)
         uint16_t obj_id = pxPack->rwoi_sot.obj_id;
         uint16_t obj_size = pxPack->rwoi_sot.size;
 
-        _ulsbus_obj_find_rezult rez = _library->find(remote_id,self_id,obj_id,obj_size); //m self_id = 0 -> from any devices
+        _ulsbus_obj_find_rezult rez = _library.find(remote_id,self_id,obj_id,obj_size); //m self_id = 0 -> from any devices
         if(rez == ULSBUS_OBJECT_FIND_OK){
             // Create Transaction Buffer
             ULSBusObjectBuffer* buffer =_oBuf.open(obj_id,obj_size);
@@ -360,7 +373,7 @@ bool ULSBus::processPacket(ULSBusConnection *pxConnection)
         uint16_t obj_id = pxPack->rroi.obj_id;
         uint16_t obj_size = pxPack->rroi.size;
 
-        _ulsbus_obj_find_rezult rez = _library->find(remote_id,0,obj_id,obj_size);
+        _ulsbus_obj_find_rezult rez = _library.find(remote_id,0,obj_id,obj_size);
 
         if(rez == ULSBUS_OBJECT_FIND_OK){
             // Create Transaction Buffer
@@ -373,7 +386,7 @@ bool ULSBus::processPacket(ULSBusConnection *pxConnection)
             }
 
             // Fill buffer with data.
-            ULSBusObjectBase *obj =  _library->getObject(remote_id,0,obj_id); // Looking for object in library
+            ULSBusObjectBase *obj =  _library.getObject(remote_id,0,obj_id); // Looking for object in library
             // check if we found object
             if(!obj)return false;
             buffer->setData(obj->data(),obj->size());
@@ -421,12 +434,12 @@ bool ULSBus::processPacket(ULSBusConnection *pxConnection)
         uint16_t obj_id = pxPack->aoi_sft.obj_id;
         uint16_t obj_size = (packLenght - ULSBUS_HEADER_SIZE_AOI_SFT);
         uint8_t* obj_data = pxPack->aoi_sft.data;
-        _ulsbus_obj_find_rezult rez = _library->find(self_id,0,obj_id,obj_size); //remote_id = 0 -> from any devices
+        _ulsbus_obj_find_rezult rez = _library.find(self_id,0,obj_id,obj_size); //remote_id = 0 -> from any devices
 
         if(rez == ULSBUS_OBJECT_FIND_OK){
             // Create Transaction Buffer
             // Fill buffer with data.
-            ULSBusObjectBase *obj =  _library->getObject(self_id,0,obj_id); // remote_id = 0 -> from any devices
+            ULSBusObjectBase *obj =  _library.getObject(self_id,0,obj_id); // remote_id = 0 -> from any devices
             // check if we found object
             if(!obj)return false;
             obj->setData(obj_data);
@@ -458,7 +471,7 @@ bool ULSBus::processPacket(ULSBusConnection *pxConnection)
         uint16_t obj_id = pxPack->aoi_sot.obj_id;
         uint16_t obj_size = pxPack->aoi_sot.size;
 
-        _ulsbus_obj_find_rezult rez = _library->find(remote_id,0,obj_id,obj_size); //m self_id = 0 -> from any devices
+        _ulsbus_obj_find_rezult rez = _library.find(remote_id,0,obj_id,obj_size); //m self_id = 0 -> from any devices
 
         if(rez == ULSBUS_OBJECT_FIND_OK){
             // Create Transaction Buffer
@@ -556,4 +569,9 @@ void ULSBus::add(ULSBusObjectBuffer* buf, uint32_t len)
         _oBuf.add(buf);
         buf++;
     }
+}
+void ULSBus::add(ULSDeviceBase* device)
+{
+
+    _library.add(device);
 }
