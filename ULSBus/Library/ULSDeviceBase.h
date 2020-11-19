@@ -71,7 +71,7 @@ typedef struct __attribute__((packed)){
 class ULSDeviceBase:public ULSBusObjectsDictionary
 {
 public:
-    ULSDeviceBase(uint8_t selfId,uint8_t remoteId,uint16_t devClass,uint16_t hardware);
+    ULSDeviceBase(const char* name,uint8_t selfId,uint8_t remoteId,uint16_t devClass,uint16_t hardware);
     void connected(bool connected);
     bool connected();
     uint8_t self_id();
@@ -79,16 +79,18 @@ public:
     void  self_id(uint8_t id);
     void  remote_id(uint8_t id);
     void  status(_ulsbus_device_status *st);
+    const char* name(){return _name;}
     _ulsbus_device_status   *status();
 private:
     bool _connected;
+    const char *_name;
     _ulsbus_device_status _status;
 };
 
 class ULSDevice_ULSX:public ULSDeviceBase
 {
 public:
-    ULSDevice_ULSX(uint8_t selfId,uint8_t remoteId,uint16_t devClass,uint16_t hardware);
+    ULSDevice_ULSX(const char* name,uint8_t selfId,uint8_t remoteId,uint16_t devClass,uint16_t hardware);
 
     ULSBusObject<__ulsdb_signature> o_signature;
     ULSBusObject<__ulsdbt_sys_cmd>   o_sys_cmd;
