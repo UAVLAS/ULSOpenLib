@@ -125,9 +125,6 @@ bool ULSBusTransaction::boiTransmitStart(){
         _frameLastSize = _buf->size()%_frameSize;
         _frames = _buf->size()/_frameSize;
         _frameNum = 0;
-        if(_frameLastSize == 0){
-            _frames--;
-        }
         // Transmit SOT.
         pxPack->boi_sot.cmd = ULSBUS_BOI_SOT;
         pxPack->boi_sot.self_id = _selfId;
@@ -150,7 +147,7 @@ bool ULSBusTransaction::boiTransmitStart(){
 //===================================================
 bool ULSBusTransaction::rwoiTransmitStart(){
     _ulsbus_packet  *pxPack = (_ulsbus_packet *)(_connection->interface()->txBufInstance.buf);
-    if(!_buf){
+    if(_buf == __null){
         close();
         return false;
     }
@@ -181,9 +178,7 @@ bool ULSBusTransaction::rwoiTransmitStart(){
         _frameLastSize = _buf->size()%_frameSize;
         _frames = _buf->size()/_frameSize;
         _frameNum = 0;
-        if(_frameLastSize == 0){
-            _frames--;
-        }
+
         // Transmit data SOT
         pxPack->rwoi_sot.cmd = ULSBUS_RWOI_SOT;
         pxPack->rwoi_sot.self_id = _selfId;
@@ -519,7 +514,7 @@ bool ULSBusTransaction::task() // calls every ms
         if(_buf->isBufferComlite())
         {
             // No ack for BIO messages
-            _state = ULSBUST_RECEIVE_BOI_COMPLITE;
+            _state = ULSBUST_RWOI_RECEIVE_COMPLITE;
 
         }else{
             // Check buffer if frame missed send request for lost frame
@@ -535,7 +530,7 @@ bool ULSBusTransaction::task() // calls every ms
         ULSBusObjectBase *obj =  _library->getObject(_remoteId,0,_buf->id()); // Looking for object in library
         if(obj){ // check if we found object
             if(obj->size() == _buf->size()){ // check size match
-                obj->setData(pxPack->boi_sft.data);
+                obj->setData(_buf->pxBuf());
                 // TODO: Send ACK to transmitter;
 
             }else {

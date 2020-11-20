@@ -40,6 +40,7 @@ public:
 public:
     uint16_t id(){return _id;}
     uint16_t size(){return _size;}
+    uint8_t* pxBuf(){return _buf;}
     uint32_t frameValidMask[64];
 
 private:
