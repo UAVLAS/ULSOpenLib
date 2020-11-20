@@ -41,6 +41,7 @@ public:
     virtual bool send(_if_buffer_instance *ifBufferInstace){(void)ifBufferInstace;return false;};
     virtual uint32_t maxTxPacketLenght(){return 0;}
     virtual void enableEscIfSupprted(bool esc){(void)esc;};
+    virtual uint32_t maxFrameSize(){return 8;};
 
     bool send(uint8_t *buf, uint32_t lenght);
     bool send();

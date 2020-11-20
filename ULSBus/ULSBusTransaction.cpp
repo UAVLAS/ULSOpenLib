@@ -233,6 +233,10 @@ bool ULSBusTransaction::aoiTransmitStart(){
                 // Error interface buffer full repeat later
                 _state = ULSBUST_AOI_TRANSMIT_START_REPEAT;
             }
+        }else{
+            //int i =10;
+            _state = ULSBUST_AOI_TRANSMIT_START_REPEAT;
+            return false; // Buffer Not ready
         }
     }else{
         // Prepare for transmittion frames.
@@ -240,9 +244,7 @@ bool ULSBusTransaction::aoiTransmitStart(){
         _frameLastSize = _buf->size()%_frameSize;
         _frames = _buf->size()/_frameSize;
         _frameNum = 0;
-        if(_frameLastSize == 0){
-            _frames--;
-        }
+
         // Transmit data SOT
         pxPack->aoi_sot.cmd = ULSBUS_AOI_SOT;
         pxPack->aoi_sot.self_id = _selfId;
@@ -272,7 +274,7 @@ bool ULSBusTransaction::processPacket()
 
     if(_state == ULSBUST_EMPTY)return false;
     if(!_connection)return false;
-    _ulsbus_packet  *pxPack = (_ulsbus_packet *)(_connection->interface()->txBufInstance.buf);
+    _ulsbus_packet  *pxPack = (_ulsbus_packet *)(_connection->interface()->rxBufInstance.buf);
 
     switch(_state){
     //================================================================
@@ -331,7 +333,7 @@ bool ULSBusTransaction::processPacket()
         _frameSize = pxPack->rwoi_sot.frame_size;
         _selfId = pxPack->rwoi_sot.self_id;
         _remoteId = pxPack->rwoi_sot.remote_id;
-        _frameLastSize = pxPack->boi_sot.size % _frameSize;
+        _frameLastSize = pxPack->rwoi_sot.size % _frameSize;
         _state = ULSBUST_RWOI_RECEIVE_F;
     }
         break;
@@ -355,24 +357,33 @@ bool ULSBusTransaction::processPacket()
     }
         break;
     case ULSBUST_AOI_TRANSMIT_COMPLITE_WAIT_ACK:{
-        close(); // Anyway close connection.
-        if((pxPack->ack.ackcmd == ULSBUS_ACK_RROI_OK)||
-                (pxPack->ack.ackcmd == ULSBUS_ACK_RWOI_SOT_COMPLITE)){
-            return true;
-        };
-        return false; // ACK with error received.
+          // Do nothing
+        return true; // ACK with error received.
     }
+
+
         break;
     case ULSBUST_AOI_TRANSMIT_SOT_WAIT_ACK:{
 
     }
         break;
+    case ULSBUST_AOI_RECEIVE_START:{
+
+        _frames = pxPack->aoi_sot.frames;
+        _frameSize = pxPack->aoi_sot.frame_size;
+        _selfId = pxPack->aoi_sot.self_id;
+        _remoteId = pxPack->aoi_sot.remote_id;
+        _frameLastSize = pxPack->aoi_sot.size % _frameSize;
+        _state = ULSBUST_AOI_RECEIVE_F;
+    }
+        break;
     case ULSBUST_AOI_RECEIVE_F:{
 
-        uint8_t frameNum = pxPack->boi_f.frameNum;
+        uint8_t frameNum = pxPack->aoi_f.frameNum;
         if(frameNum == _frames)
         {
             _buf->setData(_frameSize,pxPack->aoi_f.frameNum,pxPack->aoi_f.data,_frameLastSize);
+
         }else{
             _buf->setData(_frameSize,pxPack->aoi_f.frameNum,pxPack->aoi_f.data,_frameSize);
         }
@@ -398,8 +409,9 @@ bool ULSBusTransaction::task() // calls every ms
             return false;
         }
     }
+
     if(_state == ULSBUST_EMPTY)return false;
-    if(_connection)return false;
+    if(_connection == __null)return false;
     _ulsbus_packet  *pxPack = (_ulsbus_packet *)(_connection->interface()->txBufInstance.buf);
 
     switch(_state){
@@ -532,6 +544,7 @@ bool ULSBusTransaction::task() // calls every ms
         }
         close(); // Buffer ok close connection
     }
+        break;
         //================================================================
         // AOI Task
     case ULSBUST_AOI_TRANSMIT_START_REPEAT:{
@@ -577,8 +590,10 @@ bool ULSBusTransaction::task() // calls every ms
 
         if(_buf->isBufferComlite())
         {
+            int i = 10;
+            while(i--);
             // No ack for BIO messages
-            _state = ULSBUST_RECEIVE_BOI_COMPLITE;
+            _state = ULSBUST_AOI_RECEIVE_COMPLITE;
 
         }else{
             // Check buffer if frame missed send request for lost frame
@@ -666,12 +681,12 @@ ULSBusTransaction* ULSBusTransactionsList::open(ULSBusConnection* connection,uin
     ULSBusTransaction *px = head();
     while(px){
         if(px->open(connection,self_id,remote_id) ){
-         if(buf){
-            px->connectBuffer(buf);
-         }
-         px->state(state);
-         px->processPacket();
-         return px;
+            if(buf){
+                px->connectBuffer(buf);
+            }
+            px->state(state);
+            px->processPacket();
+            return px;
         }
         px = forward(px);
     };
@@ -684,12 +699,12 @@ ULSBusTransaction* ULSBusTransactionsList::open(ULSBusConnection* connection,ULS
     ULSBusTransaction *px = head();
     while(px){
         if(px->open(connection,connectionGate,self_id,remote_id) ){
-         if(buf){
-            px->connectBuffer(buf);
-         }
-         px->state(state);
-         px->processPacket();
-         return px;
+            if(buf){
+                px->connectBuffer(buf);
+            }
+            px->state(state);
+            px->processPacket();
+            return px;
         }
         px = forward(px);
     };

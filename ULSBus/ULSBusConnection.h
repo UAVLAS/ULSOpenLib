@@ -28,7 +28,7 @@
 class ULSBusConnection:public ULSListItem
 {
 public:
-    ULSBusConnection(IfBase* interface = __null,uint16_t maxFarameSize = 0);
+    ULSBusConnection(IfBase* interface = __null);
     void refresh(uint8_t id);
     void task();
     uint32_t read();

@@ -22,10 +22,10 @@
 
 #include "ULSBusConnection.h"
 
-ULSBusConnection::ULSBusConnection(IfBase* interface ,uint16_t maxFarameSize):
+ULSBusConnection::ULSBusConnection(IfBase* interface):
     ULSListItem(),
     _interface(interface),
-    _maxFarameSize(maxFarameSize)
+    _maxFarameSize((interface)?interface->maxFrameSize():0)
 {
     for(int i = 0 ; i < 256 ; i++) _timeout[i] = 0;
 };
