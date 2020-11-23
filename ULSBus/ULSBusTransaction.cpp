@@ -52,22 +52,17 @@ bool ULSBusTransaction::open(ULSBusConnection* connection,uint8_t selfId,uint8_t
     _timeout = ULSBUS_TIMEOUT;
     return true;
 }
-bool ULSBusTransaction::open(ULSBusConnection* connection,ULSBusConnection* connectionGate,uint8_t selfId,uint8_t remoteId)
-{
-    if(_state != ULSBUST_EMPTY) return false;
-    _connectionGate = connectionGate;
-    return open(connection,selfId,remoteId);
-}
+
 void ULSBusTransaction::close()
 {
     _state = ULSBUST_EMPTY;
+    _cmd = 0;
     _frames = 0;
     _frameSize = 0;
     _frameLastSize = 0;
     _frameNum = 0;
     disconnectBuffer();
     _connection = __null;
-    _connectionGate = __null;
 }
 void ULSBusTransaction::close(uint8_t cmd,uint8_t remoteID)
 {
@@ -116,8 +111,10 @@ bool ULSBusTransaction::boiTransmitStart(){
         close();
         return false;
     }
+
     if(_buf->size() <= _connection->maxFrameSize()){
         // Transmit data SFT using interface buffer
+        _cmd = ULSBUS_BOI_SFT;
         pxPack->boi_sft.cmd = ULSBUS_BOI_SFT;
         pxPack->boi_sft.self_id = _self_id;
         pxPack->boi_sft.obj_id = _buf->id();
@@ -134,8 +131,7 @@ bool ULSBusTransaction::boiTransmitStart(){
     }else{
         // Prepare for transmittion frames.
         initFrames();
-
-        if(_frameLastSize) _frames++;
+        _cmd = ULSBUS_BOI_SOT;
         // Transmit SOT.
         pxPack->boi_sot.cmd = ULSBUS_BOI_SOT;
         pxPack->boi_sot.self_id = _self_id;
@@ -168,6 +164,7 @@ bool ULSBusTransaction::rwoiTransmitStart(){
     }
     if((_buf->size() + 2) <= _connection->maxFrameSize()){
         // Transmit data SFT
+        _cmd = ULSBUS_RWOI_SFT;
         pxPack->rwoi_sft.cmd = ULSBUS_RWOI_SFT;
         pxPack->rwoi_sft.self_id = _self_id;
         pxPack->rwoi_sft.remote_id = _remote_id;
@@ -186,8 +183,7 @@ bool ULSBusTransaction::rwoiTransmitStart(){
     }else{
         // Prepare for transmittion frames.
         initFrames();
-
-
+        _cmd = ULSBUS_RWOI_SOT;
         // Transmit data SOT
         pxPack->rwoi_sot.cmd = ULSBUS_RWOI_SOT;
         pxPack->rwoi_sot.self_id = _self_id;
@@ -222,6 +218,7 @@ bool ULSBusTransaction::aoiTransmitStart(){
     }
     if((_buf->size() + 2) <= _connection->maxFrameSize()){
         // Transmit data SFT
+        _cmd = ULSBUS_AOI_SFT;
         pxPack->aoi_sft.cmd = ULSBUS_AOI_SFT;
         pxPack->aoi_sft.self_id = _self_id;
         pxPack->aoi_sft.remote_id = _remote_id;
@@ -245,7 +242,7 @@ bool ULSBusTransaction::aoiTransmitStart(){
     }else{
         // Prepare for transmittion frames.
         initFrames();
-
+        _cmd = ULSBUS_AOI_SOT;
         // Transmit data SOT
         pxPack->aoi_sot.cmd = ULSBUS_AOI_SOT;
         pxPack->aoi_sot.self_id = _self_id;
@@ -286,6 +283,7 @@ bool ULSBusTransaction::processPacket()
     }
         break;
     case ULSBUST_BOI_RECEIVE_START:{
+        _cmd = ULSBUS_BOI_SOT;
         _frames = pxPack->boi_sot.frames;
         _frameSize = pxPack->boi_sot.frame_size;
         _self_id = pxPack->boi_sot.self_id;
@@ -321,11 +319,17 @@ bool ULSBusTransaction::processPacket()
     }
         break;
     case ULSBUST_RWOI_RECEIVE_START:{
+        _cmd = ULSBUS_RWOI_SOT;
         _frames = pxPack->rwoi_sot.frames;
         _frameSize = pxPack->rwoi_sot.frame_size;
         _self_id = pxPack->rwoi_sot.self_id;
         _remote_id = pxPack->rwoi_sot.remote_id;
         _frameLastSize = pxPack->rwoi_sot.size % _frameSize;
+        if(_frameLastSize){
+            _frames++;
+        }else{
+            _frameLastSize = _frameSize;
+        }
         _state = ULSBUST_RWOI_RECEIVE_F;
     }
         break;
@@ -352,16 +356,19 @@ bool ULSBusTransaction::processPacket()
         // Do nothing
         return true; // ACK with error received.
     }
-
-
         break;
     case ULSBUST_AOI_RECEIVE_START:{
-
+        _cmd = ULSBUS_AOI_SOT;
         _frames = pxPack->aoi_sot.frames;
         _frameSize = pxPack->aoi_sot.frame_size;
         _self_id = pxPack->aoi_sot.self_id;
         _remote_id = pxPack->aoi_sot.remote_id;
         _frameLastSize = pxPack->aoi_sot.size % _frameSize;
+        if(_frameLastSize){
+            _frames++;
+        }else{
+            _frameLastSize = _frameSize;
+        }
         _state = ULSBUST_AOI_RECEIVE_F;
     }
         break;
@@ -491,13 +498,6 @@ bool ULSBusTransaction::task() // calls every ms
         }
     }
         break;
-
-        //        case ULSBUST_RWOI_TRANSMIT_WAIT_ACK:{
-        //            //ULSBUST_RWOI_TRANSMIT_WAIT_ACK
-        //            // Wait ack or timeout
-        //        }
-
-        break;
     case ULSBUST_RWOI_RECEIVE_F:{
 
         if(_buf->isBufferComlite())
@@ -569,13 +569,6 @@ bool ULSBusTransaction::task() // calls every ms
         }
     }
         break;
-
-        //        case ULSBUST_AOI_TRANSMIT_WAIT_ACK:{
-        //            //ULSBUST_AOI_TRANSMIT_WAIT_ACK
-        //            // Wait ack or timeout
-        //        }
-
-        break;
     case ULSBUST_AOI_RECEIVE_F:{
 
         if(_buf->isBufferComlite())
@@ -605,7 +598,7 @@ bool ULSBusTransaction::task() // calls every ms
         }
         close(); // Buffer ok close connection
     }
-
+        break;
     default:
         break;
     }
@@ -626,8 +619,6 @@ ULSBusObjectBuffer* ULSBusTransaction::buffer()
 {
     return _buf;
 };
-
-
 
 ULSBusTransactionsList::ULSBusTransactionsList():ULSList()
 {
@@ -680,23 +671,6 @@ ULSBusTransaction* ULSBusTransactionsList::open(ULSBusConnection* connection,uin
     return __null;
 }
 
-ULSBusTransaction* ULSBusTransactionsList::open(ULSBusConnection* connection,ULSBusConnection* connectionGate,uint8_t self_id,uint8_t remote_id,ULSBusObjectBuffer* buf,_ulsbus_transaction_state state)
-{
-
-    ULSBusTransaction *px = head();
-    while(px){
-        if(px->open(connection,connectionGate,self_id,remote_id) ){
-            if(buf){
-                px->connectBuffer(buf);
-            }
-            px->state(state);
-            px->processPacket();
-            return px;
-        }
-        px = forward(px);
-    };
-    return __null;
-}
 ULSBusTransaction* ULSBusTransactionsList::find(ULSBusConnection* connection,uint8_t self_id,uint8_t remote_id,_ulsbus_transaction_state state)
 {
     ULSBusTransaction *px = head();

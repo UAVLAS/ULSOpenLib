@@ -176,7 +176,7 @@ bool ULSBus::processPacket(ULSBusConnection *pxConnection)
             ULSBusConnection *px = _connections.head();
             while(px){
                 if(px != pxConnection){ // if not current interface
-                    ULSBusTransaction* pxt = _tarnsactions.open(px,pxConnection,self_id,0,buffer,ULSBUST_BOI_TRANSMIT_START);
+                    ULSBusTransaction* pxt = _tarnsactions.open(px,self_id,0,buffer,ULSBUST_BOI_TRANSMIT_START);
                     if(!pxt){
                         // No ACK
                         return false;
@@ -209,7 +209,7 @@ bool ULSBus::processPacket(ULSBusConnection *pxConnection)
         ULSBusConnection *px = _connections.head();
         while(px){
             if(px != pxConnection){ // if not current interface
-                pxt = _tarnsactions.open(px,pxConnection,self_id,0,buffer,ULSBUST_BOI_TRANSMIT_START);
+                pxt = _tarnsactions.open(px,self_id,0,buffer,ULSBUST_BOI_TRANSMIT_START);
                 if(!pxt){
                     // No ACK
                     return false;
@@ -270,7 +270,7 @@ bool ULSBus::processPacket(ULSBusConnection *pxConnection)
             }
             // fill buffer with received data
             buffer->setData(obj_data,obj_size);
-            ULSBusTransaction* pxt = _tarnsactions.open(pxc,pxConnection,self_id,remote_id,buffer,ULSBUST_RWOI_TRANSMIT_START);
+            ULSBusTransaction* pxt = _tarnsactions.open(pxc,self_id,remote_id,buffer,ULSBUST_RWOI_TRANSMIT_START);
             if(!pxt){
                 pxConnection->sendAck(ULSBUS_ACK_BUFFER_FULL,cmd,self_id,remote_id);
                 return false;
@@ -318,7 +318,7 @@ bool ULSBus::processPacket(ULSBusConnection *pxConnection)
                 return false;
             }
             // Create Transaction for current interface to receive data
-            ULSBusTransaction* pxt = _tarnsactions.open(pxc,pxConnection,self_id,remote_id,buffer,ULSBUST_RWOI_RECEIVE_START);
+            ULSBusTransaction* pxt = _tarnsactions.open(pxConnection,self_id,remote_id,buffer,ULSBUST_RWOI_RECEIVE_START);
             if(!pxt){
                 pxConnection->sendAck(ULSBUS_ACK_BUFFER_FULL,cmd,self_id,remote_id);
                 return false;

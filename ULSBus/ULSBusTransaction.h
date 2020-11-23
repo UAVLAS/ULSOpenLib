@@ -34,7 +34,7 @@ public:
     void library(ULSDevicesLibrary    *library);
 
     bool open(ULSBusConnection* connection,uint8_t selfId,uint8_t remoteId);
-    bool open(ULSBusConnection* connection,ULSBusConnection* connectionGate,uint8_t selfId,uint8_t remoteId);
+
     void close();
     void close(uint8_t cmd,uint8_t remoteID);
     void connectBuffer(ULSBusObjectBuffer* buf);
@@ -56,7 +56,6 @@ private:
 private:
     ULSBusObjectBuffer* _buf;     // Pointer to object buffers
     ULSBusConnection *_connection; // Pointer to main Connection
-    ULSBusConnection *_connectionGate; // Pointer to gate connection Connection
 
     ULSDevicesLibrary    *_library;
     _ulsbus_transaction_state _state;
@@ -82,9 +81,6 @@ public:
     ULSBusTransaction* open(ULSBusConnection* connection,uint8_t self_id,uint8_t remote_id,
                             ULSBusObjectBuffer* buf,_ulsbus_transaction_state state);
 
-    ULSBusTransaction* open(ULSBusConnection* connection,ULSBusConnection* connectionGate,
-                            uint8_t self_id,uint8_t remote_id,ULSBusObjectBuffer* buf,
-                            _ulsbus_transaction_state state);
     ULSBusTransaction* find(ULSBusConnection* connection,uint8_t self_id,uint8_t remote_id,
                             _ulsbus_transaction_state state);
     uint32_t openedTransactions();
