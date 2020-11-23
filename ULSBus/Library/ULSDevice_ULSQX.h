@@ -31,6 +31,7 @@ public:
     ULSBusObject<__ulsd_ulsqr_status> o_status;
     ULSBusObjectArray<uint8_t,2000> o_array2000;;
     ULSBusObjectArray<uint8_t,2048> o_array2048;
+    ULSBusObjectArray<uint8_t,2041> o_array2041;
     ULSBusObjectArray<tmpConfig,2> o_tcfgA;
     ULSBusObject<tmpConfig> o_tcfg;
 };
@@ -42,6 +43,7 @@ public:
     ULSBusObject<__ulsd_ulsqr_status> o_status;
     ULSBusObjectArray<uint8_t,2000> o_array2000;;
     ULSBusObjectArray<uint8_t,2048> o_array2048;
+    ULSBusObjectArray<uint8_t,2041> o_array2041;
     ULSBusObjectArray<tmpConfig,2> o_tcfgA;
     ULSBusObject<tmpConfig> o_tcfg;
 };

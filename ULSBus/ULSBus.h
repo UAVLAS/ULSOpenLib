@@ -39,6 +39,8 @@ public:
     void open();
     void sendNM();
     bool processAck(ULSBusConnection* pxConnection);
+    bool processNM(ULSBusConnection* pxConnection);
+
     bool processPacket(ULSBusConnection *pxConnection);
     uint32_t openedTransactions();
     void add(ULSBusTransaction* transaction);

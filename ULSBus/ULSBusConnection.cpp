@@ -24,8 +24,7 @@
 
 ULSBusConnection::ULSBusConnection(IfBase* interface):
     ULSListItem(),
-    _interface(interface),
-    _maxFarameSize((interface)?interface->maxFrameSize():0)
+    _interface(interface)
 {
     for(int i = 0 ; i < 256 ; i++) _timeout[i] = 0;
 };
@@ -60,14 +59,14 @@ void ULSBusConnection::send()
 {
     if(_interface)_interface->send();
 }
-bool ULSBusConnection::sendAck(_ulsbus_ack ackcmd,uint8_t self_id,uint8_t remote_id)
+bool ULSBusConnection::sendAck(_ulsbus_ack ack,uint8_t cmd,uint8_t self_id,uint8_t remote_id)
 {
     if(!_interface)return false;
     _ulsbus_packet  *pxPack = (_ulsbus_packet *)(_interface->txBufInstance.buf);
     pxPack->ack.cmd = ULSBUS_ACK;
     pxPack->ack.self_id = self_id;
     pxPack->ack.remote_id = remote_id;
-    pxPack->ack.ackcmd = ackcmd;
+    pxPack->ack.ackcmd = (ack<<5)|cmd;
     _interface->txBufInstance.lenght = ULSBUS_HEADER_SIZE_ACK;
     _interface->send();
     return true;
@@ -90,17 +89,13 @@ void ULSBusConnection::interface(IfBase* interface)
 {
     _interface = interface;
 };
-void ULSBusConnection:: maxFrameSize(uint32_t size)
-{
-    _maxFarameSize = size;
-};
 IfBase*  ULSBusConnection::interface()
 {
     return _interface;
 };
 uint16_t ULSBusConnection::maxFrameSize()
 {
-    return _maxFarameSize;
+    return _interface->maxFrameSize();
 };
 
 ULSBusConnectionsList::ULSBusConnectionsList():
@@ -118,6 +113,17 @@ void ULSBusConnectionsList::redirect(ULSBusConnection* pxConnection) // redirect
         px = forward(px);
     };
 };
+void ULSBusConnectionsList::redirect(uint16_t dev_id,ULSBusConnection* srcConnection) // redirect incoming pachet to specifed ID device
+{
+    ULSBusConnection* pxc =  findId(dev_id);
+    if(!pxc) return; // connection with device not found
+    // Redirect request to next device;
+    if( pxc != srcConnection){
+        pxc->send(&(srcConnection->interface()->rxBufInstance));
+    }
+};
+
+
 void ULSBusConnectionsList::sendNM(_ulsbus_device_status *dev)
 {
     ULSBusConnection *px = head();

@@ -35,17 +35,15 @@ public:
     bool deviceConnected(uint8_t id);
     void send(_if_buffer_instance* bufi);
     void send();
-    bool sendAck(_ulsbus_ack ackcmd,uint8_t self_id,uint8_t remote_id);
+    bool sendAck(_ulsbus_ack ack,uint8_t cmd,uint8_t self_id,uint8_t remote_id);
     bool sendNM(_ulsbus_device_status *dev);
     void interface(IfBase* interface);
     IfBase* interface();
-    void maxFrameSize(uint32_t size);
     uint16_t maxFrameSize();
 
 private:
     IfBase* _interface;
     uint32_t _timeout[256];
-    uint16_t _maxFarameSize;
 };
 
 
@@ -55,6 +53,7 @@ public:
     ULSBusConnectionsList();
 
     void redirect(ULSBusConnection* pxConnection);
+    void redirect(uint16_t dev_id,ULSBusConnection* srcConnection);
     void sendNM(_ulsbus_device_status *dev);
     void task();
     void refresh(ULSBusConnection* pxConnection,uint8_t id);

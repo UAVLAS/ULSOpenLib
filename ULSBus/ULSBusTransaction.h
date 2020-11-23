@@ -40,9 +40,7 @@ public:
     void connectBuffer(ULSBusObjectBuffer* buf);
     void disconnectBuffer();
     bool check(ULSBusConnection* connection,uint8_t self_id,uint8_t remote_id,_ulsbus_transaction_state state);
-    bool boiTransmitStart();
-    bool rwoiTransmitStart();
-    bool aoiTransmitStart();
+
     bool processPacket();
     bool task() ;
 
@@ -50,6 +48,11 @@ public:
     _ulsbus_transaction_state state();
     ULSBusObjectBuffer* buffer();
 
+private:
+    bool boiTransmitStart();
+    bool rwoiTransmitStart();
+    bool aoiTransmitStart();
+    void initFrames();
 private:
     ULSBusObjectBuffer* _buf;     // Pointer to object buffers
     ULSBusConnection *_connection; // Pointer to main Connection
@@ -59,12 +62,12 @@ private:
     _ulsbus_transaction_state _state;
     uint32_t _timeout;
     uint8_t  _cmd;
-    uint8_t  _selfId;
-    uint8_t  _remoteId;
-    uint8_t  _frames;
-    uint8_t  _frameNum;
-    uint8_t  _frameSize;
-    uint8_t  _frameLastSize;
+    uint8_t  _self_id;
+    uint8_t  _remote_id;
+    uint32_t  _frames;
+    uint32_t  _frameNum;
+    uint32_t  _frameSize;
+    uint32_t  _frameLastSize;
     //    uint16_t _crc;
 };
 

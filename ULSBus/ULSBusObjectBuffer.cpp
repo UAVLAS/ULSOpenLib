@@ -43,7 +43,7 @@ void ULSBusObjectBuffer::close()
 bool ULSBusObjectBuffer::setData(uint8_t frame_size,uint8_t frame,uint8_t *buf, uint32_t len)
 {
     uint32_t start = frame*frame_size;
-    if((start+len)  >= _sizeMax)return false;
+    if((start+len)  > _sizeMax)return false;
 
     for(uint32_t i=0 ;i<len; i++)
     {
