@@ -82,6 +82,7 @@ public:
     void lock();
     void unlock();
     void updatedCallback(_ulsbus_obj_updated_callback callback);
+    void* parent();
 
 private:
     void* _parent; // pointer to parent object (ULSDevice exspected)

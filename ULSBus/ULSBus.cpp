@@ -49,6 +49,37 @@ void ULSBus::open()
 {
 
 }
+bool ULSBus::sendObject(uint8_t self_id,ULSBusObjectBase* obj)
+{
+    ULSDeviceBase* device = (ULSDeviceBase*)obj->parent();
+    // check if we have devices connected to us with corresponding ID
+    ULSBusConnection* pxc =  _connections.findId(device->remote_id());
+    if(!pxc)return false; //  connection not found
+
+    // Create Transaction Buffer
+    ULSBusObjectBuffer* buffer =_oBuf.open(obj->id(),obj->size());
+    if(!buffer)return false;
+
+    buffer->setData(obj->data(),obj->size());
+    ULSBusTransaction* pxt = _tarnsactions.open(pxc,self_id,device->remote_id(),buffer,ULSBUST_RWOI_TRANSMIT_START);
+    if(!pxt)return false;
+    return true;
+}
+bool ULSBus::requestObject(uint8_t self_id,ULSBusObjectBase* obj)
+{
+    ULSDeviceBase* device = (ULSDeviceBase*)obj->parent();
+    // check if we have devices connected to us with corresponding ID
+    ULSBusConnection* pxc =  _connections.findId(device->remote_id());
+    if(!pxc)return false; //  connection not found
+    _ulsbus_packet  *pxTxPack = (_ulsbus_packet *)(pxc->interface()->txBufInstance.buf);
+
+    pxTxPack->rroi.cmd = ULSBUS_RROI;
+    pxTxPack->rroi.self_id = self_id;
+    pxTxPack->rroi.remote_id = device->remote_id();
+    pxTxPack->rroi.obj_id = obj->id();// PC adress
+    pxTxPack->rroi.size = obj->size();
+    return pxc->send();
+}
 void ULSBus::sendNM()
 {
     ULSDeviceBase *dev = _library.head();

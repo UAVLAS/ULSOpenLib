@@ -69,13 +69,9 @@ void ULSBusObjectBase::updatedCallback(_ulsbus_obj_updated_callback callback)
 {
     _updated_callback = callback;
 }
-const char* ULSBusObjectBase::name()
+void* ULSBusObjectBase::parent()
 {
-    return _name;
-}
-const char* ULSBusObjectBase::description()
-{
-    return _description;
+    return _parent;
 }
 uint16_t ULSBusObjectBase::id()
 {
@@ -97,6 +93,14 @@ uint8_t* ULSBusObjectBase::data()
 {
     return _pxData;
 };
+const char* ULSBusObjectBase::name()
+{
+    return _name;
+}
+const char* ULSBusObjectBase::description()
+{
+    return _description;
+}
 
 
 

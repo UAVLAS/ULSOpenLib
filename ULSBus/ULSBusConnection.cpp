@@ -51,13 +51,15 @@ bool ULSBusConnection::deviceConnected(uint8_t id){
     if(_timeout[id])return true;
     return false;
 }
-void ULSBusConnection::send(_if_buffer_instance* bufi)
+bool ULSBusConnection::send(_if_buffer_instance* bufi)
 {
-    if(_interface)_interface->send(bufi);
+    if(_interface)return _interface->send(bufi);
+    return false;
 }
-void ULSBusConnection::send()
+bool ULSBusConnection::send()
 {
-    if(_interface)_interface->send();
+    if(_interface)return _interface->send();
+        return false;
 }
 bool ULSBusConnection::sendAck(_ulsbus_ack ack,uint8_t cmd,uint8_t self_id,uint8_t remote_id)
 {

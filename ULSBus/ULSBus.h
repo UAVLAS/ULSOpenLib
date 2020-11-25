@@ -38,6 +38,8 @@ public:
     void task();
     void open();
     void sendNM();
+    bool sendObject(uint8_t self_id,ULSBusObjectBase* obj);
+    bool requestObject(uint8_t self_id,ULSBusObjectBase* obj);
     bool processAck(ULSBusConnection* pxConnection);
     bool processNM(ULSBusConnection* pxConnection);
 
@@ -51,6 +53,8 @@ public:
     void add(ULSBusObjectBuffer* buf, uint32_t len);
     void add(ULSDeviceBase* device);
     void updatedCallback(_ulsbus_obj_updated_callback callback);
+
+
 private:
     ULSBusTransactionsList _tarnsactions;
     ULSBusConnectionsList _connections;

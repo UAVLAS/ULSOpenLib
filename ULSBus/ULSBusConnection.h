@@ -33,8 +33,8 @@ public:
     void task();
     uint32_t read();
     bool deviceConnected(uint8_t id);
-    void send(_if_buffer_instance* bufi);
-    void send();
+    bool send(_if_buffer_instance* bufi);
+    bool send();
     bool sendAck(_ulsbus_ack ack,uint8_t cmd,uint8_t self_id,uint8_t remote_id);
     bool sendNM(_ulsbus_device_status *dev);
     void interface(IfBase* interface);
