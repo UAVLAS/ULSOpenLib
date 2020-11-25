@@ -56,7 +56,7 @@ private:
 class ULSBusObjectBase:public ULSListItem
 {
 public:
-    ULSBusObjectBase(uint16_t id, const char* pxDescription,_ulsbus_obj_permitions permition,uint16_t size,uint8_t *pxData);
+    ULSBusObjectBase(uint16_t id, const char* pxDescription,_ulsbus_obj_permitions permition,uint16_t size,uint16_t len,uint8_t *pxData);
 
     void getData(uint8_t *buf);
     void setData(uint8_t *buf);
@@ -64,6 +64,7 @@ public:
     uint16_t id();
     _ulsbus_obj_permitions permition();
     uint16_t size();
+    uint16_t len();
     uint8_t* data();
 
     void lock();
@@ -72,18 +73,19 @@ public:
 private:
     uint16_t _id;
     uint16_t _size;
+    uint16_t _len;
     uint8_t  *_pxData;
     const char *_pxDescription;
     _ulsbus_obj_permitions _permition;
 };
 
-template<typename T,int SIZE=1>
+template<typename T,int LENGHT=1>
 class ULSBusObjectArray: public ULSBusObjectBase
 {
 public :
     ULSBusObjectArray(uint16_t id, const char* pxDescription,_ulsbus_obj_permitions permition):
-        ULSBusObjectBase(id,pxDescription,permition,SIZE*sizeof(T) ,(uint8_t*)&var){};
-    ObjData<T> var[SIZE];
+        ULSBusObjectBase(id,pxDescription,permition,LENGHT*sizeof(T) ,LENGHT,(uint8_t*)&var){};
+    ObjData<T> var[LENGHT];
 };
 
 template<typename T>
@@ -91,7 +93,7 @@ class ULSBusObject: public ULSBusObjectBase
 {
 public :
     ULSBusObject(uint16_t id, const char* pxDescription,_ulsbus_obj_permitions permition):
-        ULSBusObjectBase(id,pxDescription,permition,sizeof(T) ,(uint8_t*)&var){};
+        ULSBusObjectBase(id,pxDescription,permition,sizeof(T) ,1,(uint8_t*)&var){};
     ObjData<T> var;
 };
 

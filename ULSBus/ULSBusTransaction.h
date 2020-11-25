@@ -52,6 +52,10 @@ private:
     bool boiTransmitStart();
     bool rwoiTransmitStart();
     bool aoiTransmitStart();
+    void frameReceived(uint32_t frame_idx,uint8_t *buf);
+    bool frameTransmit(uint8_t *buf);
+    bool frameBufferCheck(bool broadcast);
+
     void initFrames();
 private:
     ULSBusObjectBuffer* _buf;     // Pointer to object buffers
@@ -64,9 +68,9 @@ private:
     uint8_t  _self_id;
     uint8_t  _remote_id;
     uint32_t  _frames;
-    uint32_t  _frameNum;
-    uint32_t  _frameSize;
-    uint32_t  _frameLastSize;
+    uint32_t  _frame_idx;
+    uint32_t  _frame_size;
+    uint32_t  _frame_size_last;
     //    uint16_t _crc;
 };
 

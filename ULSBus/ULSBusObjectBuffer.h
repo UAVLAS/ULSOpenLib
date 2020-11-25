@@ -28,9 +28,9 @@ class ULSBusObjectBuffer:public ULSListItem{
 public:
     ULSBusObjectBuffer();
     void close();
-    bool setData(uint8_t frame_size,uint8_t frame,uint8_t *buf, uint32_t len);
-    bool setData(uint8_t *buf, uint16_t len);
-    bool getData(uint8_t frame_size,uint8_t frame,uint8_t *buf, uint16_t len);
+    bool setData(uint32_t frame_size,uint32_t frame_idx,uint8_t *buf, uint32_t len);
+    bool setData(uint8_t *buf, uint32_t len);
+    bool getData(uint32_t frame_size,uint32_t frame_idx,uint8_t *buf, uint32_t len);
     bool isBusy();
     bool open(uint16_t id,uint16_t size);
     void connect();
@@ -39,16 +39,16 @@ public:
 
 public:
     uint16_t id(){return _id;}
-    uint16_t size(){return _size;}
+    uint32_t size(){return _size;}
     uint8_t* pxBuf(){return _buf;}
-    uint32_t frameValidMask[64];
+    uint32_t frameValidMask[8];
 
 private:
     uint8_t  _buf[2048];
     uint32_t _interfacesConnected;
     uint16_t _id;
     uint32_t _frames;
-    uint16_t _size;
+    uint32_t _size;
     uint32_t _sizeMax;
 };
 

@@ -62,17 +62,17 @@ void ULSBus::sendNM()
 }
 bool ULSBus::processNM(ULSBusConnection* pxConnection)
 {
-    _ulsbus_packet  *pxPack = (_ulsbus_packet *)(pxConnection->interface()->rxBufInstance.buf);
+    _ulsbus_packet  *pxRxPack = (_ulsbus_packet *)(pxConnection->interface()->rxBufInstance.buf);
     // Interface refresh device timeout
-    _connections.refresh(pxConnection,pxPack->nm.self_id);
+    _connections.refresh(pxConnection,pxRxPack->nm.self_id);
     // Send NM pack to all other interfaces
     _connections.redirect(pxConnection);
     // Update devices
     ULSDeviceBase* dev = _library.head(); //m self_id = 0 -> from any devices
     while(dev){
-        if(dev->status()->dev_class == pxPack->nm.dev_class)
+        if(dev->status()->dev_class == pxRxPack->nm.dev_class)
         {
-            if(dev->remote_id()==pxPack->nm.self_id){
+            if(dev->remote_id()==pxRxPack->nm.self_id){
                 if(!dev->connected())dev->connected(true); // Connect device
                 // Device found - all ok
                 return true;
@@ -81,19 +81,19 @@ bool ULSBus::processNM(ULSBusConnection* pxConnection)
         dev = _library.forward(dev);
     }
     // No defined
-    addDevice(pxPack->nm.self_id,pxPack->nm.dev_class);
+    addDevice(pxRxPack->nm.self_id,pxRxPack->nm.dev_class);
     return true;
 }
 bool ULSBus::processAck(ULSBusConnection* pxConnection)
 {
-    _ulsbus_packet  *pxPack = (_ulsbus_packet *)(pxConnection->interface()->rxBufInstance.buf);
+    _ulsbus_packet  *pxRxPack = (_ulsbus_packet *)(pxConnection->interface()->rxBufInstance.buf);
 
-    uint8_t self_id = pxPack->ack.self_id;
-    uint8_t remote_id = pxPack->ack.remote_id;
+    uint8_t self_id = pxRxPack->ack.self_id;
+    uint8_t remote_id = pxRxPack->ack.remote_id;
 
     // Redirect if we have connected device
     _connections.redirect(self_id,pxConnection);
-    uint8_t ack = (pxPack->ack.ackcmd>>5);
+    uint8_t ack = (pxRxPack->ack.ackcmd>>5);
     switch(ack){
     case ULSBUS_ACK_OK:{
         // WTF ? Unused Ack received
@@ -101,17 +101,12 @@ bool ULSBus::processAck(ULSBusConnection* pxConnection)
         break;
     case ULSBUS_ACK_COMPLITE:{
         // All done close transaction
-        ULSBusTransaction* pxt = _tarnsactions.find(pxConnection,self_id,remote_id,ULSBUST_AOI_TRANSMIT_COMPLITE_WAIT_ACK);
+        ULSBusTransaction* pxt = _tarnsactions.find(pxConnection,self_id,remote_id,ULSBUST_TRANSMIT_COMPLITE_WAIT_ACK);
         if(pxt){
-            pxt->close();
+            pxt->processPacket();
             return true;
         }
-        pxt =  _tarnsactions.find(pxConnection,self_id,remote_id,ULSBUST_RWOI_TRANSMIT_COMPLITE_WAIT_ACK);
-        if(pxt){
-            pxt->close();
-            return true;
-        }
-        return false;
+
     }
         break;
     default:
@@ -125,9 +120,12 @@ bool ULSBus::processAck(ULSBusConnection* pxConnection)
 bool ULSBus::processPacket(ULSBusConnection *pxConnection)
 {
     if(!pxConnection)return false; // WTF ?
-    _ulsbus_packet  *pxPack = (_ulsbus_packet*)(pxConnection->interface()->rxBufInstance.buf);
-    uint8_t cmd = pxPack->hdr.cmd;//
+    _ulsbus_packet  *pxRxPack = (_ulsbus_packet*)(pxConnection->interface()->rxBufInstance.buf);
+    uint8_t cmd = pxRxPack->hdr.cmd;//
     uint32_t  packLenght = pxConnection->interface()->rxBufInstance.lenght;
+
+    // Interface refresh device connected timeout
+    _connections.refresh(pxConnection,pxRxPack->hdr.self_id);
 
     switch(cmd){
     case ULSBUS_RTSP://RealTime SYNC Pulse (RTSP)
@@ -141,7 +139,6 @@ bool ULSBus::processPacket(ULSBusConnection *pxConnection)
         break;
     case    ULSBUS_NM:{//Network management (NM) - heart beat
        processNM(pxConnection);
-
         return true; // No need to return data
     }
         break;
@@ -153,12 +150,9 @@ bool ULSBus::processPacket(ULSBusConnection *pxConnection)
     case    ULSBUS_BOI_SFT:{  //Broadcast Single Frame Transaction (BOI-SFT)
 
         uint32_t obj_size = (packLenght - ULSBUS_HEADER_SIZE_BOI_SFT);
-        uint8_t  self_id = pxPack->boi_sft.self_id;
-        uint16_t obj_id = pxPack->boi_sft.obj_id;
-        uint8_t  *obj_data = pxPack->boi_sft.data;
-
-        // Interface refresh device timeout
-        _connections.refresh(pxConnection,pxPack->nm.self_id);
+        uint8_t  self_id = pxRxPack->boi_sft.self_id;
+        uint16_t obj_id = pxRxPack->boi_sft.obj_id;
+        uint8_t  *obj_data = pxRxPack->boi_sft.data;
 
         ULSBusObjectBase *obj =  _library.getObject(0x0,self_id,obj_id); // Looking for object in library
         if(obj){ // check if we found object
@@ -190,17 +184,12 @@ bool ULSBus::processPacket(ULSBusConnection *pxConnection)
         break;
     case    ULSBUS_BOI_SOT:{  //Broadcast OI Start Of Transaction (BOI-SOT)
 
-        uint8_t self_id = pxPack->boi_sot.self_id;
-        uint16_t obj_id = pxPack->boi_sot.obj_id;
-        uint32_t obj_size = pxPack->boi_sot.size;
-
-        // Interface refresh device timeout
-        _connections.refresh(pxConnection,pxPack->nm.self_id);
+        uint8_t self_id = pxRxPack->boi_sot.self_id;
+        uint16_t obj_id = pxRxPack->boi_sot.obj_id;
+        uint32_t obj_size = pxRxPack->boi_sot.obj_size;
 
         // Create Transaction Buffer
         ULSBusObjectBuffer* buffer =_oBuf.open(obj_id,obj_size);
-
-        // Create Transaction for each interface
         if(!buffer) return false; // No ack for broadcast
 
         // Create Transaction for current pxc
@@ -209,43 +198,31 @@ bool ULSBus::processPacket(ULSBusConnection *pxConnection)
         ULSBusConnection *px = _connections.head();
         while(px){
             if(px != pxConnection){ // if not current interface
-                pxt = _tarnsactions.open(px,self_id,0,buffer,ULSBUST_BOI_TRANSMIT_START);
-                if(!pxt){
-                    // No ACK
-                    return false;
-                }
+                _tarnsactions.open(px,self_id,0,buffer,ULSBUST_BOI_TRANSMIT_START);
             }
             px = _connections.forward(px);
         }
     }
         break;
     case    ULSBUS_BOI_F :{   //Broadcast OI Frame - (BOI-F)
-        // Interface refresh device timeout
-        _connections.refresh(pxConnection,pxPack->nm.self_id);
-
-        ULSBusTransaction* pxt = _tarnsactions.find(pxConnection,pxPack->boi_f.self_id,0,ULSBUST_BOI_RECEIVE_F);
+        ULSBusTransaction* pxt = _tarnsactions.find(pxConnection,pxRxPack->boi_f.self_id,0,ULSBUST_BOI_RECEIVE_F);
         if(pxt) pxt->processPacket();
     }
         break;
 
     case    ULSBUS_RWOI_SFT:{ //Request Write OI Single Frame Transaction (RWOI-SFT)
         uint32_t obj_size = (packLenght - ULSBUS_HEADER_SIZE_RWOI_SFT);
-        uint8_t self_id = pxPack->rwoi_sft.self_id;
-        uint8_t remote_id = pxPack->rwoi_sft.remote_id;
-        uint16_t obj_id = pxPack->rwoi_sft.obj_id;
-        uint8_t  *obj_data = pxPack->rwoi_sft.data;
-
-        // Interface refresh device timeout
-        _connections.refresh(pxConnection,pxPack->nm.self_id);
+        uint8_t  self_id = pxRxPack->rwoi_sft.self_id;
+        uint8_t  remote_id = pxRxPack->rwoi_sft.remote_id;
+        uint16_t obj_id = pxRxPack->rwoi_sft.obj_id;
+        uint8_t  *obj_data = pxRxPack->rwoi_sft.data;
 
         _ulsbus_obj_find_rezult rez = _library.find(remote_id,0,obj_id,obj_size); //m self_id = 0 -> from any devices
 
         if(rez == ULSBUS_OBJECT_FIND_OK){
             ULSBusObjectBase *obj =  _library.getObject(remote_id,0,obj_id); // Looking for object in library
-            // check if we found object
-            if(!obj){return false;}
+            if(!obj){return false;} // WTF ?
             obj->setData(obj_data);
-            // Send Ack - we have received data
             pxConnection->sendAck(ULSBUS_ACK_COMPLITE,cmd,self_id,remote_id);
             return true;
         }
@@ -268,7 +245,6 @@ bool ULSBus::processPacket(ULSBusConnection *pxConnection)
                 pxConnection->sendAck(ULSBUS_ACK_BUFFER_FULL,cmd,self_id,remote_id);
                 return false;
             }
-            // fill buffer with received data
             buffer->setData(obj_data,obj_size);
             ULSBusTransaction* pxt = _tarnsactions.open(pxc,self_id,remote_id,buffer,ULSBUST_RWOI_TRANSMIT_START);
             if(!pxt){
@@ -280,37 +256,31 @@ bool ULSBus::processPacket(ULSBusConnection *pxConnection)
     }
         break;
     case    ULSBUS_RWOI_SOT:{ //Request Write OI SOT (RWOI-SOT)
-        uint8_t self_id = pxPack->rwoi_sot.self_id;
-        uint8_t remote_id = pxPack->rwoi_sot.remote_id;
-        uint16_t obj_id = pxPack->rwoi_sot.obj_id;
-        uint16_t obj_size = pxPack->rwoi_sot.size;
-
-        // Interface refresh device timeout
-       // _connections.refresh(pxConnection,pxPack->nm.self_id);
+        uint8_t self_id = pxRxPack->rwoi_sot.self_id;
+        uint8_t remote_id = pxRxPack->rwoi_sot.remote_id;
+        uint16_t obj_id = pxRxPack->rwoi_sot.obj_id;
+        uint16_t obj_size = pxRxPack->rwoi_sot.obj_size;
 
         _ulsbus_obj_find_rezult rez = _library.find(remote_id,0,obj_id,obj_size); //m self_id = 0 -> from any devices
+
         if(rez == ULSBUS_OBJECT_FIND_OK){
-            // Create Transaction Buffer
             ULSBusObjectBuffer* buffer =_oBuf.open(obj_id,obj_size);
             if(!buffer){
                 pxConnection->sendAck(ULSBUS_ACK_BUFFER_FULL,cmd,self_id,remote_id);
                 return false;
             }
-            // Create Transaction for current interface
             ULSBusTransaction* pxt = _tarnsactions.open(pxConnection,0,remote_id,buffer,ULSBUST_RWOI_RECEIVE_START);
             if(!pxt){
                 pxConnection->sendAck(ULSBUS_ACK_BUFFER_FULL,cmd,self_id,remote_id);
                 return false;
             }
-            // All fine No ack for start of transaction.
             return true;
         }
         if(rez == ULSBUS_OBJECT_FIND_DEVICE_NOTFOUND){
             // Redirect to other devices;
             ULSBusConnection* pxc =  _connections.findId(remote_id);
             if(!pxc) return false; // connection with device not found
-            // Redirect request to next device;
-            pxc->send(&(pxConnection->interface()->rxBufInstance));
+
             // Create Transaction Buffer
             ULSBusObjectBuffer* buffer =_oBuf.open(obj_id,obj_size);
             if(!buffer){
@@ -329,52 +299,41 @@ bool ULSBus::processPacket(ULSBusConnection *pxConnection)
                 pxConnection->sendAck(ULSBUS_ACK_BUFFER_FULL,cmd,self_id,remote_id);
                 return false;
             }
-            // All fine No ack for start of transaction.
             return true;
         }
         if(rez == ULSBUS_OBJECT_FIND_OBJECT_NOTFOUND){
             pxConnection->sendAck(ULSBUS_ACK_OBJECT_NOTFOUND,cmd,self_id,remote_id);
-            return true;
+            return false;
         }
         if(rez == ULSBUS_OBJECT_FIND_OBJECT_SIZE_MISMUCH){
             pxConnection->sendAck(ULSBUS_ACK_OBJECT_SIZE_MISMUTCH,cmd,self_id,remote_id);
-            return true;
+            return false;
         }
 
     }
         break;
     case    ULSBUS_RWOI_F:{   //Request Write OI Frame (RWOI-F)
-        // Interface refresh device timeout
-        _connections.refresh(pxConnection,pxPack->nm.self_id);
         // Find receiving transaction
-        ULSBusTransaction* pxt = _tarnsactions.find(pxConnection,pxPack->aoi_f.self_id,pxPack->aoi_f.remote_id,ULSBUST_RWOI_RECEIVE_F);
+        ULSBusTransaction* pxt = _tarnsactions.find(pxConnection,pxRxPack->aoi_f.self_id,pxRxPack->aoi_f.remote_id,ULSBUST_RWOI_RECEIVE_F);
         if(pxt) pxt->processPacket();
     }
         break;
     case    ULSBUS_RROI:{     //Request Read Object Instance (RROI)
-        uint8_t self_id = pxPack->rroi.self_id;
-        uint8_t remote_id = pxPack->rroi.remote_id;
-        uint16_t obj_id = pxPack->rroi.obj_id;
-        uint16_t obj_size = pxPack->rroi.size;
-
-        // Interface refresh device timeout
-        _connections.refresh(pxConnection,pxPack->nm.self_id);
+        uint8_t self_id = pxRxPack->rroi.self_id;
+        uint8_t remote_id = pxRxPack->rroi.remote_id;
+        uint16_t obj_id = pxRxPack->rroi.obj_id;
+        uint16_t obj_size = pxRxPack->rroi.size;
 
         _ulsbus_obj_find_rezult rez = _library.find(remote_id,0,obj_id,obj_size);
 
         if(rez == ULSBUS_OBJECT_FIND_OK){
             // Create Transaction Buffer
              ULSBusObjectBuffer* buffer =_oBuf.open(obj_id,obj_size);
+            if(!buffer)return false; // WTF?
 
-            if(!buffer){
-                pxConnection->sendAck(ULSBUS_ACK_OBJECT_SIZE_MISMUTCH,cmd,self_id,remote_id);
-                return false;
-            }
-
-            // Fill buffer with data.
             ULSBusObjectBase *obj =  _library.getObject(remote_id,0,obj_id); // Looking for object in library
-            // check if we found object
             if(!obj)return false;
+
             buffer->setData(obj->data(),obj->size());
             // Create Transaction for current interface to transmit data
             ULSBusTransaction* pxt = _tarnsactions.open(pxConnection,self_id,remote_id,buffer,ULSBUST_AOI_TRANSMIT_START);
@@ -385,36 +344,31 @@ bool ULSBus::processPacket(ULSBusConnection *pxConnection)
             return true;
         }
         if(rez == ULSBUS_OBJECT_FIND_DEVICE_NOTFOUND){
-
             // Redirect to other devices;
             ULSBusConnection* pxc =  _connections.findId(remote_id);
             if(!pxc) return true; // connection with device not found
-            // Redirect request to next device;
             pxc->send(&(pxConnection->interface()->rxBufInstance));
         }
         if(rez == ULSBUS_OBJECT_FIND_OBJECT_NOTFOUND){
             pxConnection->sendAck(ULSBUS_ACK_OBJECT_NOTFOUND,cmd,self_id,remote_id);
-            return true;
+            return false;
         }
         if(rez == ULSBUS_OBJECT_FIND_OBJECT_SIZE_MISMUCH){
             pxConnection->sendAck(ULSBUS_ACK_OBJECT_SIZE_MISMUTCH,cmd,self_id,remote_id);
-            return true;
+            return false;
         }
     }
         break;
     case    ULSBUS_AOI_SFT:{  //Answer OI SOT (AIO-SOT)
-        uint8_t self_id = pxPack->aoi_sft.self_id;
-        uint8_t remote_id = pxPack->aoi_sft.remote_id;
-        uint16_t obj_id = pxPack->aoi_sft.obj_id;
+        uint8_t self_id = pxRxPack->aoi_sft.self_id;
+        uint8_t remote_id = pxRxPack->aoi_sft.remote_id;
+        uint16_t obj_id = pxRxPack->aoi_sft.obj_id;
         uint16_t obj_size = (packLenght - ULSBUS_HEADER_SIZE_AOI_SFT);
-        uint8_t* obj_data = pxPack->aoi_sft.data;
+        uint8_t* obj_data = pxRxPack->aoi_sft.data;
         _ulsbus_obj_find_rezult rez = _library.find(self_id,0,obj_id,obj_size); //remote_id = 0 -> from any devices
 
         if(rez == ULSBUS_OBJECT_FIND_OK){
-            // Create Transaction Buffer
-            // Fill buffer with data.
             ULSBusObjectBase *obj =  _library.getObject(self_id,0,obj_id); // remote_id = 0 -> from any devices
-            // check if we found object
             if(!obj)return false;
             obj->setData(obj_data);
             return true;
@@ -431,35 +385,26 @@ bool ULSBus::processPacket(ULSBusConnection *pxConnection)
             return true;
         }
         if(rez == ULSBUS_OBJECT_FIND_OBJECT_NOTFOUND){
-            //NO ACK for reading command
-            return true;
+            return false;
         }
         if(rez == ULSBUS_OBJECT_FIND_OBJECT_SIZE_MISMUCH){
-            //NO ACK for reading command
-            return true;
+            return false;
         }
     }
     case    ULSBUS_AOI_SOT:{  //Answer OI SOT (AIO-SOT)
-        uint8_t self_id = pxPack->aoi_sot.self_id;
-        uint8_t remote_id = pxPack->aoi_sot.remote_id;
-        uint16_t obj_id = pxPack->aoi_sot.obj_id;
-        uint16_t obj_size = pxPack->aoi_sot.size;
+        uint8_t self_id = pxRxPack->aoi_sot.self_id;
+        uint8_t remote_id = pxRxPack->aoi_sot.remote_id;
+        uint16_t obj_id = pxRxPack->aoi_sot.obj_id;
+        uint16_t obj_size = pxRxPack->aoi_sot.size;
 
         _ulsbus_obj_find_rezult rez = _library.find(remote_id,0,obj_id,obj_size); //m self_id = 0 -> from any devices
 
         if(rez == ULSBUS_OBJECT_FIND_OK){
-            // Create Transaction Buffer
             ULSBusObjectBuffer* buffer =_oBuf.open(obj_id,obj_size);
-            if(!buffer){
-                //NO ACK for reading command
-                return false;
-            }
+            if(!buffer)return false; //WTF?
             // Create Transaction for current interface
             ULSBusTransaction* pxt = _tarnsactions.open(pxConnection,self_id,remote_id,buffer,ULSBUST_AOI_RECEIVE_START);
-            if(!pxt){
-                //NO ACK for reading command
-                return false;
-            }
+            if(!pxt)return false;
             return true;
         }
         if(rez == ULSBUS_OBJECT_FIND_DEVICE_NOTFOUND){
@@ -467,7 +412,7 @@ bool ULSBus::processPacket(ULSBusConnection *pxConnection)
             ULSBusConnection* pxc =  _connections.findId(self_id);
             if(!pxc) return false; // pxc with device not found
             // Redirect request to next device;
-           // No redirect wi will aspxc->send(&(pxConnection->interface()->rxBufInstance));
+            // No redirect wi will aspxc->send(&(pxConnection->interface()->rxBufInstance));
             // Create Transaction Buffer
             ULSBusObjectBuffer* buffer =_oBuf.open(obj_id,obj_size);
             if(!buffer){
@@ -498,7 +443,7 @@ bool ULSBus::processPacket(ULSBusConnection *pxConnection)
         }
     }
     case    ULSBUS_AOI_F: {   //Answer OI frame (AIO-F)
-        ULSBusTransaction* pxt = _tarnsactions.find(pxConnection,pxPack->aoi_f.self_id,pxPack->aoi_f.remote_id,ULSBUST_AOI_RECEIVE_F);
+        ULSBusTransaction* pxt = _tarnsactions.find(pxConnection,pxRxPack->aoi_f.self_id,pxRxPack->aoi_f.remote_id,ULSBUST_AOI_RECEIVE_F);
         if(pxt) pxt->processPacket();
     }
         break;

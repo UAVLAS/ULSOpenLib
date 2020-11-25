@@ -31,9 +31,9 @@ ULSBusTransaction::ULSBusTransaction():
     _self_id(0),
     _remote_id(0),
     _frames(0),
-    _frameNum(0),
-    _frameSize(0),
-    _frameLastSize(0)
+    _frame_idx(0),
+    _frame_size(0),
+    _frame_size_last(0)
 {
     close();
 }
@@ -58,9 +58,9 @@ void ULSBusTransaction::close()
     _state = ULSBUST_EMPTY;
     _cmd = 0;
     _frames = 0;
-    _frameSize = 0;
-    _frameLastSize = 0;
-    _frameNum = 0;
+    _frame_size = 0;
+    _frame_size_last = 0;
+    _frame_idx = 0;
     disconnectBuffer();
     _connection = __null;
 }
@@ -82,14 +82,14 @@ void ULSBusTransaction::disconnectBuffer()
 }
 void ULSBusTransaction::initFrames()
 {
-    _frameSize = _connection->maxFrameSize();
-    _frames = _buf->size()/_frameSize;
-    _frameNum = 0;
-    _frameLastSize = _buf->size()%_frameSize;
-    if(_frameLastSize){
-        _frames++;
+    _frame_size = _connection->maxFrameSize();
+    _frames = _buf->size()/_frame_size;
+    _frame_idx = 0;
+    _frame_size_last = _buf->size()%_frame_size;
+    if(_frame_size_last == 0){
+        _frame_size_last = _frame_size;
     }else{
-        _frameLastSize = _frameSize;
+        _frames++; // Add incomplete frame
     }
 }
 bool ULSBusTransaction::check(ULSBusConnection* connection,uint8_t self_id,uint8_t remote_id,_ulsbus_transaction_state state)
@@ -102,7 +102,7 @@ bool ULSBusTransaction::check(ULSBusConnection* connection,uint8_t self_id,uint8
 }
 //===================================================
 bool ULSBusTransaction::boiTransmitStart(){
-    _ulsbus_packet  *pxPack = (_ulsbus_packet *)(_connection->interface()->txBufInstance.buf);
+    _ulsbus_packet  *pxTxPack = (_ulsbus_packet *)(_connection->interface()->txBufInstance.buf);
     if(!_buf){
         close();
         return false;
@@ -115,10 +115,10 @@ bool ULSBusTransaction::boiTransmitStart(){
     if(_buf->size() <= _connection->maxFrameSize()){
         // Transmit data SFT using interface buffer
         _cmd = ULSBUS_BOI_SFT;
-        pxPack->boi_sft.cmd = ULSBUS_BOI_SFT;
-        pxPack->boi_sft.self_id = _self_id;
-        pxPack->boi_sft.obj_id = _buf->id();
-        if(_buf->getData(_connection->maxFrameSize(),0,pxPack->boi_sft.data,_buf->size())){ // If buffer ready
+        pxTxPack->boi_sft.cmd = ULSBUS_BOI_SFT;
+        pxTxPack->boi_sft.self_id = _self_id;
+        pxTxPack->boi_sft.obj_id = _buf->id();
+        if(_buf->getData(_connection->maxFrameSize(),0,pxTxPack->boi_sft.data,_buf->size())){ // If buffer ready
             _connection->interface()->txBufInstance.lenght = ULSBUS_HEADER_SIZE_BOI_SFT + _buf->size();
             if(_connection->interface()->send()){
                 // Close transaction no need to wait answer
@@ -133,13 +133,13 @@ bool ULSBusTransaction::boiTransmitStart(){
         initFrames();
         _cmd = ULSBUS_BOI_SOT;
         // Transmit SOT.
-        pxPack->boi_sot.cmd = ULSBUS_BOI_SOT;
-        pxPack->boi_sot.self_id = _self_id;
-        pxPack->boi_sot.obj_id = _buf->id();
-        pxPack->boi_sot.frames = _frames;
-        pxPack->boi_sot.frame_size = _frameSize;
-        pxPack->boi_sot.size = _buf->size();
-        pxPack->boi_sot.crc = 0;//TODO: _buf->(crc);
+        pxTxPack->boi_sot.cmd = ULSBUS_BOI_SOT;
+        pxTxPack->boi_sot.self_id = _self_id;
+        pxTxPack->boi_sot.obj_id = _buf->id();
+        pxTxPack->boi_sot.frame_last_idx = _frames - 1;
+        pxTxPack->boi_sot.byte_last_idx = _frame_size - 1;
+        pxTxPack->boi_sot.obj_size = _buf->size();
+        pxTxPack->boi_sot.crc = 0;//TODO: _buf->(crc);
         _connection->interface()->txBufInstance.lenght = ULSBUS_HEADER_SIZE_BOI_SOT;
 
         if(_connection->interface()->send()){
@@ -153,7 +153,7 @@ bool ULSBusTransaction::boiTransmitStart(){
 }
 //===================================================
 bool ULSBusTransaction::rwoiTransmitStart(){
-    _ulsbus_packet  *pxPack = (_ulsbus_packet *)(_connection->interface()->txBufInstance.buf);
+    _ulsbus_packet  *pxTxPack = (_ulsbus_packet *)(_connection->interface()->txBufInstance.buf);
     if(_buf == __null){
         close();
         return false;
@@ -165,15 +165,15 @@ bool ULSBusTransaction::rwoiTransmitStart(){
     if((_buf->size() + 2) <= _connection->maxFrameSize()){
         // Transmit data SFT
         _cmd = ULSBUS_RWOI_SFT;
-        pxPack->rwoi_sft.cmd = ULSBUS_RWOI_SFT;
-        pxPack->rwoi_sft.self_id = _self_id;
-        pxPack->rwoi_sft.remote_id = _remote_id;
-        pxPack->rwoi_sft.obj_id = _buf->id();
-        if(_buf->getData(_connection->maxFrameSize(),0,pxPack->rwoi_sft.data,_buf->size())){ // If buffer ready
+        pxTxPack->rwoi_sft.cmd = ULSBUS_RWOI_SFT;
+        pxTxPack->rwoi_sft.self_id = _self_id;
+        pxTxPack->rwoi_sft.remote_id = _remote_id;
+        pxTxPack->rwoi_sft.obj_id = _buf->id();
+        if(_buf->getData(_connection->maxFrameSize(),0,pxTxPack->rwoi_sft.data,_buf->size())){ // If buffer ready
             _connection->interface()->txBufInstance.lenght = ULSBUS_HEADER_SIZE_RWOI_SFT + _buf->size();
             if(_connection->interface()->send())
             {
-                _state = ULSBUST_RWOI_TRANSMIT_COMPLITE_WAIT_ACK;
+                _state = ULSBUST_TRANSMIT_COMPLITE_WAIT_ACK;
                 _timeout = ULSBUS_TIMEOUT; // keep active
             }else{
                 // Error interface buffer full repeat later
@@ -185,14 +185,15 @@ bool ULSBusTransaction::rwoiTransmitStart(){
         initFrames();
         _cmd = ULSBUS_RWOI_SOT;
         // Transmit data SOT
-        pxPack->rwoi_sot.cmd = ULSBUS_RWOI_SOT;
-        pxPack->rwoi_sot.self_id = _self_id;
-        pxPack->rwoi_sot.remote_id = _remote_id;
-        pxPack->rwoi_sot.obj_id = _buf->id();
-        pxPack->rwoi_sot.frames = _frames;
-        pxPack->rwoi_sot.frame_size = _frameSize;
-        pxPack->rwoi_sot.size = _buf->size();
-        pxPack->rwoi_sot.crc = 0;//_buf->(crc);
+        pxTxPack->rwoi_sot.cmd = ULSBUS_RWOI_SOT;
+        pxTxPack->rwoi_sot.self_id = _self_id;
+        pxTxPack->rwoi_sot.remote_id = _remote_id;
+        pxTxPack->rwoi_sot.obj_id = _buf->id();
+        pxTxPack->rwoi_sot.frame_last_idx = _frames - 1;
+        pxTxPack->rwoi_sot.byte_last_idx  = _frame_size - 1;
+        pxTxPack->rwoi_sot.obj_size = _buf->size();
+        pxTxPack->rwoi_sot.crc = 0;//_buf->(crc);
+        pxTxPack->rwoi_sot.zero = 0;
         _connection->interface()->txBufInstance.lenght = ULSBUS_HEADER_SIZE_RWOI_SOT;
 
         if(_connection->interface()->send()){
@@ -206,7 +207,7 @@ bool ULSBusTransaction::rwoiTransmitStart(){
 }
 //===================================================
 bool ULSBusTransaction::aoiTransmitStart(){
-    _ulsbus_packet  *pxPack = (_ulsbus_packet *)(_connection->interface()->txBufInstance.buf);
+    _ulsbus_packet  *pxTxPack = (_ulsbus_packet *)(_connection->interface()->txBufInstance.buf);
 
     if(!_buf){
         close();
@@ -219,16 +220,16 @@ bool ULSBusTransaction::aoiTransmitStart(){
     if((_buf->size() + 2) <= _connection->maxFrameSize()){
         // Transmit data SFT
         _cmd = ULSBUS_AOI_SFT;
-        pxPack->aoi_sft.cmd = ULSBUS_AOI_SFT;
-        pxPack->aoi_sft.self_id = _self_id;
-        pxPack->aoi_sft.remote_id = _remote_id;
-        pxPack->aoi_sft.obj_id = _buf->id();
+        pxTxPack->aoi_sft.cmd = ULSBUS_AOI_SFT;
+        pxTxPack->aoi_sft.self_id = _self_id;
+        pxTxPack->aoi_sft.remote_id = _remote_id;
+        pxTxPack->aoi_sft.obj_id = _buf->id();
 
-        if(_buf->getData(_connection->maxFrameSize(),0,pxPack->aoi_sft.data,_buf->size())){ // If buffer ready
+        if(_buf->getData(_connection->maxFrameSize(),0,pxTxPack->aoi_sft.data,_buf->size())){ // If buffer ready
             _connection->interface()->txBufInstance.lenght = ULSBUS_HEADER_SIZE_AOI_SFT + _buf->size();
             if(_connection->interface()->send())
             {
-                _state = ULSBUST_AOI_TRANSMIT_COMPLITE_WAIT_ACK;
+                _state = ULSBUST_TRANSMIT_COMPLITE_WAIT_ACK;
                 _timeout = ULSBUS_TIMEOUT; // keep active
             }else{
                 // Error interface buffer full repeat later
@@ -244,14 +245,14 @@ bool ULSBusTransaction::aoiTransmitStart(){
         initFrames();
         _cmd = ULSBUS_AOI_SOT;
         // Transmit data SOT
-        pxPack->aoi_sot.cmd = ULSBUS_AOI_SOT;
-        pxPack->aoi_sot.self_id = _self_id;
-        pxPack->aoi_sot.remote_id = _remote_id;
-        pxPack->aoi_sot.obj_id = _buf->id();
-        pxPack->aoi_sot.frames = _frames;
-        pxPack->aoi_sot.frame_size = _frameSize;
-        pxPack->aoi_sot.size = _buf->size();
-        pxPack->aoi_sot.crc = 0;//_buf->(crc);
+        pxTxPack->aoi_sot.cmd = ULSBUS_AOI_SOT;
+        pxTxPack->aoi_sot.self_id = _self_id;
+        pxTxPack->aoi_sot.remote_id = _remote_id;
+        pxTxPack->aoi_sot.obj_id = _buf->id();
+        pxTxPack->aoi_sot.frame_last_idx = _frames - 1;
+        pxTxPack->aoi_sot.byte_last_idx = _frame_size - 1;
+        pxTxPack->aoi_sot.size = _buf->size();
+        pxTxPack->aoi_sot.crc = 0;//_buf->(crc);
         _connection->interface()->txBufInstance.lenght = ULSBUS_HEADER_SIZE_AOI_SOT;
 
         if(_connection->interface()->send()){
@@ -264,125 +265,165 @@ bool ULSBusTransaction::aoiTransmitStart(){
     }
     return false;
 }
+void ULSBusTransaction::frameReceived(uint32_t frame_idx,uint8_t *buf)
+{
+    _frame_idx = frame_idx;
+    if((_frame_idx + 1) == _frames)
+    {
+        _buf->setData(_frame_size,_frame_idx,buf,_frame_size_last);
+    }else{
+        _buf->setData(_frame_size,_frame_idx,buf,_frame_size);
+    }
+}
+bool ULSBusTransaction::frameTransmit(uint8_t *buf)
+{
+    uint32_t size = ((_frame_idx + 1)  ==  _frames)?_frame_size_last:_frame_size; // set size if it is  last frame
+
+    if(!_buf->getData(_frame_size,_frame_idx,buf,size))return true; // Exit if no data aviable;
+    switch(_cmd)
+    {
+    case ULSBUS_BOI_F: _connection->interface()->txBufInstance.lenght = ULSBUS_HEADER_SIZE_BOI_F +  size;
+        break;
+    case ULSBUS_RWOI_F: _connection->interface()->txBufInstance.lenght = ULSBUS_HEADER_SIZE_RWOI_F +  size;
+        break;
+    case ULSBUS_AOI_F: _connection->interface()->txBufInstance.lenght = ULSBUS_HEADER_SIZE_AOI_F +  size;
+        break;
+    }
+
+    if(_connection->interface()->send())
+    {
+        _timeout = ULSBUS_TIMEOUT; // keep active
+        if((_frame_idx + 1) == _frames){// Last frame was sended
+            if(_cmd != ULSBUS_BOI_F){
+                _state = ULSBUST_TRANSMIT_COMPLITE_WAIT_ACK;
+            }else {
+                close();
+            }
+        }else{
+            _frame_idx++;
+        }
+        return true;
+    }else{
+        // IDLE
+        return false; // It will try to resend frame on next Task
+    }
+}
+bool ULSBusTransaction::frameBufferCheck(bool broadcast)
+{
+    uint8_t self   = (broadcast)?_self_id:0;
+    uint8_t remote = (!broadcast)?_remote_id:0;
+
+    if(_buf->isBufferComlite())
+    {
+        _ulsbus_obj_find_rezult rez = _library->find(remote,self,_buf->id(),_buf->size()); //m self_id = 0 -> from any devices
+        if(rez == ULSBUS_OBJECT_FIND_OK){
+            ULSBusObjectBase *obj =  _library->getObject(remote,self,_buf->id()); // Looking for object in library
+            if(!obj)return false; // WTF ?
+            obj->setData(_buf->pxBuf());
+            if(!broadcast)_connection->sendAck(ULSBUS_ACK_COMPLITE,_cmd,_self_id,_remote_id);
+        }
+        if(rez == ULSBUS_OBJECT_FIND_DEVICE_NOTFOUND){
+            // Do tothing not pur device - close transaction an leave buffer for others transactions.
+        }
+        if(rez == ULSBUS_OBJECT_FIND_OBJECT_NOTFOUND){
+            if(!broadcast)_connection->sendAck(ULSBUS_ACK_OBJECT_NOTFOUND,_cmd,_self_id,_remote_id);
+        }
+        if(rez == ULSBUS_OBJECT_FIND_OBJECT_SIZE_MISMUCH){
+            if(!broadcast)_connection->sendAck(ULSBUS_ACK_OBJECT_SIZE_MISMUTCH,_cmd,_self_id,_remote_id);
+        }
+
+        close(); // Buffer ok close connection
+    }else{
+        // Check buffer if frame missed send request for lost frame
+        if(_timeout == ULSBUS_TIMEOUT/2){
+            // request lost frames
+        }
+    }
+    return true;
+}
 //================================================================
 //================================================================
 bool ULSBusTransaction::processPacket()
 {
-
-
     if(_state == ULSBUST_EMPTY)return false;
     if(!_connection)return false;
-    _ulsbus_packet  *pxPack = (_ulsbus_packet *)(_connection->interface()->rxBufInstance.buf);
+    _ulsbus_packet  *pxRxPack = (_ulsbus_packet *)(_connection->interface()->rxBufInstance.buf);
+    // some package received in this transaction
+    _timeout = ULSBUS_TIMEOUT; // keep active
 
     switch(_state){
     //================================================================
-    // BOI Packet processing
-    case ULSBUST_BOI_TRANSMIT_START:{
-        _timeout = ULSBUS_TIMEOUT; // keep active
+    // Start Transmitting the package
+    case ULSBUST_BOI_TRANSMIT_START:
         return boiTransmitStart();
-    }
         break;
-    case ULSBUST_BOI_RECEIVE_START:{
-        _cmd = ULSBUS_BOI_SOT;
-        _frames = pxPack->boi_sot.frames;
-        _frameSize = pxPack->boi_sot.frame_size;
-        _self_id = pxPack->boi_sot.self_id;
-        _remote_id = 0;
-        _frameLastSize = pxPack->boi_sot.size % _frameSize;
-        _state = ULSBUST_BOI_RECEIVE_F;
-    }
+    case ULSBUST_RWOI_TRANSMIT_START:
+        return rwoiTransmitStart();
         break;
-    case ULSBUST_BOI_RECEIVE_F:{
-        uint8_t frameNum = pxPack->boi_f.frameNum;
-        if(frameNum == _frames)
-        {
-            _buf->setData(_frameSize,pxPack->boi_f.frameNum,pxPack->boi_f.data,_frameLastSize);
-        }else{
-            _buf->setData(_frameSize,pxPack->boi_f.frameNum,pxPack->boi_f.data,_frameSize);
-        }
-    }
+    case ULSBUST_AOI_TRANSMIT_START:
+        return aoiTransmitStart();
         break;
         //================================================================
-        // RWOI Packet processing
-    case ULSBUST_RWOI_TRANSMIT_START:{
-        _timeout = ULSBUS_TIMEOUT; // keep active
-        rwoiTransmitStart();
-    }
-        break;
-    case ULSBUST_RWOI_TRANSMIT_COMPLITE_WAIT_ACK:{
-        close(); // Anyway close connection.
-        uint8_t ack = (pxPack->ack.ackcmd >> 5);
-        if(ack == ULSBUS_ACK_COMPLITE){
-            return true;
-        };
-        return false; // ACK with error received.
+        // Start Receiving the package
+    case ULSBUST_BOI_RECEIVE_START:{
+        _cmd = ULSBUS_BOI_SOT;
+        _frames = (uint32_t)pxRxPack->boi_sot.frame_last_idx + 1;
+        _frame_size = (uint32_t)pxRxPack->boi_sot.byte_last_idx + 1; // 0 - 1frame, 1 - 2 frames ... 255 = 256 frames.
+        _self_id = pxRxPack->boi_sot.self_id;
+        _remote_id = 0;
+        _frame_size_last = pxRxPack->boi_sot.obj_size % _frame_size;
+        if(_frame_size_last == 0){
+            _frame_size_last = _frame_size;
+        }
+        _state = ULSBUST_BOI_RECEIVE_F;
     }
         break;
     case ULSBUST_RWOI_RECEIVE_START:{
         _cmd = ULSBUS_RWOI_SOT;
-        _frames = pxPack->rwoi_sot.frames;
-        _frameSize = pxPack->rwoi_sot.frame_size;
-        _self_id = pxPack->rwoi_sot.self_id;
-        _remote_id = pxPack->rwoi_sot.remote_id;
-        _frameLastSize = pxPack->rwoi_sot.size % _frameSize;
-        if(_frameLastSize){
-            _frames++;
-        }else{
-            _frameLastSize = _frameSize;
+        _frames = (uint32_t)pxRxPack->rwoi_sot.frame_last_idx + 1;
+        _frame_size = (uint32_t)pxRxPack->rwoi_sot.byte_last_idx + 1; // 0 - 1frame, 1 - 2 frames ... 255 = 256 frames.
+        _self_id = pxRxPack->rwoi_sot.self_id;
+        _remote_id = pxRxPack->rwoi_sot.remote_id;
+        _frame_size_last = pxRxPack->rwoi_sot.obj_size % _frame_size;
+        if(_frame_size_last == 0){
+            _frame_size_last = _frame_size;
         }
         _state = ULSBUST_RWOI_RECEIVE_F;
     }
         break;
-    case ULSBUST_RWOI_RECEIVE_F:{
-
-        uint8_t frameNum = pxPack->boi_f.frameNum;
-        if(frameNum == (_frames-1))
-        {
-            _buf->setData(_frameSize,pxPack->rwoi_f.frameNum,pxPack->rwoi_f.data,_frameLastSize);
-        }else{
-            _buf->setData(_frameSize,pxPack->rwoi_f.frameNum,pxPack->rwoi_f.data,_frameSize);
-        }
-    }
-        break;
-        //================================================================
-        // AOI Packet processing
-    case ULSBUST_AOI_TRANSMIT_START:{
-
-        _timeout = ULSBUS_TIMEOUT; // keep active
-        aoiTransmitStart();
-    }
-        break;
-    case ULSBUST_AOI_TRANSMIT_COMPLITE_WAIT_ACK:{
-        // Do nothing
-        return true; // ACK with error received.
-    }
-        break;
     case ULSBUST_AOI_RECEIVE_START:{
         _cmd = ULSBUS_AOI_SOT;
-        _frames = pxPack->aoi_sot.frames;
-        _frameSize = pxPack->aoi_sot.frame_size;
-        _self_id = pxPack->aoi_sot.self_id;
-        _remote_id = pxPack->aoi_sot.remote_id;
-        _frameLastSize = pxPack->aoi_sot.size % _frameSize;
-        if(_frameLastSize){
-            _frames++;
-        }else{
-            _frameLastSize = _frameSize;
+        _frames = (uint32_t)pxRxPack->aoi_sot.frame_last_idx + 1;
+        _frame_size = (uint32_t)pxRxPack->aoi_sot.byte_last_idx + 1;
+        _self_id = pxRxPack->aoi_sot.self_id;
+        _remote_id = pxRxPack->aoi_sot.remote_id;
+        _frame_size_last = pxRxPack->aoi_sot.size % _frame_size;
+        if(_frame_size_last == 0){
+            _frame_size_last = _frame_size;
         }
         _state = ULSBUST_AOI_RECEIVE_F;
     }
         break;
-    case ULSBUST_AOI_RECEIVE_F:{
+        //================================================================
+        // Receiving the frame
+    case ULSBUST_BOI_RECEIVE_F:
+        frameReceived(pxRxPack->boi_f.frame_idx,pxRxPack->boi_f.data);
+        break;
+    case ULSBUST_RWOI_RECEIVE_F:
+        frameReceived(pxRxPack->rwoi_f.frame_idx,pxRxPack->rwoi_f.data);
+        break;
+    case ULSBUST_AOI_RECEIVE_F:
+        frameReceived(pxRxPack->aoi_f.frame_idx,pxRxPack->aoi_f.data);
+        break;
+        //================================================================
+        // Transmit complite Packet processing
 
-        _frameNum = pxPack->aoi_f.frameNum;
-        if(_frameNum == (_frames-1))
-        {
-            _buf->setData(_frameSize,pxPack->aoi_f.frameNum,pxPack->aoi_f.data,_frameLastSize);
-
-        }else{
-            _buf->setData(_frameSize,pxPack->aoi_f.frameNum,pxPack->aoi_f.data,_frameSize);
-        }
-    }
+    case ULSBUST_TRANSMIT_COMPLITE_WAIT_ACK:
+        close(); // Anyway close connection.
+        if((pxRxPack->ack.ackcmd >> 5) == ULSBUS_ACK_COMPLITE){
+            return true;
+        };
+        return false; // ACK with error received.
         break;
 
     default:
@@ -396,8 +437,7 @@ bool ULSBusTransaction::processPacket()
 bool ULSBusTransaction::task() // calls every ms
 {
 
-    if(_timeout>0)
-    {
+    if(_timeout>0){
         _timeout--;
         if(_timeout == 0){
             close(); // Close transaction by timeout
@@ -407,197 +447,59 @@ bool ULSBusTransaction::task() // calls every ms
 
     if(_state == ULSBUST_EMPTY)return false;
     if(_connection == __null)return false;
-    _ulsbus_packet  *pxPack = (_ulsbus_packet *)(_connection->interface()->txBufInstance.buf);
+    _ulsbus_packet  *pxTxPack = (_ulsbus_packet *)(_connection->interface()->txBufInstance.buf);
 
     switch(_state){
     //================================================================
-    // BOI Task
-    case ULSBUST_BOI_TRANSMIT_START_REPEAT:{
+    // Transmit start repeat
+
+    case ULSBUST_BOI_TRANSMIT_START_REPEAT:
         boiTransmitStart(); // Try to start transmittion until timeout
-    }
         break;
-    case ULSBUST_BOI_TRANSMIT_F:{
-        pxPack->boi_f.cmd = ULSBUS_BOI_F;
-        pxPack->boi_f.frameNum = _frameNum;
-        pxPack->boi_f.self_id = _self_id;
-        pxPack->boi_f.zero = 0;
-        if(_frameNum < _frames){
-            if(!_buf->getData(_frameSize,_frameNum,pxPack->boi_f.data,_frameSize))return true; // Exit if no data aviable;
-            _connection->interface()->txBufInstance.lenght = ULSBUS_HEADER_SIZE_BOI_F +  _frameSize;
-            if(_connection->interface()->send()){
-                // If send ok prepare to new send
-                _frameNum++;
-                _timeout = ULSBUS_TIMEOUT; // keep active
-            }
-        }else{ //Last frame sending.
-            if(!_buf->getData(_frameSize,_frameNum,pxPack->boi_f.data,_frameLastSize))return true; // Exit if no data aviable;
-            _connection->interface()->txBufInstance.lenght = ULSBUS_HEADER_SIZE_BOI_F +  _frameLastSize;
-            if(_connection->interface()->send()){
-                close(); // Close transaction no need to wait answer or RLF.
-            }
-        }
-
-    }
-        break;
-    case ULSBUST_BOI_RECEIVE_F:{
-
-        if(_buf->isBufferComlite())
-        {
-            // No ack for BIO messages.
-            _state = ULSBUST_RECEIVE_BOI_COMPLITE;
-        }else{
-            // Check buffer if frame missed send request for lost frame
-            if(_timeout == ULSBUS_TIMEOUT/2){
-                // request lost frames not supported in BOI.
-            }
-        }
-    }
-        break;
-    case ULSBUST_RECEIVE_BOI_COMPLITE:{
-        // Copy data to Library if we found
-        ULSBusObjectBase *obj =  _library->getObject(0x0,_self_id,_buf->id()); // Looking for object in library
-        if(obj){ // check if we found object
-            if(obj->size() == _buf->size()){ // check size match
-                obj->setData(pxPack->boi_sft.data);
-            }else {
-                // TODO: Error here it not be, mean dictionary not consistent.
-            }
-        }
-        close(); // All done. Close Transaction.
-    }
-        break;
-        //================================================================
-        // RWOI Task
-    case ULSBUST_RWOI_TRANSMIT_START_REPEAT:{
+    case ULSBUST_RWOI_TRANSMIT_START_REPEAT:
         rwoiTransmitStart(); // Try to start transmittion until timeout
-    }
         break;
-    case ULSBUST_RWOI_TRANSMIT_F:{
-        pxPack->rwoi_f.cmd = ULSBUS_RWOI_F;
-        pxPack->rwoi_f.frameNum = _frameNum;
-        pxPack->rwoi_f.self_id = _self_id;
-        pxPack->rwoi_f.remote_id = _remote_id;
-        if(_frameNum >= _frames)return false; // WTF? all frames already transmitted
-
-        uint32_t size = (_frameNum  ==  (_frames-1))?_frameLastSize:_frameSize; // set size if it las frame or not
-
-        if(!_buf->getData(_frameSize,_frameNum,pxPack->rwoi_f.data,size))return true; // Exit if no data aviable;
-        _connection->interface()->txBufInstance.lenght = ULSBUS_HEADER_SIZE_RWOI_F +  size;
-        if(_connection->interface()->send())
-        {
-            _frameNum++;
-            _timeout = ULSBUS_TIMEOUT; // keep active
-
-            if(_frameNum == _frames){// Last frame was sended
-                _state = ULSBUST_RWOI_TRANSMIT_COMPLITE_WAIT_ACK;
-            }
-            return true;
-        }else{
-            // IDLE
-            return false; // It will try to resend frame on next Task
-        }
-    }
-        break;
-    case ULSBUST_RWOI_RECEIVE_F:{
-
-        if(_buf->isBufferComlite())
-        {
-            // No ack for BIO messages
-            _state = ULSBUST_RWOI_RECEIVE_COMPLITE;
-
-        }else{
-            // Check buffer if frame missed send request for lost frame
-            if(_timeout == ULSBUS_TIMEOUT/2){
-                // request lost frames
-            }
-        }
-    }
-        break;
-
-    case ULSBUST_RWOI_RECEIVE_COMPLITE:{
-        // Copy data to Library if we found
-        ULSBusObjectBase *obj =  _library->getObject(_remote_id,0,_buf->id()); // Looking for object in library
-        if(obj){ // check if we found object
-            if(obj->size() == _buf->size()){ // check size match
-                obj->setData(_buf->pxBuf());
-                // TODO: Send ACK to transmitter;
-                _connection->sendAck(ULSBUS_ACK_COMPLITE,_cmd,_self_id,_remote_id);
-
-            }else {
-                // TODO: Error here it not be, mean dictionary not consistent;
-                _connection->sendAck(ULSBUS_ACK_OBJECT_SIZE_MISMUTCH,_cmd,_self_id,_remote_id);
-            }
-        }else{
-            _connection->sendAck(ULSBUS_ACK_OBJECT_NOTFOUND,_cmd,_self_id,_remote_id);
-        }
-        close(); // Buffer ok close connection
-    }
+    case ULSBUST_AOI_TRANSMIT_START_REPEAT:
+        aoiTransmitStart(); // Try to start transmittion until timeout
         break;
         //================================================================
-        // AOI Task
-    case ULSBUST_AOI_TRANSMIT_START_REPEAT:{
-        aoiTransmitStart(); // Try to start transmittion until timeout
-    }
+        // Transmit frames
+    case ULSBUST_BOI_TRANSMIT_F:
+        _cmd = ULSBUS_BOI_F;
+        pxTxPack->boi_f.cmd = _cmd;
+        pxTxPack->boi_f.frame_idx = _frame_idx;
+        pxTxPack->boi_f.self_id = _self_id;
+        pxTxPack->boi_f.zero = 0;
+        frameTransmit(pxTxPack->boi_f.data);
         break;
-    case ULSBUST_AOI_TRANSMIT_F:{
-        pxPack->aoi_f.cmd = ULSBUS_AOI_F;
-        pxPack->aoi_f.frameNum = _frameNum;
-        pxPack->aoi_f.self_id = _self_id;
-        pxPack->aoi_f.remote_id = _remote_id;
-
-        if(_frameNum >= _frames)return false; // WTF? all frames already transmitted
-
-        uint32_t size = (_frameNum  ==  (_frames-1))?_frameLastSize:_frameSize; // set size if it las frame or not
-
-        if(!_buf->getData(_frameSize,_frameNum,pxPack->aoi_f.data,size))
-        {
-            int i=10;
-            while(i--);
-            return true; // Exit if no data aviable;
-        }
-        _connection->interface()->txBufInstance.lenght = ULSBUS_HEADER_SIZE_AOI_F +  size;
-        if(_connection->interface()->send())
-        {
-            _frameNum++;
-            _timeout = ULSBUS_TIMEOUT; // keep active
-            if(_frameNum == _frames){
-                _state = ULSBUST_AOI_TRANSMIT_COMPLITE_WAIT_ACK;
-            }
-        }else{
-            // IDLE
-            return false; // It will try to resend frame on next Task
-        }
-    }
+    case ULSBUST_RWOI_TRANSMIT_F:
+        _cmd = ULSBUS_RWOI_F;
+        pxTxPack->rwoi_f.cmd = _cmd;
+        pxTxPack->rwoi_f.frame_idx = _frame_idx;
+        pxTxPack->rwoi_f.self_id = _self_id;
+        pxTxPack->rwoi_f.remote_id = _remote_id;
+        frameTransmit(pxTxPack->rwoi_f.data);
         break;
-    case ULSBUST_AOI_RECEIVE_F:{
-
-        if(_buf->isBufferComlite())
-        {
-            _state = ULSBUST_AOI_RECEIVE_COMPLITE;
-        }else{
-            // Check buffer if frame missed send request for lost frame
-            if(_timeout == ULSBUS_TIMEOUT/2){
-                // request lost frames
-            }
-        }
-    }
+    case ULSBUST_AOI_TRANSMIT_F:
+        _cmd = ULSBUS_AOI_F;
+        pxTxPack->aoi_f.cmd = _cmd;
+        pxTxPack->aoi_f.frame_idx = _frame_idx;
+        pxTxPack->aoi_f.self_id = _self_id;
+        pxTxPack->aoi_f.remote_id = _remote_id;
+        frameTransmit(pxTxPack->aoi_f.data);
         break;
 
-    case ULSBUST_AOI_RECEIVE_COMPLITE:{
-        // Copy data to Library if we found
-        ULSBusObjectBase *obj =  _library->getObject(_remote_id,0,_buf->id()); // Looking for object in library
-        if(obj){ // check if we found object
-            if(obj->size() == _buf->size()){ // check size match
-                obj->setData(pxPack->boi_sft.data);
-                 _connection->sendAck(ULSBUS_ACK_COMPLITE,_cmd,_self_id,_remote_id);
-            }else {
-                _connection->sendAck(ULSBUS_ACK_OBJECT_SIZE_MISMUTCH,_cmd,_self_id,_remote_id);
-            }
-        }else {
-            _connection->sendAck(ULSBUS_ACK_OBJECT_NOTFOUND,_cmd,_self_id,_remote_id);
-        }
-        close(); // Buffer ok close connection
-    }
+        //================================================================
+        // Receive frames
+    case ULSBUST_BOI_RECEIVE_F:
+        frameBufferCheck(true);
+        break;
+    case ULSBUST_RWOI_RECEIVE_F:
+        frameBufferCheck(false);
+        break;
+
+    case ULSBUST_AOI_RECEIVE_F:
+        frameBufferCheck(false);
         break;
     default:
         break;

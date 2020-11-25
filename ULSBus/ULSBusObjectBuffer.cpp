@@ -37,38 +37,45 @@ ULSBusObjectBuffer::ULSBusObjectBuffer():ULSListItem(),
 }
 void ULSBusObjectBuffer::close()
 {
-    for(uint32_t i=0; i< 64; i++ )
+    _interfacesConnected = 0;
+    for(uint32_t i=0; i< 8; i++ )
         frameValidMask[i] = 0;
-}
-bool ULSBusObjectBuffer::setData(uint8_t frame_size,uint8_t frame,uint8_t *buf, uint32_t len)
-{
-    uint32_t start = frame*frame_size;
-    if((start+len)  > _sizeMax)return false;
 
-    for(uint32_t i=0 ;i<len; i++)
-    {
-        uint32_t idx = start + i;
+}
+bool ULSBusObjectBuffer::setData(uint32_t frame_size,uint32_t frame_idx,uint8_t *buf, uint32_t len)
+{
+    uint32_t start = frame_size * frame_idx ;
+    uint32_t end = start + len;
+    if(end > _sizeMax)return false;
+
+    for(uint32_t idx = start ;idx < end; idx++){
         uint32_t maskFrame = idx/8;
         frameValidMask[maskFrame/32] |= (1<<(maskFrame%32));
         _buf[idx] = *buf++   ;
     }
     return true;
 }
-bool ULSBusObjectBuffer::setData(uint8_t *buf, uint16_t len)
+bool ULSBusObjectBuffer::setData(uint8_t *buf, uint32_t len)
 {
     return setData(0,0,buf,len);
 }
-bool ULSBusObjectBuffer::getData(uint8_t frame_size,uint8_t frame,uint8_t *buf, uint16_t len)
+bool ULSBusObjectBuffer::getData(uint32_t frame_size,uint32_t frame_idx,uint8_t *buf, uint32_t len)
 {
-    uint32_t start = frame*frame_size;
-    if((start+len)  >= _sizeMax)return false;
-    for(uint32_t i=0 ;i<len; i++)
-    {
-        uint32_t idx = start + i;
+    if(frame_idx == 2){
+        int i = 10;
+        while(i--);
+    }
+    uint32_t start = frame_size * frame_idx ;
+    uint32_t end = start + len;
+    if(end >= _sizeMax)return false;
+
+    for(uint32_t idx = start ;idx < end; idx++){
         uint32_t maskFrame = idx/8;
         if( ( frameValidMask[maskFrame/32] & (1<<(maskFrame%32))) != 0){
             *buf++ = _buf[idx];
         }else{
+            int i = 10;
+            while(i--);
             return false; // data not ready;
         }
     }
@@ -86,6 +93,7 @@ bool ULSBusObjectBuffer::open(uint16_t id,uint16_t size)
     _id = id;
     _size = size;
     _frames = size/8;
+    if(size%8)_frames++;
     return true;
 }
 void ULSBusObjectBuffer::connect()
@@ -94,7 +102,7 @@ void ULSBusObjectBuffer::connect()
 }
 void ULSBusObjectBuffer::disconnect()
 {
-    if(_interfacesConnected){
+    if(_interfacesConnected > 0){
         _interfacesConnected--;
     }
     if(_interfacesConnected == 0){

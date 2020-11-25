@@ -39,7 +39,7 @@ public:
     bool sendNM(_ulsbus_device_status *dev);
     void interface(IfBase* interface);
     IfBase* interface();
-    uint16_t maxFrameSize();
+    uint32_t maxFrameSize();
 
 private:
     IfBase* _interface;

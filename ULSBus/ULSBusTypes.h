@@ -75,35 +75,34 @@ typedef enum{
 typedef enum{
     ULSBUST_EMPTY,
     ULSBUST_BUSY,
+    ULSBUST_TRANSMIT_COMPLITE_WAIT_ACK,
+
     ULSBUST_BOI_TRANSMIT_START,
     ULSBUST_BOI_TRANSMIT_START_REPEAT,
 
     ULSBUST_BOI_TRANSMIT_F,
     ULSBUST_BOI_RECEIVE_START,
     ULSBUST_BOI_RECEIVE_F,
-    ULSBUST_RECEIVE_BOI_COMPLITE,
+
 
 
     ULSBUST_RWOI_TRANSMIT_START,
     ULSBUST_RWOI_TRANSMIT_START_REPEAT,
 
     ULSBUST_RWOI_TRANSMIT_F,
-    ULSBUST_RWOI_TRANSMIT_COMPLITE_WAIT_ACK,
+
 
     ULSBUST_RWOI_RECEIVE_START,
     ULSBUST_RWOI_RECEIVE_F,
-    ULSBUST_RWOI_RECEIVE_COMPLITE,
 
     ULSBUST_RROI_TRANSMIT_START_REPEAT,
 
     ULSBUST_AOI_TRANSMIT_START,
     ULSBUST_AOI_TRANSMIT_START_REPEAT,
     ULSBUST_AOI_TRANSMIT_F,
-    ULSBUST_AOI_TRANSMIT_COMPLITE_WAIT_ACK,
 
     ULSBUST_AOI_RECEIVE_START,
     ULSBUST_AOI_RECEIVE_F,
-    ULSBUST_AOI_RECEIVE_COMPLITE,
 
 
     ULSBUS_TP_EOT,
@@ -178,7 +177,7 @@ typedef union{
         uint8_t cmd;
         uint8_t self_id;
         uint8_t remote_id;
-        uint8_t frame_num;
+        uint8_t frame_idx;
         uint8_t data[8];
     }__attribute__((packed))rlf;
     struct{
@@ -191,17 +190,17 @@ typedef union{
         uint8_t cmd;
         uint8_t self_id;
         uint16_t obj_id;
-        uint8_t frames;
-        uint8_t frame_size;
+        uint8_t frame_last_idx;
+        uint8_t byte_last_idx;
         uint16_t crc;
-        uint16_t size;
+        uint16_t obj_size;
         uint8_t data[2];
     }__attribute__((packed))boi_sot;
     struct{
         uint8_t cmd;
         uint8_t self_id;
         uint8_t zero;
-        uint8_t frameNum;
+        uint8_t frame_idx;
         uint8_t data[8];
     }__attribute__((packed))boi_f;
     struct{
@@ -218,16 +217,16 @@ typedef union{
         uint8_t remote_id;
         uint8_t zero;
         uint16_t obj_id;
-        uint8_t frames;
-        uint8_t frame_size;
+        uint8_t frame_last_idx;
+        uint8_t byte_last_idx;
         uint16_t crc;
-        uint16_t size;
+        uint16_t obj_size;
     }__attribute__((packed))rwoi_sot;
     struct{
         uint8_t cmd;
         uint8_t self_id;
         uint8_t remote_id;
-        uint8_t frameNum;
+        uint8_t frame_idx;
         uint8_t data[8];
     }__attribute__((packed))rwoi_f;
     struct{
@@ -253,8 +252,8 @@ typedef union{
         uint8_t remote_id;
         uint8_t zero;
         uint16_t obj_id;
-        uint8_t frames;
-        uint8_t frame_size;
+        uint8_t frame_last_idx;
+        uint8_t byte_last_idx;
         uint16_t crc;
         uint16_t size;
     }__attribute__((packed))aoi_sot;
@@ -262,7 +261,7 @@ typedef union{
         uint8_t cmd;
         uint8_t self_id;
         uint8_t remote_id;
-        uint8_t frameNum;
+        uint8_t frame_idx;
         uint8_t data[8];
     }__attribute__((packed))aoi_f;
 

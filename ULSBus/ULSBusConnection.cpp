@@ -93,7 +93,7 @@ IfBase*  ULSBusConnection::interface()
 {
     return _interface;
 };
-uint16_t ULSBusConnection::maxFrameSize()
+uint32_t ULSBusConnection::maxFrameSize()
 {
     return _interface->maxFrameSize();
 };

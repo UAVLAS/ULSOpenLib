@@ -26,10 +26,12 @@ ULSBusObjectBase::ULSBusObjectBase(uint16_t id,
                                    const char* pxDescription,
                                    _ulsbus_obj_permitions permition,
                                    uint16_t size,
+                                   uint16_t len,
                                    uint8_t *pxData):
     ULSListItem(),
     _id(id),
     _size(size),
+    _len(len),
     _pxData(pxData),
     _pxDescription(pxDescription),
     _permition(permition)
@@ -72,6 +74,10 @@ _ulsbus_obj_permitions ULSBusObjectBase::permition()
 uint16_t ULSBusObjectBase::size()
 {
     return _size;
+};
+uint16_t ULSBusObjectBase::len()
+{
+    return _len;
 };
 uint8_t* ULSBusObjectBase::data()
 {
