@@ -40,6 +40,10 @@ _ulsbus_device_status* ULSDeviceBase::status()
 {
     return &_status;
 }
+void ULSDeviceBase::status(_ulsbus_device_status* status)
+{
+    _status = *status;
+}
 
 ULSBusObjectBase* ULSDeviceBase::getObject(uint16_t id)
 {

@@ -35,7 +35,7 @@ class IfBase
 {
 public:
     IfBase();
-    virtual void open(){};
+    virtual bool open(){return false;};
     virtual void task(){};
     virtual uint32_t read(){return 0;};
     virtual bool send(_if_buffer_instance *ifBufferInstace){(void)ifBufferInstace;return false;};

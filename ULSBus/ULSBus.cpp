@@ -22,7 +22,9 @@
 
 #include "ULSBus.h"
 
-ULSBus::ULSBus():
+ULSBus::ULSBus(const char* name):
+    _name(name),
+    _time(0),
     _nmTimeout(0)
 {
     _tarnsactions.library(&_library);
@@ -30,6 +32,7 @@ ULSBus::ULSBus():
 void ULSBus::task()// call every ms
 {
     _nmTimeout++;
+    _time++;
     _connections.task();
     _tarnsactions.task();
     ULSBusConnection *pxConnection = _connections.head();
@@ -63,6 +66,7 @@ bool ULSBus::sendObject(uint8_t self_id,ULSBusObjectBase* obj)
     buffer->setData(obj->data(),obj->size());
     ULSBusTransaction* pxt = _tarnsactions.open(pxc,self_id,device->remote_id(),buffer,ULSBUST_RWOI_TRANSMIT_START);
     if(!pxt)return false;
+     ULSBUS_LOG("SEND Object   : self_id: 0x%X remote_id: 0x%X object: 0x%X",self_id,device->remote_id(),obj->id());
     return true;
 }
 bool ULSBus::requestObject(uint8_t self_id,ULSBusObjectBase* obj)
@@ -78,6 +82,8 @@ bool ULSBus::requestObject(uint8_t self_id,ULSBusObjectBase* obj)
     pxTxPack->rroi.remote_id = device->remote_id();
     pxTxPack->rroi.obj_id = obj->id();// PC adress
     pxTxPack->rroi.size = obj->size();
+    pxc->interface()->txBufInstance.lenght = ULSBUS_HEADER_SIZE_RROI;
+    ULSBUS_LOG("Request Object: self_id: 0x%X remote_id: 0x%X object: 0x%X",self_id,device->remote_id(),obj->id());
     return pxc->send();
 }
 void ULSBus::sendNM()
@@ -100,19 +106,28 @@ bool ULSBus::processNM(ULSBusConnection* pxConnection)
     _connections.redirect(pxConnection);
     // Update devices
     ULSDeviceBase* dev = _library.head(); //m self_id = 0 -> from any devices
+    _ulsbus_device_status status;
+    status.dev_class = pxRxPack->nm.dev_class;
+    status.hardware = pxRxPack->nm.hardware;
+    status.remote_id = pxRxPack->nm.self_id;
+    status.self_id = 0;
+    status.status1 = pxRxPack->nm.status1;
+    status.status2 = pxRxPack->nm.status2;
+
     while(dev){
         if(dev->status()->dev_class == pxRxPack->nm.dev_class)
         {
             if(dev->remote_id()==pxRxPack->nm.self_id){
                 if(!dev->connected())dev->connected(true); // Connect device
-                // Device found - all ok
+
+                dev->status(&status);
                 return true;
             }
         }
         dev = _library.forward(dev);
     }
     // No defined
-    addDevice(pxRxPack->nm.self_id,pxRxPack->nm.dev_class);
+    addDevice(&status);
     return true;
 }
 bool ULSBus::processAck(ULSBusConnection* pxConnection)
@@ -131,20 +146,31 @@ bool ULSBus::processAck(ULSBusConnection* pxConnection)
     }
         break;
     case ULSBUS_ACK_COMPLITE:{
+        ULSBUS_LOG("ULSBUS_ACK_COMPLITE: self_id: 0x%X remote_id: 0x%X ",self_id,remote_id);
         // All done close transaction
         ULSBusTransaction* pxt = _tarnsactions.find(pxConnection,self_id,remote_id,ULSBUST_TRANSMIT_COMPLITE_WAIT_ACK);
         if(pxt){
             pxt->processPacket();
             return true;
         }
-
     }
+        break;
+    case ULSBUS_ACK_BUFFER_FULL:
+        ULSBUS_LOG("ULSBUS_ACK_BUFFER_FULL: self_id: 0x%X remote_id: 0x%X ",self_id,remote_id);
+        break;
+    case ULSBUS_ACK_OBJECT_NOTFOUND:
+         ULSBUS_LOG("ULSBUS_ACK_OBJECT_NOTFOUND: self_id: 0x%X remote_id: 0x%X ",self_id,remote_id);
+        break;
+    case ULSBUS_ACK_OBJECT_SIZE_MISMUTCH:
+         ULSBUS_LOG("ULSBUS_ACK_OBJECT_SIZE_MISMUTCH: self_id: 0x%X remote_id: 0x%X ",self_id,remote_id);
+        break;
+    case ULSBUS_ACK_OBJECT_CRC_MISMUTCH:
+         ULSBUS_LOG("ULSBUS_ACK_OBJECT_CRC_MISMUTCH: self_id: 0x%X remote_id: 0x%X ",self_id,remote_id);
         break;
     default:
-        // WTF ? Unlnown Ack received
+         ULSBUS_ERROR("Undefine ACK: self_id: 0x%X remote_id: 0x%X ",self_id,remote_id);
         break;
     }
-
     return true;
 }
 
@@ -247,7 +273,7 @@ bool ULSBus::processPacket(ULSBusConnection *pxConnection)
         uint8_t  remote_id = pxRxPack->rwoi_sft.remote_id;
         uint16_t obj_id = pxRxPack->rwoi_sft.obj_id;
         uint8_t  *obj_data = pxRxPack->rwoi_sft.data;
-
+        ULSBUS_LOG("ULSBUS_RWOI_SFT: self_id: 0x%X remote_id: 0x%X object: 0x%X",self_id,remote_id,obj_id);
         _ulsbus_obj_find_rezult rez = _library.find(remote_id,0,obj_id,obj_size); //m self_id = 0 -> from any devices
 
         if(rez == ULSBUS_OBJECT_FIND_OK){
@@ -291,7 +317,7 @@ bool ULSBus::processPacket(ULSBusConnection *pxConnection)
         uint8_t remote_id = pxRxPack->rwoi_sot.remote_id;
         uint16_t obj_id = pxRxPack->rwoi_sot.obj_id;
         uint16_t obj_size = pxRxPack->rwoi_sot.obj_size;
-
+        ULSBUS_LOG("ULSBUS_RWOI_SOT: self_id: 0x%X remote_id: 0x%X object: 0x%X",self_id,remote_id,obj_id);
         _ulsbus_obj_find_rezult rez = _library.find(remote_id,0,obj_id,obj_size); //m self_id = 0 -> from any devices
 
         if(rez == ULSBUS_OBJECT_FIND_OK){
@@ -355,6 +381,7 @@ bool ULSBus::processPacket(ULSBusConnection *pxConnection)
         uint16_t obj_id = pxRxPack->rroi.obj_id;
         uint16_t obj_size = pxRxPack->rroi.size;
 
+       ULSBUS_LOG("ULSBUS_RROI: self_id: 0x%X remote_id: 0x%X object: 0x%X",self_id,remote_id,obj_id);
         _ulsbus_obj_find_rezult rez = _library.find(remote_id,0,obj_id,obj_size);
 
         if(rez == ULSBUS_OBJECT_FIND_OK){
@@ -396,6 +423,8 @@ bool ULSBus::processPacket(ULSBusConnection *pxConnection)
         uint16_t obj_id = pxRxPack->aoi_sft.obj_id;
         uint16_t obj_size = (packLenght - ULSBUS_HEADER_SIZE_AOI_SFT);
         uint8_t* obj_data = pxRxPack->aoi_sft.data;
+         ULSBUS_LOG("ULSBUS_AOI_SFT: self_id: 0x%X remote_id: 0x%X object: 0x%X",self_id,remote_id,obj_id);
+
         _ulsbus_obj_find_rezult rez = _library.find(self_id,0,obj_id,obj_size); //remote_id = 0 -> from any devices
 
         if(rez == ULSBUS_OBJECT_FIND_OK){
@@ -427,6 +456,8 @@ bool ULSBus::processPacket(ULSBusConnection *pxConnection)
         uint8_t remote_id = pxRxPack->aoi_sot.remote_id;
         uint16_t obj_id = pxRxPack->aoi_sot.obj_id;
         uint16_t obj_size = pxRxPack->aoi_sot.size;
+
+        ULSBUS_LOG("ULSBUS_AOI_SOT: self_id: 0x%X remote_id: 0x%X object: 0x%X",self_id,remote_id,obj_id);
 
         _ulsbus_obj_find_rezult rez = _library.find(remote_id,0,obj_id,obj_size); //m self_id = 0 -> from any devices
 

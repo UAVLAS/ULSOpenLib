@@ -29,12 +29,19 @@
 #include "ULSBusConnection.h"
 #include "ULSBusObject.h"
 #include "ULSDevicesLibrary.h"
+#include <stdarg.h>
+
+#define ULSBUS_ERROR(msg,...) error(__FILE_NAME__,__LINE__,msg,__VA_ARGS__)
+#define ULSBUS_LOG(msg,...) uDebug(msg,__VA_ARGS__)
 
 class ULSBus
 {
 public:
-    ULSBus();
-    virtual void addDevice(uint8_t id, uint16_t dev_class){(void)id;(void)dev_class;};
+    ULSBus(const char* name = 0);
+    virtual void addDevice(_ulsbus_device_status *status){(void)status;};
+    virtual void removeDevice(_ulsbus_device_status *status){(void)status;};
+    virtual void uDebug(const char* msg,...){(void)msg;}
+    virtual void error(const char *file, int line,const char* msg, ...){(void)file;(void)line;(void)msg;};
     void task();
     void open();
     void sendNM();
@@ -53,15 +60,19 @@ public:
     void add(ULSBusObjectBuffer* buf, uint32_t len);
     void add(ULSDeviceBase* device);
     void updatedCallback(_ulsbus_obj_updated_callback callback);
+    ULSDevicesLibrary* library(){return &_library;};
 
-
+protected:
+    ULSDevicesLibrary     _library;
+    const char* _name;
+    uint32_t _time;
 private:
+
     ULSBusTransactionsList _tarnsactions;
     ULSBusConnectionsList _connections;
-    ULSDevicesLibrary     _library;
     ULSBusObjectBufferList  _oBuf;
-
     uint32_t _nmTimeout;
+
 };
 
 #endif // ULSBUS_H
