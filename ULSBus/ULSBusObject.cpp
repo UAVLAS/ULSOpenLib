@@ -22,19 +22,24 @@
 
 #include "ULSBusObject.h"
 
-ULSBusObjectBase::ULSBusObjectBase(uint16_t id,
-                                   const char* pxDescription,
+ULSBusObjectBase::ULSBusObjectBase(void* parent,
+                                   uint16_t id,
+                                   const char* name,
+                                   const char* description,
                                    _ulsbus_obj_permitions permition,
                                    uint16_t size,
                                    uint16_t len,
                                    uint8_t *pxData):
     ULSListItem(),
+    _parent(parent),
     _id(id),
     _size(size),
     _len(len),
     _pxData(pxData),
-    _pxDescription(pxDescription),
-    _permition(permition)
+    _name(name),
+    _description(description),
+    _permition(permition),
+    _updated_callback(__null)
 {
 
 };
@@ -57,11 +62,20 @@ void ULSBusObjectBase::setData(uint8_t *buf)
     lock();
     memcpy(_pxData,buf,_size);
     unlock();
+    if(_updated_callback)_updated_callback(_parent,this);
     // TODO: _updated.emmit(this);
+}
+void ULSBusObjectBase::updatedCallback(_ulsbus_obj_updated_callback callback)
+{
+    _updated_callback = callback;
+}
+const char* ULSBusObjectBase::name()
+{
+    return _name;
 }
 const char* ULSBusObjectBase::description()
 {
-    return _pxDescription;
+    return _description;
 }
 uint16_t ULSBusObjectBase::id()
 {
@@ -83,39 +97,6 @@ uint8_t* ULSBusObjectBase::data()
 {
     return _pxData;
 };
-
-ULSBusObjectsDictionary::ULSBusObjectsDictionary():
-    ULSList(),
-    ULSListItem()
-{
-
-};
-
-ULSBusObjectBase* ULSBusObjectsDictionary::getObject(uint16_t id)
-{
-    ULSBusObjectBase *px = head();
-    while(px){
-        if(px->id()==id)return px;
-        px = forward(px);
-    };
-    return __null;
-}
-_ulsbus_obj_find_rezult ULSBusObjectsDictionary::find(uint16_t obj_id,uint16_t size)
-{
-    ULSBusObjectBase *px = head();
-    while(px){
-        if(px->id()==obj_id){
-            if(px->size() == size){
-                return ULSBUS_OBJECT_FIND_OK;
-            }else{
-                while(1);
-                return ULSBUS_OBJECT_FIND_OBJECT_SIZE_MISMUCH;
-            }
-        }
-        px = forward(px);
-    };
-    return ULSBUS_OBJECT_FIND_OBJECT_NOTFOUND;
-}
 
 
 

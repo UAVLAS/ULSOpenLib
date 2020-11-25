@@ -496,3 +496,8 @@ void ULSBus::add(ULSDeviceBase* device)
 
     _library.add(device);
 }
+void ULSBus::updatedCallback(_ulsbus_obj_updated_callback callback)
+{
+
+    _library.updatedCallback(callback);
+}

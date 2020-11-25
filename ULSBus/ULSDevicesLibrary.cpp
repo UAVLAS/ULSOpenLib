@@ -50,3 +50,11 @@ _ulsbus_device_status* ULSDevicesLibrary::findDevices(uint8_t self_id,uint8_t re
     };
     return __null;
 }
+void ULSDevicesLibrary::updatedCallback(_ulsbus_obj_updated_callback callback)
+{
+    ULSDeviceBase *px = head();
+    while(px){
+        px->updatedCallback(callback);
+        px = forward(px);
+    };
+}

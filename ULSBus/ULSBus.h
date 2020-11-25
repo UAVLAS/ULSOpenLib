@@ -50,6 +50,7 @@ public:
     void add(ULSBusConnection* connection, uint32_t len);
     void add(ULSBusObjectBuffer* buf, uint32_t len);
     void add(ULSDeviceBase* device);
+    void updatedCallback(_ulsbus_obj_updated_callback callback);
 private:
     ULSBusTransactionsList _tarnsactions;
     ULSBusConnectionsList _connections;

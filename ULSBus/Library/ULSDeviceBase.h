@@ -68,7 +68,7 @@ typedef struct __attribute__((packed)){
     uint8_t  buf[128];
 }__ulsdb_sys_flash;
 
-class ULSDeviceBase:public ULSBusObjectsDictionary
+class ULSDeviceBase:public ULSList<ULSBusObjectBase>, public ULSListItem
 {
 public:
     ULSDeviceBase(const char* name,uint8_t selfId,uint8_t remoteId,uint16_t devClass,uint16_t hardware);
@@ -81,6 +81,11 @@ public:
     void  status(_ulsbus_device_status *st);
     const char* name(){return _name;}
     _ulsbus_device_status   *status();
+
+    ULSBusObjectBase* getObject(uint16_t id);
+    _ulsbus_obj_find_rezult find(uint16_t obj_id,uint16_t size);
+    void updatedCallback(_ulsbus_obj_updated_callback callback);
+
 private:
     bool _connected;
     const char *_name;

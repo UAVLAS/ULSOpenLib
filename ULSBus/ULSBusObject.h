@@ -28,6 +28,10 @@
 #include "OsSupport.h"
 #include "ULSBusTypes.h"
 
+class ULSBusObjectBase;
+typedef void (*_ulsbus_obj_updated_callback)(void* parent,ULSBusObjectBase*);
+
+
 template<typename T>
 class ObjData
 {
@@ -56,10 +60,18 @@ private:
 class ULSBusObjectBase:public ULSListItem
 {
 public:
-    ULSBusObjectBase(uint16_t id, const char* pxDescription,_ulsbus_obj_permitions permition,uint16_t size,uint16_t len,uint8_t *pxData);
+    ULSBusObjectBase(void* parent,
+                     uint16_t id,
+                     const char* name,
+                     const char* description,
+                     _ulsbus_obj_permitions permition,
+                     uint16_t size,
+                     uint16_t len,
+                     uint8_t *pxData);
 
     void getData(uint8_t *buf);
     void setData(uint8_t *buf);
+    const char* name();
     const char* description();
     uint16_t id();
     _ulsbus_obj_permitions permition();
@@ -69,22 +81,27 @@ public:
 
     void lock();
     void unlock();
+    void updatedCallback(_ulsbus_obj_updated_callback callback);
 
 private:
+    void* _parent; // pointer to parent object (ULSDevice exspected)
     uint16_t _id;
     uint16_t _size;
     uint16_t _len;
     uint8_t  *_pxData;
-    const char *_pxDescription;
+    const char *_name;
+    const char *_description;
     _ulsbus_obj_permitions _permition;
+    _ulsbus_obj_updated_callback _updated_callback;
+
 };
 
 template<typename T,int LENGHT=1>
 class ULSBusObjectArray: public ULSBusObjectBase
 {
 public :
-    ULSBusObjectArray(uint16_t id, const char* pxDescription,_ulsbus_obj_permitions permition):
-        ULSBusObjectBase(id,pxDescription,permition,LENGHT*sizeof(T) ,LENGHT,(uint8_t*)&var){};
+    ULSBusObjectArray(void* parent,uint16_t id,const char* name, const char* decription,_ulsbus_obj_permitions permition):
+        ULSBusObjectBase(parent,id,name,decription,permition,LENGHT*sizeof(T) ,LENGHT,(uint8_t*)&var){};
     ObjData<T> var[LENGHT];
 };
 
@@ -92,19 +109,10 @@ template<typename T>
 class ULSBusObject: public ULSBusObjectBase
 {
 public :
-    ULSBusObject(uint16_t id, const char* pxDescription,_ulsbus_obj_permitions permition):
-        ULSBusObjectBase(id,pxDescription,permition,sizeof(T) ,1,(uint8_t*)&var){};
+    ULSBusObject(void* parent,uint16_t id,const char* name, const char* decription,_ulsbus_obj_permitions permition):
+        ULSBusObjectBase(parent,id,name,decription,permition,sizeof(T) ,1,(uint8_t*)&var){};
     ObjData<T> var;
 };
-
-class ULSBusObjectsDictionary:public ULSList<ULSBusObjectBase>, public ULSListItem
-{
-public:
-    ULSBusObjectsDictionary();
-    ULSBusObjectBase* getObject(uint16_t id);
-    _ulsbus_obj_find_rezult find(uint16_t obj_id,uint16_t size);
-};
-
 
 
 #endif // ULSBUSOBJECT_H
