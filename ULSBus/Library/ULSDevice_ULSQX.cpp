@@ -2,7 +2,7 @@
 
 ULSDevice_ULSQR1_R1::ULSDevice_ULSQR1_R1(uint8_t selfId,uint8_t remoteId):
 ULSDevice_ULSX("ULSQR1_R1",selfId,remoteId,__DEVICE_CLASS_ULSQR1,__DEVICE_HW_ULSQR1_R1),
-  o_status(this,0x0001,"Device/Status","Device status data",ULSBUS_OBJECT_PERMITION_SYSCONFIG),
+  o_status(this,0x1001,"Device/Status","Device status data",ULSBUS_OBJECT_PERMITION_SYSCONFIG),
   o_array2000(this,0x5101,"Test/Array1","Test array 2000",ULSBUS_OBJECT_PERMITION_READWRITE),
   o_array2048(this,0x5102,"Test/Array2","Test array 2048",ULSBUS_OBJECT_PERMITION_READWRITE),
   o_array2041(this,0x5103,"Test/Array3","Test array 2041",ULSBUS_OBJECT_PERMITION_READWRITE),
@@ -19,7 +19,7 @@ ULSDevice_ULSX("ULSQR1_R1",selfId,remoteId,__DEVICE_CLASS_ULSQR1,__DEVICE_HW_ULS
 }
 ULSDevice_ULSQT1_R1::ULSDevice_ULSQT1_R1(uint8_t selfId,uint8_t remoteId):
 ULSDevice_ULSX("ULSQT1_R1",selfId,remoteId,__DEVICE_CLASS_ULSQT1,__DEVICE_HW_ULSQT1_R1),
-  o_status(this,0x0001,"Device/Status","Device status data",ULSBUS_OBJECT_PERMITION_SYSCONFIG),
+  o_status(this,0x1001,"Device/Status","Device status data",ULSBUS_OBJECT_PERMITION_SYSCONFIG),
   o_array2000(this,0x5101,"Test/Array1","Test array 2000",ULSBUS_OBJECT_PERMITION_READWRITE),
   o_array2048(this,0x5102,"Test/Array2","Test array 2048",ULSBUS_OBJECT_PERMITION_READWRITE),
   o_array2041(this,0x5103,"Test/Array3","Test array 2041",ULSBUS_OBJECT_PERMITION_READWRITE),

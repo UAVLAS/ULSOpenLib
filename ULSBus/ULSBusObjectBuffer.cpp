@@ -61,13 +61,9 @@ bool ULSBusObjectBuffer::setData(uint8_t *buf, uint32_t len)
 }
 bool ULSBusObjectBuffer::getData(uint32_t frame_size,uint32_t frame_idx,uint8_t *buf, uint32_t len)
 {
-    if(frame_idx == 2){
-        int i = 10;
-        while(i--);
-    }
     uint32_t start = frame_size * frame_idx ;
     uint32_t end = start + len;
-    if(end >= _sizeMax)return false;
+    if(end > _sizeMax)return false;
 
     for(uint32_t idx = start ;idx < end; idx++){
         uint32_t maskFrame = idx/8;

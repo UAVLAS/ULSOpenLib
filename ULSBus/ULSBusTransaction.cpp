@@ -114,7 +114,7 @@ bool ULSBusTransaction::boiTransmitStart(){
     if(!_connection->interface()){
      ULSBUS_ERROR("Interface id __null",0);
     }
-    const char* name = _connection->interface()->name();
+
     if(_buf->size() <= _connection->maxFrameSize()){
         // Transmit data SFT using interface buffer
         _cmd = ULSBUS_BOI_SFT;
@@ -128,7 +128,7 @@ bool ULSBusTransaction::boiTransmitStart(){
                 close();
             }else{
                 // Error interface buffer full
-                ULSBUS_ERROR("%s: Sending ULSBUS_BOI_SFT FAIL : self_id: 0x%X remote_id: 0x%X ",name,_self_id,_remote_id);
+                ULSBUS_ERROR("%s: Sending ULSBUS_BOI_SFT FAIL : self_id: 0x%X remote_id: 0x%X ",_connection->interface()->name(),_self_id,_remote_id);
                 _state = ULSBUST_BOI_TRANSMIT_START_REPEAT;
             }
         }
@@ -150,7 +150,7 @@ bool ULSBusTransaction::boiTransmitStart(){
             _state = ULSBUST_BOI_TRANSMIT_F;
         }else{
             // Error interface buffer full try to resend data later
-            ULSBUS_ERROR("%s: Sending ULSBUS_BOI_SOT FAIL : self_id: 0x%X remote_id: 0x%X ",name,_self_id,_remote_id);
+            ULSBUS_ERROR("%s: Sending ULSBUS_BOI_SOT FAIL : self_id: 0x%X remote_id: 0x%X ",_connection->interface()->name(),_self_id,_remote_id);
             _state = ULSBUST_BOI_TRANSMIT_START_REPEAT;
         }
     }
@@ -252,7 +252,7 @@ bool ULSBusTransaction::aoiTransmitStart(){
         }else{
             //int i =10;
             _state = ULSBUST_AOI_TRANSMIT_START_REPEAT;
-            ULSBUS_ERROR("%s: Sending ULSBUS_AOI_SFT Buffer Not ready : self_id: 0x%X remote_id: 0x%X ",_connection->interface()->name(),_self_id,_remote_id);
+           // ULSBUS_ERROR("%s: Sending ULSBUS_AOI_SFT Buffer Not ready : self_id: 0x%X remote_id: 0x%X ",_connection->interface()->name(),_self_id,_remote_id);
             return false; // Buffer Not ready
         }
     }else{
@@ -293,7 +293,7 @@ void ULSBusTransaction::frameReceived(uint32_t frame_idx,uint8_t *buf)
     }else{
         _buf->setData(_frame_size,_frame_idx,buf,_frame_size);
     }
-    ULSBUS_LOG("%s: Frame [%d] Received : self_id: 0x%X remote_id: 0x%X ",_connection->interface()->name(),_frame_idx,_self_id,_remote_id);
+    //ULSBUS_LOG("%s: Frame [%d] Received : self_id: 0x%X remote_id: 0x%X ",_connection->interface()->name(),_frame_idx,_self_id,_remote_id);
 }
 bool ULSBusTransaction::frameTransmit(uint8_t *buf)
 {
@@ -303,7 +303,14 @@ bool ULSBusTransaction::frameTransmit(uint8_t *buf)
 
     uint32_t size = ((_frame_idx + 1)  ==  _frames)?_frame_size_last:_frame_size; // set size if it is  last frame
 
-    if(!_buf->getData(_frame_size,_frame_idx,buf,size))return true; // Exit if no data aviable;
+    if(!_buf->getData(_frame_size,_frame_idx,buf,size))
+    {
+//        ULSBUS_LOG("%s: Frame [%d] data [0x%X]unaviable : self_id: 0x%X remote_id: 0x%X "
+//                   ,_connection->interface()->name(),
+//                   _frame_idx,_buf->id(),_self_id,_remote_id);
+
+        return true; // Exit if no data aviable;
+    }
     switch(_cmd)
     {
     case ULSBUS_BOI_F: _connection->interface()->txBufInstance.lenght = ULSBUS_HEADER_SIZE_BOI_F +  size;
@@ -316,14 +323,17 @@ bool ULSBusTransaction::frameTransmit(uint8_t *buf)
 
     if(_connection->interface()->send())
     {
-        _timeout = ULSBUS_TIMEOUT; // keep active
+         _timeout = ULSBUS_TIMEOUT; // keep active
         if((_frame_idx + 1) == _frames){// Last frame was sended
+            ULSBUS_LOG("%s: Last Frame [%d] Transmited : self_id: 0x%X remote_id: 0x%X ",_connection->interface()->name(),_frame_idx,_self_id,_remote_id);
+
             if(_cmd != ULSBUS_BOI_F){
                 _state = ULSBUST_TRANSMIT_COMPLITE_WAIT_ACK;
             }else {
                 close();
             }
         }else{
+            //ULSBUS_LOG("%s: Frame [%d] Transmited : self_id: 0x%X remote_id: 0x%X ",_connection->interface()->name(),_frame_idx,_self_id,_remote_id);
             _frame_idx++;
         }
         return true;
@@ -598,6 +608,7 @@ ULSBusTransaction* ULSBusTransactionsList::open(ULSBusConnection* connection,uin
             }
             px->state(state);
             px->processPacket();
+            ULSBUS_LOG("Transaction: self_id: 0x%X remote_id: 0x%X ",self_id,remote_id);
             return px;
         }
         px = forward(px);
