@@ -22,7 +22,7 @@
 
 #include "IfBase.h"
 
-IfBase::IfBase(){
+IfBase::IfBase(const char* name):_name(name){
     rxBufInstance.buf = __null;
     rxBufInstance.lenght = 0;
     txBufInstance.buf = __null;

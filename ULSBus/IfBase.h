@@ -23,7 +23,7 @@
 #ifndef IFBASE_H
 #define IFBASE_H
 
-#include<inttypes.h>
+#include "ULSBusTypes.h"
 
 typedef struct
 {
@@ -34,13 +34,12 @@ typedef struct
 class IfBase
 {
 public:
-    IfBase();
+    IfBase(const char* name = __null);
     virtual bool open(){return false;};
     virtual void task(){};
     virtual uint32_t read(){return 0;};
     virtual bool send(_if_buffer_instance *ifBufferInstace)
     {
-        while(1);
         (void)ifBufferInstace;return false;
     };
     virtual uint32_t maxTxPacketLenght(){return 0;}
@@ -49,9 +48,12 @@ public:
 
     bool send(uint8_t *buf, uint32_t lenght);
     bool send();
+    const char* name(){return _name;};
 public:
     _if_buffer_instance rxBufInstance;
     _if_buffer_instance txBufInstance;
+private:
+    const char* _name;
 };
 
 #endif // IFBASE_H

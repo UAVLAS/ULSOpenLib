@@ -54,14 +54,22 @@ bool ULSBusConnection::deviceConnected(uint8_t id){
 bool ULSBusConnection::send(_if_buffer_instance* bufi)
 {
     if(_interface)return _interface->send(bufi);
-        ULSBUS_ERROR("Interface not Valid",1);
+        ULSBUS_ERROR("Interface %s not Valid",_interface->name());
     return false;
 }
 bool ULSBusConnection::send()
 {
-    if(_interface)return _interface->send();
-    ULSBUS_ERROR("Interface not Valid",1);
-    return false;
+    if(_interface == __null){
+        ULSBUS_ERROR("Interface %s not Valid",_interface->name());
+        return false;
+      }
+      bool rez = _interface->send();
+
+   if(rez == false)
+   {
+      ULSBUS_ERROR("Interface %s send() failure",_interface->name());
+   }
+   return rez;
 }
 bool ULSBusConnection::sendAck(_ulsbus_ack ack,uint8_t cmd,uint8_t self_id,uint8_t remote_id)
 {
