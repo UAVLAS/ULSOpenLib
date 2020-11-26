@@ -108,9 +108,9 @@ bool ULSBus::processNM(ULSBusConnection* pxConnection)
     ULSDeviceBase* dev = _library.head(); //m self_id = 0 -> from any devices
     _ulsbus_device_status status;
     status.dev_class = pxRxPack->nm.dev_class;
-    status.hardware = pxRxPack->nm.hardware;
-    status.remote_id = pxRxPack->nm.self_id;
-    status.self_id = 0;
+    status.hardware  = pxRxPack->nm.hardware;
+    status.remote_id = 0;
+    status.self_id = pxRxPack->nm.self_id;
     status.status1 = pxRxPack->nm.status1;
     status.status2 = pxRxPack->nm.status2;
 
@@ -119,8 +119,7 @@ bool ULSBus::processNM(ULSBusConnection* pxConnection)
         {
             if(dev->remote_id()==pxRxPack->nm.self_id){
                 if(!dev->connected())dev->connected(true); // Connect device
-
-                dev->status(&status);
+                //dev->status(&status);
                 return true;
             }
         }
@@ -427,10 +426,10 @@ bool ULSBus::processPacket(ULSBusConnection *pxConnection)
         uint8_t* obj_data = pxRxPack->aoi_sft.data;
          ULSBUS_LOG("Received ULSBUS_AOI_SFT: self_id: 0x%X remote_id: 0x%X object: 0x%X",self_id,remote_id,obj_id);
 
-        _ulsbus_obj_find_rezult rez = _library.find(self_id,0,obj_id,obj_size); //remote_id = 0 -> from any devices
+        _ulsbus_obj_find_rezult rez = _library.find(self_id,remote_id,obj_id,obj_size); //remote_id = 0 -> from any devices
 
         if(rez == ULSBUS_OBJECT_FIND_OK){
-            ULSBusObjectBase *obj =  _library.getObject(self_id,0,obj_id); // remote_id = 0 -> from any devices
+            ULSBusObjectBase *obj =  _library.getObject(self_id,remote_id,obj_id); // remote_id = 0 -> from any devices
             if(!obj)return false;
             obj->setData(obj_data);
             return true;
@@ -463,7 +462,7 @@ bool ULSBus::processPacket(ULSBusConnection *pxConnection)
 
         ULSBUS_LOG("Received ULSBUS_AOI_SOT: self_id: 0x%X remote_id: 0x%X object: 0x%X",self_id,remote_id,obj_id);
 
-        _ulsbus_obj_find_rezult rez = _library.find(remote_id,0,obj_id,obj_size); //m self_id = 0 -> from any devices
+        _ulsbus_obj_find_rezult rez = _library.find(self_id,remote_id,obj_id,obj_size); //m self_id = 0 -> from any devices
 
         if(rez == ULSBUS_OBJECT_FIND_OK){
             ULSBusObjectBuffer* buffer =_oBuf.open(obj_id,obj_size);
