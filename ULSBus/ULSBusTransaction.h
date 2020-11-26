@@ -54,7 +54,7 @@ private:
     bool aoiTransmitStart();
     void frameReceived(uint32_t frame_idx,uint8_t *buf);
     bool frameTransmit(uint8_t *buf);
-    bool frameBufferCheck(bool broadcast);
+    bool frameBufferCheck();
 
     void initFrames();
 private:

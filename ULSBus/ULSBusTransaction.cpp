@@ -112,7 +112,7 @@ bool ULSBusTransaction::boiTransmitStart(){
         return false;
     }
     if(!_connection->interface()){
-     ULSBUS_ERROR("Interface id __null",0);
+        ULSBUS_ERROR("Interface id __null",0);
     }
 
     if(_buf->size() <= _connection->maxFrameSize()){
@@ -168,7 +168,7 @@ bool ULSBusTransaction::rwoiTransmitStart(){
         return false;
     }
     if(!_connection->interface()){
-     ULSBUS_ERROR("Interface id __null",0);
+        ULSBUS_ERROR("Interface id __null",0);
     }
     if((_buf->size() + 2) <= _connection->maxFrameSize()){
         // Transmit data SFT
@@ -209,7 +209,7 @@ bool ULSBusTransaction::rwoiTransmitStart(){
             _state = ULSBUST_RWOI_TRANSMIT_F;
         }else{
             // Error interface buffer full repeat later
-             ULSBUS_ERROR("%s: Sending ULSBUS_RWOI_SOT FAIL : self_id: 0x%X remote_id: 0x%X ",_connection->interface()->name(),_self_id,_remote_id);
+            ULSBUS_ERROR("%s: Sending ULSBUS_RWOI_SOT FAIL : self_id: 0x%X remote_id: 0x%X ",_connection->interface()->name(),_self_id,_remote_id);
             _state = ULSBUST_RWOI_TRANSMIT_START_REPEAT;
         }
     }
@@ -218,7 +218,7 @@ bool ULSBusTransaction::rwoiTransmitStart(){
 //===================================================
 bool ULSBusTransaction::aoiTransmitStart(){
     if(!_connection->interface()){
-     ULSBUS_ERROR("Interface id __null",0);
+        ULSBUS_ERROR("Interface id __null",0);
     }
     _ulsbus_packet  *pxTxPack = (_ulsbus_packet *)(_connection->interface()->txBufInstance.buf);
 
@@ -252,7 +252,7 @@ bool ULSBusTransaction::aoiTransmitStart(){
         }else{
             //int i =10;
             _state = ULSBUST_AOI_TRANSMIT_START_REPEAT;
-           // ULSBUS_ERROR("%s: Sending ULSBUS_AOI_SFT Buffer Not ready : self_id: 0x%X remote_id: 0x%X ",_connection->interface()->name(),_self_id,_remote_id);
+            // ULSBUS_ERROR("%s: Sending ULSBUS_AOI_SFT Buffer Not ready : self_id: 0x%X remote_id: 0x%X ",_connection->interface()->name(),_self_id,_remote_id);
             return false; // Buffer Not ready
         }
     }else{
@@ -284,30 +284,33 @@ bool ULSBusTransaction::aoiTransmitStart(){
 void ULSBusTransaction::frameReceived(uint32_t frame_idx,uint8_t *buf)
 {
     if(!_connection->interface()){
-     ULSBUS_ERROR("Interface id __null",0);
+        ULSBUS_ERROR("Interface id __null",0);
     }
     _frame_idx = frame_idx;
     if((_frame_idx + 1) == _frames)
     {
         _buf->setData(_frame_size,_frame_idx,buf,_frame_size_last);
+        ULSBUS_LOG("%s: Last Frame [%d/%d] Received : self_id: 0x%X remote_id: 0x%X ",_connection->interface()->name(),_frame_idx,_frames-1,_self_id,_remote_id);
     }else{
         _buf->setData(_frame_size,_frame_idx,buf,_frame_size);
+      //  ULSBUS_LOG("%s: Frame [%d/%d] Received : self_id: 0x%X remote_id: 0x%X ",_connection->interface()->name(),_frame_idx,_frames-1,_self_id,_remote_id);
+
     }
-    //ULSBUS_LOG("%s: Frame [%d] Received : self_id: 0x%X remote_id: 0x%X ",_connection->interface()->name(),_frame_idx,_self_id,_remote_id);
+
 }
 bool ULSBusTransaction::frameTransmit(uint8_t *buf)
 {
     if(!_connection->interface()){
-     ULSBUS_ERROR("Interface id __null",0);
+        ULSBUS_ERROR("Interface id __null",0);
     }
 
     uint32_t size = ((_frame_idx + 1)  ==  _frames)?_frame_size_last:_frame_size; // set size if it is  last frame
 
     if(!_buf->getData(_frame_size,_frame_idx,buf,size))
     {
-//        ULSBUS_LOG("%s: Frame [%d] data [0x%X]unaviable : self_id: 0x%X remote_id: 0x%X "
-//                   ,_connection->interface()->name(),
-//                   _frame_idx,_buf->id(),_self_id,_remote_id);
+        //        ULSBUS_LOG("%s: Frame [%d] data [0x%X]unaviable : self_id: 0x%X remote_id: 0x%X "
+        //                   ,_connection->interface()->name(),
+        //                   _frame_idx,_buf->id(),_self_id,_remote_id);
 
         return true; // Exit if no data aviable;
     }
@@ -323,7 +326,7 @@ bool ULSBusTransaction::frameTransmit(uint8_t *buf)
 
     if(_connection->interface()->send())
     {
-         _timeout = ULSBUS_TIMEOUT; // keep active
+        _timeout = ULSBUS_TIMEOUT; // keep active
         if((_frame_idx + 1) == _frames){// Last frame was sended
             ULSBUS_LOG("%s: Last Frame [%d] Transmited : self_id: 0x%X remote_id: 0x%X ",_connection->interface()->name(),_frame_idx,_self_id,_remote_id);
 
@@ -343,16 +346,35 @@ bool ULSBusTransaction::frameTransmit(uint8_t *buf)
         return false; // It will try to resend frame on next Task
     }
 }
-bool ULSBusTransaction::frameBufferCheck(bool broadcast)
+bool ULSBusTransaction::frameBufferCheck()
 {
-    uint8_t self   = _self_id;
-    uint8_t remote = (broadcast)?0:_remote_id;
     if(!_connection->interface()){
-     ULSBUS_ERROR("Interface id __null",0);
+        ULSBUS_ERROR("Interface id __null",0);
     }
 
     if(_buf->isBufferComlite())
     {
+        uint8_t self = 0;
+        uint8_t remote = 0;
+        switch(_state){
+        case ULSBUST_BOI_RECEIVE_F:
+            self = 0;
+            remote = _self_id;
+            break;
+
+        case ULSBUST_RWOI_RECEIVE_F:
+            self = _remote_id;
+            remote = 0;
+            break;
+        case ULSBUST_AOI_RECEIVE_F:
+            self = _self_id;
+            remote = _remote_id;
+            break;
+        default:
+
+            break;
+        }
+
         _ulsbus_obj_find_rezult rez = _library->find(self,remote,_buf->id(),_buf->size()); //m self_id = 0 -> from any devices
         if(rez == ULSBUS_OBJECT_FIND_OK){
             ULSBusObjectBase *obj =  _library->getObject(self,remote,_buf->id()); // Looking for object in library
@@ -363,16 +385,16 @@ bool ULSBusTransaction::frameBufferCheck(bool broadcast)
                 return false; // WTF ?
             }
             obj->setData(_buf->pxBuf());
-            if(!broadcast)_connection->sendAck(ULSBUS_ACK_COMPLITE,_cmd,_self_id,_remote_id);
+            if(_state != ULSBUST_BOI_RECEIVE_F)_connection->sendAck(ULSBUS_ACK_COMPLITE,_cmd,_self_id,_remote_id);
         }
         if(rez == ULSBUS_OBJECT_FIND_DEVICE_NOTFOUND){
-            // Do tothing not pur device - close transaction an leave buffer for others transactions.
+            // Do tothing not our device - close transaction an leave buffer for others transactions.
         }
         if(rez == ULSBUS_OBJECT_FIND_OBJECT_NOTFOUND){
-            if(!broadcast)_connection->sendAck(ULSBUS_ACK_OBJECT_NOTFOUND,_cmd,_self_id,_remote_id);
+            if(_state != ULSBUST_BOI_RECEIVE_F)_connection->sendAck(ULSBUS_ACK_OBJECT_NOTFOUND,_cmd,_self_id,_remote_id);
         }
         if(rez == ULSBUS_OBJECT_FIND_OBJECT_SIZE_MISMUCH){
-            if(!broadcast)_connection->sendAck(ULSBUS_ACK_OBJECT_SIZE_MISMUTCH,_cmd,_self_id,_remote_id);
+            if(_state != ULSBUST_BOI_RECEIVE_F)_connection->sendAck(ULSBUS_ACK_OBJECT_SIZE_MISMUTCH,_cmd,_self_id,_remote_id);
         }
 
         close(); // Buffer ok close connection
@@ -535,13 +557,13 @@ bool ULSBusTransaction::task() // calls every ms
         //================================================================
         // Receive frames
     case ULSBUST_BOI_RECEIVE_F:
-        frameBufferCheck(true);
+        frameBufferCheck();
         break;
     case ULSBUST_RWOI_RECEIVE_F:
-        frameBufferCheck(false);
+        frameBufferCheck();
         break;
     case ULSBUST_AOI_RECEIVE_F:
-        frameBufferCheck(false);
+        frameBufferCheck();
         break;
     default:
         break;

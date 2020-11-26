@@ -279,6 +279,7 @@ bool ULSBus::processPacket(ULSBusConnection *pxConnection)
             ULSBusObjectBase *obj =  _library.getObject(remote_id,0,obj_id); // Looking for object in library
             if(!obj){return false;} // WTF ?
             obj->setData(obj_data);
+            ULSBUS_LOG("%s: OBJECT [0x%X] Received : self_id: 0x%X remote_id: 0x%X ",pxConnection->interface()->name(),obj_id,self_id,remote_id);
             pxConnection->sendAck(ULSBUS_ACK_COMPLITE,cmd,self_id,remote_id);
             return true;
         }
@@ -432,6 +433,7 @@ bool ULSBus::processPacket(ULSBusConnection *pxConnection)
             ULSBusObjectBase *obj =  _library.getObject(self_id,remote_id,obj_id); // remote_id = 0 -> from any devices
             if(!obj)return false;
             obj->setData(obj_data);
+            ULSBUS_LOG("%s: OBJECT [0x%X] Received : self_id: 0x%X remote_id: 0x%X ",pxConnection->interface()->name(),obj_id,self_id,remote_id);
             return true;
         }
         if(rez == ULSBUS_OBJECT_FIND_DEVICE_NOTFOUND){
