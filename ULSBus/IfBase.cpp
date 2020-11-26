@@ -29,9 +29,10 @@ IfBase::IfBase(){
     txBufInstance.lenght = 0;
 }
 bool IfBase::send(uint8_t *buf, uint32_t lenght){
-    txBufInstance.buf = buf;
-    txBufInstance.lenght = lenght;
-    return send(&txBufInstance);
+    _if_buffer_instance bi;
+    bi.buf = buf;
+    bi.lenght = lenght;
+    return send(&bi);
 }
 
 bool IfBase::send(){

@@ -38,7 +38,11 @@ public:
     virtual bool open(){return false;};
     virtual void task(){};
     virtual uint32_t read(){return 0;};
-    virtual bool send(_if_buffer_instance *ifBufferInstace){(void)ifBufferInstace;return false;};
+    virtual bool send(_if_buffer_instance *ifBufferInstace)
+    {
+        while(1);
+        (void)ifBufferInstace;return false;
+    };
     virtual uint32_t maxTxPacketLenght(){return 0;}
     virtual void enableEscIfSupprted(bool esc){(void)esc;};
     virtual uint32_t maxFrameSize(){return 8;};

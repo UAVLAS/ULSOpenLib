@@ -45,11 +45,11 @@ ULSBusObjectBase::ULSBusObjectBase(void* parent,
 };
 void ULSBusObjectBase::lock()
 {
-    OS_ENTER_CRITICAL; // protect for slow operations (Ex. array copy)
+    ULS_ENTER_CRITICAL; // protect for slow operations (Ex. array copy)
 };
 void ULSBusObjectBase::unlock()
 {
-    OS_EXIT_CRITICAL;
+    ULS_EXIT_CRITICAL;
 };
 void ULSBusObjectBase::getData(uint8_t *buf)
 {

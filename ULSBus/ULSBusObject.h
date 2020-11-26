@@ -25,7 +25,7 @@
 
 #include <inttypes.h>
 #include <string.h>
-#include "OsSupport.h"
+
 #include "ULSBusTypes.h"
 
 class ULSBusObjectBase;
@@ -38,16 +38,16 @@ class ObjData
 public:
     inline T get()
     {
-        OS_DISABLE_IRQ; // protect for fast operations
+        ULS_DISABLE_IRQ; // protect for fast operations
         T tmp = _val;
-        OS_ENABLE_IRQ;
+        ULS_ENABLE_IRQ;
         return tmp;
     }
     inline void set(T val)
     {
-        OS_DISABLE_IRQ;// protect for fast operations
+        ULS_DISABLE_IRQ;// protect for fast operations
         _val = val;
-        OS_ENABLE_IRQ;
+        ULS_ENABLE_IRQ;
     }
     inline T* val()
     {

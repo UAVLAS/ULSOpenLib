@@ -125,6 +125,7 @@ bool ULSBusTransaction::boiTransmitStart(){
                 close();
             }else{
                 // Error interface buffer full
+                ULSBUS_ERROR("ULSBUS_BOI_SFT FAIL : self_id: 0x%X remote_id: 0x%X ",_self_id,_remote_id);
                 _state = ULSBUST_BOI_TRANSMIT_START_REPEAT;
             }
         }
@@ -146,6 +147,7 @@ bool ULSBusTransaction::boiTransmitStart(){
             _state = ULSBUST_BOI_TRANSMIT_F;
         }else{
             // Error interface buffer full try to resend data later
+            ULSBUS_ERROR("ULSBUS_BOI_SOT FAIL : self_id: 0x%X remote_id: 0x%X ",_self_id,_remote_id);
             _state = ULSBUST_BOI_TRANSMIT_START_REPEAT;
         }
     }
@@ -177,6 +179,7 @@ bool ULSBusTransaction::rwoiTransmitStart(){
                 _timeout = ULSBUS_TIMEOUT; // keep active
             }else{
                 // Error interface buffer full repeat later
+                ULSBUS_ERROR("ULSBUS_RWOI_SFT FAIL : self_id: 0x%X remote_id: 0x%X ",_self_id,_remote_id);
                 _state = ULSBUST_RWOI_TRANSMIT_START_REPEAT;
             }
         }
@@ -200,6 +203,7 @@ bool ULSBusTransaction::rwoiTransmitStart(){
             _state = ULSBUST_RWOI_TRANSMIT_F;
         }else{
             // Error interface buffer full repeat later
+             ULSBUS_ERROR("ULSBUS_RWOI_SOT FAIL : self_id: 0x%X remote_id: 0x%X ",_self_id,_remote_id);
             _state = ULSBUST_RWOI_TRANSMIT_START_REPEAT;
         }
     }
@@ -207,6 +211,9 @@ bool ULSBusTransaction::rwoiTransmitStart(){
 }
 //===================================================
 bool ULSBusTransaction::aoiTransmitStart(){
+    if(!_connection->interface()){
+     ULSBUS_ERROR("Interface id __null",0);
+    }
     _ulsbus_packet  *pxTxPack = (_ulsbus_packet *)(_connection->interface()->txBufInstance.buf);
 
     if(!_buf){
@@ -227,17 +234,19 @@ bool ULSBusTransaction::aoiTransmitStart(){
 
         if(_buf->getData(_connection->maxFrameSize(),0,pxTxPack->aoi_sft.data,_buf->size())){ // If buffer ready
             _connection->interface()->txBufInstance.lenght = ULSBUS_HEADER_SIZE_AOI_SFT + _buf->size();
-            if(_connection->interface()->send())
+            if(_connection->send())
             {
                 _state = ULSBUST_TRANSMIT_COMPLITE_WAIT_ACK;
                 _timeout = ULSBUS_TIMEOUT; // keep active
             }else{
                 // Error interface buffer full repeat later
                 _state = ULSBUST_AOI_TRANSMIT_START_REPEAT;
+                ULSBUS_ERROR("ULSBUS_AOI_SFT Connection send failure : self_id: 0x%X remote_id: 0x%X ",_self_id,_remote_id);
             }
         }else{
             //int i =10;
             _state = ULSBUST_AOI_TRANSMIT_START_REPEAT;
+            ULSBUS_ERROR("ULSBUS_AOI_SFT Buffer Not ready : self_id: 0x%X remote_id: 0x%X ",_self_id,_remote_id);
             return false; // Buffer Not ready
         }
     }else{
@@ -255,11 +264,12 @@ bool ULSBusTransaction::aoiTransmitStart(){
         pxTxPack->aoi_sot.crc = 0;//_buf->(crc);
         _connection->interface()->txBufInstance.lenght = ULSBUS_HEADER_SIZE_AOI_SOT;
 
-        if(_connection->interface()->send()){
+        if(_connection->send()){
             _state = ULSBUST_AOI_TRANSMIT_F;
             _timeout = ULSBUS_TIMEOUT; // keep active
         }else{
             // Error interface buffer full repeat later
+            ULSBUS_ERROR("ULSBUS_AOI_SOT FAIL : self_id: 0x%X remote_id: 0x%X ",_self_id,_remote_id);
             _state = ULSBUST_AOI_TRANSMIT_START_REPEAT;
         }
     }
@@ -570,6 +580,7 @@ ULSBusTransaction* ULSBusTransactionsList::open(ULSBusConnection* connection,uin
         }
         px = forward(px);
     };
+    ULSBUS_ERROR("Transaction Open FAIL : self_id: 0x%X remote_id: 0x%X ",self_id,remote_id);
     return __null;
 }
 

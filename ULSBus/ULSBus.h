@@ -29,10 +29,6 @@
 #include "ULSBusConnection.h"
 #include "ULSBusObject.h"
 #include "ULSDevicesLibrary.h"
-#include <stdarg.h>
-
-#define ULSBUS_ERROR(msg,...) error(__FILE__,__LINE__,msg,__VA_ARGS__)
-#define ULSBUS_LOG(msg,...) uDebug(msg,__VA_ARGS__)
 
 class ULSBus
 {
@@ -40,8 +36,6 @@ public:
     ULSBus(const char* name = 0);
     virtual void addDevice(_ulsbus_device_status *status){(void)status;};
     virtual void removeDevice(_ulsbus_device_status *status){(void)status;};
-    virtual void uDebug(const char* msg,...){(void)msg;}
-    virtual void error(const char *file, int line,const char* msg, ...){(void)file;(void)line;(void)msg;};
     void task();
     virtual void open();
     void sendNM();
