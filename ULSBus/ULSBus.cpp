@@ -57,17 +57,27 @@ bool ULSBus::sendObject(uint8_t self_id,ULSBusObjectBase* obj)
     ULSDeviceBase* device = (ULSDeviceBase*)obj->parent();
     // check if we have devices connected to us with corresponding ID
     ULSBusConnection* pxc =  _connections.findId(device->remote_id());
-    if(!pxc)return false; //  connection not found
-
+    if(!pxc)
+    {
+        obj->state(ULSBUS_OBJECT_STATE_ERROR);
+        return false; //  connection not found
+    }
     // Create Transaction Buffer
-    ULSBusObjectBuffer* buffer =_oBuf.open(obj->id(),obj->size());
-    if(!buffer)return false;
-
+    ULSBusObjectBuffer* buffer =_oBuf.open(obj->id(),obj->size(),obj);
+    if(!buffer)
+    {
+        obj->state(ULSBUS_OBJECT_STATE_ERROR);
+        return false;
+    }
     buffer->setData(obj->data(),obj->size());
     ULSBusTransaction* pxt = _tarnsactions.open(pxc,self_id,device->remote_id(),buffer,ULSBUST_RWOI_TRANSMIT_START);
-    if(!pxt)return false;
+    if(!pxt){
+        obj->state(ULSBUS_OBJECT_STATE_ERROR);
+        return false;
+    }
      ULSBUS_LOG("SEND Object   : self_id: 0x%X remote_id: 0x%X object: 0x%X",self_id,device->remote_id(),obj->id());
-    return true;
+    obj->state(ULSBUS_OBJECT_STATE_BUSY);
+     return true;
 }
 bool ULSBus::requestObject(uint8_t self_id,ULSBusObjectBase* obj)
 {
@@ -84,7 +94,13 @@ bool ULSBus::requestObject(uint8_t self_id,ULSBusObjectBase* obj)
     pxTxPack->rroi.size = obj->size();
     pxc->interface()->txBufInstance.lenght = ULSBUS_HEADER_SIZE_RROI;
     ULSBUS_LOG("Request Object: self_id: 0x%X remote_id: 0x%X object: 0x%X",self_id,device->remote_id(),obj->id());
-    return pxc->send();
+    if(!pxc->send())
+    {
+       obj->state(ULSBUS_OBJECT_STATE_ERROR);
+       return false;
+    }
+    obj->state(ULSBUS_OBJECT_STATE_BUSY);
+    return true;
 }
 void ULSBus::sendNM()
 {
@@ -218,7 +234,7 @@ bool ULSBus::processPacket(ULSBusConnection *pxConnection)
                 // TODO: Error here it not be, mean dictionary not consistent;
             }
             // Create Transaction Buffer
-            ULSBusObjectBuffer* buffer =_oBuf.open(obj_id,obj_size);
+            ULSBusObjectBuffer* buffer =_oBuf.open(obj_id,obj_size,obj);
             if(!buffer) return false;
             // Set data with current object
             buffer->setData(obj_data,obj_size);
@@ -244,8 +260,11 @@ bool ULSBus::processPacket(ULSBusConnection *pxConnection)
         uint16_t obj_id = pxRxPack->boi_sot.obj_id;
         uint32_t obj_size = pxRxPack->boi_sot.obj_size;
         ULSBUS_LOG("%s: Received ULSBUS_BOI_SOT: self_id: 0x%X remote_id: 0x%X object: 0x%X",_name,self_id,0,obj_id);
+
+        ULSBusObjectBase *obj =  _library.getObject(0x0,self_id,obj_id); // Looking for object in library
+
         // Create Transaction Buffer
-        ULSBusObjectBuffer* buffer =_oBuf.open(obj_id,obj_size);
+        ULSBusObjectBuffer* buffer =_oBuf.open(obj_id,obj_size,obj);
         if(!buffer) return false; // No ack for broadcast
 
         // Create Transaction for current pxc
@@ -281,6 +300,7 @@ bool ULSBus::processPacket(ULSBusConnection *pxConnection)
             obj->setData(obj_data);
             ULSBUS_LOG("%s: OBJECT [0x%X] Received : self_id: 0x%X remote_id: 0x%X ",pxConnection->interface()->name(),obj_id,self_id,remote_id);
             pxConnection->sendAck(ULSBUS_ACK_COMPLITE,cmd,self_id,remote_id);
+            obj->state(ULSBUS_OBJECT_STATE_OK);
             return true;
         }
         if(rez == ULSBUS_OBJECT_FIND_OBJECT_NOTFOUND){
@@ -297,7 +317,7 @@ bool ULSBus::processPacket(ULSBusConnection *pxConnection)
             if(!pxc){return true;} //  connection not found
 
             // Create Transaction Buffer
-            ULSBusObjectBuffer* buffer =_oBuf.open(obj_id,obj_size);
+            ULSBusObjectBuffer* buffer =_oBuf.open(obj_id,obj_size,__null);
             if(!buffer){
                 pxConnection->sendAck(ULSBUS_ACK_BUFFER_FULL,cmd,self_id,remote_id);
                 return false;
@@ -321,7 +341,9 @@ bool ULSBus::processPacket(ULSBusConnection *pxConnection)
         _ulsbus_obj_find_rezult rez = _library.find(remote_id,0,obj_id,obj_size); //m self_id = 0 -> from any devices
 
         if(rez == ULSBUS_OBJECT_FIND_OK){
-            ULSBusObjectBuffer* buffer =_oBuf.open(obj_id,obj_size);
+            ULSBusObjectBase *obj =  _library.getObject(remote_id,0,obj_id); // Looking for object in library
+            if(!obj){return false;} // WTF ?
+            ULSBusObjectBuffer* buffer =_oBuf.open(obj_id,obj_size,obj);
             if(!buffer){
                 pxConnection->sendAck(ULSBUS_ACK_BUFFER_FULL,cmd,self_id,remote_id);
                 return false;
@@ -340,7 +362,7 @@ bool ULSBus::processPacket(ULSBusConnection *pxConnection)
             if(!pxc) return false; // connection with device not found
 
             // Create Transaction Buffer
-            ULSBusObjectBuffer* buffer =_oBuf.open(obj_id,obj_size);
+            ULSBusObjectBuffer* buffer =_oBuf.open(obj_id,obj_size,__null);
             if(!buffer){
                 pxConnection->sendAck(ULSBUS_ACK_BUFFER_FULL,cmd,self_id,remote_id);
                 return false;
@@ -386,14 +408,16 @@ bool ULSBus::processPacket(ULSBusConnection *pxConnection)
         _ulsbus_obj_find_rezult rez = _library.find(remote_id,0,obj_id,obj_size);
 
         if(rez == ULSBUS_OBJECT_FIND_OK){
-            // Create Transaction Buffer
-             ULSBusObjectBuffer* buffer =_oBuf.open(obj_id,obj_size);
-            if(!buffer)return false; // WTF?
+
 
             ULSBusObjectBase *obj =  _library.getObject(remote_id,0,obj_id); // Looking for object in library
             if(!obj)return false;
 
+            // Create Transaction Buffer
+             ULSBusObjectBuffer* buffer =_oBuf.open(obj_id,obj_size,obj);
+            if(!buffer)return false; // WTF?
             buffer->setData(obj->data(),obj->size());
+
             // Create Transaction for current interface to transmit data
             ULSBusTransaction* pxt = _tarnsactions.open(pxConnection,self_id,remote_id,buffer,ULSBUST_AOI_TRANSMIT_START);
             if(!pxt){
@@ -433,6 +457,7 @@ bool ULSBus::processPacket(ULSBusConnection *pxConnection)
             ULSBusObjectBase *obj =  _library.getObject(self_id,remote_id,obj_id); // remote_id = 0 -> from any devices
             if(!obj)return false;
             obj->setData(obj_data);
+            obj->state(ULSBUS_OBJECT_STATE_OK);
             ULSBUS_LOG("%s: OBJECT [0x%X] Received : self_id: 0x%X remote_id: 0x%X ",pxConnection->interface()->name(),obj_id,self_id,remote_id);
             return true;
         }
@@ -443,7 +468,7 @@ bool ULSBus::processPacket(ULSBusConnection *pxConnection)
             ULSBusConnection* pxc =  _connections.findId(self_id);
             if(!pxc) return true; // connection with device not found
 
-            ULSBusObjectBuffer* buffer =_oBuf.open(obj_id,obj_size);
+            ULSBusObjectBuffer* buffer =_oBuf.open(obj_id,obj_size,__null);
             if(!buffer){
                 //NO ACK for reading command
                 return false;
@@ -475,7 +500,11 @@ bool ULSBus::processPacket(ULSBusConnection *pxConnection)
         _ulsbus_obj_find_rezult rez = _library.find(self_id,remote_id,obj_id,obj_size); //m self_id = 0 -> from any devices
 
         if(rez == ULSBUS_OBJECT_FIND_OK){
-            ULSBusObjectBuffer* buffer =_oBuf.open(obj_id,obj_size);
+            ULSBusObjectBase *obj =  _library.getObject(self_id,0,obj_id); // Looking for object in library
+            if(!obj){
+                return false; // WTF ?
+            }
+            ULSBusObjectBuffer* buffer =_oBuf.open(obj_id,obj_size,obj);
             if(!buffer)return false; //WTF?
             // Create Transaction for current interface
             ULSBusTransaction* pxt = _tarnsactions.open(pxConnection,self_id,remote_id,buffer,ULSBUST_AOI_RECEIVE_START);
@@ -496,7 +525,7 @@ bool ULSBus::processPacket(ULSBusConnection *pxConnection)
             // Redirect request to next device;
             // No redirect wi will aspxc->send(&(pxConnection->interface()->rxBufInstance));
             // Create Transaction Buffer
-            ULSBusObjectBuffer* buffer =_oBuf.open(obj_id,obj_size);
+            ULSBusObjectBuffer* buffer =_oBuf.open(obj_id,obj_size,__null);
             if(!buffer){
                 //NO ACK for reading command
                 return false;

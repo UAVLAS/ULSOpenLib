@@ -23,6 +23,7 @@
 #ifndef ULSBUSOBJECTBUFFER_H
 #define ULSBUSOBJECTBUFFER_H
 #include "ULSBusTypes.h"
+#include "ULSBusObject.h"
 
 class ULSBusObjectBuffer:public ULSListItem{
 public:
@@ -31,8 +32,14 @@ public:
     bool setData(uint32_t frame_size,uint32_t frame_idx,uint8_t *buf, uint32_t len);
     bool setData(uint8_t *buf, uint32_t len);
     bool getData(uint32_t frame_size,uint32_t frame_idx,uint8_t *buf, uint32_t len);
+
+    bool setFromObject();
+    bool setToObject();
+
+
     bool isBusy();
-    bool open(uint16_t id,uint16_t size);
+    bool open(uint16_t id,uint16_t size,ULSBusObjectBase *obj);
+
     void connect();
     void disconnect();
     bool isBufferComlite();
@@ -41,6 +48,7 @@ public:
     uint16_t id(){return _id;}
     uint32_t size(){return _size;}
     uint8_t* pxBuf(){return _buf;}
+    ULSBusObjectBase * obj(){return _obj;}
     uint32_t frameValidMask[8];
 
 private:
@@ -50,6 +58,7 @@ private:
     uint32_t _frames;
     uint32_t _size;
     uint32_t _sizeMax;
+    ULSBusObjectBase *_obj;
 };
 
 class ULSBusObjectBufferList:public ULSList<ULSBusObjectBuffer>
@@ -57,7 +66,7 @@ class ULSBusObjectBufferList:public ULSList<ULSBusObjectBuffer>
 public:
     ULSBusObjectBufferList();
 
-    ULSBusObjectBuffer* open(uint16_t id,uint16_t size);
+    ULSBusObjectBuffer* open(uint16_t id,uint16_t size,ULSBusObjectBase *obj);
 private:
 };
 

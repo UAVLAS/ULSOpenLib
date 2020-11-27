@@ -133,6 +133,19 @@ typedef enum{
 }_ulsbus_obj_permitions;
 
 typedef enum{
+    ULSBUS_OBJECT_DATA_STATE_UNINITIALIZED = 0, // Object created with no data on it
+    ULSBUS_OBJECT_DATA_STATE_VALID = 1,// Data in object is valid
+    ULSBUS_OBJECT_DATA_STATE_NOTVALID = 2, // Data in object not valid
+}_ulsbus_obj_data_state;
+
+typedef enum{
+    ULSBUS_OBJECT_STATE_OK = 0,
+    ULSBUS_OBJECT_STATE_BUSY = 1,
+    ULSBUS_OBJECT_STATE_ERROR = 2,
+    ULSBUS_OBJECT_STATE_TIMEOUT = 3,
+}_ulsbus_obj_state;
+
+typedef enum{
     ULSBUS_OBJECT_FIND_OK = 0,
     ULSBUS_OBJECT_FIND_DEVICE_NOTFOUND = 1,
     ULSBUS_OBJECT_FIND_OBJECT_NOTFOUND = 2,

@@ -29,16 +29,18 @@ ULSBusObjectBase::ULSBusObjectBase(void* parent,
                                    _ulsbus_obj_permitions permition,
                                    uint16_t size,
                                    uint16_t len,
-                                   uint8_t *pxData):
+                                   uint8_t *data):
     ULSListItem(),
+    _data_state(ULSBUS_OBJECT_DATA_STATE_UNINITIALIZED),
     _parent(parent),
     _id(id),
     _size(size),
     _len(len),
-    _pxData(pxData),
+    _data(data),
     _name(name),
     _description(description),
     _permition(permition),
+    _state(ULSBUS_OBJECT_STATE_OK),
     _updated_callback(__null)
 {
 
@@ -54,21 +56,41 @@ void ULSBusObjectBase::unlock()
 void ULSBusObjectBase::getData(uint8_t *buf)
 {
     lock();
-    memcpy(buf,_pxData,_size);
+    memcpy(buf,_data,_size);
     unlock();
 }
 void ULSBusObjectBase::setData(uint8_t *buf)
 {
     lock();
-    memcpy(_pxData,buf,_size);
+    memcpy(_data,buf,_size);
+    dataState(ULSBUS_OBJECT_DATA_STATE_VALID);
     unlock();
-    if(_updated_callback)_updated_callback(_parent,this);
     // TODO: _updated.emmit(this);
 }
 void ULSBusObjectBase::updatedCallback(_ulsbus_obj_updated_callback callback)
 {
     _updated_callback = callback;
 }
+_ulsbus_obj_state ULSBusObjectBase::state()
+{
+    return _state;
+}
+void  ULSBusObjectBase::state(_ulsbus_obj_state state)
+{
+    _state = state;
+    if(_state != ULSBUS_OBJECT_STATE_BUSY){
+    if(_updated_callback)_updated_callback(_parent,this);
+    }
+}
+_ulsbus_obj_data_state ULSBusObjectBase::dataState()
+{
+    return _data_state;
+}
+void  ULSBusObjectBase::dataState(_ulsbus_obj_data_state state)
+{
+    _data_state = state;
+}
+
 void* ULSBusObjectBase::parent()
 {
     return _parent;
@@ -91,7 +113,7 @@ uint16_t ULSBusObjectBase::len()
 };
 uint8_t* ULSBusObjectBase::data()
 {
-    return _pxData;
+    return _data;
 };
 const char* ULSBusObjectBase::name()
 {

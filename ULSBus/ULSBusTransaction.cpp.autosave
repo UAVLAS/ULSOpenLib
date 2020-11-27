@@ -354,52 +354,10 @@ bool ULSBusTransaction::frameBufferCheck()
 
     if(_buf->isBufferComlite())
     {
-        //        uint8_t self = 0;
-        //        uint8_t remote = 0;
-        //        switch(_state){
-        //        case ULSBUST_BOI_RECEIVE_F:
-        //            self = 0;
-        //            remote = _self_id;
-        //            break;
-
-        //        case ULSBUST_RWOI_RECEIVE_F:
-        //            self = _remote_id;
-        //            remote = 0;
-        //            break;
-        //        case ULSBUST_AOI_RECEIVE_F:
-        //            self = _self_id;
-        //            remote = _remote_id;
-        //            break;
-        //        default:
-
-        //            break;
-        //        }
         _buf->setToObject();
         if((_state != ULSBUST_BOI_RECEIVE_F)&&(_buf->obj() != __null)){
             _connection->sendAck(ULSBUS_ACK_COMPLITE,_cmd,_self_id,_remote_id);
         }
-
-        //        _ulsbus_obj_find_rezult rez = _library->find(self,remote,_buf->id(),_buf->size()); //m self_id = 0 -> from any devices
-        //        if(rez == ULSBUS_OBJECT_FIND_OK){
-        //            ULSBusObjectBase *obj =  _library->getObject(self,remote,_buf->id()); // Looking for object in library
-        //            ULSBUS_LOG("%s: OBJECT [0x%X] Received : self_id: 0x%X remote_id: 0x%X ",_connection->interface()->name(),_buf->id(),_self_id,_remote_id);
-        //            if(!obj){
-        //                ULSBUS_ERROR("%s: OBJECT [0x%X] Notfound (WTF) : self_id: 0x%X remote_id: 0x%X ",_connection->interface()->name(),_buf->id(),_self_id,_remote_id);
-        //                close();
-        //                return false; // WTF ?
-        //            }
-        //            obj->setData(_buf->pxBuf());
-        //            if(_state != ULSBUST_BOI_RECEIVE_F)_connection->sendAck(ULSBUS_ACK_COMPLITE,_cmd,_self_id,_remote_id);
-        //        }
-        //        if(rez == ULSBUS_OBJECT_FIND_DEVICE_NOTFOUND){
-        //            // Do tothing not our device - close transaction an leave buffer for others transactions.
-        //        }
-        //        if(rez == ULSBUS_OBJECT_FIND_OBJECT_NOTFOUND){
-        //            if(_state != ULSBUST_BOI_RECEIVE_F)_connection->sendAck(ULSBUS_ACK_OBJECT_NOTFOUND,_cmd,_self_id,_remote_id);
-        //        }
-        //        if(rez == ULSBUS_OBJECT_FIND_OBJECT_SIZE_MISMUCH){
-        //            if(_state != ULSBUST_BOI_RECEIVE_F)_connection->sendAck(ULSBUS_ACK_OBJECT_SIZE_MISMUTCH,_cmd,_self_id,_remote_id);
-        //        }
 
         close(); // Buffer ok close connection
     }else{

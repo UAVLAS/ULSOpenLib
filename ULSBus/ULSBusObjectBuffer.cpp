@@ -27,7 +27,8 @@ ULSBusObjectBuffer::ULSBusObjectBuffer():ULSListItem(),
     _id(0),
     _frames(0),
     _size(0),
-    _sizeMax(2048)
+    _sizeMax(2048),
+    _obj(__null)
 {
     for(uint32_t i=0 ;i<_sizeMax; i++)
     {
@@ -38,6 +39,7 @@ ULSBusObjectBuffer::ULSBusObjectBuffer():ULSListItem(),
 void ULSBusObjectBuffer::close()
 {
     _interfacesConnected = 0;
+    _obj = __null;
     for(uint32_t i=0; i< 8; i++ )
         frameValidMask[i] = 0;
 
@@ -77,15 +79,28 @@ bool ULSBusObjectBuffer::getData(uint32_t frame_size,uint32_t frame_idx,uint8_t 
     }
     return true;
 }
+bool ULSBusObjectBuffer::setFromObject()
+{
+    if(_obj == __null)return false;
+    return setData(_obj->data(),_obj->size());
+}
+bool ULSBusObjectBuffer::setToObject()
+{
+    if(_obj == __null)return false;
+    _obj->setData(_buf);
+    _obj->state(ULSBUS_OBJECT_STATE_OK);
+     return true;
+}
 bool ULSBusObjectBuffer::isBusy()
 {
     return (_interfacesConnected != 0);
 }
-bool ULSBusObjectBuffer::open(uint16_t id,uint16_t size)
+bool ULSBusObjectBuffer::open(uint16_t id,uint16_t size,ULSBusObjectBase *obj)
 {
     if(isBusy())return false;
     if(size > _sizeMax)return false;
     if(size == 0)return false;
+    _obj = obj;
     _id = id;
     _size = size;
     _frames = size/8;
@@ -116,11 +131,11 @@ ULSBusObjectBufferList::ULSBusObjectBufferList():ULSList()
 
 };
 
-ULSBusObjectBuffer* ULSBusObjectBufferList::open(uint16_t id,uint16_t size)
+ULSBusObjectBuffer* ULSBusObjectBufferList::open(uint16_t id,uint16_t size,ULSBusObjectBase *obj)
 {
     ULSBusObjectBuffer *px = head();
     while(px){
-        if(px->open(id,size))return px;
+        if(px->open(id,size,obj))return px;
         px = forward(px);
     };
     return __null;
