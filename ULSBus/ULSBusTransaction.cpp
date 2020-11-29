@@ -24,7 +24,7 @@
 
 ULSBusTransaction::ULSBusTransaction():
     ULSListItem(),
-    _library(__null),
+   // _library(__null),
     _state(ULSBUST_EMPTY),
     _timeout(0),
     _cmd(0),
@@ -37,10 +37,10 @@ ULSBusTransaction::ULSBusTransaction():
 {
     close();
 }
-void ULSBusTransaction::library(ULSDevicesLibrary    *library)
-{
-    _library = library;
-}
+//void ULSBusTransaction::library(ULSDevicesLibrary    *library)
+//{
+//    _library = library;
+//}
 bool ULSBusTransaction::open(ULSBusConnection* connection,uint8_t selfId,uint8_t remoteId)
 {
     if(_state != ULSBUST_EMPTY) return false;
@@ -331,6 +331,7 @@ bool ULSBusTransaction::frameTransmit(uint8_t *buf)
             // ULSBUS_LOG("%s: Last Frame [%d] Transmited : self_id: 0x%X remote_id: 0x%X ",_connection->interface()->name(),_frame_idx,_self_id,_remote_id);
 
             if(_cmd != ULSBUS_BOI_F){
+                _timeout = 4 * ULSBUS_TIMEOUT; // keep active for a while to wait ack from remote device
                 _state = ULSBUST_TRANSMIT_COMPLITE_WAIT_ACK;
             }else {
                 close();
@@ -475,7 +476,9 @@ bool ULSBusTransaction::task() // calls every ms
     if(_timeout>0){
         _timeout--;
         if(_timeout == 0){
-
+            if(_buf){
+                if(_buf->obj())_buf->obj()->state(ULSBUS_OBJECT_STATE_TIMEOUT);
+            }
             close(); // Close transaction by timeout
             return false;
         }
@@ -566,13 +569,13 @@ ULSBusTransactionsList::ULSBusTransactionsList():ULSList()
     };
 };
 
-void ULSBusTransactionsList::library(ULSDevicesLibrary    *library){
-    ULSBusTransaction *px = head();
-    while(px){
-        px->library(library);
-        px = forward(px);
-    };
-}
+//void ULSBusTransactionsList::library(ULSDevicesLibrary    *library){
+//    ULSBusTransaction *px = head();
+//    while(px){
+//        px->library(library);
+//        px = forward(px);
+//    };
+//}
 void ULSBusTransactionsList::task(){
     ULSBusTransaction *px = head();
     while(px){

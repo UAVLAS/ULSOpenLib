@@ -88,8 +88,8 @@ bool ULSBusConnection::sendNM(_ulsbus_device_status *dev)
     if(!_interface)return false;
     _ulsbus_packet  *pxPack = (_ulsbus_packet *)(_interface->txBufInstance.buf);
     pxPack->nm.cmd = ULSBUS_NM;
-    pxPack->nm.self_id = dev->self_id;
-    pxPack->nm.dev_class = dev->dev_class;
+    pxPack->nm.self_id = dev->id;
+    pxPack->nm.dev_class = dev->devClass;
     pxPack->nm.hardware = dev->hardware;
     pxPack->nm.status1 = dev->status1;
     pxPack->nm.status2 = dev->status2;

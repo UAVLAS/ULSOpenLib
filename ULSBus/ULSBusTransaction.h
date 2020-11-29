@@ -25,13 +25,13 @@
 #include "IfBase.h"
 #include "ULSBusConnection.h"
 #include "ULSBusObjectBuffer.h"
-#include "ULSDevicesLibrary.h"
+
 
 
 class ULSBusTransaction:public ULSListItem{
 public:
     ULSBusTransaction();
-    void library(ULSDevicesLibrary    *library);
+//    void library(ULSDevicesLibrary    *library);
 
     bool open(ULSBusConnection* connection,uint8_t selfId,uint8_t remoteId);
 
@@ -61,7 +61,7 @@ private:
     ULSBusObjectBuffer* _buf;     // Pointer to object buffers
     ULSBusConnection *_connection; // Pointer to main Connection
 
-    ULSDevicesLibrary    *_library;
+//    ULSDevicesLibrary    *_library;
     _ulsbus_transaction_state _state;
     uint32_t _timeout;
     uint8_t  _cmd;
@@ -78,7 +78,7 @@ class ULSBusTransactionsList:public ULSList<ULSBusTransaction>{
 public:
     ULSBusTransactionsList();
 
-    void library(ULSDevicesLibrary    *library);
+ //   void library(ULSDevicesLibrary    *library);
     void task();
     ULSBusTransaction* open(ULSBusConnection* connection,uint8_t self_id,uint8_t remote_id);
 

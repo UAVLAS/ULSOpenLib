@@ -33,7 +33,7 @@
 class ULSBus
 {
 public:
-    ULSBus(const char* name = 0);
+    ULSBus(const char* name = 0,ULSDeviceBase *selfDevice = __null);
     virtual void addDevice(_ulsbus_device_status *status){(void)status;};
     virtual void removeDevice(_ulsbus_device_status *status){(void)status;};
     void task();
@@ -54,10 +54,12 @@ public:
     void add(ULSBusObjectBuffer* buf, uint32_t len);
     void add(ULSDeviceBase* device);
     void updatedCallback(_ulsbus_obj_updated_callback callback);
-    ULSDevicesLibrary* library(){return &_library;};
+    ULSDevicesLibrary* remoteDevices(){return &_remoteDevices;};
 
 protected:
-    ULSDevicesLibrary     _library;
+    ULSDeviceBase *_selfDevice;
+    ULSDevicesLibrary _remoteDevices;
+
     const char* _name;
     uint32_t _time;
 private:

@@ -5,14 +5,13 @@ ULSDevicesLibrary::ULSDevicesLibrary():ULSList()
 {
 
 };
-ULSBusObjectBase* ULSDevicesLibrary::getObject(uint8_t self_id,uint8_t remote_id,uint16_t obj_id)
+ULSBusObjectBase* ULSDevicesLibrary::getObject(uint8_t id,uint16_t obj_id)
 {
     ULSDeviceBase *px = head();
     while(px){
         if(px->connected())
         {
-            if(((px->self_id() == self_id)||(self_id == 0)) &&
-                    ((px->remote_id() == remote_id)||(remote_id == 0))){
+            if(px->id() == id){
                 return px->getObject(obj_id);
             }
         }
@@ -20,14 +19,13 @@ ULSBusObjectBase* ULSDevicesLibrary::getObject(uint8_t self_id,uint8_t remote_id
     };
     return __null;
 }
-_ulsbus_obj_find_rezult ULSDevicesLibrary::find(uint8_t self_id,uint8_t remote_id,uint16_t obj_id,uint16_t size)
+_ulsbus_obj_find_rezult ULSDevicesLibrary::find(uint8_t id,uint16_t obj_id,uint16_t size)
 {
     ULSDeviceBase *px = head();
     while(px){
         if(px->connected())
         {
-            if(((px->self_id() == self_id)||(self_id == 0)) &&
-                    ((px->remote_id() == remote_id)||(remote_id == 0))){
+            if(px->id() == id){
                 return px->find(obj_id,size);
             }
         }
@@ -35,14 +33,13 @@ _ulsbus_obj_find_rezult ULSDevicesLibrary::find(uint8_t self_id,uint8_t remote_i
     };
     return ULSBUS_OBJECT_FIND_DEVICE_NOTFOUND;
 }
-_ulsbus_device_status* ULSDevicesLibrary::findDevices(uint8_t self_id,uint8_t remote_id)
+_ulsbus_device_status* ULSDevicesLibrary::findDevices(uint8_t id)
 {
     ULSDeviceBase *px = head();
     while(px){
         if(px->connected())
         {
-            if(((px->self_id() == self_id)||(self_id == 0)) &&
-                    ((px->remote_id() == remote_id)||(remote_id == 0))){
+            if(px->id() == id){
                 return px->status();
             }
         }

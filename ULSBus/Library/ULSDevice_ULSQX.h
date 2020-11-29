@@ -26,7 +26,7 @@ typedef struct __attribute__((packed)){
 class ULSDevice_ULSQR1_R1:public ULSDevice_ULSX
 {
 public:
-    ULSDevice_ULSQR1_R1(uint8_t selfId,uint8_t remoteId);
+    ULSDevice_ULSQR1_R1(uint8_t id);
 
     ULSBusObject<__ulsd_ulsqr_status> o_status;
     ULSBusObjectArray<uint8_t,2000> o_array2000;;
@@ -38,7 +38,7 @@ public:
 class ULSDevice_ULSQT1_R1:public ULSDevice_ULSX
 {
 public:
-    ULSDevice_ULSQT1_R1(uint8_t selfId,uint8_t remoteId);
+    ULSDevice_ULSQT1_R1(uint8_t id);
 
     ULSBusObject<__ulsd_ulsqr_status> o_status;
     ULSBusObjectArray<uint8_t,2000> o_array2000;;
@@ -46,5 +46,12 @@ public:
     ULSBusObjectArray<uint8_t,2041> o_array2041;
     ULSBusObjectArray<tmpConfig,2> o_tcfgA;
     ULSBusObject<tmpConfig> o_tcfg;
+};
+class ULSDevice_ULSPC:public ULSDevice_ULSX
+{
+public:
+    ULSDevice_ULSPC(uint8_t id);
+
+
 };
 #endif // ULSDEVICE_ULSQX_H

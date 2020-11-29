@@ -18,7 +18,7 @@
 
 #define ULSBUS_FRAMESIZE_MAX    256
 #define ULSBUS_FRAMES           8
-#define ULSBUS_TIMEOUT          50
+#define ULSBUS_TIMEOUT          100
 #define ULSBUS_TIMEOUT_ACK      200
 
 #define ULSBUS_NM_INTERVAL      1000
@@ -153,9 +153,8 @@ typedef enum{
 }_ulsbus_obj_find_rezult;
 
 typedef struct{
-    uint8_t self_id;
-    uint8_t remote_id;
-    uint16_t dev_class;
+    uint8_t  id;
+    uint16_t devClass;
     uint16_t hardware;
     uint16_t status1;
     uint16_t status2;
