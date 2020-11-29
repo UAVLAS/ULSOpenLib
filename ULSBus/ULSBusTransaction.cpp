@@ -242,8 +242,8 @@ bool ULSBusTransaction::aoiTransmitStart(){
             _connection->interface()->txBufInstance.lenght = ULSBUS_HEADER_SIZE_AOI_SFT + _buf->size();
             if(_connection->send())
             {
-                _state = ULSBUST_TRANSMIT_COMPLITE_WAIT_ACK;
-                _timeout = ULSBUS_TIMEOUT; // keep active
+                // No ack reqired - close connection
+                close();
             }else{
                 // Error interface buffer full repeat later
                 _state = ULSBUST_AOI_TRANSMIT_START_REPEAT;
@@ -479,6 +479,7 @@ bool ULSBusTransaction::task() // calls every ms
             if(_buf){
                 if(_buf->obj())_buf->obj()->state(ULSBUS_OBJECT_STATE_TIMEOUT);
             }
+            ULSBUS_LOG("Transaction Closed by Timeout: self_id: 0x%X remote_id: 0x%X ",_self_id,_remote_id);
             close(); // Close transaction by timeout
             return false;
         }

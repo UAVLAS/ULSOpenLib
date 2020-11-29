@@ -19,28 +19,14 @@ ULSBusObjectBase* ULSDevicesLibrary::getObject(uint8_t id,uint16_t obj_id)
     };
     return __null;
 }
-_ulsbus_obj_find_rezult ULSDevicesLibrary::find(uint8_t id,uint16_t obj_id,uint16_t size)
+ULSDeviceBase* ULSDevicesLibrary::findDevice(uint8_t id)
 {
     ULSDeviceBase *px = head();
     while(px){
         if(px->connected())
         {
             if(px->id() == id){
-                return px->find(obj_id,size);
-            }
-        }
-        px = forward(px);
-    };
-    return ULSBUS_OBJECT_FIND_DEVICE_NOTFOUND;
-}
-_ulsbus_device_status* ULSDevicesLibrary::findDevices(uint8_t id)
-{
-    ULSDeviceBase *px = head();
-    while(px){
-        if(px->connected())
-        {
-            if(px->id() == id){
-                return px->status();
+                return px;
             }
         }
         px = forward(px);

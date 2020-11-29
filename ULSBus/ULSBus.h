@@ -39,8 +39,8 @@ public:
     void task();
     virtual void open();
     void sendNM();
-    bool sendObject(uint8_t self_id,ULSBusObjectBase* obj);
-    bool requestObject(uint8_t self_id,ULSBusObjectBase* obj);
+    bool sendObject(ULSBusObjectBase* obj);
+    bool requestObject(ULSBusObjectBase* obj);
     bool processAck(ULSBusConnection* pxConnection);
     bool processNM(ULSBusConnection* pxConnection);
 

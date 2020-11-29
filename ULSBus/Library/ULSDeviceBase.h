@@ -82,7 +82,7 @@ public:
     _ulsbus_device_status   *status();
 
     ULSBusObjectBase* getObject(uint16_t id);
-    _ulsbus_obj_find_rezult find(uint16_t obj_id,uint16_t size);
+
     void updatedCallback(_ulsbus_obj_updated_callback callback);
 
 private:

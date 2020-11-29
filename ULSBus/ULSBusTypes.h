@@ -145,12 +145,6 @@ typedef enum{
     ULSBUS_OBJECT_STATE_TIMEOUT = 3,
 }_ulsbus_obj_state;
 
-typedef enum{
-    ULSBUS_OBJECT_FIND_OK = 0,
-    ULSBUS_OBJECT_FIND_DEVICE_NOTFOUND = 1,
-    ULSBUS_OBJECT_FIND_OBJECT_NOTFOUND = 2,
-    ULSBUS_OBJECT_FIND_OBJECT_SIZE_MISMUCH = 3,
-}_ulsbus_obj_find_rezult;
 
 typedef struct{
     uint8_t  id;

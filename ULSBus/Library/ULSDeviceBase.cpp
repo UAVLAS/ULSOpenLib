@@ -44,22 +44,6 @@ ULSBusObjectBase* ULSDeviceBase::getObject(uint16_t id)
     };
     return __null;
 }
-_ulsbus_obj_find_rezult ULSDeviceBase::find(uint16_t obj_id,uint16_t size)
-{
-    ULSBusObjectBase *px = head();
-    while(px){
-        if(px->id()==obj_id){
-            if(px->size() == size){
-                return ULSBUS_OBJECT_FIND_OK;
-            }else{
-                while(1);
-                return ULSBUS_OBJECT_FIND_OBJECT_SIZE_MISMUCH;
-            }
-        }
-        px = forward(px);
-    };
-    return ULSBUS_OBJECT_FIND_OBJECT_NOTFOUND;
-}
 void ULSDeviceBase::updatedCallback(_ulsbus_obj_updated_callback callback)
 {
     ULSBusObjectBase *px = head();
