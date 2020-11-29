@@ -48,6 +48,7 @@ public:
     _ulsbus_transaction_state state();
     ULSBusObjectBuffer* buffer();
 
+    static uint32_t  counter;
 private:
     bool boiTransmitStart();
     bool rwoiTransmitStart();
@@ -71,6 +72,7 @@ private:
     uint32_t  _frame_idx;
     uint32_t  _frame_size;
     uint32_t  _frame_size_last;
+
     //    uint16_t _crc;
 };
 

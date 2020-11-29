@@ -21,10 +21,12 @@
  */
 
 #include "ULSBusTransaction.h"
+uint32_t ULSBusTransaction::counter = 0;
 
 ULSBusTransaction::ULSBusTransaction():
     ULSListItem(),
    // _library(__null),
+    _connection(__null),
     _state(ULSBUST_EMPTY),
     _timeout(0),
     _cmd(0),
@@ -34,8 +36,9 @@ ULSBusTransaction::ULSBusTransaction():
     _frame_idx(0),
     _frame_size(0),
     _frame_size_last(0)
+
 {
-    close();
+        disconnectBuffer();
 }
 //void ULSBusTransaction::library(ULSDevicesLibrary    *library)
 //{
@@ -44,6 +47,7 @@ ULSBusTransaction::ULSBusTransaction():
 bool ULSBusTransaction::open(ULSBusConnection* connection,uint8_t selfId,uint8_t remoteId)
 {
     if(_state != ULSBUST_EMPTY) return false;
+    counter++;
     _state = ULSBUST_BUSY;
     _connection = connection;
     _self_id = selfId;
@@ -55,6 +59,7 @@ bool ULSBusTransaction::open(ULSBusConnection* connection,uint8_t selfId,uint8_t
 
 void ULSBusTransaction::close()
 {
+     ULSBUS_LOG("Transaction %d closed : self_id: 0x%X remote_id: 0x%X ",counter,_self_id,_remote_id);
     _state = ULSBUST_EMPTY;
     _cmd = 0;
     _frames = 0;
@@ -94,6 +99,7 @@ void ULSBusTransaction::initFrames()
 }
 bool ULSBusTransaction::check(ULSBusConnection* connection,uint8_t self_id,uint8_t remote_id,_ulsbus_transaction_state state)
 {
+    if(_state == ULSBUST_EMPTY)return false;
     if((connection == _connection)&&
             (self_id == _self_id)&&
             (remote_id == _remote_id)&&
@@ -479,7 +485,7 @@ bool ULSBusTransaction::task() // calls every ms
             if(_buf){
                 if(_buf->obj())_buf->obj()->state(ULSBUS_OBJECT_STATE_TIMEOUT);
             }
-            ULSBUS_LOG("Transaction Closed by Timeout: self_id: 0x%X remote_id: 0x%X ",_self_id,_remote_id);
+            ULSBUS_LOG("Transaction %d Closed by Timeout: self_id: 0x%X remote_id: 0x%X ",counter,_self_id,_remote_id);
             close(); // Close transaction by timeout
             return false;
         }
@@ -580,7 +586,9 @@ ULSBusTransactionsList::ULSBusTransactionsList():ULSList()
 void ULSBusTransactionsList::task(){
     ULSBusTransaction *px = head();
     while(px){
-        px->task();
+        if(px->state() != ULSBUST_EMPTY){
+            px->task();
+        }
         px = forward(px);
     };
 }
@@ -605,7 +613,7 @@ ULSBusTransaction* ULSBusTransactionsList::open(ULSBusConnection* connection,uin
             }
             px->state(state);
             px->processPacket();
-            ULSBUS_LOG("Transaction: self_id: 0x%X remote_id: 0x%X ",self_id,remote_id);
+            ULSBUS_LOG("Transaction %d Open: self_id: 0x%X remote_id: 0x%X ",px->counter,self_id,remote_id);
             return px;
         }
         px = forward(px);
