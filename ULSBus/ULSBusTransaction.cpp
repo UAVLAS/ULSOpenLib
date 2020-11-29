@@ -35,7 +35,8 @@ ULSBusTransaction::ULSBusTransaction():
     _frames(0),
     _frame_idx(0),
     _frame_size(0),
-    _frame_size_last(0)
+    _frame_size_last(0),
+    _number(0)
 
 {
         disconnectBuffer();
@@ -48,18 +49,20 @@ bool ULSBusTransaction::open(ULSBusConnection* connection,uint8_t selfId,uint8_t
 {
     if(_state != ULSBUST_EMPTY) return false;
     counter++;
+    _number = counter;
     _state = ULSBUST_BUSY;
     _connection = connection;
     _self_id = selfId;
     _remote_id = remoteId;
     _buf = __null;
     _timeout = ULSBUS_TIMEOUT;
+    ULSBUS_LOG("%s:Transaction %d Open: self_id: 0x%X remote_id: 0x%X ",_connection->interface()->name(),_number,_self_id,_remote_id);
     return true;
 }
 
 void ULSBusTransaction::close()
 {
-     ULSBUS_LOG("Transaction %d closed : self_id: 0x%X remote_id: 0x%X ",counter,_self_id,_remote_id);
+     ULSBUS_LOG("%s:Transaction %d Close : self_id: 0x%X remote_id: 0x%X ",_connection->interface()->name(),_number,_self_id,_remote_id);
     _state = ULSBUST_EMPTY;
     _cmd = 0;
     _frames = 0;
@@ -296,10 +299,10 @@ void ULSBusTransaction::frameReceived(uint32_t frame_idx,uint8_t *buf)
     if((_frame_idx + 1) == _frames)
     {
         _buf->setData(_frame_size,_frame_idx,buf,_frame_size_last);
-       // ULSBUS_LOG("%s: Last Frame [%d/%d] Received : self_id: 0x%X remote_id: 0x%X ",_connection->interface()->name(),_frame_idx,_frames-1,_self_id,_remote_id);
+        ULSBUS_LOG("%s: Last Frame [%d/%d] Received : self_id: 0x%X remote_id: 0x%X ",_connection->interface()->name(),_frame_idx,_frames-1,_self_id,_remote_id);
     }else{
         _buf->setData(_frame_size,_frame_idx,buf,_frame_size);
-        //  ULSBUS_LOG("%s: Frame [%d/%d] Received : self_id: 0x%X remote_id: 0x%X ",_connection->interface()->name(),_frame_idx,_frames-1,_self_id,_remote_id);
+       //   ULSBUS_LOG("%s: Frame [%d/%d] Received : self_id: 0x%X remote_id: 0x%X ",_connection->interface()->name(),_frame_idx,_frames-1,_self_id,_remote_id);
 
     }
 
@@ -334,7 +337,7 @@ bool ULSBusTransaction::frameTransmit(uint8_t *buf)
     {
         _timeout = ULSBUS_TIMEOUT; // keep active
         if((_frame_idx + 1) == _frames){// Last frame was sended
-            // ULSBUS_LOG("%s: Last Frame [%d] Transmited : self_id: 0x%X remote_id: 0x%X ",_connection->interface()->name(),_frame_idx,_self_id,_remote_id);
+             ULSBUS_LOG("%s: Last Frame [%d] Transmited : self_id: 0x%X remote_id: 0x%X ",_connection->interface()->name(),_frame_idx,_self_id,_remote_id);
 
             if(_cmd != ULSBUS_BOI_F){
                 _timeout = 4 * ULSBUS_TIMEOUT; // keep active for a while to wait ack from remote device
@@ -343,7 +346,7 @@ bool ULSBusTransaction::frameTransmit(uint8_t *buf)
                 close();
             }
         }else{
-            //ULSBUS_LOG("%s: Frame [%d] Transmited : self_id: 0x%X remote_id: 0x%X ",_connection->interface()->name(),_frame_idx,_self_id,_remote_id);
+           // ULSBUS_LOG("%s: Frame [%d] Transmited : self_id: 0x%X remote_id: 0x%X ",_connection->interface()->name(),_frame_idx,_self_id,_remote_id);
             _frame_idx++;
         }
         return true;
@@ -362,8 +365,10 @@ bool ULSBusTransaction::frameBufferCheck()
     if(_buf->isBufferComlite())
     {
         _buf->setToObject();
-        if((_state != ULSBUST_BOI_RECEIVE_F)&&(_buf->obj() != __null)){
+        if(_state != ULSBUST_BOI_RECEIVE_F){
             _connection->sendAck(ULSBUS_ACK_COMPLITE,_cmd,_self_id,_remote_id);
+            ULSBUS_LOG("%s: Sending ULSBUS_ACK_COMPLITE : self_id: 0x%X remote_id: 0x%X ",_connection->interface()->name(),_self_id,_remote_id);
+
         }
 
         close(); // Buffer ok close connection
@@ -485,7 +490,7 @@ bool ULSBusTransaction::task() // calls every ms
             if(_buf){
                 if(_buf->obj())_buf->obj()->state(ULSBUS_OBJECT_STATE_TIMEOUT);
             }
-            ULSBUS_LOG("Transaction %d Closed by Timeout: self_id: 0x%X remote_id: 0x%X ",counter,_self_id,_remote_id);
+            ULSBUS_LOG("%s:Transaction %d Close by Timeout: self_id: 0x%X remote_id: 0x%X ",_connection->interface()->name(),_number,_self_id,_remote_id);
             close(); // Close transaction by timeout
             return false;
         }
@@ -569,11 +574,11 @@ ULSBusObjectBuffer* ULSBusTransaction::buffer()
 
 ULSBusTransactionsList::ULSBusTransactionsList():ULSList()
 {
-    ULSBusTransaction *px = head();
-    while(px){
-        px->close();
-        px = forward(px);
-    };
+//    ULSBusTransaction *px = head();
+//    while(px){
+//        px->close();
+//        px = forward(px);
+//    };
 };
 
 //void ULSBusTransactionsList::library(ULSDevicesLibrary    *library){
@@ -613,12 +618,11 @@ ULSBusTransaction* ULSBusTransactionsList::open(ULSBusConnection* connection,uin
             }
             px->state(state);
             px->processPacket();
-            ULSBUS_LOG("Transaction %d Open: self_id: 0x%X remote_id: 0x%X ",px->counter,self_id,remote_id);
             return px;
         }
         px = forward(px);
     };
-    ULSBUS_ERROR("Transaction Open FAIL : self_id: 0x%X remote_id: 0x%X ",self_id,remote_id);
+    ULSBUS_ERROR("%s:Transaction Open FAIL : self_id: 0x%X remote_id: 0x%X ",connection->interface()->name(),self_id,remote_id);
     return __null;
 }
 

@@ -159,8 +159,8 @@ bool ULSBus::processAck(ULSBusConnection* pxConnection)
         // All done close transaction
         ULSBusTransaction* pxt = _tarnsactions.find(pxConnection,self_id,remote_id,ULSBUST_TRANSMIT_COMPLITE_WAIT_ACK);
         if(pxt){
-            pxt->processPacket();
             ULSBUS_LOG("%s: Received ULSBUS_ACK_COMPLITE: self_id: 0x%X remote_id: 0x%X ",_name,self_id,remote_id);
+            pxt->processPacket();
             return true;
         }
         ULSBUS_LOG("%s: UNTRANSACTION ULSBUS_ACK_COMPLITE: self_id: 0x%X remote_id: 0x%X ",_name,self_id,remote_id);

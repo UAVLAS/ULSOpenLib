@@ -72,7 +72,7 @@ private:
     uint32_t  _frame_idx;
     uint32_t  _frame_size;
     uint32_t  _frame_size_last;
-
+    uint32_t  _number;
     //    uint16_t _crc;
 };
 
