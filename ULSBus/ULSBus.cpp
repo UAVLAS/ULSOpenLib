@@ -55,6 +55,10 @@ void ULSBus::open()
 }
 bool ULSBus::sendObject(ULSBusObjectBase* obj)
 {
+    if(obj->permition() == ULSBUS_OBJECT_PERMITION_WRITEONLY){ // why to read  write only object WTF ?
+        obj->state(ULSBUS_OBJECT_STATE_ERROR);
+        return false;
+    }
     ULSDeviceBase* remoteDevice = (ULSDeviceBase*)obj->parent();
     // check if we have devices connected to us with corresponding ID
     ULSBusConnection* pxc =  _connections.findId(remoteDevice->id());
@@ -82,6 +86,10 @@ bool ULSBus::sendObject(ULSBusObjectBase* obj)
 }
 bool ULSBus::requestObject(ULSBusObjectBase* obj)
 {
+    if(obj->permition() == ULSBUS_OBJECT_PERMITION_READONLY){ // why to write readonly object WTF ?
+        obj->state(ULSBUS_OBJECT_STATE_ERROR);
+        return false;
+    }
     ULSDeviceBase* remoteDevice = (ULSDeviceBase*)obj->parent();
     // check if we have devices connected to us with corresponding ID
     ULSBusConnection* pxc =  _connections.findId(remoteDevice->id());
@@ -159,11 +167,11 @@ bool ULSBus::processAck(ULSBusConnection* pxConnection)
         // All done close transaction
         ULSBusTransaction* pxt = _tarnsactions.find(pxConnection,self_id,remote_id,ULSBUST_TRANSMIT_COMPLITE_WAIT_ACK);
         if(pxt){
-            ULSBUS_LOG("%s: Received ULSBUS_ACK_COMPLITE: self_id: 0x%X remote_id: 0x%X ",_name,self_id,remote_id);
+            //ULSBUS_LOG("%s: Received ULSBUS_ACK_COMPLITE: self_id: 0x%X remote_id: 0x%X ",_name,self_id,remote_id);
             pxt->processPacket();
             return true;
         }
-        ULSBUS_LOG("%s: UNTRANSACTION ULSBUS_ACK_COMPLITE: self_id: 0x%X remote_id: 0x%X ",_name,self_id,remote_id);
+        //ULSBUS_LOG("%s: UNTRANSACTION ULSBUS_ACK_COMPLITE: self_id: 0x%X remote_id: 0x%X ",_name,self_id,remote_id);
     }
         break;
 
@@ -236,7 +244,7 @@ bool ULSBus::processPacket(ULSBusConnection *pxConnection)
         uint8_t  self_id = pxRxPack->boi_sft.self_id;
         uint16_t obj_id = pxRxPack->boi_sft.obj_id;
         uint8_t  *obj_data = pxRxPack->boi_sft.data;
-        ULSBUS_LOG("%s: Received ULSBUS_BOI_SFT: self_id: 0x%X remote_id: 0x%X object: 0x%X",_name,self_id,0,obj_id);
+        //ULSBUS_LOG("%s: Received ULSBUS_BOI_SFT: self_id: 0x%X remote_id: 0x%X object: 0x%X",_name,self_id,0,obj_id);
         ULSBusObjectBase *obj =  _remoteDevices.getObject(self_id,obj_id); // Looking for object in library
         if(obj){ // check if we found object
             if(obj->size() == obj_size){ // check size match
@@ -275,7 +283,7 @@ bool ULSBus::processPacket(ULSBusConnection *pxConnection)
         uint8_t self_id = pxRxPack->boi_sot.self_id;
         uint16_t obj_id = pxRxPack->boi_sot.obj_id;
         uint32_t obj_size = pxRxPack->boi_sot.obj_size;
-        ULSBUS_LOG("%s: Received ULSBUS_BOI_SOT: self_id: 0x%X remote_id: 0x%X object: 0x%X",_name,self_id,0,obj_id);
+       // ULSBUS_LOG("%s: Received ULSBUS_BOI_SOT: self_id: 0x%X remote_id: 0x%X object: 0x%X",_name,self_id,0,obj_id);
 
         ULSBusObjectBase *obj =  _remoteDevices.getObject(self_id,obj_id); // Looking for object in library
 
@@ -307,7 +315,7 @@ bool ULSBus::processPacket(ULSBusConnection *pxConnection)
         uint8_t  remote_id = pxRxPack->rwoi_sft.remote_id;
         uint16_t obj_id = pxRxPack->rwoi_sft.obj_id;
         uint8_t  *obj_data = pxRxPack->rwoi_sft.data;
-        ULSBUS_LOG("%s: Received ULSBUS_RWOI_SFT: self_id: 0x%X remote_id: 0x%X object: 0x%X",_name,self_id,remote_id,obj_id);
+        //ULSBUS_LOG("%s: Received ULSBUS_RWOI_SFT: self_id: 0x%X remote_id: 0x%X object: 0x%X",_name,self_id,remote_id,obj_id);
         if(_selfDevice->id() == remote_id){
             // our device need to write.
             ULSBusObjectBase *obj =  _selfDevice->getObject(obj_id); // Looking for object in library
@@ -325,7 +333,7 @@ bool ULSBus::processPacket(ULSBusConnection *pxConnection)
                 return false;
             }
             obj->setData(obj_data);
-            ULSBUS_LOG("%s: OBJECT [0x%X] Received : self_id: 0x%X remote_id: 0x%X ",pxConnection->interface()->name(),obj_id,self_id,remote_id);
+            //ULSBUS_LOG("%s: OBJECT [0x%X] Received : self_id: 0x%X remote_id: 0x%X ",pxConnection->interface()->name(),obj_id,self_id,remote_id);
             pxConnection->sendAck(ULSBUS_ACK_COMPLITE,cmd,self_id,remote_id);
             obj->state(ULSBUS_OBJECT_STATE_OK);
             return true;
@@ -358,7 +366,7 @@ bool ULSBus::processPacket(ULSBusConnection *pxConnection)
         uint8_t remote_id = pxRxPack->rwoi_sot.remote_id;
         uint16_t obj_id = pxRxPack->rwoi_sot.obj_id;
         uint16_t obj_size = pxRxPack->rwoi_sot.obj_size;
-        ULSBUS_LOG("%s: Received ULSBUS_RWOI_SOT: self_id: 0x%X remote_id: 0x%X object: 0x%X",_name,self_id,remote_id,obj_id);
+        //ULSBUS_LOG("%s: Received ULSBUS_RWOI_SOT: self_id: 0x%X remote_id: 0x%X object: 0x%X",_name,self_id,remote_id,obj_id);
         if(_selfDevice->id() == remote_id){
             ULSBusObjectBase *obj =  _selfDevice->getObject(obj_id); // Looking for object in library
             if(!obj){
@@ -377,7 +385,7 @@ bool ULSBus::processPacket(ULSBusConnection *pxConnection)
             }
             return true;
         }else{
-            ULSBUS_LOG("%s: ULSBUS_RWOI_SOT - RETRANSMIT : self_id: 0x%X remote_id: 0x%X object: 0x%X",_name,self_id,remote_id,obj_id);
+            //ULSBUS_LOG("%s: ULSBUS_RWOI_SOT - RETRANSMIT : self_id: 0x%X remote_id: 0x%X object: 0x%X",_name,self_id,remote_id,obj_id);
             // Redirect to other devices;
             ULSBusConnection* pxc =  _connections.findId(remote_id);
             if(!pxc) return false; // connection with device not found
@@ -417,7 +425,7 @@ bool ULSBus::processPacket(ULSBusConnection *pxConnection)
         uint16_t obj_id = pxRxPack->rroi.obj_id;
         uint16_t obj_size = pxRxPack->rroi.size;
 
-        ULSBUS_LOG("%s: Received ULSBUS_RROI: self_id: 0x%X remote_id: 0x%X object: 0x%X",_name,self_id,remote_id,obj_id);
+        //ULSBUS_LOG("%s: Received ULSBUS_RROI: self_id: 0x%X remote_id: 0x%X object: 0x%X",_name,self_id,remote_id,obj_id);
         if(_selfDevice->id() == remote_id){
 
             ULSBusObjectBase *obj =  _selfDevice->getObject(obj_id); // Looking for object in library
@@ -441,7 +449,7 @@ bool ULSBus::processPacket(ULSBusConnection *pxConnection)
             return true;
 
         }else{
-            ULSBUS_LOG("%s: ULSBUS_RROI - RETRANSMIT : self_id: 0x%X remote_id: 0x%X object: 0x%X",_name,self_id,remote_id,obj_id);
+           // ULSBUS_LOG("%s: ULSBUS_RROI - RETRANSMIT : self_id: 0x%X remote_id: 0x%X object: 0x%X",_name,self_id,remote_id,obj_id);
             // Redirect to other devices;
             ULSBusConnection* pxc =  _connections.findId(remote_id);
             if(!pxc) return true; // connection with device not found
@@ -455,7 +463,7 @@ bool ULSBus::processPacket(ULSBusConnection *pxConnection)
         uint16_t obj_id = pxRxPack->aoi_sft.obj_id;
         uint16_t obj_size = (packLenght - ULSBUS_HEADER_SIZE_AOI_SFT);
         uint8_t* obj_data = pxRxPack->aoi_sft.data;
-        ULSBUS_LOG("%s: Received ULSBUS_AOI_SFT: self_id: 0x%X remote_id: 0x%X object: 0x%X",_name,self_id,remote_id,obj_id);
+        //ULSBUS_LOG("%s: Received ULSBUS_AOI_SFT: self_id: 0x%X remote_id: 0x%X object: 0x%X",_name,self_id,remote_id,obj_id);
 
         ULSDeviceBase *remoteDevice = _remoteDevices.findDevice(remote_id);
         if(remoteDevice){
@@ -463,10 +471,10 @@ bool ULSBus::processPacket(ULSBusConnection *pxConnection)
             if(!obj)return false; // No ack if device not found
             obj->setData(obj_data);
             obj->state(ULSBUS_OBJECT_STATE_OK);
-            ULSBUS_LOG("%s: OBJECT [0x%X] Received : self_id: 0x%X remote_id: 0x%X ",pxConnection->interface()->name(),obj_id,self_id,remote_id);
+            //ULSBUS_LOG("%s: OBJECT [0x%X] Received : self_id: 0x%X remote_id: 0x%X ",pxConnection->interface()->name(),obj_id,self_id,remote_id);
             return true;
         }else{
-            ULSBUS_LOG("%s: ULSBUS_AOI_SFT - RETRANSMIT : self_id: 0x%X remote_id: 0x%X object: 0x%X",_name,self_id,remote_id,obj_id);
+           // ULSBUS_LOG("%s: ULSBUS_AOI_SFT - RETRANSMIT : self_id: 0x%X remote_id: 0x%X object: 0x%X",_name,self_id,remote_id,obj_id);
             // Redirect to other devices;
             ULSBusConnection* pxc =  _connections.findId(self_id);
             if(!pxc) return true; // connection with device not found
@@ -491,7 +499,7 @@ bool ULSBus::processPacket(ULSBusConnection *pxConnection)
         uint16_t obj_id = pxRxPack->aoi_sot.obj_id;
         uint16_t obj_size = pxRxPack->aoi_sot.size;
 
-        ULSBUS_LOG("%s: Received ULSBUS_AOI_SOT: self_id: 0x%X remote_id: 0x%X object: 0x%X",_name,self_id,remote_id,obj_id);
+        //ULSBUS_LOG("%s: Received ULSBUS_AOI_SOT: self_id: 0x%X remote_id: 0x%X object: 0x%X",_name,self_id,remote_id,obj_id);
         ULSDeviceBase *remoteDevice = _remoteDevices.findDevice(remote_id);
         if(remoteDevice){
             ULSBusObjectBase *obj =  remoteDevice->getObject(obj_id); // Looking for object in library
@@ -506,13 +514,13 @@ bool ULSBus::processPacket(ULSBusConnection *pxConnection)
             return true;
 
         }else{
-            ULSBUS_LOG("%s: ULSBUS_AOI_SOT - RETRANSMIT : self_id: 0x%X remote_id: 0x%X object: 0x%X",_name,self_id,remote_id,obj_id);
+            //ULSBUS_LOG("%s: ULSBUS_AOI_SOT - RETRANSMIT : self_id: 0x%X remote_id: 0x%X object: 0x%X",_name,self_id,remote_id,obj_id);
 
             // Redirect to other devices;
             ULSBusConnection* pxc =  _connections.findId(self_id);
             if(!pxc)
             {
-                ULSBUS_LOG("%s: ULSBUS_AOI_SOT - No Connected Devices : self_id: 0x%X remote_id: 0x%X object: 0x%X",_name,self_id,remote_id,obj_id);
+                //ULSBUS_LOG("%s: ULSBUS_AOI_SOT - No Connected Devices : self_id: 0x%X remote_id: 0x%X object: 0x%X",_name,self_id,remote_id,obj_id);
 
                 return false; // pxc with device not found
             }

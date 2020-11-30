@@ -56,13 +56,13 @@ bool ULSBusTransaction::open(ULSBusConnection* connection,uint8_t selfId,uint8_t
     _remote_id = remoteId;
     _buf = __null;
     _timeout = ULSBUS_TIMEOUT;
-    ULSBUS_LOG("%s:Transaction %d Open: self_id: 0x%X remote_id: 0x%X ",_connection->interface()->name(),_number,_self_id,_remote_id);
+    //ULSBUS_LOG("%s:Transaction %d Open: self_id: 0x%X remote_id: 0x%X ",_connection->interface()->name(),_number,_self_id,_remote_id);
     return true;
 }
 
 void ULSBusTransaction::close()
 {
-    ULSBUS_LOG("%s:Transaction %d Close : self_id: 0x%X remote_id: 0x%X ",_connection->interface()->name(),_number,_self_id,_remote_id);
+    //ULSBUS_LOG("%s:Transaction %d Close : self_id: 0x%X remote_id: 0x%X ",_connection->interface()->name(),_number,_self_id,_remote_id);
     _state = ULSBUST_EMPTY;
     _cmd = 0;
     _frames = 0;
@@ -299,7 +299,7 @@ void ULSBusTransaction::frameReceived(uint32_t frame_idx,uint8_t *buf)
     if((_frame_idx + 1) == _frames)
     {
         _buf->setData(_frame_size,_frame_idx,buf,_frame_size_last);
-        ULSBUS_LOG("%s: Last Frame [%d/%d] Received : self_id: 0x%X remote_id: 0x%X ",_connection->interface()->name(),_frame_idx,_frames-1,_self_id,_remote_id);
+        //ULSBUS_LOG("%s: Last Frame [%d/%d] Received : self_id: 0x%X remote_id: 0x%X ",_connection->interface()->name(),_frame_idx,_frames-1,_self_id,_remote_id);
     }else{
         _buf->setData(_frame_size,_frame_idx,buf,_frame_size);
         //   ULSBUS_LOG("%s: Frame [%d/%d] Received : self_id: 0x%X remote_id: 0x%X ",_connection->interface()->name(),_frame_idx,_frames-1,_self_id,_remote_id);
@@ -337,7 +337,7 @@ bool ULSBusTransaction::frameTransmit(uint8_t *buf)
     {
         _timeout = ULSBUS_TIMEOUT; // keep active
         if((_frame_idx + 1) == _frames){// Last frame was sended
-            ULSBUS_LOG("%s: Last Frame [%d] Transmited : self_id: 0x%X remote_id: 0x%X ",_connection->interface()->name(),_frame_idx,_self_id,_remote_id);
+           // ULSBUS_LOG("%s: Last Frame [%d] Transmited : self_id: 0x%X remote_id: 0x%X ",_connection->interface()->name(),_frame_idx,_self_id,_remote_id);
 
             if(_cmd != ULSBUS_BOI_F){
                 _timeout = 4 * ULSBUS_TIMEOUT; // keep active for a while to wait ack from remote device
@@ -370,17 +370,9 @@ bool ULSBusTransaction::frameBufferCheck()
         case ULSBUST_BOI_RECEIVE_F: // No ack
 
             break;
-        case ULSBUST_AOI_RECEIVE_F: // Ack anyway
-            if(_buf->obj()){
-                if(_buf->obj()->permition() == ULSBUS_OBJECT_PERMITION_READONLY)
-                {
-                    _connection->sendAck(ULSBUS_ACK_OBJECT_ACCESS_DENIED,_cmd,_self_id,_remote_id);
-                    ULSBUS_LOG("%s: Sending ULSBUS_ACK_OBJECT_ACCESS_DENIED : self_id: 0x%X remote_id: 0x%X ",_connection->interface()->name(),_self_id,_remote_id);
-                    return false;
-                }
-            }
+        case ULSBUST_AOI_RECEIVE_F: // Ack anyway we are reading requested object - no permittion check;
             _connection->sendAck(ULSBUS_ACK_COMPLITE,_cmd,_self_id,_remote_id);
-            ULSBUS_LOG("%s: Sending ULSBUS_ACK_COMPLITE : self_id: 0x%X remote_id: 0x%X ",_connection->interface()->name(),_self_id,_remote_id);
+            //ULSBUS_LOG("%s: Sending ULSBUS_ACK_COMPLITE : self_id: 0x%X remote_id: 0x%X ",_connection->interface()->name(),_self_id,_remote_id);
             break;
         case ULSBUST_RWOI_RECEIVE_F: // Ack only if we receiving object
             if(_buf->obj()){
@@ -388,11 +380,12 @@ bool ULSBusTransaction::frameBufferCheck()
                 {
                     _connection->sendAck(ULSBUS_ACK_OBJECT_ACCESS_DENIED,_cmd,_self_id,_remote_id);
                     ULSBUS_LOG("%s: Sending ULSBUS_ACK_OBJECT_ACCESS_DENIED : self_id: 0x%X remote_id: 0x%X ",_connection->interface()->name(),_self_id,_remote_id);
+                    close();
                     return false;
                 }
 
                 _connection->sendAck(ULSBUS_ACK_COMPLITE,_cmd,_self_id,_remote_id);
-                ULSBUS_LOG("%s: Sending ULSBUS_ACK_COMPLITE : self_id: 0x%X remote_id: 0x%X ",_connection->interface()->name(),_self_id,_remote_id);
+               // ULSBUS_LOG("%s: Sending ULSBUS_ACK_COMPLITE : self_id: 0x%X remote_id: 0x%X ",_connection->interface()->name(),_self_id,_remote_id);
             }
             break;
         default:
