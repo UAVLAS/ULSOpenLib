@@ -570,7 +570,6 @@ void ULSBus::add(ULSBusTransaction* transaction)
 }
 void ULSBus::add(ULSBusConnection* pxc)
 {
-    pxc->interface()->enableEscIfSupprted(true);
     _connections.add(pxc);
 }
 void ULSBus::add(ULSBusObjectBuffer* buf)

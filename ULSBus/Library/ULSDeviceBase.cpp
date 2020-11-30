@@ -53,18 +53,3 @@ void ULSDeviceBase::updatedCallback(_ulsbus_obj_updated_callback callback)
     };
 }
 
-
-
-ULSDevice_ULSX::ULSDevice_ULSX(const char* name,uint8_t id,uint16_t devClass,uint16_t hardware):
-ULSDeviceBase(name,id,devClass,hardware),
-  o_sys_signature(this,0x0001,"System_Signature","Device signature data",ULSBUS_OBJECT_PERMITION_READONLY),
-  o_sys_cmd(this,0x0010,"System_Command","Device command",ULSBUS_OBJECT_PERMITION_WRITEONLY),
-  o_sys_status(this,0x0011,"System_Status","Device status data",ULSBUS_OBJECT_PERMITION_READONLY),
-  o_sys_flash(this,0x0100,"System_Flash","Device flash page",ULSBUS_OBJECT_PERMITION_WRITEONLY)
-{
-    add(&o_sys_signature);
-    add(&o_sys_cmd);
-    add(&o_sys_status);
-    add(&o_sys_flash);
-
-}

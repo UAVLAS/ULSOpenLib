@@ -51,7 +51,6 @@ typedef enum  : uint16_t{
     ULSBD_SYS_STARTUSER = 2,
     ULSBD_SYS_PREPARE_TO_UPDATE = 10,
     ULSBD_SYS_FINISH_UPDATE = 11
-
 }__ulsdbt_sys_cmd;
 
 
@@ -91,16 +90,6 @@ private:
     _ulsbus_device_status _status;
 };
 
-class ULSDevice_ULSX:public ULSDeviceBase
-{
-public:
-    ULSDevice_ULSX(const char* name,uint8_t id,uint16_t devClass,uint16_t hardware);
-
-    ULSBusObject<__ulsdb_signature> o_sys_signature;
-    ULSBusObject<__ulsdbt_sys_cmd>   o_sys_cmd;
-    ULSBusObject<__ulsdbt_sys_status> o_sys_status;
-    ULSBusObject<__ulsdb_sys_flash> o_sys_flash;
-};
 
 
 
