@@ -55,7 +55,7 @@ void ULSBus::open()
 }
 bool ULSBus::sendObject(ULSBusObjectBase* obj)
 {
-    if(obj->permition() == ULSBUS_OBJECT_PERMITION_WRITEONLY){ // why to read  write only object WTF ?
+    if(obj->permition() == ULSBUS_OBJECT_PERMITION_READONLY){ // why to write  read only object WTF ?
         obj->state(ULSBUS_OBJECT_STATE_ERROR);
         return false;
     }
@@ -86,7 +86,7 @@ bool ULSBus::sendObject(ULSBusObjectBase* obj)
 }
 bool ULSBus::requestObject(ULSBusObjectBase* obj)
 {
-    if(obj->permition() == ULSBUS_OBJECT_PERMITION_READONLY){ // why to write readonly object WTF ?
+    if(obj->permition() == ULSBUS_OBJECT_PERMITION_WRITEONLY){ // why to read Writeonly object WTF ?
         obj->state(ULSBUS_OBJECT_STATE_ERROR);
         return false;
     }
