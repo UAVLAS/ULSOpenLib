@@ -35,7 +35,6 @@ void ULSBus::task()// call every ms
     _nmTimeout++;
     _time++;
     _connections.task();
-    _tarnsactions.task();
     ULSBusConnection *pxConnection = _connections.head();
     while(pxConnection){
         while( pxConnection->read() != 0){ // read all packets from connection
@@ -43,6 +42,7 @@ void ULSBus::task()// call every ms
         }
         pxConnection = _connections.forward(pxConnection);
     }
+    _tarnsactions.task();
     // Send NM packet
     if(_nmTimeout >= ULSBUS_NM_INTERVAL){
         sendNM();

@@ -18,7 +18,11 @@
 
 #define ULSBUS_FRAMESIZE_MAX    256
 #define ULSBUS_FRAMES           8
-#define ULSBUS_TIMEOUT          300
+#define ULSBUS_TIMEOUT          50
+#define ULSBUS_TIMEOUT_TRANSMIT_COMPLITE    400
+
+
+
 #define ULSBUS_TIMEOUT_ACK      200
 
 #define ULSBUS_NM_INTERVAL      1000

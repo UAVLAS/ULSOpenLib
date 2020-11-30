@@ -80,8 +80,7 @@ bool ULSBusConnection::sendAck(_ulsbus_ack ack,uint8_t cmd,uint8_t self_id,uint8
     pxPack->ack.remote_id = remote_id;
     pxPack->ack.ackcmd = (ack<<5)|cmd;
     _interface->txBufInstance.lenght = ULSBUS_HEADER_SIZE_ACK;
-    _interface->send();
-    return true;
+    return  _interface->send();
 }
 bool ULSBusConnection::sendNM(_ulsbus_device_status *dev)
 {
@@ -94,8 +93,7 @@ bool ULSBusConnection::sendNM(_ulsbus_device_status *dev)
     pxPack->nm.status1 = dev->status1;
     pxPack->nm.status2 = dev->status2;
     _interface->txBufInstance.lenght = ULSBUS_HEADER_SIZE_NM;
-    _interface->send();
-    return true;
+    return _interface->send();
 }
 void ULSBusConnection::interface(IfBase* interface)
 {

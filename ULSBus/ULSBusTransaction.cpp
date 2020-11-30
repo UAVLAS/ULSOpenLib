@@ -191,7 +191,7 @@ bool ULSBusTransaction::rwoiTransmitStart(){
             if(_connection->interface()->send())
             {
                 _state = ULSBUST_TRANSMIT_COMPLITE_WAIT_ACK;
-                _timeout = ULSBUS_TIMEOUT; // keep active
+                _timeout = ULSBUS_TIMEOUT_TRANSMIT_COMPLITE; // keep active
             }else{
                 // Error interface buffer full repeat later
                 ULSBUS_ERROR("%s: Sending ULSBUS_RWOI_SFT FAIL : self_id: 0x%X remote_id: 0x%X ",_connection->interface()->name(),_self_id,_remote_id);
@@ -340,7 +340,7 @@ bool ULSBusTransaction::frameTransmit(uint8_t *buf)
            // ULSBUS_LOG("%s: Last Frame [%d] Transmited : self_id: 0x%X remote_id: 0x%X ",_connection->interface()->name(),_frame_idx,_self_id,_remote_id);
 
             if(_cmd != ULSBUS_BOI_F){
-                _timeout = 4 * ULSBUS_TIMEOUT; // keep active for a while to wait ack from remote device
+                _timeout = ULSBUS_TIMEOUT_TRANSMIT_COMPLITE; // keep active for a while to wait ack from remote device
                 _state = ULSBUST_TRANSMIT_COMPLITE_WAIT_ACK;
             }else {
                 close();

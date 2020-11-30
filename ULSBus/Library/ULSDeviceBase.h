@@ -96,7 +96,7 @@ class ULSDevice_ULSX:public ULSDeviceBase
 public:
     ULSDevice_ULSX(const char* name,uint8_t id,uint16_t devClass,uint16_t hardware);
 
-    ULSBusObject<__ulsdb_signature> o_signature;
+    ULSBusObject<__ulsdb_signature> o_sys_signature;
     ULSBusObject<__ulsdbt_sys_cmd>   o_sys_cmd;
     ULSBusObject<__ulsdbt_sys_status> o_sys_status;
     ULSBusObject<__ulsdb_sys_flash> o_sys_flash;
