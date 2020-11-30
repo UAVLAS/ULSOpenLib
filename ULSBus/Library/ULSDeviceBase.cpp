@@ -57,7 +57,7 @@ void ULSDeviceBase::updatedCallback(_ulsbus_obj_updated_callback callback)
 
 ULSDevice_ULSX::ULSDevice_ULSX(const char* name,uint8_t id,uint16_t devClass,uint16_t hardware):
 ULSDeviceBase(name,id,devClass,hardware),
-  o_signature(this,0x0001,"Device/Signature","Device signature data",ULSBUS_OBJECT_PERMITION_SYSCONFIG),
+  o_signature(this,0x0001,"Device/Signature","Device signature data",ULSBUS_OBJECT_PERMITION_READONLY),
   o_sys_cmd(this,0x0010,"Device/Command","Device command",ULSBUS_OBJECT_PERMITION_WRITEONLY),
   o_sys_status(this,0x0011,"Device/Status","Device status data",ULSBUS_OBJECT_PERMITION_READONLY),
   o_sys_flash(this,0x0100,"Device/Flash","Device flash page",ULSBUS_OBJECT_PERMITION_WRITEONLY)

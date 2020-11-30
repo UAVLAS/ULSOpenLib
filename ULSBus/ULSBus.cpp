@@ -166,6 +166,21 @@ bool ULSBus::processAck(ULSBusConnection* pxConnection)
         ULSBUS_LOG("%s: UNTRANSACTION ULSBUS_ACK_COMPLITE: self_id: 0x%X remote_id: 0x%X ",_name,self_id,remote_id);
     }
         break;
+
+    case ULSBUS_ACK_OBJECT_ACCESS_DENIED:{
+        ULSBUS_LOG("%s: Received ULSBUS_ACK_OBJECT_ACCESS_DENIED: self_id: 0x%X remote_id: 0x%X ",_name,self_id,remote_id);
+        // All done close transaction
+        ULSBusTransaction* pxt = _tarnsactions.find(pxConnection,self_id,remote_id,ULSBUST_TRANSMIT_COMPLITE_WAIT_ACK);
+        if(pxt){
+            if(pxt->buffer()->obj())
+            {
+                pxt->buffer()->obj()->state(ULSBUS_OBJECT_STATE_ERROR);
+            }
+            pxt->close();
+            return true;
+        }
+    }
+        break;
     case ULSBUS_ACK_BUFFER_FULL:
         ULSBUS_LOG("%s: Received ULSBUS_ACK_BUFFER_FULL: self_id: 0x%X remote_id: 0x%X ",_name,self_id,remote_id);
         break;
@@ -233,6 +248,11 @@ bool ULSBus::processPacket(ULSBusConnection *pxConnection)
             ULSBusObjectBuffer* buffer =_oBuf.open(obj_id,obj_size,obj);
             if(!buffer) return false;
             // Set data with current object
+            if(obj->permition() == ULSBUS_OBJECT_PERMITION_READONLY)
+            {
+                pxConnection->sendAck(ULSBUS_ACK_OBJECT_ACCESS_DENIED,cmd,self_id,0);
+                return false;
+            }
             buffer->setData(obj_data,obj_size);
             // Create Transaction for each interface
             ULSBusConnection *px = _connections.head();
@@ -297,6 +317,11 @@ bool ULSBus::processPacket(ULSBusConnection *pxConnection)
             }
             if(obj->size()!= obj_size){
                 pxConnection->sendAck(ULSBUS_ACK_OBJECT_SIZE_MISMUTCH,cmd,self_id,remote_id);
+                return false;
+            }
+            if(obj->permition() == ULSBUS_OBJECT_PERMITION_READONLY)
+            {
+                pxConnection->sendAck(ULSBUS_ACK_OBJECT_ACCESS_DENIED,cmd,self_id,remote_id);
                 return false;
             }
             obj->setData(obj_data);
@@ -467,7 +492,7 @@ bool ULSBus::processPacket(ULSBusConnection *pxConnection)
         uint16_t obj_size = pxRxPack->aoi_sot.size;
 
         ULSBUS_LOG("%s: Received ULSBUS_AOI_SOT: self_id: 0x%X remote_id: 0x%X object: 0x%X",_name,self_id,remote_id,obj_id);
-         ULSDeviceBase *remoteDevice = _remoteDevices.findDevice(remote_id);
+        ULSDeviceBase *remoteDevice = _remoteDevices.findDevice(remote_id);
         if(remoteDevice){
             ULSBusObjectBase *obj =  remoteDevice->getObject(obj_id); // Looking for object in library
             if(!obj){
@@ -532,7 +557,7 @@ uint32_t ULSBus::openedTransactions()
 }
 void ULSBus::add(ULSBusTransaction* transaction)
 {
- //   transaction->library(&_remoteDevices);
+    //   transaction->library(&_remoteDevices);
     _tarnsactions.add(transaction);
 }
 void ULSBus::add(ULSBusConnection* pxc)
