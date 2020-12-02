@@ -47,8 +47,8 @@ public:
 protected:
     virtual void receiverUpdate(){};
     virtual void transmitterUpdate(){};
-    _io_fifo_u8 *_rxBuf;
-    _io_fifo_u8 *_txBuf;
+    _io_fifo_u8 *_rxFifo;
+    _io_fifo_u8 *_txFifo;
     bool _txCplt;
     bool _isOpened;
 
