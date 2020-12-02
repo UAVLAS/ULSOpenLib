@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdarg.h>
 
+#define ULS_DEBUG
 #ifdef __cplusplus
 extern "C" {
 #endif

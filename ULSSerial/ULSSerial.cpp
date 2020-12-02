@@ -1,5 +1,4 @@
 #include "ULSSerial.h"
-#include "udebug.h"
 
 
 ULSSerial::ULSSerial(_io_fifo_u8 *rxFifo,_io_fifo_u8 *txFifo)
@@ -184,11 +183,14 @@ uint32_t ULSSerial::readCobs(uint8_t *buf,uint32_t sizelimit)
         size++;
         if(size == sizelimit){
             // unable to receive complite pack
-           _rxFifo->flush_to_seeker();
+            _rxFifo->flush_to_seeker();
         }
     }
     if(crc != 0){
+#ifdef ULS_DEBUG
         uDebug("COBS Received packet CRC Mismatch");
+#endif
+        return 0;
     }
     return size;
 }

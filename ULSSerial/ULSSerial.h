@@ -1,13 +1,13 @@
 #ifndef ULSSERIAL_H
 #define ULSSERIAL_H
 
-#include "../utils/io_fifo.h"
 #include "string.h"
 #include <stdio.h>
 #include <stdarg.h>
 #include "../utils/crc16.h"
+#include "../utils/io_fifo.h"
 
-#define ULSSerial_STR_BUFFER_SIZE 512
+#define ULSSERIAL_STR_BUFFER_SIZE 512
 
 typedef enum{
     SERIAL_MODE_RAW = 0,
@@ -60,7 +60,7 @@ private:
     uint32_t _escstage;
     bool _escStarted;
 
-    char _str[ULSSerial_STR_BUFFER_SIZE];
+    char _str[ULSSERIAL_STR_BUFFER_SIZE];
 };
 
 
