@@ -80,7 +80,7 @@ bool ULSBus::sendObject(ULSBusObjectBase* obj)
         obj->state(ULSBUS_OBJECT_STATE_ERROR);
         return false;
     }
-    ULSBUS_LOG("SEND Object   : self_id: 0x%X remote_id: 0x%X object: 0x%X",_selfDevice->id(),remoteDevice->id(),obj->id());
+   // ULSBUS_LOG("SEND Object   : self_id: 0x%X remote_id: 0x%X object: 0x%X",_selfDevice->id(),remoteDevice->id(),obj->id());
     obj->state(ULSBUS_OBJECT_STATE_BUSY);
     return true;
 }
@@ -102,7 +102,7 @@ bool ULSBus::requestObject(ULSBusObjectBase* obj)
     pxTxPack->rroi.obj_id = obj->id();// PC adress
     pxTxPack->rroi.size = obj->size();
     pxc->interface()->txBufInstance.lenght = ULSBUS_HEADER_SIZE_RROI;
-    ULSBUS_LOG("Request Object: self_id: 0x%X remote_id: 0x%X object: 0x%X",_selfDevice->id(),remoteDevice->id(),obj->id());
+    //ULSBUS_LOG("Request Object: self_id: 0x%X remote_id: 0x%X object: 0x%X",_selfDevice->id(),remoteDevice->id(),obj->id());
     if(!pxc->send())
     {
         obj->state(ULSBUS_OBJECT_STATE_ERROR);
