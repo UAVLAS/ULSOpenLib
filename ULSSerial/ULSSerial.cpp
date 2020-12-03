@@ -33,42 +33,41 @@ uint32_t ULSSerial::write(uint8_t *buf,uint32_t size)
     transmitterUpdate();
     return size;
 }
-
 uint32_t ULSSerial::writeCobs(uint8_t *buf,uint32_t size)
 {
-    uint8_t *pxSlip;
+    uint8_t *pxcobs;
     uint8_t code;
-    uint32_t len = size;
-    uint16_t crc = 0;
+    uint32_t len = size + 2;
+    uint16_t crc = 0xFFFF;
+
     // Start block
-    pxSlip = _txFifo->cobs();
+    pxcobs = _txFifo->pxcobs();
     code = 1;
     _txFifo->pushcobs(0);
     
-    while(len > 0U){
+    while(len > 2U){
         if (code != 0xFF) {
             len--;
-            uint8_t c = *buf++;
-            crc = GetCrcByte(crc,c);
-            if (c != 0) {
-                _txFifo->pushcobs(c);
+            uint8_t v = *buf++;
+            crc = GetCrcByte(crc,v);
+            if (v != 0) {
+                _txFifo->pushcobs(v);
                 code++;
                 continue;
             }
         }
-        *pxSlip = code; // finish block
+        *pxcobs = code; // finish block
         // Start block
-        pxSlip = _txFifo->cobs();
+        pxcobs = _txFifo->pxcobs();
         code = 1;
         _txFifo->pushcobs(0);
     }
     // send CRC
-    len = 2;
     buf = (uint8_t*)&crc;
     while(len > 0U)
     {
-        len--;
         if (code != 0xFF) {
+             len--;
             uint8_t c = *buf++;
             if (c != 0) {
                 _txFifo->pushcobs(c);
@@ -76,14 +75,14 @@ uint32_t ULSSerial::writeCobs(uint8_t *buf,uint32_t size)
                 continue;
             }
         }
-        *pxSlip = code; // finish block
+        *pxcobs = code; // finish block
         // Start block
-        pxSlip = _txFifo->cobs();
+        pxcobs = _txFifo->pxcobs();
         code = 1;
         _txFifo->pushcobs(0);
     }
     
-    *pxSlip = code; // finish block
+    *pxcobs = code; // finish block
     _txFifo->pushcobs(0);
     _txFifo->releasecobs();
     return size;
@@ -142,93 +141,76 @@ uint32_t ULSSerial::read(uint8_t *buf,uint32_t sizelimit)
     return size;
 }
 //==============================================================================
-uint32_t ULSSerial::readCobs(uint8_t *buf,uint32_t sizelimit)
+bool ULSSerial::readCobsCheck(uint32_t sizelimit)
 {
-    bool packInBuf = false;
-    unsigned char v=0;
-    uint32_t size = 0;
-    uint16_t crc = 0;
-
-
+    uint8_t v=0;
     while (_rxFifo->seek(&v)){
         switch(_stage)
         {
         case 0: // Start Of packet
-            _code = _copy = v;
+            _cobs_code = _cobs_counter = v;
             _stage = 1;
             _len = 0;
+            _crc = 0xFFFF;
             break;
-        case 1:
-            // Analayzing packet
-            _copy--;
-            if(_copy != 0){
+        case 1:// Analayzing packet
+            _cobs_counter--;
+            if(_cobs_counter != 0){
                 _len++;
-                crc = GetCrcByte(crc,v);
+                _crc = GetCrcByte(_crc,v);
             }else {
-                if(v == 0){
+                if(v == 0){ // Packet Received
                     _stage = 0;
-                    if((crc != 0)||(_len<2)){
-#ifdef ULS_DEBUG
-                        uDebug("COBS Received packet CRC Mismatch");
-#endif
+                    if((_crc != 0) || (_len < 2) || (_len > sizelimit + 2)){ // Packet error
                         _rxFifo->flush_to_seeker();
-                        return 0;
+                        return false;
                     }
-                    // CRC Ok buffer len calculated;
-                    packInBuf = true;
-                }else{
-                    if(_code != 0xFF){
-                        _len++;
-                        crc = GetCrcByte(crc,0);
-                    }
+                    _len -= 2 ;// remove crc
+                    return true; // CRC Ok buffer len calculated;
                 }
-                _copy = _code = v;
+                if(_cobs_code != 0xFF){
+                    _len++;
+                    _crc = GetCrcByte(_crc,0);
+                }
+            _cobs_counter = _cobs_code = v;
             }
             break;
         }
-        if(packInBuf)break;
     }
+    return false;
+}
+//==============================================================================
+uint32_t ULSSerial::readCobs(uint8_t *buf,uint32_t sizelimit)
+{
+    if(!readCobsCheck(sizelimit))return 0;
 
-
-    if(!packInBuf)return 0;
-    _len -= 2; // Remove CRC;
-    size = _len;
-    if(_len > sizelimit){
-        // unable to receive complite pack
-        _rxFifo->flush_to_seeker();
-        return 0 ;
-    }
+    uint8_t v = 0;
+    uint32_t size = _len;
 
     if(!_rxFifo->pull(&v))return 0; // WTF
-    if(v == 0) return 0;
-    _code = _copy = v;
+    if(v == 0) return 0;// WTF
+
+    _cobs_counter = _cobs_code = v;
 
     while(_rxFifo->pull(&v))
     {
-        _copy--;
-        if (_copy != 0) {
-            if(_len){*buf++ = v;
+        _cobs_counter--;
+        if (_cobs_counter != 0) {
+            if(_len){
+                *buf++ = v;
                 _len--;
             }
         } else {
             if (v == 0){
-                if(crc != 0){
-#ifdef ULS_DEBUG
-                    uDebug("COBS Received packet CRC Mismatch");
-#endif
-                    _rxFifo->flush_to_seeker();
-                    return 0;
-                }
                 return size;
             }
-            if (_code != 0xFF){
+            if (_cobs_code != 0xFF){
                 if(_len){
                     *buf++ = 0;
                     _len--;
                 }
-                crc = GetCrcByte(crc,0);
             }
-            _copy = _code = v;
+            _cobs_counter = _cobs_code = v;
         }
     }
     _rxFifo->flush_to_seeker();

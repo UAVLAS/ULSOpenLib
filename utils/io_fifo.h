@@ -235,7 +235,7 @@ public:
         __exit_critical();
         return true;
     }
-    T* cobs(){return _cobs;}
+    T* pxcobs(){return _cobs;}
 private:
 
     T *_first,*_seeker,*_cobs,*_last,*_start,*_end;

@@ -5,7 +5,7 @@ extern "C" {
 #endif
 
 static unsigned int _startup_time = 0;
-char tmpStr[256];
+char tmpStr[1024];
 void udebugTickHandler()
 {
     _startup_time++;

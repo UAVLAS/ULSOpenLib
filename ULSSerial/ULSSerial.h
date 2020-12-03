@@ -57,12 +57,12 @@ private:
     _serial_mode _mode;
     uint16_t _crc;
     uint32_t _len;
-    uint8_t _code;
-    uint8_t _copy;
+    uint8_t _cobs_code;
+    uint8_t _cobs_counter;
     uint32_t _stage;
     bool _escStarted;
-
     char _str[ULSSERIAL_STR_BUFFER_SIZE];
+    bool readCobsCheck(uint32_t sizelimit);
 };
 
 
