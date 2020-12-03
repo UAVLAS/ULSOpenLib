@@ -70,7 +70,7 @@ public:
 class ULSDevice_ULSX_LDR:public ULSDevice_ULSX
 {
 public:
-    ULSDevice_ULSX_LDR(uint8_t id);
+    ULSDevice_ULSX_LDR(const char* name,uint8_t id,uint16_t devClass,uint16_t hardware);
     ULSBusObject<__ulsot_sys_flash> o_sys_flash;
 };
 

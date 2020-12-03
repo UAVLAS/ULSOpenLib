@@ -33,8 +33,8 @@ ULSDeviceBase(name,id,devClass,hardware),
     add(&o_sys_status);
 }
 
-ULSDevice_ULSX_LDR::ULSDevice_ULSX_LDR(uint8_t id):
-ULSDevice_ULSX("ULSQX_LDR",id,__DEVICE_CLASS_LDR,__DEVICE_HW_LDR),
+ULSDevice_ULSX_LDR::ULSDevice_ULSX_LDR(const char* name,uint8_t id,uint16_t devClass,uint16_t hardware):
+ULSDevice_ULSX(name,id,devClass,hardware),
   o_sys_flash    (this,0x0100,"System_Flash"    ,"Device flash page"    ,ULSBUS_OBJECT_PERMITION_WRITEONLY)
 {
     add(&o_sys_flash);
