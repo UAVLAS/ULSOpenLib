@@ -31,6 +31,7 @@ public:
     ULSBusConnection(IfBase* interface = __null);
     void refresh(uint8_t id);
     void task();
+    void close();
     uint32_t read();
     bool deviceConnected(uint8_t id);
     bool send(_if_buffer_instance* bufi);
@@ -56,6 +57,7 @@ public:
     void redirect(uint16_t dev_id,ULSBusConnection* srcConnection);
     void sendNM(_ulsbus_device_status *dev);
     void task();
+    void close();
     void refresh(ULSBusConnection* pxConnection,uint8_t id);
     ULSBusConnection* findId(uint8_t id);
 };

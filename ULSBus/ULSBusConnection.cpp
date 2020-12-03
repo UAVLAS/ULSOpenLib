@@ -32,6 +32,10 @@ void ULSBusConnection::refresh(uint8_t id)
 {
     _timeout[id] = ULSBUS_NM_TIMEOUT;
 };
+void ULSBusConnection::close()
+{
+    if(_interface)_interface->close();
+}
 void ULSBusConnection::task(){
     uint32_t *pxTimeOut = _timeout;
     uint32_t i = 255;
@@ -113,6 +117,15 @@ ULSBusConnectionsList::ULSBusConnectionsList():
 {
 
 };
+void ULSBusConnectionsList::close()
+{
+    ULSBusConnection *px = head();
+    while(px){
+        px->close();
+        px = forward(px);
+    };
+};
+
 void ULSBusConnectionsList::redirect(ULSBusConnection* pxConnection) // redirect incoming pachet from interface to other
 {
     ULSBusConnection *px = head();

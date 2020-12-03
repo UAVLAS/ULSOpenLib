@@ -38,6 +38,10 @@ public:
     virtual void removeDevice(_ulsbus_device_status *status){(void)status;};
     void task();
     virtual void open();
+    void close()
+    {
+       _connections.close();
+    };
     void sendNM();
     bool sendObject(ULSBusObjectBase* obj);
     bool requestObject(ULSBusObjectBase* obj);

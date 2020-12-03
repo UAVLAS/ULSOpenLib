@@ -36,6 +36,7 @@ class IfBase
 public:
     IfBase(const char* name = __null);
     virtual bool open(){return false;};
+    virtual void close(){};
     virtual void task(){};
     virtual uint32_t read(){return 0;};
     virtual bool send(_if_buffer_instance *ifBufferInstace)
