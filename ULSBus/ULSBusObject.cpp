@@ -69,7 +69,7 @@ void ULSBusObjectBase::setData(uint8_t *buf)
 }
 void ULSBusObjectBase::updatedCallback(_ulsbus_obj_updated_callback callback)
 {
-    _updated_callback = callback;
+    if(_updated_callback == __null)_updated_callback = callback;
 }
 _ulsbus_obj_state ULSBusObjectBase::state()
 {
