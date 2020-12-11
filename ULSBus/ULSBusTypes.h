@@ -14,7 +14,7 @@
 
 #endif
 
-#include "IfBase.h"
+#include "ULSBusInterface.h"
 
 #define ULSBUS_FRAMESIZE_MAX    256
 #define ULSBUS_FRAMES           8

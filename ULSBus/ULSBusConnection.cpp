@@ -22,151 +22,47 @@
 
 #include "ULSBusConnection.h"
 
-ULSBusConnection::ULSBusConnection(IfBase* interface):
-    ULSListItem(),
-    _interface(interface)
+ULSBusConnection::ULSBusConnection(const char* name,uint8_t id,uint8_t net):
+    //ULSListItem(),
+    ULSBusInterface(name,id,net)
 {
-    for(int i = 0 ; i < 256 ; i++) _timeout[i] = 0;
 };
-void ULSBusConnection::refresh(uint8_t id)
+
+
+
+void ULSBusConnection::deviceConnected(uint8_t id)
 {
-    _timeout[id] = ULSBUS_NM_TIMEOUT;
-};
-void ULSBusConnection::task(){
-    uint32_t *pxTimeOut = _timeout;
-    uint32_t i = 255;
-    while(i > 0U)
-    {
-        if(*pxTimeOut>0U){(*pxTimeOut)--;}
-        pxTimeOut++;
-        i--;
-    }
-    if(_interface)_interface->task();
+#ifdef ULS_DEBUG
+    uDebug("%s: Device Connected 0x%.2X ",_name,id);
+#else
+     (void) id;
+#endif
 }
-uint32_t ULSBusConnection::read()
+void ULSBusConnection::deviceDisconnected(uint8_t id)
 {
-    return _interface->read();
-};
-bool ULSBusConnection::deviceConnected(uint8_t id){
-    if(_timeout[id])return true;
+#ifdef ULS_DEBUG
+        uDebug("%s: Device Disconnected 0x%.2X ",_name,id);
+#else
+    (void) id;
+#endif
+
+}
+bool ULSBusConnection::send(uint8_t cmd,uint8_t dsn_network,uint8_t dsn_id,uint32_t len)
+{
+
+    _cn_packet *txPacket = (_cn_packet *)(txInstance.packet.pld);
+
+    txPacket->dsn_id = dsn_id;
+    txPacket->dsn_network = dsn_network;
+    txPacket->src_id = _id;
+    txPacket->src_network = _network;
+
+    if(sendPacket(cmd|0x10,len + 4)== IF_OK)return true;
+
     return false;
 }
-bool ULSBusConnection::send(_if_buffer_instance* bufi)
+bool ULSBusConnection::receive()
 {
-    if(_interface)return _interface->send(bufi);
-        ULSBUS_ERROR("Interface %s not Valid",_interface->name());
+    if(ULSBusInterface::receivePacket() == IF_OK) return true;
     return false;
 }
-bool ULSBusConnection::send()
-{
-    if(_interface == __null){
-        ULSBUS_ERROR("Interface %s not Valid",_interface->name());
-        return false;
-      }
-      bool rez = _interface->send();
-
-   if(rez == false)
-   {
-      ULSBUS_ERROR("Interface %s send() failure",_interface->name());
-   }
-   return rez;
-}
-bool ULSBusConnection::sendAck(_ulsbus_ack ack,uint8_t cmd,uint8_t self_id,uint8_t remote_id)
-{
-    if(!_interface)return false;
-    _ulsbus_packet  *pxPack = (_ulsbus_packet *)(_interface->txBufInstance.buf);
-    pxPack->ack.cmd = ULSBUS_ACK;
-    pxPack->ack.self_id = self_id;
-    pxPack->ack.remote_id = remote_id;
-    pxPack->ack.ackcmd = (ack<<5)|cmd;
-    _interface->txBufInstance.lenght = ULSBUS_HEADER_SIZE_ACK;
-    return  _interface->send();
-}
-bool ULSBusConnection::sendNM(_ulsbus_device_status *dev)
-{
-    if(!_interface)return false;
-    _ulsbus_packet  *pxPack = (_ulsbus_packet *)(_interface->txBufInstance.buf);
-    pxPack->nm.cmd = ULSBUS_NM;
-    pxPack->nm.self_id = dev->id;
-    pxPack->nm.dev_class = dev->devClass;
-    pxPack->nm.hardware = dev->hardware;
-    pxPack->nm.status1 = dev->status1;
-    pxPack->nm.status2 = dev->status2;
-    _interface->txBufInstance.lenght = ULSBUS_HEADER_SIZE_NM;
-    return _interface->send();
-}
-void ULSBusConnection::interface(IfBase* interface)
-{
-    _interface = interface;
-};
-IfBase*  ULSBusConnection::interface()
-{
-    return _interface;
-};
-uint32_t ULSBusConnection::maxFrameSize()
-{
-    return _interface->maxFrameSize();
-};
-
-ULSBusConnectionsList::ULSBusConnectionsList():
-    ULSList()
-{
-
-};
-void ULSBusConnectionsList::redirect(ULSBusConnection* pxConnection) // redirect incoming pachet from interface to other
-{
-    ULSBusConnection *px = head();
-    while(px){
-        if( px != pxConnection){
-            px->send(&(pxConnection->interface()->rxBufInstance));
-        }
-        px = forward(px);
-    };
-};
-void ULSBusConnectionsList::redirect(uint16_t dev_id,ULSBusConnection* srcConnection) // redirect incoming pachet to specifed ID device
-{
-    ULSBusConnection* pxc =  findId(dev_id);
-    if(!pxc) return; // connection with device not found
-    // Redirect request to next device;
-    if( pxc != srcConnection){
-        pxc->send(&(srcConnection->interface()->rxBufInstance));
-    }
-};
-
-
-void ULSBusConnectionsList::sendNM(_ulsbus_device_status *dev)
-{
-    ULSBusConnection *px = head();
-    while(px){
-        px->sendNM(dev);
-        px = forward(px);
-    };
-};
-void ULSBusConnectionsList::task()
-{
-    ULSBusConnection *px = head();
-    while(px){
-        px->task();
-        px = forward(px);
-    };
-};
-void ULSBusConnectionsList::refresh(ULSBusConnection* pxConnection,uint8_t id)
-{
-    ULSBusConnection *px = head();
-    while(px){
-        if(px == pxConnection) px->refresh(id);
-        px = forward(px);
-    };
-};
-
-ULSBusConnection* ULSBusConnectionsList::findId(uint8_t id)
-{
-    ULSBusConnection *px = head();
-    while(px){
-        if(px->deviceConnected(id)) return px;
-        px = forward(px);
-    };
-    return __null;
-}
-
-

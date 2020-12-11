@@ -20,39 +20,25 @@
  * @license LGPL-3.0+ <https://spdx.org/licenses/LGPL-3.0+>
  */
 
-#ifndef IFBASE_H
-#define IFBASE_H
+#ifndef ULSBUSQTWRAPPER_H
+#define ULSBUSQTWRAPPER_H
 
-#include "ULSBusTypes.h"
+#include "ULSBus.h"
+#include "ULSDevice_ULSQX.h"
+#include <QTextStream>
+#include <QElapsedTimer>
 
-typedef struct
-{
-    uint8_t*  buf;
-    uint32_t  lenght;
-}_if_buffer_instance;
-
-class IfBase
+class ULSBusQTWrapper:public ULSBus
 {
 public:
-    IfBase(const char* name = __null);
-    virtual bool open(){return false;};
-    virtual void task(){};
-    virtual uint32_t read(){return 0;};
-    virtual bool send(_if_buffer_instance *ifBufferInstace)
-    {
-        (void)ifBufferInstace;return false;
-    };
-    virtual uint32_t maxTxPacketLenght(){return 0;}
-    virtual uint32_t maxFrameSize(){return 8;};
+    ULSBusQTWrapper(const char *name,ULSDeviceBase *selfDevice,_ulsbus_obj_updated_callback callback);
+    void addDevice(_ulsbus_device_status *status) override;
 
-    bool send(uint8_t *buf, uint32_t lenght);
-    bool send();
-    const char* name(){return _name;};
-public:
-    _if_buffer_instance rxBufInstance;
-    _if_buffer_instance txBufInstance;
 private:
-    const char* _name;
+    ULSBusTransaction _transactions[512];
+    ULSBusObjectBuffer _objectsBuffers[512];
+    _ulsbus_obj_updated_callback _callback;
 };
 
-#endif // IFBASE_H
+
+#endif // ULSBUSQTWRAPPER_H

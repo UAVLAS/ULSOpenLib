@@ -22,10 +22,7 @@
 
 #ifndef ULSBUSTRANSACTION_H
 #define ULSBUSTRANSACTION_H
-#include "IfBase.h"
-#include "ULSBusConnection.h"
-#include "ULSBusObjectBuffer.h"
-
+#include "ULSBusConnectionUSB.h"
 
 
 class ULSBusTransaction:public ULSListItem{

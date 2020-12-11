@@ -23,42 +23,68 @@
 #ifndef ULSBUSCONNECTION_H
 #define ULSBUSCONNECTION_H
 
-#include "ULSBusTypes.h"
+#ifdef ULS_DBUG
+#define DEBUG_MSG(MSG,...) uDebug(MSG,##__VA_ARGS__)
+#define DEBUG_ERROR(FILE,LINE,MSG,...) uError(FILE,LINE,MSG,##__VA_ARGS__)
+#else
+#define DEBUG_MSG(MSG,...) void()
+#define DEBUG_ERROR(FILE,LINE,MSG,...) (void)FILE;(void)LINE;(void)MSG;
+#endif
 
-class ULSBusConnection:public ULSListItem
+#include "ULSBusInterface.h"
+
+#ifndef  CN_PAYLOAD_SIZE
+#define  CN_PAYLOAD_SIZE 1024
+#endif
+
+
+
+// Packet structure
+typedef struct{
+    uint8_t src_network;
+    uint8_t src_id;
+    uint8_t dsn_network;
+    uint8_t dsn_id;
+    uint8_t pld[CN_PAYLOAD_SIZE];
+}__attribute__((packed))_cn_packet;
+
+
+class ULSBusConnection:public ULSBusInterface
 {
 public:
-    ULSBusConnection(IfBase* interface = __null);
-    void refresh(uint8_t id);
-    void task();
-    uint32_t read();
-    bool deviceConnected(uint8_t id);
-    bool send(_if_buffer_instance* bufi);
-    bool send();
-    bool sendAck(_ulsbus_ack ack,uint8_t cmd,uint8_t self_id,uint8_t remote_id);
-    bool sendNM(_ulsbus_device_status *dev);
-    void interface(IfBase* interface);
-    IfBase* interface();
-    uint32_t maxFrameSize();
+      ULSBusConnection(const char* name = __null,uint8_t id = 255,uint8_t net = 255);
+//    void refresh(uint8_t id);
+
+    void deviceConnected(uint8_t id) override;
+    void deviceDisconnected(uint8_t id) override;
+
+    bool send(uint8_t cmd,uint8_t dsn_network,uint8_t dsn_id,uint32_t len);
+    bool receive();
+
+//    bool send();
+//    bool sendAck(_ulsbus_ack ack,uint8_t cmd,uint8_t self_id,uint8_t remote_id);
+//    bool sendNM(_ulsbus_device_status *dev);
+
+
+
 
 private:
-    IfBase* _interface;
-    uint32_t _timeout[256];
+   // uint32_t _networks_timeout[255];
 };
 
 
-class ULSBusConnectionsList:public ULSList<ULSBusConnection>
-{
-public:
-    ULSBusConnectionsList();
+//class ULSBusConnectionsList:public ULSList<ULSBusConnection>
+//{
+//public:
+//    ULSBusConnectionsList();
 
-    void redirect(ULSBusConnection* pxConnection);
-    void redirect(uint16_t dev_id,ULSBusConnection* srcConnection);
-    void sendNM(_ulsbus_device_status *dev);
-    void task();
-    void refresh(ULSBusConnection* pxConnection,uint8_t id);
-    ULSBusConnection* findId(uint8_t id);
-};
+//    void redirect(ULSBusConnection* pxConnection);
+//    void redirect(uint16_t dev_id,ULSBusConnection* srcConnection);
+//    void sendNM(_ulsbus_device_status *dev);
+//    void task();
+//    void refresh(ULSBusConnection* pxConnection,uint8_t id);
+//    ULSBusConnection* findId(uint8_t id);
+//};
 
 
 #endif // ULSBUSCONNECTION_H
