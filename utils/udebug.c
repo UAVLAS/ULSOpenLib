@@ -10,6 +10,10 @@ void udebugTickHandler()
 {
     _startup_time++;
 }
+void udebugElspsed(unsigned int etaime)
+{
+    _startup_time = etaime;
+}
 void uDebug(const char* msg, ...)
 {
     printf("[%d]: ",(int)_startup_time);

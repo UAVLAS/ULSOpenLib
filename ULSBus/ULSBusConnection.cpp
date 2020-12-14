@@ -22,47 +22,66 @@
 
 #include "ULSBusConnection.h"
 
-ULSBusConnection::ULSBusConnection(const char* name,uint8_t id,uint8_t net):
+ULSBusConnection::ULSBusConnection(const char* name,uint8_t did,uint8_t cid):
     //ULSListItem(),
-    ULSBusInterface(name,id,net)
+    ULSBusInterface(name,did),
+    _cid(cid)
 {
+    cnRxPacket = (_cn_packet*)ifRxBuf;
+    cnTxPacket = (_cn_packet*)ifTxBuf;
+    ifRxLen = 0;
 };
-
-
 
 void ULSBusConnection::deviceConnected(uint8_t id)
 {
 #ifdef ULS_DEBUG
     uDebug("%s: Device Connected 0x%.2X ",_name,id);
 #else
-     (void) id;
+    (void) id;
 #endif
 }
 void ULSBusConnection::deviceDisconnected(uint8_t id)
 {
 #ifdef ULS_DEBUG
-        uDebug("%s: Device Disconnected 0x%.2X ",_name,id);
+    uDebug("%s: Device Disconnected 0x%.2X ",_name,id);
 #else
     (void) id;
 #endif
 
 }
-bool ULSBusConnection::send(uint8_t cmd,uint8_t dsn_network,uint8_t dsn_id,uint32_t len)
+
+_io_op_rezult ULSBusConnection::cnSendDiscovery()
 {
-
-    _cn_packet *txPacket = (_cn_packet *)(txInstance.packet.pld);
-
-    txPacket->dsn_id = dsn_id;
-    txPacket->dsn_network = dsn_network;
-    txPacket->src_id = _id;
-    txPacket->src_network = _network;
-
-    if(sendPacket(cmd|0x10,len + 4)== IF_OK)return true;
-
-    return false;
+    cnTxPacket->ridx = 0;
+    ifTxLen = 1;
+    return ifSend();
 }
-bool ULSBusConnection::receive()
+_io_op_rezult ULSBusConnection::cnForward(ULSBusConnection *sc)
 {
-    if(ULSBusInterface::receivePacket() == IF_OK) return true;
-    return false;
+    uint8_t *pxDsn = cnTxPacket->pld;
+    uint8_t *pxSrc = sc->cnTxPacket->pld;
+    uint8_t ridx = sc->cnTxPacket->ridx;
+    uint32_t len = sc->ifTxLen;
+
+    for(int i=0;i < ridx;i++){
+        *pxDsn++ =  *pxSrc++;
+        if(len == 0)return IO_ERROR;
+        len--;
+    }
+    *pxDsn++= cnrid(sc->cid()); // Add Route ID to list
+    cnTxPacket->ridx = ridx + 1; // Add route count
+    ifTxLen = sc->ifRxLen + 1; // Add route count
+    memcpy(pxDsn,pxSrc,len);
+    return ifSend();
+}
+
+_io_op_rezult ULSBusConnection::cnReceive()
+{
+    _io_op_rezult rez = ifReceive();
+    if(rez != IO_OK) return rez;
+    if(ifRxLen < 1) return IO_ERROR;
+    ifRxLen -= 1;
+
+    ifRxLen = 0;
+    return IO_OK;
 }

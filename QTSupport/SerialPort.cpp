@@ -22,28 +22,31 @@
 
 #include "SerialPort.h"
 
-SerialPort::SerialPort(QObject *parent) : QObject(parent),ULSBusConnection("PC",255,255),ULSSerial(&_rxFifo,&_txFifo)
+SerialPort::SerialPort(QObject *parent) :
+    QObject(parent),
+    ULSSerial(&_rxFifo,&_txFifo),
+    _opened(false)
 {
-    _serialPort = new QSerialPort();
+    serialPort = new QSerialPort();
 
-    connect(_serialPort, &QSerialPort::readyRead, this, &SerialPort::handleReadyRead);
-    connect(_serialPort, &QSerialPort::errorOccurred, this, &SerialPort::handleError);
+    connect(serialPort, &QSerialPort::readyRead, this, &SerialPort::handleReadyRead);
+    connect(serialPort, &QSerialPort::errorOccurred, this, &SerialPort::handleError);
 
-    _serialPort->waitForReadyRead(1);
+    serialPort->waitForReadyRead(1);
 }
 bool SerialPort::open()
 {
-    _serialPort->setPortName(portName);
-    _serialPort->setBaudRate(portBaudrate);
-    return _serialPort->open(QSerialPort::ReadWrite);
+    serialPort->setPortName(portName);
+    serialPort->setBaudRate(portBaudrate);
+    return serialPort->open(QSerialPort::ReadWrite);
 };
 void SerialPort::close()
 {
-    _serialPort->close();
+    serialPort->close();
 }
 bool SerialPort::opened()
 {
-    return  _serialPort->isOpen();
+    return  _opened;//serialPort->isOpen();
 }
 bool SerialPort::openPort(QString name)
 {
@@ -57,25 +60,11 @@ bool SerialPort::openPort(QString name)
     portName = name;
     portBaudrate = 115200;
     if (open()) {
-        if (opened()){
-            return true;
-        }
+        _opened = true;
     }
     return false;
 }
-_if_op_rezult SerialPort::receiveBuffer()
-{
-    if(! _serialPort->isOpen())return IF_ERROR;
-    rxInstance.lenght = ULSSerial::read((uint8_t*)&rxInstance.packet,IF_FRAME_SIZE);
-    return IF_OK;
-};
-_if_op_rezult SerialPort::sendBuffer()
-{
-    if(! _serialPort->isOpen())return IF_ERROR;
-    uint32_t len = ULSSerial::write((uint8_t*)&txInstance.packet,txInstance.lenght);
-    if(len != txInstance.lenght)return IF_ERROR;
-    return IF_OK;
-};
+
 
 QStringList SerialPort::getPortsList()
 {
@@ -89,7 +78,7 @@ QStringList SerialPort::getPortsList()
 
 void SerialPort::handleReadyRead()
 {
-    QByteArray data = _serialPort->readAll();
+    QByteArray data = serialPort->readAll();
     for(int i = 0; i < data.length();i++)
     {
         _rxFifo.push(data.at(i));
@@ -97,7 +86,7 @@ void SerialPort::handleReadyRead()
 }
 void SerialPort::transmitterUpdate(){
     uint8_t ch;
-    while(_txFifo.pull(&ch))_serialPort->putChar(ch);
+    while(_txFifo.pull(&ch))serialPort->putChar(ch);
 }
 
 void SerialPort::handleError(QSerialPort::SerialPortError serialPortError)
@@ -107,12 +96,34 @@ void SerialPort::handleError(QSerialPort::SerialPortError serialPortError)
     if (serialPortError == QSerialPort::ReadError) {
         qDebug()  << QObject::tr("An I/O error occurred while reading "
                                  "the data from port %1, error: %2")
-                     .arg(_serialPort->portName())
-                     .arg(_serialPort->errorString())
+                     .arg(serialPort->portName())
+                     .arg(serialPort->errorString())
                   << Qt::endl;
      //   QCoreApplication::exit(1);
     }
-    _serialPort->close();
+    _opened = false;
+    serialPort->close();
      }
 }
 
+ULSSerialPort::ULSSerialPort(QObject *parent):
+    ULSBusConnection("PC",255,0),
+    SerialPort(parent)
+{
+
+}
+_io_op_rezult ULSSerialPort::receivePacket()
+{
+    if(! serialPort->isOpen())return IO_ERROR;
+    ifRxLen = ULSSerial::read(ifRxBuf,IF_PACKET_SIZE);
+    if(ifRxLen == 0)return IO_NO_DATA;
+    return IO_OK;
+};
+_io_op_rezult ULSSerialPort::sendPacket()
+{
+    if(! serialPort->isOpen())return IO_ERROR;
+    uint32_t len = ULSSerial::write(ifTxBuf,ifTxLen);
+    ifTxLen = 0;
+    if(len != ifTxLen)return IO_ERROR;
+    return IO_OK;
+};

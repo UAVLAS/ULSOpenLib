@@ -33,18 +33,15 @@
 #include "ULSBusConnection.h"
 #include "ULSSerial.h"
 
-class SerialPort : public QObject, public ULSBusConnection, public ULSSerial {
+class SerialPort : public QObject,public ULSSerial{
     Q_OBJECT
 
 // QT Serial port
 public:
-    explicit SerialPort(QObject *parent = 0);
+    SerialPort(QObject *parent = 0);
 
-    bool open() override;
+    bool open();
     void close(void) override;
-
-    _if_op_rezult sendBuffer() override;
-    _if_op_rezult receiveBuffer() override;
 
     bool opened();
     QStringList getPortsList(void);
@@ -58,11 +55,26 @@ private slots:
 public:
    QString      portName;
    long         portBaudrate;
-
+   QSerialPort* serialPort;
 private:
-    QSerialPort* _serialPort;
-    _io_fifo<uint8_t,8*1024> _rxFifo;
-    _io_fifo<uint8_t,8*1024> _txFifo;
+   _io_fifo<uint8_t,8*1024> _rxFifo;
+   _io_fifo<uint8_t,8*1024> _txFifo;
+    bool _opened;
 };
+
+
+class ULSSerialPort :  public ULSBusConnection, public SerialPort {
+
+// QT Serial port
+public:
+
+    ULSSerialPort(QObject *parent = 0);
+
+    _io_op_rezult sendPacket() override;
+    _io_op_rezult receivePacket() override;
+private:
+
+};
+
 
 #endif // SERIALPORT_H

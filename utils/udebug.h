@@ -10,6 +10,7 @@
 extern "C" {
 #endif
 void udebugTickHandler();
+void udebugElspsed(unsigned int etaime);
 void uDebug(const char* msg, ...);
 void uError(const char *file, int line,const char* msg, ...);
 

@@ -23,6 +23,8 @@
 #ifndef ULSBUSCONNECTION_H
 #define ULSBUSCONNECTION_H
 
+#include "ULSBusInterface.h"
+
 #ifdef ULS_DBUG
 #define DEBUG_MSG(MSG,...) uDebug(MSG,##__VA_ARGS__)
 #define DEBUG_ERROR(FILE,LINE,MSG,...) uError(FILE,LINE,MSG,##__VA_ARGS__)
@@ -31,45 +33,61 @@
 #define DEBUG_ERROR(FILE,LINE,MSG,...) (void)FILE;(void)LINE;(void)MSG;
 #endif
 
-#include "ULSBusInterface.h"
-
-#ifndef  CN_PAYLOAD_SIZE
-#define  CN_PAYLOAD_SIZE 1024
-#endif
-
 
 
 // Packet structure
 typedef struct{
-    uint8_t src_network;
-    uint8_t src_id;
-    uint8_t dsn_network;
-    uint8_t dsn_id;
-    uint8_t pld[CN_PAYLOAD_SIZE];
+    uint8_t cmd;
+    uint8_t src_did;
+    uint8_t ridx;
+    uint8_t pld[256];
 }__attribute__((packed))_cn_packet;
 
+typedef struct
+{
+    uint32_t    lenght;
+    _cn_packet  *packet;
+}_cn_instance;
+
+
+typedef enum {
+    CN_CMD_DISCOVERY = 0,
+    CN_ACK_STATUS    = 8,
+}_cn_cmd;
 
 class ULSBusConnection:public ULSBusInterface
 {
 public:
-      ULSBusConnection(const char* name = __null,uint8_t id = 255,uint8_t net = 255);
-//    void refresh(uint8_t id);
+    ULSBusConnection(const char* name = __null,uint8_t did = 255,uint8_t cid = 0);
+
+    _cn_packet *cnRxPacket;
+    _cn_packet *cnTxPacket;
 
     void deviceConnected(uint8_t id) override;
     void deviceDisconnected(uint8_t id) override;
 
+    _io_op_rezult cnSendDiscovery();
+    _io_op_rezult cnForward(ULSBusConnection *src);
+
     bool send(uint8_t cmd,uint8_t dsn_network,uint8_t dsn_id,uint32_t len);
-    bool receive();
+    _io_op_rezult cnReceive();
+    _io_op_rezult cnSendStatus();
 
-//    bool send();
-//    bool sendAck(_ulsbus_ack ack,uint8_t cmd,uint8_t self_id,uint8_t remote_id);
-//    bool sendNM(_ulsbus_device_status *dev);
+    uint8_t cnrid(){return ((_cid & 0x03)<<6)| ifid();}
+    uint8_t cnrid(uint8_t cid){return (((cid&0x03)<<6) | ifid());};
+    uint8_t cid(){return _cid;}
 
 
-
+protected:
+    //    virtual _if_op_rezult sendPacket(){return IF_ERROR;};
+    //    virtual _if_op_rezult receivePacket(){return IF_ERROR;};
 
 private:
-   // uint32_t _networks_timeout[255];
+
+    uint8_t     _cid;
+
+
+    // uint32_t _networks_timeout[255];
 };
 
 
