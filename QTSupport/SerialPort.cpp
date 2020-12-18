@@ -106,8 +106,8 @@ void SerialPort::handleError(QSerialPort::SerialPortError serialPortError)
      }
 }
 
-ULSSerialPort::ULSSerialPort(QObject *parent):
-    ULSBusConnection("PC",255,0),
+ULSSerialPort::ULSSerialPort(QObject *parent,ULSBusConnectionsList* connections):
+    ULSBusConnection(connections,"PC",255,1),
     SerialPort(parent)
 {
 

@@ -62,6 +62,7 @@ void ULSBusInterface::task(uint32_t dtms)
     case IF_STATE_UNINITIALIZED:
         if(_did == 0){
             _state = IF_STATE_OK;
+            ifOk();
         }else{
             if(_nm_timeout == 0){ // Request ID each 100ms
                 sendNM_REQUESTID();
@@ -125,7 +126,7 @@ _io_op_rezult ULSBusInterface::receive()
         _io_op_rezult rez = receivePacket();
         if(rez != IO_OK)  return rez;
 
-        uDebug("%s: !!!! Received lid: 0x%.2X cmd: 0x%.2X len: %d",_name,
+        uDebug("%s: Received lid: 0x%.2X cmd: 0x%.2X len: %d",_name,
                ifRxPacket->src_lid,
                ifRxPacket->cmd,
                ifRxLen);
@@ -233,8 +234,6 @@ void ULSBusInterface::processNM_HB()
 {
     uint8_t idx = ifRxPacket->src_lid;
     _locals[idx].uid0 = ifRxPacket->hb.uid0;
-    uDebug("%s: HB Received from 0x%.2X UID0:%.8X",_name,idx,
-           _locals[idx].uid0);
 }
 void ULSBusInterface::resetId()
 {

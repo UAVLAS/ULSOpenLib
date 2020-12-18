@@ -32,16 +32,28 @@
 #define DEBUG_MSG(MSG,...) void()
 #define DEBUG_ERROR(FILE,LINE,MSG,...) (void)FILE;(void)LINE;(void)MSG;
 #endif
+class ULSBusConnection;
+typedef void (*_uls_cn_callback)(ULSBusConnection*);
 
-
+#define CN_CALL(func) if(func !=nullptr)func(this);
 
 // Packet structure
 typedef struct{
     uint8_t cmd;
     uint8_t src_did;
-    uint8_t ridx;
+    struct{
+        uint8_t hope:4;
+        uint8_t size:4;
+    }__attribute__((packed))ridx;
     uint8_t pld[256];
 }__attribute__((packed))_cn_packet;
+
+
+typedef struct{
+    uint32_t type;
+    uint8_t  name[16];
+}__attribute__((packed))_cn_packet_status;
+
 
 typedef struct
 {
@@ -51,58 +63,78 @@ typedef struct
 
 
 typedef enum {
-    CN_CMD_DISCOVERY = 0,
+    CN_CMD_EXPLORER = 0,
     CN_ACK_STATUS    = 8,
 }_cn_cmd;
 
-class ULSBusConnection:public ULSBusInterface
+
+
+class ULSBusConnectionsList:public ULSList<ULSBusConnection>
 {
 public:
-    ULSBusConnection(const char* name = __null,uint8_t did = 255,uint8_t cid = 0);
+    ULSBusConnectionsList(){};
+    void cnForwardExplorer(ULSBusConnection *sc);
+    _io_op_rezult cnForwardPacket(uint8_t cid,ULSBusConnection *sc);
+    void task(uint32_t dtms);
+};
+
+class ULSBusConnection: public ULSListItem, public ULSBusInterface
+{
+public:
+    ULSBusConnection(ULSBusConnectionsList* connections,const char* name = __null,uint8_t did = 255,uint8_t cid = 0);
 
     _cn_packet *cnRxPacket;
     _cn_packet *cnTxPacket;
 
+    void task(uint32_t dtms);
     void deviceConnected(uint8_t id) override;
     void deviceDisconnected(uint8_t id) override;
+    void ifOk() override;
 
-    _io_op_rezult cnSendDiscovery();
-    _io_op_rezult cnForward(ULSBusConnection *src);
+    _io_op_rezult cnSendExplorer();
+    _io_op_rezult cnProcessExplorer();
+    _io_op_rezult cnForwardExplorer(ULSBusConnection *src);
+
+    _io_op_rezult cnProcessPacket();
+    _io_op_rezult cnProcessOurPacket();
+    _io_op_rezult cnForwardPacket(ULSBusConnection *src);
+
+
+    _io_op_rezult cnSendStatus();
+     _io_op_rezult cnProcessStatus();
+
+
 
     bool send(uint8_t cmd,uint8_t dsn_network,uint8_t dsn_id,uint32_t len);
     _io_op_rezult cnReceive();
-    _io_op_rezult cnSendStatus();
+
 
     uint8_t cnrid(){return ((_cid & 0x03)<<6)| ifid();}
     uint8_t cnrid(uint8_t cid){return (((cid&0x03)<<6) | ifid());};
     uint8_t cid(){return _cid;}
 
+    _uls_cn_callback cnclbkConnected;
+    _uls_cn_callback cnclbkStatusReceived;
+    _uls_cn_callback cnclbkObjReceived;
+    _uls_cn_callback cnclbkObjRequested;
+
+
 
 protected:
     //    virtual _if_op_rezult sendPacket(){return IF_ERROR;};
     //    virtual _if_op_rezult receivePacket(){return IF_ERROR;};
-
+private:
+        uint8_t *prepareAck();
 private:
 
     uint8_t     _cid;
+    ULSBusConnectionsList* _connections;
 
 
     // uint32_t _networks_timeout[255];
 };
 
 
-//class ULSBusConnectionsList:public ULSList<ULSBusConnection>
-//{
-//public:
-//    ULSBusConnectionsList();
-
-//    void redirect(ULSBusConnection* pxConnection);
-//    void redirect(uint16_t dev_id,ULSBusConnection* srcConnection);
-//    void sendNM(_ulsbus_device_status *dev);
-//    void task();
-//    void refresh(ULSBusConnection* pxConnection,uint8_t id);
-//    ULSBusConnection* findId(uint8_t id);
-//};
 
 
 #endif // ULSBUSCONNECTION_H

@@ -294,56 +294,55 @@ typedef union{
 
 class ULSListItem{
 public:
-    ULSListItem():_next(__null){};
-    ULSListItem* next(){return _next;};
-    void next(ULSListItem* nextItem){_next = nextItem;};
-private:
- ULSListItem* _next;
+    ULSListItem():next(nullptr){};
+    ULSListItem* next;
 };
 
 template<class T>
 class ULSList{
 public:
-    ULSList():_head(__null){};
+    ULSList():_head(nullptr){};
+    void begin(){_first = true;}
+    bool next()
+    {
+        if(_first){
+            current = _head;
+            _first = false;
+        }else{
+            if(current == nullptr) return false;
+            current = (T*)current->next;
+        }
+        if(current == nullptr) return false;
+        return true;
+    }
 
     void add(T* item){
-        if(_head == __null){
+        if(_head == nullptr){
             _head = item; //add first item;
-            _head->next(__null);
+            _head->next = nullptr;
         }else{
-             ULSListItem *px = (ULSListItem *)_head;
-            while(px->next() != __null){
-                px = px->next();
+            ULSListItem *px = (ULSListItem *)_head;
+            while(px->next != nullptr){
+                px = px->next;
             }
-            px->next(item); //add item;
+            px->next = item; //add item;
         }
     };
-    uint32_t count()
-    {
-        uint32_t count = 0;
-        ULSListItem *px = (ULSListItem *)_head;
-        while(px != __null){
-            count++;
-            px = px->next();
-        }
-        return count;
+    void remove(T* item){
+        // Todo Add remove code
+        (void)item;
     };
-    bool find(T* item)
-    {
-        ULSListItem *px = (ULSListItem *)_head;
-        while(px != __null){
-            if(px == item){return true;}
-            px = px->next();
-        }
-        return false;
-    };
-    T* head(){return _head;};
-    T* forward(T* item)
-    {
-        item = (T*)item->next();
-        return item;
-    };
+    //    bool find(T* item)
+    //    {
+    //        begin();
+    //        while(next()){
+    //            if(current == item){return true;}
+    //        }
+    //        return false;
+    //    };
+    T *current;
 private:
+    bool _first;
     T *_head;
 };
 
