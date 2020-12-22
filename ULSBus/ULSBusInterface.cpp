@@ -21,8 +21,7 @@
  */
 
 #include "ULSBusInterface.h"
-#include "string.h"
-#include "udebug.h"
+
 
 #ifndef ULS_KEY_GENERATOR
 #define ULS_KEY_GENERATOR() 0

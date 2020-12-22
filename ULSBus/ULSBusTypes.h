@@ -2,19 +2,9 @@
 #define ULSBUSTYPES_H
 #include <inttypes.h>
 #include <string.h>
+#include "ULSDevices.h"
 #include "ULSBusConfig.h"
-#ifdef ULS_DEBUG
 #include "udebug.h"
-#define ULSBUS_ERROR(msg,...) uError(__FILE__,__LINE__,msg,__VA_ARGS__)
-#define ULSBUS_LOG(msg,...) uDebug(msg,__VA_ARGS__)
-
-#else
-#define ULSBUS_ERROR(msg,...) void()
-#define ULSBUS_LOG(msg,...) void()
-
-#endif
-
-#include "ULSBusInterface.h"
 
 #define ULSBUS_FRAMESIZE_MAX    256
 #define ULSBUS_FRAMES           8
