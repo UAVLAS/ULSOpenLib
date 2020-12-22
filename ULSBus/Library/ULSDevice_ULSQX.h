@@ -22,79 +22,133 @@
 #ifndef ULSDEVICE_ULSQX_H
 #define ULSDEVICE_ULSQX_H
 
-#include "ULSDeviceBase.h"
-
-// ULSDevice_ULSX Object types
-typedef struct __attribute__((packed)){
-    char hw[32];
-    char fw[32];
-    char ldr[32];
-    char serial[16];
-    uint32_t progflashingtime;
-    uint32_t progsize;
-    uint32_t progcrc;
-    uint32_t devclass;
-}__ulsot_signature;  // Total 128 bytes;
-
-typedef enum : uint16_t{
-    ULSOT_SYS_STATUS_ONUSER = 1,
-    ULSOT_SYS_STATUS_LOADER = 2,
-    ULSOT_SYS_STATUS_READY_TO_UPDATE = 10,
-    ULSOT_SYS_USTATUS_PDATE_DONE = 11,
-}__ulsot_sys_status;
-
-typedef enum  : uint16_t{
-    ULSOT_SYS_CMD_STARTLOADER = 1,
-    ULSOT_SYS_CMD_STARTUSER = 2,
-    ULSOT_SYS_CMD_PREPARE_TO_UPDATE = 10,
-    ULSOT_SYS_CMD_FINISH_UPDATE = 11
-}__ulsot_sys_cmd;
-
-typedef struct __attribute__((packed)){
-    uint32_t addr;
-    uint32_t size;
-    uint8_t  buf[128];
-}__ulsot_sys_flash;
+#include "ULSObject.h"
 
 
-class ULSDevice_ULSX:public ULSDeviceBase
+class ULSObjectSignature: public ULSObjectBase
 {
 public:
-    ULSDevice_ULSX(const char* name,uint8_t id,uint16_t devClass,uint16_t hardware);
+    typedef struct __attribute__((packed)){
+        char hw[32];
+        char fw[32];
+        char ldr[32];
+        uint32_t serial[4];
+        uint32_t progflashingtime;
+        uint32_t progsize;
+        uint32_t progcrc;
+        uint32_t devclass;
+    }__ULSObjectSignature;  // Total 128 bytes;
+    __ULSObjectSignature var;
 
-    ULSBusObject<__ulsot_signature> o_sys_signature;
-    ULSBusObject<__ulsot_sys_status> o_sys_status;
-    ULSBusObject<__ulsot_sys_cmd>   o_sys_cmd;
+public:
+    ULSObjectSignature(uint16_t id):
+        ULSObjectBase(id,"System_signature","SystemSignature Information",ULSBUS_OBJECT_PERMITION_READONLY)
+    {
+        size = sizeof (__ULSObjectSignature);
+        len = 1;
+        _pxData = (uint8_t*)&var;
+    }
+#ifdef PCQT_BUILD
+    QVariantMap get(uint8_t *buf)override
+    {
+        QVariantMap out;
+        __ULSObjectSignature *pxSign = (__ULSObjectSignature*)buf;
+        pxSign->hw[31] = 0;
+        pxSign->fw[31] = 0;
+        pxSign->ldr[31] = 0;
+
+        out["hw"]   = QString().fromLatin1(pxSign->hw);
+        out["fw"]   = QString().fromLatin1(pxSign->fw);
+        out["ldr"]  =  QString().fromLatin1(pxSign->ldr);
+        out["serial"] = QString("%1-%2-%3-%4").arg(pxSign->serial[0],8,16,QLatin1Char('0'))
+                .arg(pxSign->serial[1],8,16,QLatin1Char('0'))
+                .arg(pxSign->serial[2],8,16,QLatin1Char('0'))
+                .arg(pxSign->serial[3],8,16,QLatin1Char('0'));
+        out["progflashingtime"] = pxSign->progflashingtime;
+        out["progsize"] = pxSign->progsize;
+        out["progcrc"] = pxSign->progcrc;
+        out["devclass"] = pxSign->devclass;
+        return out;
+    };
+#endif
 };
 
-class ULSDevice_ULSX_LDR:public ULSDevice_ULSX
+
+
+
+
+class ULSD_ULSX:public ULSDBase
 {
 public:
-    ULSDevice_ULSX_LDR(uint8_t id);
-    ULSBusObject<__ulsot_sys_flash> o_sys_flash;
+    ULSD_ULSX(const char* tn,const uint16_t tc):
+        ULSDBase(tn,tc),
+        o_sys_signature(0x0001)
+    {
+        add(&o_sys_signature);
+    }
+
+    ULSObjectSignature o_sys_signature;
 };
 
-class ULSDevice_ULSQR1_R1:public ULSDevice_ULSX
-{
-public:
-    ULSDevice_ULSQR1_R1(uint8_t id);
-    ULSBusObjectArray<uint8_t,2000> o_array2000;;
-    ULSBusObjectArray<uint8_t,2048> o_array2048;
-    ULSBusObjectArray<uint8_t,2041> o_array2041;
-};
-class ULSDevice_ULSQT1_R1:public ULSDevice_ULSX
-{
-public:
-    ULSDevice_ULSQT1_R1(uint8_t id);
-    ULSBusObjectArray<uint8_t,2000> o_array2000;;
-    ULSBusObjectArray<uint8_t,2048> o_array2048;
-    ULSBusObjectArray<uint8_t,2041> o_array2041;
-};
-class ULSDevice_ULSPC:public ULSDevice_ULSX
-{
-public:
-    ULSDevice_ULSPC(uint8_t id);
 
+class ULSD_PC:public ULSDBase
+{
+public:
+    ULSD_PC():
+        ULSDBase(__ULS_DEVICE_TYPE_PCR1_NAME,__ULS_DEVICE_TYPE_PCR1)
+    {
 
+    }
 };
+class ULSD_ULSQT1R1:public ULSD_ULSX
+{
+public:
+    ULSD_ULSQT1R1():
+        ULSD_ULSX(__ULS_DEVICE_TYPE_ULSQT1R1_NAME,__ULS_DEVICE_TYPE_ULSQT1R1)
+    {
+    }
+};
+class ULSD_ULSQR1R1:public ULSD_ULSX
+{
+public:
+    ULSD_ULSQR1R1():
+        ULSD_ULSX(__ULS_DEVICE_TYPE_ULSQR1R1_NAME,__ULS_DEVICE_TYPE_ULSQR1R1)
+    {
+    }
+};
+
+#ifdef PCQT_BUILD
+class ULSQTDevice_X
+{
+public:
+    ULSQTDevice_X()
+    {
+        devTypeName[__ULS_DEVICE_TYPE_PCR1] = __ULS_DEVICE_TYPE_PCR1_NAME;
+        devTypeName[__ULS_DEVICE_TYPE_ULSQT1R1] =__ULS_DEVICE_TYPE_ULSQT1R1_NAME;
+        devTypeName[__ULS_DEVICE_TYPE_ULSQR1R1] =__ULS_DEVICE_TYPE_ULSQR1R1_NAME;
+        devTypeName[__ULS_DEVICE_TYPE_ULSQG1R1] =__ULS_DEVICE_TYPE_ULSQG1R1_NAME;
+        devTypeName[__ULS_DEVICE_TYPE_ULSQM1R1] =__ULS_DEVICE_TYPE_ULSQM1R1_NAME;
+        dev[__ULS_DEVICE_TYPE_ULSQT1R1_NAME] = (ULSDBase*)&devULSQT1R1;
+        dev[__ULS_DEVICE_TYPE_ULSQR1R1_NAME] = (ULSDBase*)&devULSQR1R1;
+    };
+
+    ULSD_ULSQT1R1 devULSQT1R1;
+    ULSD_ULSQR1R1 devULSQR1R1;
+
+    QHash<int,QString> devTypeName;
+    QHash<QString,ULSDBase*> dev;
+
+    QVariantMap getVars(QString devName,QString objName,uint8_t *buf){
+        if(dev[devName] != nullptr)
+            return dev[devName]->getVar(objName,buf);
+        return QVariantMap();
+    }
+    QVariantMap getVars(QString devName,QString *objName,uint16_t obj_id,uint8_t *buf){
+        if(dev[devName] != nullptr)
+            return dev[devName]->getVar(objName,obj_id,buf);
+        return QVariantMap();
+    }
+};
+#endif
+
 #endif // ULSDEVICE_ULSQX_H

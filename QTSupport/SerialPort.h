@@ -31,6 +31,7 @@
 #include <QList>
 
 #include "ULSBusConnection.h"
+#include "ULSObject.h"
 #include "ULSSerial.h"
 
 class SerialPort : public QObject,public ULSSerial{
@@ -68,10 +69,11 @@ class ULSSerialPort :  public ULSBusConnection, public SerialPort {
 // QT Serial port
 public:
 
-    ULSSerialPort(QObject *parent = 0,ULSBusConnectionsList* connections = nullptr);
+    ULSSerialPort(QObject *parent = 0,ULSDBase *dev = nullptr,ULSBusConnectionsList* connections = nullptr);
 
     _io_op_rezult sendPacket() override;
     _io_op_rezult receivePacket() override;
+
 private:
 
 };

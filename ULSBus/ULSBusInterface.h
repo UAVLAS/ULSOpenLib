@@ -24,6 +24,8 @@
 #define ULSBUSINTERFACE_H
 
 #include "ULSBusTypes.h"
+#include "udebug.h"
+
 
 #define IF_PACKET_SIZE 1324
 
@@ -34,7 +36,7 @@
 #define IF_NM_PING_HB_TIMEOUT 400
 #define IF_NM_REQUESTID_TIMEOUT 100
 
-#define IF_LOCAL_DEVICES_NUM 64 // local devices 0-64 , 255 bradcast device
+#define IF_LOCAL_DEVICES_NUM 63 // local devices 0-62 , 63 bradcast device
 
 #define IF_PACKET_SYS_SIZE (2)
 #define IF_PACKET_NM_HEADER_SIZE (0)
@@ -115,7 +117,7 @@ typedef struct
 class ULSBusInterface
 {
 public:
-    ULSBusInterface(const char* name = __null,uint8_t did = 255);
+    ULSBusInterface(const char* name = __null,uint8_t did = IF_LOCAL_DEVICES_NUM);
     virtual bool open(){return false;};
     void task(uint32_t dtms);
 

@@ -23,6 +23,14 @@ void uDebug(const char* msg, ...)
     va_end(args);
     printf("%s\n",tmpStr);
 }
+void uDebugPacket(const char* msg,const char* msg2, uint8_t *buf,uint32_t len)
+{
+    printf("[%d]: %s:%s Packet[%d]:",(int)_startup_time,msg,msg2,(int)len);
+    while(len--){
+        printf("0x%.2X ",*buf++);
+    }
+    printf("\n");
+}
 void uError(const char *file, int line,const char* msg, ...)
 {
     printf("[%d] ERROR: (%s line:%d) ",(int)_startup_time,file,line);

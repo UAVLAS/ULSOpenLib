@@ -294,9 +294,12 @@ typedef union{
 
 class ULSListItem{
 public:
-    ULSListItem():next(nullptr){};
-    ULSListItem* next;
+    ULSListItem(){
+        pxnext = __null;
+        };
+    void* pxnext;
 };
+
 
 template<class T>
 class ULSList{
@@ -310,22 +313,22 @@ public:
             _first = false;
         }else{
             if(current == nullptr) return false;
-            current = (T*)current->next;
+            current = (T*)current->pxnext;
         }
         if(current == nullptr) return false;
         return true;
     }
-
     void add(T* item){
         if(_head == nullptr){
             _head = item; //add first item;
-            _head->next = nullptr;
+            //_head->pxnext = nullptr;
         }else{
-            ULSListItem *px = (ULSListItem *)_head;
-            while(px->next != nullptr){
-                px = px->next;
+            T *px = (T *)_head;
+            while(px->pxnext != nullptr){
+                px = (T*)(px->pxnext);
             }
-            px->next = item; //add item;
+            px->pxnext = item; //add item;
+           // item->pxnext = nullptr;
         }
     };
     void remove(T* item){

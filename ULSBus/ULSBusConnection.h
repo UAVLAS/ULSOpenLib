@@ -24,27 +24,21 @@
 #define ULSBUSCONNECTION_H
 
 #include "ULSBusInterface.h"
+#include "ULSDevice_ULSQX.h"
+//#include "ULSObject.h"
 
-#ifdef ULS_DBUG
-#define DEBUG_MSG(MSG,...) uDebug(MSG,##__VA_ARGS__)
-#define DEBUG_ERROR(FILE,LINE,MSG,...) uError(FILE,LINE,MSG,##__VA_ARGS__)
-#else
-#define DEBUG_MSG(MSG,...) void()
-#define DEBUG_ERROR(FILE,LINE,MSG,...) (void)FILE;(void)LINE;(void)MSG;
-#endif
+
 class ULSBusConnection;
 typedef void (*_uls_cn_callback)(ULSBusConnection*);
 
 #define CN_CALL(func) if(func !=nullptr)func(this);
 
+
 // Packet structure
 typedef struct{
     uint8_t cmd;
     uint8_t src_did;
-    struct{
-        uint8_t hope:4;
-        uint8_t size:4;
-    }__attribute__((packed))ridx;
+    uint8_t hop;
     uint8_t pld[256];
 }__attribute__((packed))_cn_packet;
 
@@ -64,7 +58,9 @@ typedef struct
 
 typedef enum {
     CN_CMD_EXPLORER = 0,
-    CN_ACK_STATUS    = 8,
+    CN_ACK_EXPLORER = 1,
+    CN_CMD_GETOBJ   = 2,
+    CN_ACK_OBJ      = 3
 }_cn_cmd;
 
 
@@ -75,33 +71,36 @@ public:
     ULSBusConnectionsList(){};
     void cnForwardExplorer(ULSBusConnection *sc);
     _io_op_rezult cnForwardPacket(uint8_t cid,ULSBusConnection *sc);
+    _io_op_rezult cnSendGetObject(uint8_t *route,uint8_t hs,uint16_t obj_addr);
     void task(uint32_t dtms);
 };
 
 class ULSBusConnection: public ULSListItem, public ULSBusInterface
 {
 public:
-    ULSBusConnection(ULSBusConnectionsList* connections,const char* name = __null,uint8_t did = 255,uint8_t cid = 0);
+    ULSBusConnection(ULSDBase *dev,ULSBusConnectionsList* connections,const char* name = __null,uint8_t did = 255,uint8_t cid = 0);
 
     _cn_packet *cnRxPacket;
     _cn_packet *cnTxPacket;
 
-    void task(uint32_t dtms);
+    virtual void task(uint32_t dtms);
     void deviceConnected(uint8_t id) override;
     void deviceDisconnected(uint8_t id) override;
     void ifOk() override;
 
     _io_op_rezult cnSendExplorer();
+    _io_op_rezult cnSendGetObject(uint8_t *route,uint8_t hs,uint16_t obj_addr);
     _io_op_rezult cnProcessExplorer();
     _io_op_rezult cnForwardExplorer(ULSBusConnection *src);
 
     _io_op_rezult cnProcessPacket();
     _io_op_rezult cnProcessOurPacket();
     _io_op_rezult cnForwardPacket(ULSBusConnection *src);
-
+    _io_op_rezult cnProcessGetObject();
 
     _io_op_rezult cnSendStatus();
-     _io_op_rezult cnProcessStatus();
+    _io_op_rezult cnProcessStatus();
+
 
 
 
@@ -124,11 +123,12 @@ protected:
     //    virtual _if_op_rezult sendPacket(){return IF_ERROR;};
     //    virtual _if_op_rezult receivePacket(){return IF_ERROR;};
 private:
-        uint8_t *prepareAck();
+    uint8_t *cnPrepareAnswer(uint8_t cmd);
 private:
 
     uint8_t     _cid;
     ULSBusConnectionsList* _connections;
+    ULSDBase *_dev;
 
 
     // uint32_t _networks_timeout[255];

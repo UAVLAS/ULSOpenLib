@@ -35,7 +35,6 @@ ULSBusInterface::ULSBusInterface(const char* name,uint8_t did):
     _state(IF_STATE_UNINITIALIZED),
     _key(0),
     _didx(0),
-
     _nm_timeout(0)
 {
 
@@ -44,6 +43,7 @@ ULSBusInterface::ULSBusInterface(const char* name,uint8_t did):
     ifRxPacket = (_if_packet*)ifRxBuf;
     ifTxPacket = (_if_packet*)ifTxBuf;
 
+    if(_did>0x3f)_did=0x3f;
     memset(ifRxBuf,0,IF_PACKET_SIZE);
     memset(ifTxBuf,0,IF_PACKET_SIZE);
     memset(_locals,0,IF_LOCAL_DEVICES_NUM*(sizeof(_local_device)));
@@ -57,7 +57,7 @@ void ULSBusInterface::task(uint32_t dtms)
         _nm_timeout = 0;
     }
     // Check for timeout for devices
-    if(_did == 255) _state = IF_STATE_UNINITIALIZED;
+    if(_did >= 0x3f) _state = IF_STATE_UNINITIALIZED;
     switch(_state){
     case IF_STATE_UNINITIALIZED:
         if(_did == 0){
@@ -113,7 +113,9 @@ _io_op_rezult ULSBusInterface::send()
     if((_state != IF_STATE_OK) && ((ifTxPacket->cmd&0x10) != 0))return IO_ERROR; // Only sys commands allowed
     ifTxPacket->src_lid = _did;
     ifTxLen += IF_PACKET_HEADER_SIZE;
-    uDebug("%s: Send lid:0x%.2X cmd: 0x%.2X len: %d",_name,_did,ifTxPacket->cmd,ifTxLen);
+
+  //  DEBUG_MSG("%s: Send lid:0x%.2X cmd: 0x%.2X len: %d",_name,_did,ifTxPacket->cmd,ifTxLen);
+   // if(ifTxPacket->cmd!= IF_CMD_NM_HB)DEBUG_PACKET(_name,"Tx",ifTxBuf,ifTxLen);
     _io_op_rezult rez = sendPacket();
     if(rez == IO_OK) _nm_timeout = IF_NM_PING_HB_TIMEOUT;
     return rez;
@@ -125,11 +127,12 @@ _io_op_rezult ULSBusInterface::receive()
     {
         _io_op_rezult rez = receivePacket();
         if(rez != IO_OK)  return rez;
+//        DEBUG_MSG("%s: Received lid: 0x%.2X cmd: 0x%.2X len: %d",_name,
+//               ifRxPacket->src_lid,
+//               ifRxPacket->cmd,
+//               ifRxLen);
+        //if(ifRxPacket->cmd!= IF_CMD_NM_HB) DEBUG_PACKET(_name,"Rx",ifRxBuf,ifRxLen);
 
-        uDebug("%s: Received lid: 0x%.2X cmd: 0x%.2X len: %d",_name,
-               ifRxPacket->src_lid,
-               ifRxPacket->cmd,
-               ifRxLen);
         ifRxLen -= IF_PACKET_HEADER_SIZE;
         if(ifRxPacket->src_lid == _did){ // error duplicate address
             resetId();
@@ -138,6 +141,7 @@ _io_op_rezult ULSBusInterface::receive()
         }
         // if it was disconnected call procedure
         if(_locals[ifRxPacket->src_lid].timeout == 0){
+           if(ifRxPacket->src_lid < 0x3f)
             deviceConnected(ifRxPacket->src_lid);
         }
         // Update Timeout of device
@@ -208,19 +212,17 @@ _io_op_rezult ULSBusInterface::sendNM_SETID(uint32_t key)
 }
 uint8_t ULSBusInterface::allocateId()
 {
-    uint8_t free_did = 255;
     uint32_t n = IF_LOCAL_DEVICES_NUM - 1; // 0 - master device excluded
     while(n>0U)
     {
         _didx++;
-        if(_didx >=255)_didx = 1; // O not allocated - it is master
+        if(_didx >=IF_LOCAL_DEVICES_NUM)_didx = 1; // O not allocated - it is master
         if(_locals[_didx].timeout == 0){ // slot emmpty - no device connected
-            free_did = _didx;
-            return free_did;
+            return _didx;
         }
         n--;
     }
-    return free_did;
+    return IF_LOCAL_DEVICES_NUM;
 }
 void ULSBusInterface::processNM_SETID()
 {
@@ -237,7 +239,7 @@ void ULSBusInterface::processNM_HB()
 }
 void ULSBusInterface::resetId()
 {
-    _did = 255;
+    _did = IF_LOCAL_DEVICES_NUM;
     _state = IF_STATE_UNINITIALIZED;
 }
 

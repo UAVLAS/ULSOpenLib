@@ -9,7 +9,7 @@
  * as published by the Free Software Foundation, either
  * version 3 of the License, or (at your option) any later version.
  *
- * Some open source application is distributed in the hope that it will
+ * Some open source application is distributed in the hop that it will
  * be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
  * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
@@ -22,7 +22,7 @@
 
 #include "ULSBusConnection.h"
 
-ULSBusConnection::ULSBusConnection(ULSBusConnectionsList* connections,const char* name,uint8_t did,uint8_t cid):
+ULSBusConnection::ULSBusConnection(ULSDBase *dev,ULSBusConnectionsList* connections,const char* name,uint8_t did,uint8_t cid):
     ULSListItem(),
     ULSBusInterface(name,did),
     cnclbkConnected(nullptr),
@@ -30,7 +30,8 @@ ULSBusConnection::ULSBusConnection(ULSBusConnectionsList* connections,const char
     cnclbkObjReceived(nullptr),
     cnclbkObjRequested(nullptr),
     _cid(cid),
-    _connections(connections)
+    _connections(connections),
+    _dev(dev)
 {
     connections->add(this);
     cnRxPacket = (_cn_packet*)ifRxBuf;
@@ -44,97 +45,93 @@ void ULSBusConnection::task(uint32_t dtms){
 
 void ULSBusConnection::deviceConnected(uint8_t id)
 {
-#ifdef ULS_DEBUG
-    uDebug("%s: Device Connected 0x%.2X ",_name,id);
-#else
-    (void) id;
-#endif
+    DEBUG_MSG("%s: Device Connected 0x%.2X ",_name,id);
+    (void)id;
 }
 void ULSBusConnection::deviceDisconnected(uint8_t id)
 {
-#ifdef ULS_DEBUG
-    uDebug("%s: Device Disconnected 0x%.2X ",_name,id);
-#else
-    (void) id;
-#endif
-
+    DEBUG_MSG("%s: Device Disconnected 0x%.2X ",_name,id);
+    (void)id;
 }
 
 void ULSBusConnection::ifOk() {CN_CALL(cnclbkConnected);}
 
-_io_op_rezult ULSBusConnection::cnSendExplorer()
+_io_op_rezult ULSBusConnection::cnReceive()
 {
-    cnTxPacket->cmd = CN_CMD_EXPLORER;
-    cnTxPacket->pld[0] = (((_cid & 0x03)<<6)| ifid());
-    cnTxPacket->ridx.hope = 0;
-    cnTxPacket->ridx.size = 1;
-    ifTxLen = cnTxPacket->ridx.size + 1;
-    return  ifSend();
-}
-
-_io_op_rezult ULSBusConnection::cnProcessExplorer()
-{
-    if(cnRxPacket->ridx.hope == 15 ) return IO_ERROR;// Max Hope reached
-    // Forward Message
-   // _connections->cnForwardExplorer(this);
-
-    // Do answer
-    cnTxPacket->cmd = CN_ACK_STATUS;
-    // fix sender route
-    cnTxPacket->pld[cnRxPacket->ridx.hope] = ((_cid & 0x03)<<6) | (cnRxPacket->src_did  & 0x3f);
-    // Inc route size
-    cnTxPacket->ridx.size = cnRxPacket->ridx.size + 1;
-    // Hope = 1 for answer
-    cnTxPacket->ridx.hope = 1;
-    // Add current address
-    cnTxPacket->pld[0] = ((_cid & 0x03)<<6) | (ifid() & 0x3f);
-
-    // Flip route table for response
-    for(int i=0;i<cnRxPacket->ridx.size;i++)
-    {
-       cnTxPacket->pld[i+1] =  cnRxPacket->pld[cnRxPacket->ridx.size - 1 - i];
+    while(ifReceive() == IO_OK){
+        if(ifRxLen < 1) continue;
+      //  DEBUG_MSG("%s: cnReceived from:0x%.2X cmd: 0x%.2X len: %d",_name,cnRxPacket->src_did ,cnRxPacket->cmd,ifRxLen);
+        cnProcessPacket();
+        ifRxLen = 0;
     }
-
-    // Add payload Information
-    _cn_packet_status *px = (_cn_packet_status*)(&cnTxPacket->pld[cnTxPacket->ridx.size]);
-
-    strcpy((char*)px->name,"TEST NAME");
-    px->type = __DEVICE_TYPE;
-    ifTxLen = sizeof (_cn_packet_status) + cnTxPacket->ridx.size + 1;
-    return ifSend();
-}
-_io_op_rezult ULSBusConnection::cnForwardExplorer(ULSBusConnection *sc)
-{
-    if(cnRxPacket->ridx.hope == 15 ) return IO_ERROR;// Max Hope reached
-
-    cnTxPacket->cmd = CN_CMD_EXPLORER;
-    cnTxPacket->pld[sc->cnRxPacket->ridx.hope] = ((sc->cid() & 0x03)<<6) | (sc->cnRxPacket->src_did & 0x3f);
-    cnTxPacket->ridx.hope = sc->cnRxPacket->ridx.hope + 1;
-    cnTxPacket->ridx.size = sc->cnRxPacket->ridx.size + 1;
-    ifTxLen = cnTxPacket->ridx.size + 1;
-    return  ifSend();
-}
-_io_op_rezult ULSBusConnection::cnForwardPacket(ULSBusConnection *sc)
-{
-    if(cnRxPacket->ridx.hope == 15 ) return IO_ERROR;// Max Hope reached
-    memcpy(cnTxPacket->pld,sc->cnRxPacket->pld,sc->ifRxLen);
-    cnTxPacket->cmd = sc->cnRxPacket->cmd;
-    cnTxPacket->pld[sc->cnRxPacket->ridx.hope - 1] = ((sc->cid() & 0x03)<<6) | (sc->cnRxPacket->src_did & 0x3f);
-    cnTxPacket->ridx.hope = sc->cnRxPacket->ridx.hope + 1;
-    ifTxLen = sc->ifRxLen + 1;
-    return  ifSend();
+    return IO_OK;
 }
 _io_op_rezult ULSBusConnection::cnProcessPacket()
 {
     uint8_t *R = cnRxPacket->pld;
-    uint8_t  hs = cnRxPacket->ridx.size;
-    uint8_t  h = cnRxPacket->ridx.hope;
+    uint32_t rxH = cnRxPacket->hop >> 4;
+    uint32_t rxHs = cnRxPacket->hop & 0xF;
+    uint8_t  rId = R[rxH]&0x3f;
+    uint8_t  forwardCID = R[rxH+1]>>6;
 
+    // Fix Route with  source information
+    R[rxH] =  (((_cid & 0x03)<<6)| (cnRxPacket->src_did&0x3f));
     if(cnRxPacket->cmd == CN_CMD_EXPLORER)return cnProcessExplorer();
-    if((R[h]&0x3f) != ifid())return IO_OK; // just not our packet - forgot about it
 
-    if(h==(hs-1)) return cnProcessOurPacket(); // OMG it for us !!!
-    _connections->cnForwardPacket(R[h]>>6,this);
+//    DEBUG_MSG("%s: cnProcessPacket lid:0x%.2X cmd: 0x%.2X len: %d hs:%d h:%d",_name,_did,cnTxPacket->cmd,ifTxLen,rxHs,rxH);
+//    DEBUG_PACKET(_name," cnProcessPacket Route",cnRxPacket->pld,rxHs);
+//    DEBUG_MSG("%s: cnProcessPacket Check route id [%.2X] vs Self [%.2X]",_name,rId,ifid());
+
+    if(rId != ifid())return IO_OK; // just not our packet - forgot about it
+    if((rxH + 1) == rxHs) return cnProcessOurPacket(); // OMG it for us !!!
+    _connections->cnForwardPacket(forwardCID,this);
+    return IO_OK;
+}
+uint8_t *ULSBusConnection::cnPrepareAnswer(uint8_t cmd)
+{
+    uint32_t rxHs = cnRxPacket->hop & 0xF;
+    cnTxPacket->cmd = cmd;
+    for(uint32_t i=0 ; i < rxHs ; i++){    // Flip route table for response
+        cnTxPacket->pld[i] =  cnRxPacket->pld[rxHs - 1 - i];
+    }
+    cnTxPacket->hop = (0 << 4) | rxHs;    // hop  =  0; hop size = rxhop
+    return &cnTxPacket->pld[cnTxPacket->hop & 0xF];
+}
+_io_op_rezult ULSBusConnection::cnProcessExplorer()
+{
+    if((cnRxPacket->hop & 0xF) < 15 ){ // Max hop reached no forwarding
+        _connections->cnForwardExplorer(this);    // Forward Message
+    }
+    // Prepare answer
+    _cn_packet_status *px = (_cn_packet_status*)cnPrepareAnswer(CN_ACK_EXPLORER);
+
+    strcpy((char*)px->name,_dev->typeName);
+    px->type = _dev->typeCode;
+    uint32_t txHs = cnTxPacket->hop&0xF;
+    ifTxLen = sizeof (_cn_packet_status) + txHs + 1;
+//    DEBUG_MSG("%s: cnAnswer lid:0x%.2X cmd: 0x%.2X len: %d",_name,_did,cnTxPacket->cmd,ifTxLen);
+//    DEBUG_PACKET(_name,"cnAnswer Route",cnTxPacket->pld,txHs);
+    return ifSend();
+}
+_io_op_rezult ULSBusConnection::cnProcessGetObject()
+{
+    uint16_t obj_id =  *((uint16_t*)&cnRxPacket->pld[cnRxPacket->hop&0xf]);
+
+    ULSObjectBase* obj = _dev->getObject(obj_id);
+    if(obj == nullptr) {
+        DEBUG_MSG("%s: Requested Wrong Object [0x%.4X]",_name,obj_id);
+        return IO_ERROR;
+    }
+    uint8_t *px = cnPrepareAnswer(CN_ACK_OBJ);
+
+    *((uint16_t*)px) = obj_id;
+    px+=2;
+    obj->getData(px);
+    uint32_t txHs = cnTxPacket->hop&0xF;
+    ifTxLen = 1 + txHs + 2 + obj->size;
+  //  DEBUG_MSG("%s: cnAnswer Object lid:0x%.2X cmd: 0x%.2X len: %d",_name,_did,cnTxPacket->cmd,ifTxLen);
+  //  DEBUG_PACKET(_name,"cnAnswer Route",cnTxPacket->pld,txHs);
+    return ifSend();
 
     return IO_OK;
 }
@@ -142,29 +139,68 @@ _io_op_rezult ULSBusConnection::cnProcessOurPacket()
 {
     switch(cnRxPacket->cmd)
     {
-        case CN_ACK_STATUS:
-            CN_CALL(cnclbkStatusReceived);
+    case CN_ACK_EXPLORER:
+        CN_CALL(cnclbkStatusReceived);
+        break;
+    case CN_CMD_GETOBJ:
+        cnProcessGetObject();
+        break;
+
+    case CN_ACK_OBJ:
+        CN_CALL(cnclbkObjReceived);
         break;
     }
-
-
     return IO_OK;
 }
-
-
-
-_io_op_rezult ULSBusConnection::cnReceive()
+_io_op_rezult ULSBusConnection::cnSendExplorer()
 {
-
-    while(ifReceive() == IO_OK)
-    {
-        if(ifRxLen < 1) continue;
-        ifRxLen -= 1;
-        cnProcessPacket();
-        ifRxLen = 0;
-    }
-    return IO_OK;
+    cnTxPacket->cmd = CN_CMD_EXPLORER;
+    cnTxPacket->hop = (0<<4) | 1; // h = 0; hs = 1;
+    ifTxLen = (cnTxPacket->hop&0xF) + 1;
+    return  ifSend();
 }
+_io_op_rezult ULSBusConnection::cnSendGetObject(uint8_t *route,uint8_t hs,uint16_t obj_addr)
+{
+    if( (route[0] >> 6) != _cid)return IO_ERROR; // not our interface
+
+    cnTxPacket->cmd = CN_CMD_GETOBJ;
+    cnTxPacket->hop = (0<<4) | hs;
+    memcpy(cnTxPacket->pld,route,hs);
+
+    cnTxPacket->pld[hs]   = obj_addr&0xff;
+    cnTxPacket->pld[hs+1] = (obj_addr>>8)&0xff;
+    ifTxLen = (1 + hs + 2);
+    return  ifSend();
+}
+
+_io_op_rezult ULSBusConnection::cnForwardExplorer(ULSBusConnection *sc)
+{
+    uint32_t rxHs = sc->cnRxPacket->hop & 0xF;
+
+    if(rxHs == 15 ) return IO_ERROR;// Max hop reached
+
+    cnTxPacket->cmd = CN_CMD_EXPLORER;
+    // Copy roure
+    for(uint32_t i = 0 ; i < rxHs ; i++){
+        cnTxPacket->pld[i] =  sc->cnRxPacket->pld[i];
+    }
+    cnTxPacket->hop = sc->cnRxPacket->hop + 0x11; // Inc hop and hopSize
+   // DEBUG_MSG("%s: cnForward Explorer Added route: %.2X",_name,cnTxPacket->pld[rxHs]);
+    ifTxLen = (cnTxPacket->hop & 0xF) + 1;
+  //  DEBUG_MSG("%s: cnForward Explorer lid:0x%.2X cmd: 0x%.2X len: %d",_name,_did,cnTxPacket->cmd,ifTxLen);
+    return  ifSend();
+}
+_io_op_rezult ULSBusConnection::cnForwardPacket(ULSBusConnection *sc)
+{
+    memcpy(cnTxPacket->pld,sc->cnRxPacket->pld,sc->ifRxLen-1);
+    cnTxPacket->cmd = sc->cnRxPacket->cmd;
+    cnTxPacket->hop = sc->cnRxPacket->hop + 0x10;
+
+    ifTxLen = sc->ifRxLen;
+   // DEBUG_MSG("%s: cnForward lid:0x%.2X cmd: 0x%.2X len: %d",_name,_did,cnTxPacket->cmd,ifTxLen);
+    return  ifSend();
+}
+
 void ULSBusConnectionsList::task(uint32_t dtms)
 {
     begin();
@@ -186,6 +222,16 @@ _io_op_rezult ULSBusConnectionsList::cnForwardPacket(uint8_t cid,ULSBusConnectio
         if((current != sc)&&(current->cid() == cid)){
             return current->cnForwardPacket(sc);
         }
+    }
+    return IO_ERROR;
+}
+
+
+_io_op_rezult ULSBusConnectionsList::cnSendGetObject(uint8_t *route,uint8_t hs,uint16_t obj_addr)
+{
+    begin();
+    while (next()) {
+        if (current->cnSendGetObject(route,hs,obj_addr) == IO_OK) return IO_OK;
     }
     return IO_ERROR;
 }
