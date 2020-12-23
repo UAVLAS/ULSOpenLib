@@ -22,34 +22,34 @@
 
 #include "ULSBusInterface.h"
 
-
 #ifndef ULS_KEY_GENERATOR
-#define ULS_KEY_GENERATOR() 0
+#define ULS_KEY_GENERATOR (__DEVICE_UNIC_ID3^__DEVICE_UNIC_ID2^__DEVICE_UNIC_ID1^__DEVICE_UNIC_ID0)
 #endif
 
 ULSBusInterface::ULSBusInterface(const char* name,uint8_t did):
     _name(name),
     _did(did),
-    //_iftime(0),
     _state(IF_STATE_UNINITIALIZED),
     _key(0),
+    _key_cntr(0),
     _didx(0),
     _nm_timeout(0)
 {
-
     ifRxLen = 0;
     ifTxLen = 0;
     ifRxPacket = (_if_packet*)ifRxBuf;
     ifTxPacket = (_if_packet*)ifTxBuf;
 
     if(_did>0x3f)_did=0x3f;
+
     memset(ifRxBuf,0,IF_PACKET_SIZE);
     memset(ifTxBuf,0,IF_PACKET_SIZE);
     memset(_locals,0,IF_LOCAL_DEVICES_NUM*(sizeof(_local_device)));
 }
 void ULSBusInterface::task(uint32_t dtms)
 {
-//    _iftime+=dtms;
+
+    _key_cntr++;
     if(_nm_timeout >= dtms){
         _nm_timeout -=dtms;
     }else{
@@ -63,7 +63,7 @@ void ULSBusInterface::task(uint32_t dtms)
             _state = IF_STATE_OK;
             ifOk();
         }else{
-            if(_nm_timeout == 0){ // Request ID each 100ms
+            if(_nm_timeout == 0){ // Request ID each IF_NM_REQUESTID_TIMEOUT
                 sendNM_REQUESTID();
                 _nm_timeout = IF_NM_REQUESTID_TIMEOUT;
             }
@@ -112,8 +112,7 @@ _io_op_rezult ULSBusInterface::send()
     if((_state != IF_STATE_OK) && ((ifTxPacket->cmd&0x10) != 0))return IO_ERROR; // Only sys commands allowed
     ifTxPacket->src_lid = _did;
     ifTxLen += IF_PACKET_HEADER_SIZE;
-
-  //  DEBUG_MSG("%s: Send lid:0x%.2X cmd: 0x%.2X len: %d",_name,_did,ifTxPacket->cmd,ifTxLen);
+   // DEBUG_MSG("%s: Send lid:0x%.2X cmd: 0x%.2X len: %d",_name,_did,ifTxPacket->cmd,ifTxLen);
    // if(ifTxPacket->cmd!= IF_CMD_NM_HB)DEBUG_PACKET(_name,"Tx",ifTxBuf,ifTxLen);
     _io_op_rezult rez = sendPacket();
     if(rez == IO_OK) _nm_timeout = IF_NM_PING_HB_TIMEOUT;
@@ -165,16 +164,13 @@ void ULSBusInterface::processLocal()
     case IF_CMD_NM_GET_STATUS:
         break;
     case IF_CMD_NM_HB:
-        if(ifRxLen == IF_PACKET_NM_HB_SIZE)
-            processNM_HB();
+        if(ifRxLen == IF_PACKET_NM_HB_SIZE)processNM_HB();
         break;
     case IF_CMD_NM_REQUEST_ID:
-        if(ifRxLen == IF_PACKET_NM_REQUESTID_SIZE)
-            sendNM_SETID(ifRxPacket->request_id.key);
+        if((ifRxLen == IF_PACKET_NM_REQUESTID_SIZE) && (_did == 0x0))sendNM_SETID(ifRxPacket->request_id.key);
         break;
     case IF_CMD_NM_SET_ID:
-        if(ifRxLen != IF_PACKET_NM_SETID_SIZE )return;
-        processNM_SETID();
+        if(ifRxLen == IF_PACKET_NM_SETID_SIZE )processNM_SETID();
         break;
     case IF_CMD_NM_RESET_ID:
 
@@ -188,7 +184,8 @@ _io_op_rezult ULSBusInterface::sendNM_REQUESTID()
     ifTxPacket->cmd = IF_CMD_NM_REQUEST_ID;
     ifTxLen = IF_PACKET_NM_REQUESTID_SIZE;
 
-    _key = ULS_KEY_GENERATOR();
+    _key = ULS_KEY_GENERATOR ^ _key_cntr;
+   // DEBUG_MSG("%s: send REQUEST ID lid:0x%.2X KEY: 0x%.4X ",_name,_did, _key);
     ifTxPacket->request_id.key = _key;
     return send();
 }
@@ -206,6 +203,7 @@ _io_op_rezult ULSBusInterface::sendNM_SETID(uint32_t key)
     ifTxLen = IF_PACKET_NM_SETID_SIZE;
 
     ifTxPacket->set_id.new_id = allocateId();
+    DEBUG_MSG("%s: send SET ID lid:0x%.2X NEWID: 0x%.2X KEY: 0x%.4X",_name,_did, ifTxPacket->set_id.new_id,key);
     ifTxPacket->set_id.key = key;
     return send();
 }
@@ -225,6 +223,7 @@ uint8_t ULSBusInterface::allocateId()
 }
 void ULSBusInterface::processNM_SETID()
 {
+   // DEBUG_MSG("%s: Received SET ID new ID:0x%.2X REMKEY:0x%.4X  OUR KEY: 0x%.4X",_name,ifTxPacket->set_id.new_id,ifRxPacket->set_id.key,_key);
     if(ifRxPacket->set_id.key != _key)return;
     _did      =  ifRxPacket->set_id.new_id;
     _state   = IF_STATE_OK;
