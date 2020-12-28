@@ -24,7 +24,6 @@
 
 #include "ULSObject.h"
 
-
 class ULSObjectSignature: public ULSObjectBase
 {
 public:
@@ -73,7 +72,96 @@ public:
 #endif
 };
 
+class ULSObjectULSQT1R1Status: public ULSObjectBase
+{
+public:
+    typedef struct __attribute__((packed)){
+        uint32_t status;
+        uint32_t errorr;
+        float Iled[37];
+        float vs;
+        float ih;
+        float il;
+        float tb;
+        float timu;
+        float imua[3];
+        float imug[3];
+        float imum[3];
+        float imu[3];
 
+    }__ULSObjectULSQT1R1Status;  // Total 128 bytes;
+    __ULSObjectULSQT1R1Status var;
+
+public:
+    ULSObjectULSQT1R1Status(uint16_t id):
+        ULSObjectBase(id,"Status","System status Information",ULSBUS_OBJECT_PERMITION_READONLY)
+    {
+        size = sizeof (__ULSObjectULSQT1R1Status);
+        len = 1;
+        _pxData = (uint8_t*)&var;
+    }
+#ifdef PCQT_BUILD
+    QVariantMap get(uint8_t *buf)override
+    {
+        QVariantMap out;
+        __ULSObjectULSQT1R1Status *px = (__ULSObjectULSQT1R1Status*)buf;
+
+        out["status"] = px->status;
+        out["errorr"] = px->errorr;
+
+        QList<QVariant> iled;
+        for(int i=0;i<37;i++)iled.append(px->Iled[i]);
+        out["Iled"] = iled;
+
+        out["vs"] = px->vs;
+        out["ih"] = px->ih;
+        out["il"] = px->il;
+        out["tb"] = px->tb;
+        out["timu"] = px->timu;
+        out["imua"] = QList<QVariant>()<<(px->imua[0])<<(px->imua[1])<<(px->imua[2]);
+        out["imug"] = QList<QVariant>()<<(px->imug[0])<<(px->imug[1])<<(px->imug[2]);
+        out["imum"] = QList<QVariant>()<<(px->imum[0])<<(px->imum[1])<<(px->imum[2]);
+        out["imu"] = QList<QVariant>()<<(px->imu[0])<<(px->imu[1])<<(px->imu[2]);
+        return out;
+    };
+#endif
+};
+class ULSObjectULSQT1R1Config: public ULSObjectBase
+{
+public:
+    typedef struct __attribute__((packed)){
+        char name[16];
+
+    }__ULSObjectULSQT1R1Config;  // Total 128 bytes;
+    __ULSObjectULSQT1R1Config var;
+
+public:
+    ULSObjectULSQT1R1Config(uint16_t id):
+        ULSObjectBase(id,"Config","System configuration",ULSBUS_OBJECT_PERMITION_READWRITE)
+    {
+        size = sizeof (__ULSObjectULSQT1R1Config);
+        len = 1;
+        _pxData = (uint8_t*)&var;
+    }
+#ifdef PCQT_BUILD
+    QVariantMap get(uint8_t *buf)override
+    {
+        QVariantMap out;
+        __ULSObjectULSQT1R1Config *px = (__ULSObjectULSQT1R1Config*)buf;
+        px->name[15] = 0;
+        out["name"]   = QString().fromLatin1(px->name);
+        return out;
+    };
+    uint32_t set(QVariantMap vars,uint8_t *buf)override
+    {
+        __ULSObjectULSQT1R1Config *px = (__ULSObjectULSQT1R1Config*)buf;
+        QString nm = QString("%1").arg(vars["name"].toString());
+        if(nm.size()<16)memcpy( px->name, nm.toStdString().c_str() ,nm.size());
+        px->name[15] = 0;
+        return size;
+    };
+#endif
+};
 
 
 
@@ -104,9 +192,15 @@ class ULSD_ULSQT1R1:public ULSD_ULSX
 {
 public:
     ULSD_ULSQT1R1():
-        ULSD_ULSX(__ULS_DEVICE_TYPE_ULSQT1R1_NAME,__ULS_DEVICE_TYPE_ULSQT1R1)
+        ULSD_ULSX(__ULS_DEVICE_TYPE_ULSQT1R1_NAME,__ULS_DEVICE_TYPE_ULSQT1R1),
+        o_status(0x0010),
+        o_cfg(0x0020)
     {
+        add(&o_status);
+        add(&o_cfg);
     }
+    ULSObjectULSQT1R1Status o_status;
+    ULSObjectULSQT1R1Config o_cfg;
 };
 class ULSD_ULSQR1R1:public ULSD_ULSX
 {
@@ -118,36 +212,18 @@ public:
 };
 
 #ifdef PCQT_BUILD
-class ULSQTDevice_X
+
+
+class ULSQTDevicesLibrary
 {
 public:
-    ULSQTDevice_X()
-    {
-        devTypeName[__ULS_DEVICE_TYPE_PCR1] = __ULS_DEVICE_TYPE_PCR1_NAME;
-        devTypeName[__ULS_DEVICE_TYPE_ULSQT1R1] =__ULS_DEVICE_TYPE_ULSQT1R1_NAME;
-        devTypeName[__ULS_DEVICE_TYPE_ULSQR1R1] =__ULS_DEVICE_TYPE_ULSQR1R1_NAME;
-        devTypeName[__ULS_DEVICE_TYPE_ULSQG1R1] =__ULS_DEVICE_TYPE_ULSQG1R1_NAME;
-        devTypeName[__ULS_DEVICE_TYPE_ULSQM1R1] =__ULS_DEVICE_TYPE_ULSQM1R1_NAME;
-        dev[__ULS_DEVICE_TYPE_ULSQT1R1_NAME] = (ULSDBase*)&devULSQT1R1;
-        dev[__ULS_DEVICE_TYPE_ULSQR1R1_NAME] = (ULSDBase*)&devULSQR1R1;
+    ULSQTDevicesLibrary(){
+        devTypes[__ULS_DEVICE_TYPE_ULSQT1R1] = (ULSDBase*)&devULSQT1R1;
+        devTypes[__ULS_DEVICE_TYPE_ULSQR1R1] = (ULSDBase*)&devULSQR1R1;
     };
-
     ULSD_ULSQT1R1 devULSQT1R1;
     ULSD_ULSQR1R1 devULSQR1R1;
-
-    QHash<int,QString> devTypeName;
-    QHash<QString,ULSDBase*> dev;
-
-    QVariantMap getVars(QString devName,QString objName,uint8_t *buf){
-        if(dev[devName] != nullptr)
-            return dev[devName]->getVar(objName,buf);
-        return QVariantMap();
-    }
-    QVariantMap getVars(QString devName,QString *objName,uint16_t obj_id,uint8_t *buf){
-        if(dev[devName] != nullptr)
-            return dev[devName]->getVar(objName,obj_id,buf);
-        return QVariantMap();
-    }
+    QHash<uint,ULSDBase*> devTypes;
 };
 #endif
 

@@ -27,13 +27,11 @@
 #include <string.h>
 #include "ULSBusTypes.h"
 
-
-
-
 #ifdef PCQT_BUILD
 #include<QHash>
 #include<QString>
 #include<QVariantMap>
+#include<QList>
 #endif
 
 class ULSObjectBase:public ULSListItem
@@ -67,9 +65,12 @@ public:
     QVariantMap getVar(QString *objName,uint16_t obj_id,uint8_t *buf);
     QVariantMap getVar(QString objName,uint8_t *buf);
     QString name(){return QString().fromLatin1(typeName);}
+    uint16_t getObjId(QString objName);
 #endif
+    const char *devname;
     const char *typeName;
     const uint16_t typeCode;
+
 
 };
 

@@ -49,18 +49,20 @@ typedef struct{
 }__attribute__((packed))_cn_packet_status;
 
 
-typedef struct
-{
-    uint32_t    lenght;
-    _cn_packet  *packet;
-}_cn_instance;
+//typedef struct
+//{
+//    uint32_t    lenght;
+//    _cn_packet  *packet;
+//}_cn_instance;
 
 
 typedef enum {
     CN_CMD_EXPLORER = 0,
     CN_ACK_EXPLORER = 1,
     CN_CMD_GETOBJ   = 2,
-    CN_ACK_OBJ      = 3
+    CN_ACK_GETOBJ   = 3,
+    CN_CMD_SETOBJ   = 4,
+    CN_ACK_SETOBJ   = 5,
 }_cn_cmd;
 
 
@@ -72,6 +74,8 @@ public:
     void cnForwardExplorer(ULSBusConnection *sc);
     _io_op_rezult cnForwardPacket(uint8_t cid,ULSBusConnection *sc);
     _io_op_rezult cnSendGetObject(uint8_t *route,uint8_t hs,uint16_t obj_addr);
+    _io_op_rezult cnSendSetObject(uint8_t *route,uint8_t hs,uint16_t obj_addr,uint8_t *buf);
+    _io_op_rezult cnSendExplorer();
     void task(uint32_t dtms);
 };
 
@@ -90,6 +94,8 @@ public:
 
     _io_op_rezult cnSendExplorer();
     _io_op_rezult cnSendGetObject(uint8_t *route,uint8_t hs,uint16_t obj_addr);
+    _io_op_rezult cnSendSetObject(uint8_t *route,uint8_t hs,uint16_t obj_addr,uint8_t *buf);
+
     _io_op_rezult cnProcessExplorer();
     _io_op_rezult cnForwardExplorer(ULSBusConnection *src);
 
@@ -97,6 +103,7 @@ public:
     _io_op_rezult cnProcessOurPacket();
     _io_op_rezult cnForwardPacket(ULSBusConnection *src);
     _io_op_rezult cnProcessGetObject();
+    _io_op_rezult cnProcessSetObject();
 
     _io_op_rezult cnSendStatus();
     _io_op_rezult cnProcessStatus();
@@ -115,6 +122,7 @@ public:
     _uls_cn_callback cnclbkConnected;
     _uls_cn_callback cnclbkStatusReceived;
     _uls_cn_callback cnclbkObjReceived;
+    _uls_cn_callback cnclbkObjSended;
     _uls_cn_callback cnclbkObjRequested;
 
 

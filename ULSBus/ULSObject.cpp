@@ -72,4 +72,13 @@ QVariantMap ULSDBase::getVar(QString objName, uint8_t *buf)
     }
     return QVariantMap();
 }
+
+uint16_t ULSDBase::getObjId(QString objName)
+{
+    begin();
+    while(next()){
+        if(current->name() == objName)return current->id;
+    }
+    return 0xFFFF;
+}
 #endif

@@ -23,21 +23,59 @@
 #ifndef ULSBUSQTWRAPPER_H
 #define ULSBUSQTWRAPPER_H
 
-#include "ULSBus.h"
+#define ULS_DEBUG
+
+#include<QTimer>
+#include"SerialPort.h"
+#include "ULSBusConnection.h"
 #include "ULSDevice_ULSQX.h"
+#include "ULSSerial.h"
 #include <QTextStream>
 #include <QElapsedTimer>
 
-class ULSBusQTWrapper:public ULSBus
-{
+#define ULSQTW_DEVICE_TIMEOUT   2000
+
+
+typedef struct{
+    uint32_t timeout;
+    ULSDBase* instance;
+}_device_state;
+
+
+
+class ULSBusQTWrapper: public QObject {
+    Q_OBJECT
 public:
-    ULSBusQTWrapper(const char *name,ULSDeviceBase *selfDevice,_ulsbus_obj_updated_callback callback);
-    void addDevice(_ulsbus_device_status *status) override;
+    ULSBusQTWrapper();
+
+    void sendObject(const QString &route,const QString &objName,const QVariantMap &objData);
+    void requestObject(const QString &route,const QString &objName);
+    void exploreDevices();
+
+    void cnObjectReceived(ULSBusConnection *sc);
+    void cnStatusReceived(ULSBusConnection *sc);
 
 private:
-    ULSBusTransaction _transactions[512];
-    ULSBusObjectBuffer _objectsBuffers[512];
-    _ulsbus_obj_updated_callback _callback;
+    QString getRoute(ULSBusConnection *sc);
+    void updateDevice(const QString &route);
+
+private:
+    uint m_dtms;
+    uint     m_counter;
+    QElapsedTimer* m_elapsed;
+    ULSD_PC m_pcDevice;
+    ULSBusConnectionsList m_connections;
+    ULSSerialPort m_serial;
+    ULSQTDevicesLibrary   m_devsLibrary;
+    QHash<QString,_device_state> m_dev;
+
+signals:
+    void objectReceived(const QString &route,const QString &objName,const QVariantMap &objData);
+    void deviceConnected(const QString &route,const  QString &deviceType,const  QString &deviceName);
+    void deviceDisconnected(const QString &route);
+private slots:
+    void onTimer();
+
 };
 
 
