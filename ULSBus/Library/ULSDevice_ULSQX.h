@@ -206,14 +206,12 @@ public:
 
         float  posDistance;
         float  posHeight;
-        float  posX;
-        float  posY;
         float  posAx;
         float  posAy;
         float  posDx;
         float  posDy;
-        float  velx;
-        float  vely;
+        float  velDx;
+        float  velDy;
         float  imuR;
         float  imuP;
 
@@ -248,14 +246,12 @@ public:
         __ULS_GENERIC_VAR_TO_QVM(levelB);
         __ULS_GENERIC_VAR_TO_QVM(posDistance);
         __ULS_GENERIC_VAR_TO_QVM(posHeight);
-        __ULS_GENERIC_VAR_TO_QVM(posX);
-        __ULS_GENERIC_VAR_TO_QVM(posY);
         __ULS_GENERIC_VAR_TO_QVM(posAx);
         __ULS_GENERIC_VAR_TO_QVM(posAy);
         __ULS_GENERIC_VAR_TO_QVM(posDx);
         __ULS_GENERIC_VAR_TO_QVM(posDy);
-        __ULS_GENERIC_VAR_TO_QVM(velx);
-        __ULS_GENERIC_VAR_TO_QVM(vely);
+        __ULS_GENERIC_VAR_TO_QVM(velDx);
+        __ULS_GENERIC_VAR_TO_QVM(velDy);
         __ULS_GENERIC_VAR_TO_QVM(imuR);
         __ULS_GENERIC_VAR_TO_QVM(imuP);
         return out;
