@@ -23,6 +23,23 @@
 #define ULSDEVICE_ULSQX_H
 
 #include "ULSObject.h"
+#ifdef PCQT_BUILD
+// GET DEFINES
+#define __ULS_GENERIC_VAR_TO_QVM(VNAME) {out[#VNAME] = px->VNAME;};
+#define __ULS_GENERIC_STRING_TO_QVM(SNAME) {out[#SNAME] = QString().fromLatin1(px->SNAME);};
+#define __ULS_GENERIC_V3F_TO_QVM(VNAME) {out[#VNAME] = QList<QVariant>()<<(px->VNAME[0])<<(px->VNAME[1])<<(px->VNAME[2]);};
+
+
+#define __ULS_GENERIC_VARRAY_TO_QVM(VNAME,SIZE) {QList<QVariant> ql_##VNAME;for(int i=0;i<SIZE;i++)ql_##VNAME.append(px->VNAME[i]);\
+    out[#VNAME] = ql_##VNAME;};
+
+// SET DEFINES
+#define __ULS_QVM_TO_STRING(SNAME) if(QString("%1").arg(vars[#SNAME].toString()).size() < 16){\
+    memcpy( px->SNAME, QString("%1").arg(vars[#SNAME].toString()).toStdString().c_str()\
+    ,QString("%1").arg(vars[#SNAME].toString()).size());}
+
+#define __ULS_QVM_TO_FLOAT(VNAME) {px->VNAME = vars[#VNAME].toFloat();};
+#endif
 
 class ULSObjectSignature: public ULSObjectBase
 {
@@ -105,23 +122,21 @@ public:
     {
         QVariantMap out;
         __ULSObjectULSQT1R1Status *px = (__ULSObjectULSQT1R1Status*)buf;
+        __ULS_GENERIC_VAR_TO_QVM(status);
+        __ULS_GENERIC_VAR_TO_QVM(errorr);
+        __ULS_GENERIC_VAR_TO_QVM(vs);
+        __ULS_GENERIC_VAR_TO_QVM(ih);
+        __ULS_GENERIC_VAR_TO_QVM(il);
+        __ULS_GENERIC_VAR_TO_QVM(tb);
+        __ULS_GENERIC_VAR_TO_QVM(timu);
 
-        out["status"] = px->status;
-        out["errorr"] = px->errorr;
+        __ULS_GENERIC_VARRAY_TO_QVM(Iled,37);
 
-        QList<QVariant> iled;
-        for(int i=0;i<37;i++)iled.append(px->Iled[i]);
-        out["Iled"] = iled;
+        __ULS_GENERIC_V3F_TO_QVM(imua);
+        __ULS_GENERIC_V3F_TO_QVM(imug);
+        __ULS_GENERIC_V3F_TO_QVM(imum);
+        __ULS_GENERIC_V3F_TO_QVM(imu);
 
-        out["vs"] = px->vs;
-        out["ih"] = px->ih;
-        out["il"] = px->il;
-        out["tb"] = px->tb;
-        out["timu"] = px->timu;
-        out["imua"] = QList<QVariant>()<<(px->imua[0])<<(px->imua[1])<<(px->imua[2]);
-        out["imug"] = QList<QVariant>()<<(px->imug[0])<<(px->imug[1])<<(px->imug[2]);
-        out["imum"] = QList<QVariant>()<<(px->imum[0])<<(px->imum[1])<<(px->imum[2]);
-        out["imu"] = QList<QVariant>()<<(px->imu[0])<<(px->imu[1])<<(px->imu[2]);
         return out;
     };
 #endif
@@ -131,7 +146,8 @@ class ULSObjectULSQT1R1Config: public ULSObjectBase
 public:
     typedef struct __attribute__((packed)){
         char name[16];
-
+        float Voff;
+        float Vlow;
     }__ULSObjectULSQT1R1Config;  // Total 128 bytes;
     __ULSObjectULSQT1R1Config var;
 
@@ -149,7 +165,9 @@ public:
         QVariantMap out;
         __ULSObjectULSQT1R1Config *px = (__ULSObjectULSQT1R1Config*)buf;
         px->name[15] = 0;
-        out["name"]   = QString().fromLatin1(px->name);
+        __ULS_GENERIC_STRING_TO_QVM(name);
+        __ULS_GENERIC_VAR_TO_QVM(Voff);
+        __ULS_GENERIC_VAR_TO_QVM(Vlow);
         return out;
     };
     uint32_t set(QVariantMap vars,uint8_t *buf)override
@@ -158,11 +176,133 @@ public:
         QString nm = QString("%1").arg(vars["name"].toString());
         if(nm.size()<16)memcpy( px->name, nm.toStdString().c_str() ,nm.size());
         px->name[15] = 0;
+        __ULS_QVM_TO_FLOAT(Voff);
+        __ULS_QVM_TO_FLOAT(Vlow);
+
         return size;
     };
 #endif
 };
+// ULS-QR1-R1
 
+class ULSObjectULSQR1R1Status: public ULSObjectBase
+{
+public:
+    typedef struct __attribute__((packed)){
+        uint32_t status;
+        uint32_t errorr;
+
+        uint32_t packCntr;
+        uint16_t bitMax;
+        uint8_t qtId;
+        uint8_t synqChannel;
+        uint32_t posTime;
+        uint32_t emsTime;
+        uint32_t synqMax;
+
+        float level;
+        float levelA;
+        float levelB;
+
+        float  posDistance;
+        float  posHeight;
+        float  posX;
+        float  posY;
+        float  posAx;
+        float  posAy;
+        float  posDx;
+        float  posDy;
+        float  velx;
+        float  vely;
+        float  imuR;
+        float  imuP;
+
+    }__ULSObjectULSQR1R1Status;  // Total 128 bytes;
+    __ULSObjectULSQR1R1Status var;
+
+public:
+    ULSObjectULSQR1R1Status(uint16_t id):
+        ULSObjectBase(id,"Status","System status Information",ULSBUS_OBJECT_PERMITION_READONLY)
+    {
+        size = sizeof (__ULSObjectULSQR1R1Status);
+        len = 1;
+        _pxData = (uint8_t*)&var;
+    }
+#ifdef PCQT_BUILD
+
+    QVariantMap get(uint8_t *buf)override
+    {
+        QVariantMap out;
+        __ULSObjectULSQR1R1Status *px = (__ULSObjectULSQR1R1Status*)buf;
+        __ULS_GENERIC_VAR_TO_QVM(status);
+        __ULS_GENERIC_VAR_TO_QVM(errorr);
+        __ULS_GENERIC_VAR_TO_QVM(packCntr);
+        __ULS_GENERIC_VAR_TO_QVM(bitMax);
+        __ULS_GENERIC_VAR_TO_QVM(qtId);
+        __ULS_GENERIC_VAR_TO_QVM(synqChannel);
+        __ULS_GENERIC_VAR_TO_QVM(posTime);
+        __ULS_GENERIC_VAR_TO_QVM(emsTime);
+        __ULS_GENERIC_VAR_TO_QVM(synqMax);
+        __ULS_GENERIC_VAR_TO_QVM(level);
+        __ULS_GENERIC_VAR_TO_QVM(levelA);
+        __ULS_GENERIC_VAR_TO_QVM(levelB);
+        __ULS_GENERIC_VAR_TO_QVM(posDistance);
+        __ULS_GENERIC_VAR_TO_QVM(posHeight);
+        __ULS_GENERIC_VAR_TO_QVM(posX);
+        __ULS_GENERIC_VAR_TO_QVM(posY);
+        __ULS_GENERIC_VAR_TO_QVM(posAx);
+        __ULS_GENERIC_VAR_TO_QVM(posAy);
+        __ULS_GENERIC_VAR_TO_QVM(posDx);
+        __ULS_GENERIC_VAR_TO_QVM(posDy);
+        __ULS_GENERIC_VAR_TO_QVM(velx);
+        __ULS_GENERIC_VAR_TO_QVM(vely);
+        __ULS_GENERIC_VAR_TO_QVM(imuR);
+        __ULS_GENERIC_VAR_TO_QVM(imuP);
+        return out;
+    };
+#endif
+};
+class ULSObjectULSQR1R1Config: public ULSObjectBase
+{
+public:
+    typedef struct __attribute__((packed)){
+        char name[16];
+        float posOffsetX;
+        float posOffsetY;
+    }__ULSObjectULSQR1R1Config;  // Total 128 bytes;
+    __ULSObjectULSQR1R1Config var;
+
+public:
+    ULSObjectULSQR1R1Config(uint16_t id):
+        ULSObjectBase(id,"Config","System configuration",ULSBUS_OBJECT_PERMITION_READWRITE)
+    {
+        size = sizeof (__ULSObjectULSQR1R1Config);
+        len = 1;
+        _pxData = (uint8_t*)&var;
+    }
+#ifdef PCQT_BUILD
+    QVariantMap get(uint8_t *buf)override
+    {
+        QVariantMap out;
+        __ULSObjectULSQR1R1Config *px = (__ULSObjectULSQR1R1Config*)buf;
+        px->name[15] = 0;
+        __ULS_GENERIC_STRING_TO_QVM(name);
+        __ULS_GENERIC_VAR_TO_QVM(posOffsetX);
+        __ULS_GENERIC_VAR_TO_QVM(posOffsetY);
+
+        return out;
+    };
+    uint32_t set(QVariantMap vars,uint8_t *buf)override
+    {
+        __ULSObjectULSQR1R1Config *px = (__ULSObjectULSQR1R1Config*)buf;
+        __ULS_QVM_TO_STRING(name);
+        px->name[15] = 0;
+        __ULS_QVM_TO_FLOAT(posOffsetX);
+        __ULS_QVM_TO_FLOAT(posOffsetY);
+        return size;
+    };
+#endif
+};
 
 
 class ULSD_ULSX:public ULSDBase
