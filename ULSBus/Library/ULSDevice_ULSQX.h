@@ -346,9 +346,15 @@ class ULSD_ULSQR1R1:public ULSD_ULSX
 {
 public:
     ULSD_ULSQR1R1():
-        ULSD_ULSX(__ULS_DEVICE_TYPE_ULSQR1R1_NAME,__ULS_DEVICE_TYPE_ULSQR1R1)
+        ULSD_ULSX(__ULS_DEVICE_TYPE_ULSQR1R1_NAME,__ULS_DEVICE_TYPE_ULSQR1R1),
+      o_status(0x0010),
+      o_cfg(0x0020)
     {
+        add(&o_status);
+        add(&o_cfg);
     }
+    ULSObjectULSQR1R1Status o_status;
+    ULSObjectULSQR1R1Config o_cfg;
 };
 
 #ifdef PCQT_BUILD
