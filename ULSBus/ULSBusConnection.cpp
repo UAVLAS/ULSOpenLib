@@ -106,7 +106,8 @@ _io_op_rezult ULSBusConnection::cnProcessExplorer()
     // Prepare answer
     _cn_packet_status *px = (_cn_packet_status*)cnPrepareAnswer(CN_ACK_EXPLORER);
 
-    strcpy((char*)px->name,_dev->devname);
+    memcpy((uint8_t*)px->name,_dev->devname,16);
+    px->name[15] = 0;
     px->type = _dev->typeCode;
     uint32_t txHs = cnTxPacket->hop&0xF;
     ifTxLen = sizeof (_cn_packet_status) + txHs + 1;
@@ -140,6 +141,7 @@ _io_op_rezult ULSBusConnection::cnProcessGetObject()
 _io_op_rezult ULSBusConnection::cnProcessSetObject()
 {
     uint16_t obj_id =  *((uint16_t*)&cnRxPacket->pld[cnRxPacket->hop&0xf]);
+    uint8_t *obj_px = ((uint8_t*)&cnRxPacket->pld[(cnRxPacket->hop&0xf) + 2]);
 
     ULSObjectBase* obj = _dev->getObject(obj_id);
     if(obj == nullptr) {
@@ -149,10 +151,10 @@ _io_op_rezult ULSBusConnection::cnProcessSetObject()
     if((obj->_permition != ULSBUS_OBJECT_PERMITION_READWRITE)&&
             (obj->_permition != ULSBUS_OBJECT_PERMITION_WRITEONLY))return IO_ERROR;
 
+    obj->setData(obj_px);
     uint8_t *px = cnPrepareAnswer(CN_ACK_SETOBJ);
     *((uint16_t*)px) = obj_id;
-    px+=2;
-    obj->setData(px);
+
     uint32_t txHs = cnTxPacket->hop&0xF;
     ifTxLen = 1 + txHs + 2;
     return ifSend();
