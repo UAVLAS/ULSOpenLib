@@ -54,7 +54,7 @@ public:
 
     void cnObjectReceived(ULSBusConnection *sc);
     void cnStatusReceived(ULSBusConnection *sc);
-
+    void cnObjectSended(ULSBusConnection *sc);
 private:
     QString getRoute(ULSBusConnection *sc);
     void updateDevice(const QString &route);
@@ -71,6 +71,7 @@ private:
 
 signals:
     void objectReceived(const QString &route,const QString &objName,const QVariantMap &objData);
+    void objectSended(const QString &route,const QString &objName);
     void deviceConnected(const QString &route,const  QString &deviceType,const  QString &deviceName);
     void deviceDisconnected(const QString &route);
 private slots:

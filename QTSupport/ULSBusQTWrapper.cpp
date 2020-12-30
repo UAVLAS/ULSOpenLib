@@ -37,7 +37,10 @@ static void cnklbkObjReceived(ULSBusConnection *sc)
 {
     if(ubqtw)ubqtw->cnObjectReceived(sc);
 }
-
+static void cnklbkObjSended(ULSBusConnection *sc)
+{
+    if(ubqtw)ubqtw->cnObjectSended(sc);
+}
 ULSBusQTWrapper::ULSBusQTWrapper():
     m_dtms(50),
     m_serial(this,&m_pcDevice,&m_connections)
@@ -85,7 +88,7 @@ void ULSBusQTWrapper::onTimer()
 }
 void ULSBusQTWrapper::updateDevice(const QString &route)
 {
-  m_dev[route].timeout = ULSQTW_DEVICE_TIMEOUT;
+    m_dev[route].timeout = ULSQTW_DEVICE_TIMEOUT;
 }
 QString ULSBusQTWrapper::getRoute(ULSBusConnection *sc)
 {
@@ -129,6 +132,16 @@ void ULSBusQTWrapper::cnStatusReceived(ULSBusConnection *sc)
     }
     updateDevice(route);
 }
+void ULSBusQTWrapper::cnObjectSended(ULSBusConnection *sc)
+{
+    QString route(getRoute(sc));
+    if(!m_dev.contains(route))return;
+    uint32_t rxHs = sc->cnRxPacket->hop & 0xF;
+    uint16_t obj_id = *((uint16_t*)&sc->cnRxPacket->pld[rxHs]);
+
+    ULSObjectBase *obj = m_dev[route].instance->getObject(obj_id);
+    if(obj) emit objectSended(route,obj->name());
+}
 //QML CONNECTIONS
 void ULSBusQTWrapper::sendObject(const QString &route,const QString &objName,const QVariantMap &value)
 {
@@ -137,7 +150,7 @@ void ULSBusQTWrapper::sendObject(const QString &route,const QString &objName,con
     QStringList list = route.split(QRegExp("\\s+"), Qt::SkipEmptyParts);
     if(list.count() == 0) return;
     uint8_t r[15];
-    uint8_t buf[2048];
+
 
     for (int i = 0; i < list.length(); i++)
     {
@@ -146,12 +159,11 @@ void ULSBusQTWrapper::sendObject(const QString &route,const QString &objName,con
         r[i] = (clist[0].toUInt(&bStatus,16) << 6) | clist[1].toUInt(&bStatus,16);
 
     }
-    if(!m_dev.contains(route)){
-        ULSObjectBase *obj = m_dev[route].instance->getObject(objName);
-        uint32_t size = obj->set(value);
-        m_connections.cnSendSetObject(r,list.length(),obj->id,buf,size);
-    }
-   }
+    ULSObjectBase *obj = m_dev[route].instance->getObject(objName);
+    uint32_t size = obj->set(value);
+    m_connections.cnSendSetObject(r,list.length(),obj->id,obj->_pxData,size);
+
+}
 void ULSBusQTWrapper::requestObject(const QString &route,const QString &objName)
 {
     if(!m_dev.contains(route)) return;

@@ -28,6 +28,7 @@ ULSBusConnection::ULSBusConnection(ULSDBase *dev,ULSBusConnectionsList* connecti
     cnclbkConnected(nullptr),
     cnclbkStatusReceived(nullptr),
     cnclbkObjReceived(nullptr),
+    cnclbkObjSended(nullptr),
     cnclbkObjRequested(nullptr),
     _cid(cid),
     _connections(connections),
@@ -211,7 +212,7 @@ _io_op_rezult ULSBusConnection::cnSendSetObject(uint8_t *route,uint8_t hs,uint16
     cnTxPacket->pld[hs+1] = (obj_addr>>8)&0xff;
     memcpy(&cnTxPacket->pld[hs+2],buf,size);
     ifTxLen = (1 + hs + 2 + size);
-    return IO_ERROR;
+    return  ifSend();
 }
 _io_op_rezult ULSBusConnection::cnForwardExplorer(ULSBusConnection *sc)
 {
