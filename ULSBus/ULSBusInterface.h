@@ -41,7 +41,12 @@
 #define IF_PACKET_NM_HB_SIZE (IF_PACKET_NM_HEADER_SIZE + 4)
 #define IF_PACKET_NM_REQUESTID_SIZE (IF_PACKET_NM_HEADER_SIZE + 4)
 #define IF_PACKET_NM_SETID_SIZE (IF_PACKET_NM_HEADER_SIZE + 1 + 4)
+#define IF_PACKET_BLITZ_SIZE (2)
 
+class ULSBusInterface;
+typedef void (*_uls_if_callback)(ULSBusInterface*);
+
+#define IF_CALL(func) if(func !=nullptr)func(this);
 
 typedef enum {
     IO_OK = 0,
@@ -57,7 +62,8 @@ typedef enum {
     IF_CMD_NM_GET_STATUS = 2,
     IF_CMD_NM_REQUEST_ID = 3,
     IF_CMD_NM_SET_ID = 4,
-    IF_CMD_NM_RESET_ID = 5
+    IF_CMD_NM_RESET_ID = 5,
+    IF_CMD_BLITZ = 6
 }_if_cmd;
 
 
@@ -98,6 +104,12 @@ typedef struct{
                 uint32_t key;
             }__attribute__((packed))set_id;
         }__attribute__((packed));
+        //Blitzh messges
+        struct{
+            uint32_t id;
+            uint8_t data[8];
+        }__attribute__((packed))blitz;
+
         //Buffer direct access
         uint8_t  pld[IF_PAYLOAD_SIZE]; // Payload of if_packet
     }__attribute__((packed));
@@ -121,6 +133,8 @@ public:
 
     _io_op_rezult ifSend();
     _io_op_rezult ifReceive();
+    _io_op_rezult ifSendBLITZ(uint16_t blitz_id,uint8_t *buf,uint32_t size);
+    _uls_if_callback ifclbkBlitzReceived;
     uint8_t ifid(){return (_did & 0x3f);}
     void ifid(uint8_t did){_did = (did & 0x3f);}
 
@@ -156,6 +170,8 @@ private:
     _io_op_rezult sendNM_REQUESTID();
     _io_op_rezult sendNM_SETID(uint32_t key);
     _io_op_rezult sendNM_HB();
+
+
 
     // Utils
     uint8_t allocateId();

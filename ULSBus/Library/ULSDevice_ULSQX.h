@@ -192,6 +192,7 @@ public:
         uint32_t status;
         uint32_t errorr;
 
+        uint32_t blitzTest;
         uint32_t packCntr;
         uint16_t bitMax;
         uint8_t qtId;
@@ -234,6 +235,7 @@ public:
         __ULSObjectULSQR1R1Status *px = (__ULSObjectULSQR1R1Status*)buf;
         __ULS_GENERIC_VAR_TO_QVM(status);
         __ULS_GENERIC_VAR_TO_QVM(errorr);
+        __ULS_GENERIC_VAR_TO_QVM(blitzTest);
         __ULS_GENERIC_VAR_TO_QVM(packCntr);
         __ULS_GENERIC_VAR_TO_QVM(bitMax);
         __ULS_GENERIC_VAR_TO_QVM(qtId);
@@ -342,8 +344,8 @@ class ULSD_ULSQR1R1:public ULSD_ULSX
 public:
     ULSD_ULSQR1R1():
         ULSD_ULSX(__ULS_DEVICE_TYPE_ULSQR1R1_NAME,__ULS_DEVICE_TYPE_ULSQR1R1),
-      o_status(0x0010),
-      o_cfg(0x0020)
+        o_status(0x0010),
+        o_cfg(0x0020)
     {
         add(&o_status);
         add(&o_cfg);

@@ -175,6 +175,9 @@ void ULSBusInterface::processLocal()
     case IF_CMD_NM_RESET_ID:
 
         break;
+    case IF_CMD_BLITZ:
+        IF_CALL(ifclbkBlitzReceived);
+        break;
     }
     ifRxLen  = 0;
 }
@@ -203,8 +206,17 @@ _io_op_rezult ULSBusInterface::sendNM_SETID(uint32_t key)
     ifTxLen = IF_PACKET_NM_SETID_SIZE;
 
     ifTxPacket->set_id.new_id = allocateId();
-    DEBUG_MSG("%s: send SET ID lid:0x%.2X NEWID: 0x%.2X KEY: 0x%.4X",_name,_did, ifTxPacket->set_id.new_id,key);
+   // DEBUG_MSG("%s: send SET ID lid:0x%.2X NEWID: 0x%.2X KEY: 0x%.4X",_name,_did, ifTxPacket->set_id.new_id,key);
     ifTxPacket->set_id.key = key;
+    return send();
+}
+_io_op_rezult ULSBusInterface::ifSendBLITZ(uint16_t blitz_id,uint8_t *buf,uint32_t size)
+{
+    if(size>8)return IO_ERROR;
+    ifTxPacket->cmd = IF_CMD_BLITZ;
+    ifTxLen = IF_PACKET_BLITZ_SIZE + size;
+    ifTxPacket->blitz.id = blitz_id;
+    memcpy(ifTxPacket->blitz.data,buf,size);
     return send();
 }
 uint8_t ULSBusInterface::allocateId()
