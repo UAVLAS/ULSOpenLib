@@ -50,6 +50,7 @@ ULSBusQTWrapper::ULSBusQTWrapper():
     m_serial.cnclbkStatusReceived = &cnklbkStatusReceived;
     m_serial.cnclbkConnected = &cnklbkConnected;
     m_serial.cnclbkObjReceived = &cnklbkObjReceived;
+    m_serial.cnclbkObjSended = &cnklbkObjSended;
 
     QTimer *timer = new QTimer();
     connect(timer, SIGNAL(timeout()), this, SLOT(onTimer()));
