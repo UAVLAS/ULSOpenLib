@@ -51,6 +51,7 @@ ULSObjectBase *ULSDBase::getObject(uint16_t obj_id)
     }
     return nullptr;
 }
+
 #ifdef PCQT_BUILD
 QVariantMap ULSDBase::getVar(QString *objName, uint16_t obj_id, uint8_t *buf)
 {
@@ -81,4 +82,13 @@ uint16_t ULSDBase::getObjId(QString objName)
     }
     return 0xFFFF;
 }
+ULSObjectBase *ULSDBase::getObject(QString objName)
+{
+    begin();
+    while(next()){
+        if(current->name()  == objName)return current;
+    }
+    return nullptr;
+}
+
 #endif

@@ -48,7 +48,7 @@ public:
 
 #ifdef PCQT_BUILD
     virtual QVariantMap get(uint8_t *buf){QVariantMap v;(void)v;(void)buf;return v;};
-    virtual uint32_t set(QVariantMap vars,uint8_t *buf){(void)buf;(void)vars;return 0;};
+    virtual uint32_t set(QVariantMap vars){(void)vars;return 0;};
     QString name(){return QString().fromLatin1(_name);};
     QString description(){return QString().fromLatin1(_description);};
 #endif
@@ -64,8 +64,10 @@ public:
 #ifdef PCQT_BUILD
     QVariantMap getVar(QString *objName,uint16_t obj_id,uint8_t *buf);
     QVariantMap getVar(QString objName,uint8_t *buf);
+
     QString name(){return QString().fromLatin1(typeName);}
     uint16_t getObjId(QString objName);
+    ULSObjectBase *getObject(QString objName);;
 #endif
     const char *devname;
     const char *typeName;

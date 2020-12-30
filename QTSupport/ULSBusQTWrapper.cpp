@@ -130,11 +130,28 @@ void ULSBusQTWrapper::cnStatusReceived(ULSBusConnection *sc)
     updateDevice(route);
 }
 //QML CONNECTIONS
-void ULSBusQTWrapper::sendObject(const QString &route,const QString &name,const QVariantMap &value)
+void ULSBusQTWrapper::sendObject(const QString &route,const QString &objName,const QVariantMap &value)
 {
-    // TODO send
+    if(!m_dev.contains(route)) return;
 
-}
+    QStringList list = route.split(QRegExp("\\s+"), Qt::SkipEmptyParts);
+    if(list.count() == 0) return;
+    uint8_t r[15];
+    uint8_t buf[2048];
+
+    for (int i = 0; i < list.length(); i++)
+    {
+        QStringList clist = list[i].split(":");
+        bool bStatus = false;
+        r[i] = (clist[0].toUInt(&bStatus,16) << 6) | clist[1].toUInt(&bStatus,16);
+
+    }
+    if(!m_dev.contains(route)){
+        ULSObjectBase *obj = m_dev[route].instance->getObject(objName);
+        uint32_t size = obj->set(value);
+        m_connections.cnSendSetObject(r,list.length(),obj->id,buf,size);
+    }
+   }
 void ULSBusQTWrapper::requestObject(const QString &route,const QString &objName)
 {
     if(!m_dev.contains(route)) return;

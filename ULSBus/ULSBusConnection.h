@@ -74,7 +74,7 @@ public:
     void cnForwardExplorer(ULSBusConnection *sc);
     _io_op_rezult cnForwardPacket(uint8_t cid,ULSBusConnection *sc);
     _io_op_rezult cnSendGetObject(uint8_t *route,uint8_t hs,uint16_t obj_addr);
-    _io_op_rezult cnSendSetObject(uint8_t *route,uint8_t hs,uint16_t obj_addr,uint8_t *buf);
+    _io_op_rezult cnSendSetObject(uint8_t *route, uint8_t hs, uint16_t obj_addr, uint8_t *buf, uint32_t size);
     _io_op_rezult cnSendExplorer();
     void task(uint32_t dtms);
 };
@@ -94,7 +94,7 @@ public:
 
     _io_op_rezult cnSendExplorer();
     _io_op_rezult cnSendGetObject(uint8_t *route,uint8_t hs,uint16_t obj_addr);
-    _io_op_rezult cnSendSetObject(uint8_t *route,uint8_t hs,uint16_t obj_addr,uint8_t *buf);
+    _io_op_rezult cnSendSetObject(uint8_t *route, uint8_t hs, uint16_t obj_addr, uint8_t *buf, uint32_t size);
 
     _io_op_rezult cnProcessExplorer();
     _io_op_rezult cnForwardExplorer(ULSBusConnection *src);

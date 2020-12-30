@@ -199,18 +199,18 @@ _io_op_rezult ULSBusConnection::cnSendGetObject(uint8_t *route,uint8_t hs,uint16
     ifTxLen = (1 + hs + 2);
     return  ifSend();
 }
-_io_op_rezult ULSBusConnection::cnSendSetObject(uint8_t *route,uint8_t hs,uint16_t obj_addr,uint8_t *buf)
+_io_op_rezult ULSBusConnection::cnSendSetObject(uint8_t *route,uint8_t hs,uint16_t obj_addr,uint8_t *buf,uint32_t size)
 {
     if( (route[0] >> 6) != _cid)return IO_ERROR; // not our interface
 
-//    cnTxPacket->cmd = CN_CMD_SETOBJ;
-//    cnTxPacket->hop = (0<<4) | hs;
-//    memcpy(cnTxPacket->pld,route,hs);
+    cnTxPacket->cmd = CN_CMD_SETOBJ;
+    cnTxPacket->hop = (0<<4) | hs;
+    memcpy(cnTxPacket->pld,route,hs);
 
-//    cnTxPacket->pld[hs]   = obj_addr&0xff;
-//    cnTxPacket->pld[hs+1] = (obj_addr>>8)&0xff;
-//    ifTxLen = (1 + hs + 2);
-//    return  ifSend();
+    cnTxPacket->pld[hs]   = obj_addr&0xff;
+    cnTxPacket->pld[hs+1] = (obj_addr>>8)&0xff;
+    memcpy(&cnTxPacket->pld[hs+2],buf,size);
+    ifTxLen = (1 + hs + 2 + size);
     return IO_ERROR;
 }
 _io_op_rezult ULSBusConnection::cnForwardExplorer(ULSBusConnection *sc)
@@ -275,11 +275,11 @@ _io_op_rezult ULSBusConnectionsList::cnSendGetObject(uint8_t *route,uint8_t hs,u
     }
     return IO_ERROR;
 }
-_io_op_rezult ULSBusConnectionsList::cnSendSetObject(uint8_t *route,uint8_t hs,uint16_t obj_addr,uint8_t *buf)
+_io_op_rezult ULSBusConnectionsList::cnSendSetObject(uint8_t *route,uint8_t hs,uint16_t obj_addr,uint8_t *buf,uint32_t size)
 {
     begin();
     while (next()) {
-        if (current->cnSendSetObject(route,hs,obj_addr,buf) == IO_OK) return IO_OK;
+        if (current->cnSendSetObject(route,hs,obj_addr,buf,size) == IO_OK) return IO_OK;
     }
     return IO_ERROR;
 }

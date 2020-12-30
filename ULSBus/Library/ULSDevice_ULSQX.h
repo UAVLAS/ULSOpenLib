@@ -35,10 +35,10 @@
 
 // SET DEFINES
 #define __ULS_QVM_TO_STRING(SNAME) if(QString("%1").arg(vars[#SNAME].toString()).size() < 16){\
-    memcpy( px->SNAME, QString("%1").arg(vars[#SNAME].toString()).toStdString().c_str()\
+    memcpy( var.SNAME, QString("%1").arg(vars[#SNAME].toString()).toStdString().c_str()\
     ,QString("%1").arg(vars[#SNAME].toString()).size());}
 
-#define __ULS_QVM_TO_FLOAT(VNAME) {px->VNAME = vars[#VNAME].toFloat();};
+#define __ULS_QVM_TO_FLOAT(VNAME) {var.VNAME = vars[#VNAME].toFloat();};
 #endif
 
 class ULSObjectSignature: public ULSObjectBase
@@ -170,12 +170,12 @@ public:
         __ULS_GENERIC_VAR_TO_QVM(Vlow);
         return out;
     };
-    uint32_t set(QVariantMap vars,uint8_t *buf)override
+    uint32_t set(QVariantMap vars)override
     {
-        __ULSObjectULSQT1R1Config *px = (__ULSObjectULSQT1R1Config*)buf;
+
         QString nm = QString("%1").arg(vars["name"].toString());
-        if(nm.size()<16)memcpy( px->name, nm.toStdString().c_str() ,nm.size());
-        px->name[15] = 0;
+        if(nm.size()<16)memcpy( var.name, nm.toStdString().c_str() ,nm.size());
+        var.name[15] = 0;
         __ULS_QVM_TO_FLOAT(Voff);
         __ULS_QVM_TO_FLOAT(Vlow);
 
@@ -288,11 +288,10 @@ public:
 
         return out;
     };
-    uint32_t set(QVariantMap vars,uint8_t *buf)override
+    uint32_t set(QVariantMap vars)override
     {
-        __ULSObjectULSQR1R1Config *px = (__ULSObjectULSQR1R1Config*)buf;
         __ULS_QVM_TO_STRING(name);
-        px->name[15] = 0;
+        var.name[15] = 0;
         __ULS_QVM_TO_FLOAT(posOffsetX);
         __ULS_QVM_TO_FLOAT(posOffsetY);
         return size;
