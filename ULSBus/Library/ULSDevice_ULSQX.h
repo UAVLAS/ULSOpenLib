@@ -36,7 +36,7 @@
 // SET DEFINES
 #define __ULS_QVM_TO_STRING(SNAME) if(QString("%1").arg(vars[#SNAME].toString()).size() < 16){\
     memcpy( var.SNAME, QString("%1").arg(vars[#SNAME].toString()).toStdString().c_str()\
-    ,QString("%1").arg(vars[#SNAME].toString()).size());}
+    ,QString("%1").arg(vars[#SNAME].toString()).size());var.SNAME[QString("%1").arg(vars[#SNAME].toString()).size()] = 0; }
 
 #define __ULS_QVM_TO_FLOAT(VNAME) {var.VNAME = vars[#VNAME].toFloat();};
 #endif
