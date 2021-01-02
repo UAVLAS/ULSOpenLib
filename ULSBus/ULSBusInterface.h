@@ -106,7 +106,7 @@ typedef struct{
         }__attribute__((packed));
         //Blitzh messges
         struct{
-            uint32_t id;
+            uint16_t id;
             uint8_t data[8];
         }__attribute__((packed))blitz;
 
