@@ -31,9 +31,9 @@ ULSBusConnection::ULSBusConnection(ULSDBase *dev,ULSBusConnectionsList* connecti
     cnclbkObjSended(nullptr),
     cnclbkObjRequested(nullptr),
     _cid(cid),
-    _connections(connections),
-    _dev(dev)
+    _connections(connections)
 {
+    _dev = dev;
     connections->add(this);
     cnRxPacket = (_cn_packet*)ifRxBuf;
     cnTxPacket = (_cn_packet*)ifTxBuf;
@@ -159,6 +159,7 @@ _io_op_rezult ULSBusConnection::cnProcessSetObject()
     ifTxLen = 1 + txHs + 2;
     return ifSend();
 }
+
 _io_op_rezult ULSBusConnection::cnProcessOurPacket()
 {
     switch(cnRxPacket->cmd)
@@ -178,7 +179,6 @@ _io_op_rezult ULSBusConnection::cnProcessOurPacket()
     case CN_ACK_SETOBJ:
         CN_CALL(cnclbkObjSended);
         break;
-
     }
     return IO_OK;
 }
@@ -294,3 +294,20 @@ _io_op_rezult ULSBusConnectionsList::cnSendExplorer()
     }
     return IO_OK;
 }
+_io_op_rezult ULSBusConnectionsList::open()
+{
+    begin();
+    while (next()) {
+        current->open();
+    }
+    return IO_OK;
+}
+_io_op_rezult ULSBusConnectionsList::setDID(uint8_t cid, uint8_t did)
+{
+    begin();
+    while (next()) {
+        if(current->cid() == cid)current->ifid(did);
+    }
+    return IO_OK;
+}
+

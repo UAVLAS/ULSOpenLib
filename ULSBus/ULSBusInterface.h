@@ -24,6 +24,7 @@
 #define ULSBUSINTERFACE_H
 
 #include "ULSBusTypes.h"
+#include "ULSDevice_ULSQX.h"
 
 #define IF_PACKET_SIZE 1324
 
@@ -42,6 +43,7 @@
 #define IF_PACKET_NM_REQUESTID_SIZE (IF_PACKET_NM_HEADER_SIZE + 4)
 #define IF_PACKET_NM_SETID_SIZE (IF_PACKET_NM_HEADER_SIZE + 1 + 4)
 #define IF_PACKET_BLITZ_SIZE (2)
+#define IF_PACKET_FORCELDR_SIZE (2)
 
 class ULSBusInterface;
 typedef void (*_uls_if_callback)(ULSBusInterface*);
@@ -109,7 +111,6 @@ typedef struct{
             uint16_t id;
             uint8_t data[8];
         }__attribute__((packed))blitz;
-
         //Buffer direct access
         uint8_t  pld[IF_PAYLOAD_SIZE]; // Payload of if_packet
     }__attribute__((packed));
@@ -134,7 +135,9 @@ public:
     _io_op_rezult ifSend();
     _io_op_rezult ifReceive();
     _io_op_rezult ifSendBLITZ(uint16_t blitz_id,uint8_t *buf,uint32_t size);
+
     _uls_if_callback ifclbkBlitzReceived;
+
     uint8_t ifid(){return (_did & 0x3f);}
     void ifid(uint8_t did){_did = (did & 0x3f);}
 
@@ -154,25 +157,18 @@ protected:
     virtual void deviceConnected(uint8_t id){(void)id;};
     virtual void deviceDisconnected(uint8_t id){(void)id;};
     virtual void ifOk(){};
-
-
 private:
     _io_op_rezult send();
     _io_op_rezult receive();
-
     // Process received packets
     void processLocal();
     void processSYS();
     void processNM_SETID();
     void processNM_HB();
-
     // Send packets
     _io_op_rezult sendNM_REQUESTID();
     _io_op_rezult sendNM_SETID(uint32_t key);
     _io_op_rezult sendNM_HB();
-
-
-
     // Utils
     uint8_t allocateId();
     void resetId();
@@ -180,6 +176,7 @@ private:
 protected:
     const char* _name;
     uint8_t _did; // Local device Id
+    ULSDBase *_dev;
     // uint64_t _iftime;
     _if_state _state;
     _local_device _locals[IF_LOCAL_DEVICES_NUM + 1];

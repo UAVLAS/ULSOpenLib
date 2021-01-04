@@ -27,6 +27,7 @@
 #endif
 
 ULSBusInterface::ULSBusInterface(const char* name,uint8_t did):
+    ifclbkBlitzReceived(nullptr),
     _name(name),
     _did(did),
     _state(IF_STATE_UNINITIALIZED),
@@ -48,7 +49,6 @@ ULSBusInterface::ULSBusInterface(const char* name,uint8_t did):
 }
 void ULSBusInterface::task(uint32_t dtms)
 {
-
     _key_cntr++;
     if(_nm_timeout >= dtms){
         _nm_timeout -=dtms;
@@ -101,8 +101,7 @@ _io_op_rezult ULSBusInterface::ifSend()
 _io_op_rezult ULSBusInterface::ifReceive()
 {
     _io_op_rezult rez = receive();
-    if(rez == IO_OK)
-    {
+    if(rez == IO_OK){
         ifRxPacket->cmd &= 0x0f;
     }
     return rez;
@@ -112,23 +111,21 @@ _io_op_rezult ULSBusInterface::send()
     if((_state != IF_STATE_OK) && ((ifTxPacket->cmd&0x10) != 0))return IO_ERROR; // Only sys commands allowed
     ifTxPacket->src_lid = _did;
     ifTxLen += IF_PACKET_HEADER_SIZE;
-   // DEBUG_MSG("%s: Send lid:0x%.2X cmd: 0x%.2X len: %d",_name,_did,ifTxPacket->cmd,ifTxLen);
-   // if(ifTxPacket->cmd!= IF_CMD_NM_HB)DEBUG_PACKET(_name,"Tx",ifTxBuf,ifTxLen);
+    // DEBUG_MSG("%s: Send lid:0x%.2X cmd: 0x%.2X len: %d",_name,_did,ifTxPacket->cmd,ifTxLen);
+    // if(ifTxPacket->cmd!= IF_CMD_NM_HB)DEBUG_PACKET(_name,"Tx",ifTxBuf,ifTxLen);
     _io_op_rezult rez = sendPacket();
     if(rez == IO_OK) _nm_timeout = IF_NM_PING_HB_TIMEOUT;
     return rez;
 }
-
 _io_op_rezult ULSBusInterface::receive()
 {
-    while(ifRxLen == 0)
-    {
+    while(ifRxLen == 0){
         _io_op_rezult rez = receivePacket();
         if(rez != IO_OK)  return rez;
-//        DEBUG_MSG("%s: Received lid: 0x%.2X cmd: 0x%.2X len: %d",_name,
-//               ifRxPacket->src_lid,
-//               ifRxPacket->cmd,
-//               ifRxLen);
+        //        DEBUG_MSG("%s: Received lid: 0x%.2X cmd: 0x%.2X len: %d",_name,
+        //               ifRxPacket->src_lid,
+        //               ifRxPacket->cmd,
+        //               ifRxLen);
         //if(ifRxPacket->cmd!= IF_CMD_NM_HB) DEBUG_PACKET(_name,"Rx",ifRxBuf,ifRxLen);
 
         ifRxLen -= IF_PACKET_HEADER_SIZE;
@@ -139,8 +136,8 @@ _io_op_rezult ULSBusInterface::receive()
         }
         // if it was disconnected call procedure
         if(_locals[ifRxPacket->src_lid].timeout == 0){
-           if(ifRxPacket->src_lid < 0x3f)
-            deviceConnected(ifRxPacket->src_lid);
+            if(ifRxPacket->src_lid < 0x3f)
+                deviceConnected(ifRxPacket->src_lid);
         }
         // Update Timeout of device
         _locals[ifRxPacket->src_lid].timeout = IF_NM_DVICE_HB_TIMEOUT;
@@ -188,7 +185,7 @@ _io_op_rezult ULSBusInterface::sendNM_REQUESTID()
     ifTxLen = IF_PACKET_NM_REQUESTID_SIZE;
 
     _key = ULS_KEY_GENERATOR ^ _key_cntr;
-   // DEBUG_MSG("%s: send REQUEST ID lid:0x%.2X KEY: 0x%.4X ",_name,_did, _key);
+    // DEBUG_MSG("%s: send REQUEST ID lid:0x%.2X KEY: 0x%.4X ",_name,_did, _key);
     ifTxPacket->request_id.key = _key;
     return send();
 }
@@ -206,7 +203,7 @@ _io_op_rezult ULSBusInterface::sendNM_SETID(uint32_t key)
     ifTxLen = IF_PACKET_NM_SETID_SIZE;
 
     ifTxPacket->set_id.new_id = allocateId();
-   // DEBUG_MSG("%s: send SET ID lid:0x%.2X NEWID: 0x%.2X KEY: 0x%.4X",_name,_did, ifTxPacket->set_id.new_id,key);
+    // DEBUG_MSG("%s: send SET ID lid:0x%.2X NEWID: 0x%.2X KEY: 0x%.4X",_name,_did, ifTxPacket->set_id.new_id,key);
     ifTxPacket->set_id.key = key;
     return send();
 }
@@ -219,11 +216,11 @@ _io_op_rezult ULSBusInterface::ifSendBLITZ(uint16_t blitz_id,uint8_t *buf,uint32
     memcpy(ifTxPacket->blitz.data,buf,size);
     return send();
 }
+
 uint8_t ULSBusInterface::allocateId()
 {
     uint32_t n = IF_LOCAL_DEVICES_NUM - 1; // 0 - master device excluded
-    while(n>0U)
-    {
+    while(n>0U){
         _didx++;
         if(_didx >=IF_LOCAL_DEVICES_NUM)_didx = 1; // O not allocated - it is master
         if(_locals[_didx].timeout == 0){ // slot emmpty - no device connected
@@ -235,7 +232,7 @@ uint8_t ULSBusInterface::allocateId()
 }
 void ULSBusInterface::processNM_SETID()
 {
-   // DEBUG_MSG("%s: Received SET ID new ID:0x%.2X REMKEY:0x%.4X  OUR KEY: 0x%.4X",_name,ifTxPacket->set_id.new_id,ifRxPacket->set_id.key,_key);
+    // DEBUG_MSG("%s: Received SET ID new ID:0x%.2X REMKEY:0x%.4X  OUR KEY: 0x%.4X",_name,ifTxPacket->set_id.new_id,ifRxPacket->set_id.key,_key);
     if(ifRxPacket->set_id.key != _key)return;
     _did      =  ifRxPacket->set_id.new_id;
     _state   = IF_STATE_OK;

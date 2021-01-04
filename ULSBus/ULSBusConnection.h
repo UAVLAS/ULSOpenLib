@@ -24,16 +24,12 @@
 #define ULSBUSCONNECTION_H
 
 #include "ULSBusInterface.h"
-#include "ULSDevice_ULSQX.h"
-//#include "ULSObject.h"
 
 
 class ULSBusConnection;
 typedef void (*_uls_cn_callback)(ULSBusConnection*);
 
 #define CN_CALL(func) if(func !=nullptr)func(this);
-
-
 // Packet structure
 typedef struct{
     uint8_t cmd;
@@ -42,30 +38,22 @@ typedef struct{
     uint8_t pld[256];
 }__attribute__((packed))_cn_packet;
 
-
 typedef struct{
     uint32_t type;
     uint8_t  name[16];
 }__attribute__((packed))_cn_packet_status;
 
 
-//typedef struct
-//{
-//    uint32_t    lenght;
-//    _cn_packet  *packet;
-//}_cn_instance;
-
-
 typedef enum {
     CN_CMD_EXPLORER = 0,
     CN_ACK_EXPLORER = 1,
-    CN_CMD_GETOBJ   = 2,
-    CN_ACK_GETOBJ   = 3,
-    CN_CMD_SETOBJ   = 4,
-    CN_ACK_SETOBJ   = 5,
+    CN_CMD_SYS = 2,
+    CN_ACK_SYS = 3,
+    CN_CMD_GETOBJ   = 4,
+    CN_ACK_GETOBJ   = 5,
+    CN_CMD_SETOBJ   = 6,
+    CN_ACK_SETOBJ   = 7
 }_cn_cmd;
-
-
 
 class ULSBusConnectionsList:public ULSList<ULSBusConnection>
 {
@@ -75,7 +63,12 @@ public:
     _io_op_rezult cnForwardPacket(uint8_t cid,ULSBusConnection *sc);
     _io_op_rezult cnSendGetObject(uint8_t *route,uint8_t hs,uint16_t obj_addr);
     _io_op_rezult cnSendSetObject(uint8_t *route, uint8_t hs, uint16_t obj_addr, uint8_t *buf, uint32_t size);
+ //   _io_op_rezult cnSendSetMode(uint8_t *route,uint8_t hs,uint16_t mode);
+
     _io_op_rezult cnSendExplorer();
+    _io_op_rezult open();
+    _io_op_rezult setDID(uint8_t cid, uint8_t did);
+
     void task(uint32_t dtms);
 };
 
@@ -105,15 +98,12 @@ public:
     _io_op_rezult cnProcessGetObject();
     _io_op_rezult cnProcessSetObject();
 
+
     _io_op_rezult cnSendStatus();
     _io_op_rezult cnProcessStatus();
 
-
-
-
     bool send(uint8_t cmd,uint8_t dsn_network,uint8_t dsn_id,uint32_t len);
     _io_op_rezult cnReceive();
-
 
     uint8_t cnrid(){return ((_cid & 0x03)<<6)| ifid();}
     uint8_t cnrid(uint8_t cid){return (((cid&0x03)<<6) | ifid());};
@@ -124,25 +114,16 @@ public:
     _uls_cn_callback cnclbkObjReceived;
     _uls_cn_callback cnclbkObjSended;
     _uls_cn_callback cnclbkObjRequested;
+    _uls_cn_callback cnclbkSetMode;
 
 
-
-protected:
-    //    virtual _if_op_rezult sendPacket(){return IF_ERROR;};
-    //    virtual _if_op_rezult receivePacket(){return IF_ERROR;};
 private:
     uint8_t *cnPrepareAnswer(uint8_t cmd);
 private:
 
     uint8_t     _cid;
     ULSBusConnectionsList* _connections;
-    ULSDBase *_dev;
 
-
-    // uint32_t _networks_timeout[255];
 };
-
-
-
 
 #endif // ULSBUSCONNECTION_H
