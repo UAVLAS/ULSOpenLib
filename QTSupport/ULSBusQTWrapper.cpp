@@ -127,8 +127,8 @@ void ULSBusQTWrapper::cnStatusReceived(ULSBusConnection *sc)
     QString route(getRoute(sc));
 
     if(!m_dev.contains(route)){
-        if(!m_devsLibrary.devTypes.contains(status->type)) return ; // Unkniwn device
-        m_dev[route].instance = m_devsLibrary.devTypes[status->type];
+        if(!m_devsLibrary.devTypes.contains(status->type&0x7FFF)) return ; // Unkniwn device
+        m_dev[route].instance = m_devsLibrary.devTypes[(status->type)&0x7FFF];
         emit deviceConnected(route,m_dev[route].instance->typeName,name);
     }
     updateDevice(route);
