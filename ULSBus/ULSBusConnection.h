@@ -25,12 +25,34 @@
 
 #include "ULSBusInterface.h"
 
+typedef enum {
+    CN_CMD_EXPLORER = 0,
+    CN_ACK_EXPLORER = 1,
+    CN_CMD_SYS      = 2,
+    CN_ACK_SYS      = 3,
+    CN_CMD_GETOBJ   = 4,
+    CN_ACK_GETOBJ   = 5,
+    CN_CMD_SETOBJ   = 6,
+    CN_ACK_SETOBJ   = 7
+}_cn_cmd;
 
-class ULSBusConnection;
-typedef void (*_uls_cn_callback)(ULSBusConnection*);
+typedef enum :uint8_t{
+    CN_SYS_CMD_PING = 0,
+    CN_SYS_CMD_SETMODE = 1,
+    CN_SYS_CMD_ERASE = 2,
+    CN_SYS_CMD_WRITE = 3,
+    CN_SYS_CMD_SETSIGNATURE = 3
+}_cn_sys_cmd;
 
-#define CN_CALL(func) if(func !=nullptr)func(this);
-// Packet structure
+typedef enum :uint8_t{
+    CN_SYS_OPERATION_OK = 0,
+    CN_SYS_OPERATION_ERROR = 1
+}_cn_sys_oprezult;
+typedef enum :uint8_t{
+    CN_SYS_MODE_APP = 0,
+    CN_SYS_MODE_LOADER = 1
+}_cn_sys_mode;
+
 typedef struct{
     uint8_t cmd;
     uint8_t src_did;
@@ -43,17 +65,48 @@ typedef struct{
     uint8_t  name[16];
 }__attribute__((packed))_cn_packet_status;
 
+typedef struct{
+    _cn_sys_cmd syscmd;
+    union{
+        //Sysmem messges
+        struct{
+            uint16_t  devtype;
+        }__attribute__((packed))ping;
+        struct{
+            _cn_sys_mode  mode;
+        }__attribute__((packed))setmode;
+        struct{
+            uint32_t  key;
+            uint32_t  start;
+            uint32_t  len;
+        }__attribute__((packed))erase;
+        struct{
+            uint32_t  key;
+            uint32_t  start;
+            uint32_t  len;
+            uint8_t   buf[512];
+        }__attribute__((packed))write;
+        struct{
+            uint32_t  key;
+            char      fw[32];
+            char      ldr[32];
+            uint32_t  progflashingtime;
+            uint32_t  progsize;
+            uint32_t  progcrc;
+        }__attribute__((packed))signature;
 
-typedef enum {
-    CN_CMD_EXPLORER = 0,
-    CN_ACK_EXPLORER = 1,
-    CN_CMD_SYS = 2,
-    CN_ACK_SYS = 3,
-    CN_CMD_GETOBJ   = 4,
-    CN_ACK_GETOBJ   = 5,
-    CN_CMD_SETOBJ   = 6,
-    CN_ACK_SETOBJ   = 7
-}_cn_cmd;
+    }__attribute__((packed));
+}__attribute__((packed))_cn_sys_packet;
+
+
+class ULSBusConnection;
+typedef void (*_uls_cn_callback)(ULSBusConnection*);
+typedef _cn_sys_oprezult (*_uls_cn_sys_callback)(ULSBusConnection*,_cn_sys_packet*);
+typedef void (*_uls_cn_sysack_callback)(ULSBusConnection*,_cn_sys_oprezult);
+
+#define CN_CALL(func) if(func !=nullptr)func(this);
+#define CN_CALL_SYS(func) (func !=nullptr)?func(this,(_cn_sys_packet*)(&cnRxPacket->pld[cnRxPacket->hop & 0xF])):CN_SYS_OPERATION_ERROR;
+#define CN_CALL_SYSACK(func) if(func !=nullptr)func(this,(_cn_sys_oprezult)cnRxPacket->pld[cnRxPacket->hop & 0xF]);
 
 class ULSBusConnectionsList:public ULSList<ULSBusConnection>
 {
@@ -63,7 +116,11 @@ public:
     _io_op_rezult cnForwardPacket(uint8_t cid,ULSBusConnection *sc);
     _io_op_rezult cnSendGetObject(uint8_t *route,uint8_t hs,uint16_t obj_addr);
     _io_op_rezult cnSendSetObject(uint8_t *route, uint8_t hs, uint16_t obj_addr, uint8_t *buf, uint32_t size);
- //   _io_op_rezult cnSendSetMode(uint8_t *route,uint8_t hs,uint16_t mode);
+    _io_op_rezult cnSendSysSetMode(uint8_t *route,uint8_t hs,_cn_sys_mode mode);
+    _io_op_rezult cnSendSysErase(uint8_t *route,uint8_t hs,uint32_t key,uint32_t start, uint32_t len);
+    _io_op_rezult cnSendSysWrite(uint8_t *route,uint8_t hs,uint32_t key,uint32_t start, uint32_t len,uint8_t *buf);
+    _io_op_rezult cnSendSysSetSignature(uint8_t *route,uint8_t hs,uint32_t key,char* fw,
+                                        char* ldr,uint32_t ftime,uint32_t progsize,uint32_t progcrc);
 
     _io_op_rezult cnSendExplorer();
     _io_op_rezult open();
@@ -86,24 +143,29 @@ public:
     void ifOk() override;
 
     _io_op_rezult cnSendExplorer();
+    _io_op_rezult cnSendStatus();
     _io_op_rezult cnSendGetObject(uint8_t *route,uint8_t hs,uint16_t obj_addr);
     _io_op_rezult cnSendSetObject(uint8_t *route, uint8_t hs, uint16_t obj_addr, uint8_t *buf, uint32_t size);
-
-    _io_op_rezult cnProcessExplorer();
-    _io_op_rezult cnForwardExplorer(ULSBusConnection *src);
+    _io_op_rezult cnSendSysSetMode(uint8_t *route,uint8_t hs,_cn_sys_mode mode);
+    _io_op_rezult cnSendSysErase(uint8_t *route,uint8_t hs,uint32_t key,uint32_t start, uint32_t len);
+    _io_op_rezult cnSendSysWrite(uint8_t *route,uint8_t hs,uint32_t key,uint32_t start, uint32_t len,uint8_t *buf);
+    _io_op_rezult cnSendSysSetSignature(uint8_t *route,uint8_t hs,uint32_t key,char* fw,char* ldr,uint32_t ftime,uint32_t progsize,uint32_t progcrc);
 
     _io_op_rezult cnProcessPacket();
     _io_op_rezult cnProcessOurPacket();
-    _io_op_rezult cnForwardPacket(ULSBusConnection *src);
+    _io_op_rezult cnProcessExplorer();
+    _io_op_rezult cnProcessSys();
     _io_op_rezult cnProcessGetObject();
     _io_op_rezult cnProcessSetObject();
-
-
-    _io_op_rezult cnSendStatus();
     _io_op_rezult cnProcessStatus();
+
+    _io_op_rezult cnForwardExplorer(ULSBusConnection *src);
+    _io_op_rezult cnForwardPacket(ULSBusConnection *src);
+
 
     bool send(uint8_t cmd,uint8_t dsn_network,uint8_t dsn_id,uint32_t len);
     _io_op_rezult cnReceive();
+
 
     uint8_t cnrid(){return ((_cid & 0x03)<<6)| ifid();}
     uint8_t cnrid(uint8_t cid){return (((cid&0x03)<<6) | ifid());};
@@ -114,11 +176,12 @@ public:
     _uls_cn_callback cnclbkObjReceived;
     _uls_cn_callback cnclbkObjSended;
     _uls_cn_callback cnclbkObjRequested;
-    _uls_cn_callback cnclbkSetMode;
-
+    _uls_cn_sys_callback cnclbkSys;
+    _uls_cn_sysack_callback cnclbkSysAck;
 
 private:
     uint8_t *cnPrepareAnswer(uint8_t cmd);
+    uint8_t *cnPreparePacket(uint8_t *route,uint8_t hs,uint8_t cmd);
 private:
 
     uint8_t     _cid;

@@ -159,13 +159,27 @@ _io_op_rezult ULSBusConnection::cnProcessSetObject()
     ifTxLen = 1 + txHs + 2;
     return ifSend();
 }
+_io_op_rezult ULSBusConnection::cnProcessSys()
+{
+    uint8_t *px = cnPrepareAnswer(CN_ACK_SETOBJ);
+    *((_cn_sys_oprezult*)px) = CN_CALL_SYS(cnclbkSys);
 
+    uint32_t txHs = cnTxPacket->hop&0xF;
+    ifTxLen = 1 + txHs + 1;
+    return ifSend();
+}
 _io_op_rezult ULSBusConnection::cnProcessOurPacket()
 {
     switch(cnRxPacket->cmd)
     {
     case CN_ACK_EXPLORER:
         CN_CALL(cnclbkStatusReceived);
+        break;
+    case CN_CMD_SYS:
+        cnProcessSys();
+        break;
+    case CN_ACK_SYS:
+        CN_CALL_SYSACK(cnclbkSysAck);
         break;
     case CN_CMD_GETOBJ:
         cnProcessGetObject();
@@ -182,12 +196,68 @@ _io_op_rezult ULSBusConnection::cnProcessOurPacket()
     }
     return IO_OK;
 }
+uint8_t *ULSBusConnection::cnPreparePacket(uint8_t *route,uint8_t hs,uint8_t cmd)
+{
+    cnTxPacket->cmd = cmd;
+    cnTxPacket->hop = (0<<4) | hs;
+    memcpy(cnTxPacket->pld,route,hs);
+    ifTxLen = 1 + hs;
+    return &cnTxPacket->pld[hs];
+}
 _io_op_rezult ULSBusConnection::cnSendExplorer()
 {
     cnTxPacket->cmd = CN_CMD_EXPLORER;
     cnTxPacket->hop = (0<<4) | 1; // h = 0; hs = 1;
     ifTxLen = (cnTxPacket->hop&0xF) + 1;
     return  ifSend();
+}
+ _io_op_rezult ULSBusConnection::cnSendSysErase(uint8_t *route,uint8_t hs,uint32_t key,uint32_t start, uint32_t len)
+{
+     if( (route[0] >> 6) != _cid)return IO_ERROR; // not our interface
+     _cn_sys_packet *pxsys = (_cn_sys_packet*)cnPreparePacket(route,hs,CN_CMD_SYS);
+     pxsys->syscmd = CN_SYS_CMD_ERASE;
+     pxsys->erase.key = key;
+     pxsys->erase.start = start;
+     pxsys->erase.len = len;
+     ifTxLen += + 1 + 12;
+     return  ifSend();
+}
+ _io_op_rezult ULSBusConnection::cnSendSysSetMode(uint8_t *route,uint8_t hs,_cn_sys_mode mode)
+{
+     if( (route[0] >> 6) != _cid)return IO_ERROR; // not our interface
+     _cn_sys_packet *pxsys = (_cn_sys_packet*)cnPreparePacket(route,hs,CN_CMD_SYS);
+     pxsys->syscmd = CN_SYS_CMD_SETMODE;
+     pxsys->setmode.mode = mode;
+     ifTxLen += 1 + 1;
+     return  ifSend();
+}
+ _io_op_rezult ULSBusConnection::cnSendSysWrite(uint8_t *route,uint8_t hs,uint32_t key,uint32_t start, uint32_t len,uint8_t *buf)
+{
+     if( (route[0] >> 6) != _cid)return IO_ERROR; // not our interface
+     if(len > 512) return IO_ERROR; //buff too big
+     _cn_sys_packet *pxsys = (_cn_sys_packet*)cnPreparePacket(route,hs,CN_CMD_SYS);
+     pxsys->syscmd = CN_SYS_CMD_WRITE;
+     pxsys->write.key = key;
+     pxsys->write.start = start;
+     pxsys->write.len = len;
+     memcpy(pxsys->write.buf,buf,len);
+     ifTxLen += 1 + 12 + len;
+     return  ifSend();
+}
+ _io_op_rezult ULSBusConnection::cnSendSysSetSignature(uint8_t *route,uint8_t hs,uint32_t key,char* fw,
+                                                       char* ldr,uint32_t ftime,uint32_t progsize,uint32_t progcrc)
+{
+     if( (route[0] >> 6) != _cid)return IO_ERROR; // not our interface
+     _cn_sys_packet *pxsys = (_cn_sys_packet*)cnPreparePacket(route,hs,CN_CMD_SYS);
+     pxsys->syscmd = CN_SYS_CMD_SETSIGNATURE;
+     pxsys->signature.key = key;
+     memcpy(pxsys->signature.fw,fw,32);
+     memcpy(pxsys->signature.ldr,ldr,32);
+     pxsys->signature.progflashingtime = ftime;
+     pxsys->signature.progsize = progsize;
+     pxsys->signature.progcrc = progcrc;
+     ifTxLen += 1 + 12 + 16 + 64;
+     return  ifSend();
 }
 _io_op_rezult ULSBusConnection::cnSendGetObject(uint8_t *route,uint8_t hs,uint16_t obj_addr)
 {
@@ -311,3 +381,36 @@ _io_op_rezult ULSBusConnectionsList::setDID(uint8_t cid, uint8_t did)
     return IO_OK;
 }
 
+_io_op_rezult ULSBusConnectionsList::cnSendSysSetMode(uint8_t *route,uint8_t hs,_cn_sys_mode mode)
+{
+    begin();
+    while (next()) {
+        if(current->cnSendSysSetMode(route,hs,mode) == IO_OK) return IO_OK;
+    }
+    return IO_ERROR;
+}
+_io_op_rezult ULSBusConnectionsList::cnSendSysErase(uint8_t *route,uint8_t hs,uint32_t key,uint32_t start, uint32_t len)
+{
+    begin();
+    while (next()) {
+        if(current->cnSendSysErase(route,hs,key,start,len) == IO_OK) return IO_OK;
+    }
+    return IO_ERROR;
+}
+_io_op_rezult ULSBusConnectionsList::cnSendSysWrite(uint8_t *route,uint8_t hs,uint32_t key,uint32_t start, uint32_t len,uint8_t *buf)
+{
+    begin();
+    while (next()) {
+        if(current->cnSendSysWrite(route,hs,key,start,len,buf) == IO_OK) return IO_OK;
+    }
+    return IO_ERROR;
+}
+_io_op_rezult ULSBusConnectionsList::cnSendSysSetSignature(uint8_t *route,uint8_t hs,uint32_t key,char* fw,
+                                                           char* ldr,uint32_t ftime,uint32_t progsize,uint32_t progcrc)
+{
+    begin();
+    while (next()) {
+        if(current->cnSendSysSetSignature(route,hs,key,fw,ldr,ftime,progsize,progcrc) == IO_OK) return IO_OK;
+    }
+    return IO_ERROR;
+}

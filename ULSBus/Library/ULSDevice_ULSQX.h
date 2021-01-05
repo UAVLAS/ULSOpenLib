@@ -45,14 +45,13 @@ class ULSObjectSignature: public ULSObjectBase
 {
 public:
     typedef struct __attribute__((packed)){
-        char hw[32];
         char fw[32];
         char ldr[32];
         uint32_t serial[4];
         uint32_t progflashingtime;
         uint32_t progsize;
         uint32_t progcrc;
-        uint32_t devclass;
+        uint32_t devtype;
     }__ULSObjectSignature;  // Total 128 bytes;
     __ULSObjectSignature var;
 
@@ -69,11 +68,8 @@ public:
     {
         QVariantMap out;
         __ULSObjectSignature *pxSign = (__ULSObjectSignature*)buf;
-        pxSign->hw[31] = 0;
         pxSign->fw[31] = 0;
         pxSign->ldr[31] = 0;
-
-        out["hw"]   = QString().fromLatin1(pxSign->hw);
         out["fw"]   = QString().fromLatin1(pxSign->fw);
         out["ldr"]  =  QString().fromLatin1(pxSign->ldr);
         out["serial"] = QString("%1-%2-%3-%4").arg(pxSign->serial[0],8,16,QLatin1Char('0'))
