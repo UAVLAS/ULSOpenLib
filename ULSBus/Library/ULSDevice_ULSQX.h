@@ -51,7 +51,7 @@ public:
         uint32_t progflashingtime;
         uint32_t progsize;
         uint32_t progcrc;
-        uint32_t devtype;
+        uint32_t type;
     }__ULSObjectSignature;  // Total 128 bytes;
     __ULSObjectSignature var;
 
@@ -79,7 +79,7 @@ public:
         out["progflashingtime"] = pxSign->progflashingtime;
         out["progsize"] = pxSign->progsize;
         out["progcrc"] = pxSign->progcrc;
-        out["devclass"] = pxSign->devclass;
+        out["type"] = pxSign->type;
         return out;
     };
 #endif
