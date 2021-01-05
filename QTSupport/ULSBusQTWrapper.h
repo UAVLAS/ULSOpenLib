@@ -49,6 +49,12 @@ public:
     ULSBusQTWrapper();
 
     void sendObject(const QString &route,const QString &objName,const QVariantMap &objData);
+    void sendSysSetMode(const QString &route,_cn_sys_mode mode);
+    void sendSysErase(const QString &route,uint32_t key,uint32_t start,uint16_t len);
+    void sendSysWrite(const QString &route,uint32_t key,uint32_t start,uint16_t len,uint8_t *buf);
+    void sendSysSignature(const QString &route,uint32_t key,char* fw,char* ldr,
+                          uint32_t ftime,uint32_t progsize,uint32_t progcrc);
+
     void requestObject(const QString &route,const QString &objName);
     void exploreDevices();
 
@@ -57,6 +63,7 @@ public:
     void cnObjectSended(ULSBusConnection *sc);
 private:
     QString getRoute(ULSBusConnection *sc);
+    uint32_t getRoute(QString route,uint8_t *r);
     void updateDevice(const QString &route);
 
 private:

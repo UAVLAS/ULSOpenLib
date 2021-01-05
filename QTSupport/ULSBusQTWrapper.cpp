@@ -100,6 +100,18 @@ QString ULSBusQTWrapper::getRoute(ULSBusConnection *sc)
     }
     return route;
 }
+uint32_t ULSBusQTWrapper::getRoute(QString route,uint8_t *r)
+{
+    QStringList list = route.split(QRegExp("\\s+"), Qt::SkipEmptyParts);
+    if(list.count() == 0) return 0;
+
+    for (int i = 0; i < list.length(); i++){
+        QStringList clist = list[i].split(":");
+        bool bStatus = false;
+        r[i] = (clist[0].toUInt(&bStatus,16) << 6) | clist[1].toUInt(&bStatus,16);
+    }
+    return list.length();
+}
 // CALLBACKS
 void ULSBusQTWrapper::cnObjectReceived(ULSBusConnection *sc)
 {
@@ -143,44 +155,63 @@ void ULSBusQTWrapper::cnObjectSended(ULSBusConnection *sc)
     ULSObjectBase *obj = m_dev[route].instance->getObject(obj_id);
     if(obj) emit objectSended(route,obj->name());
 }
-//QML CONNECTIONS
+void ULSBusQTWrapper::sendSysSetMode(const QString &route,_cn_sys_mode mode)
+{
+    if(!m_dev.contains(route)) return;
+    uint8_t r[15];
+    uint32_t hs = getRoute(route,r);
+    if(hs == 0) return;
+    m_connections.cnSendSysSetMode(r,hs,mode);
+}
+void ULSBusQTWrapper::sendSysErase(const QString &route,uint32_t key,uint32_t start,uint16_t len)
+{
+    if(!m_dev.contains(route)) return;
+    uint8_t r[15];
+    uint32_t hs = getRoute(route,r);
+    if(hs == 0) return;
+    m_connections.cnSendSysErase(r,hs,key,start,len);
+}
+void ULSBusQTWrapper::sendSysWrite(const QString &route,uint32_t key,uint32_t start,uint16_t len,uint8_t *buf)
+{
+    if(!m_dev.contains(route)) return;
+    uint8_t r[15];
+    uint32_t hs = getRoute(route,r);
+    if(hs == 0) return;
+    m_connections.cnSendSysWrite(r,hs,key,start,len,buf);
+}
+void ULSBusQTWrapper::sendSysSignature(const QString &route,uint32_t key,
+                                       char* fw,char* ldr,uint32_t ftime,
+                                       uint32_t progsize,uint32_t progcrc)
+{
+    if(!m_dev.contains(route)) return;
+    uint8_t r[15];
+    uint32_t hs = getRoute(route,r);
+    if(hs == 0) return;
+    m_connections.cnSendSysSetSignature(r,hs,key,fw,ldr,ftime,progsize,progcrc);
+}
 void ULSBusQTWrapper::sendObject(const QString &route,const QString &objName,const QVariantMap &value)
 {
     if(!m_dev.contains(route)) return;
 
-    QStringList list = route.split(QRegExp("\\s+"), Qt::SkipEmptyParts);
-    if(list.count() == 0) return;
     uint8_t r[15];
+    uint32_t hs = getRoute(route,r);
+    if(hs == 0) return;
 
-
-    for (int i = 0; i < list.length(); i++)
-    {
-        QStringList clist = list[i].split(":");
-        bool bStatus = false;
-        r[i] = (clist[0].toUInt(&bStatus,16) << 6) | clist[1].toUInt(&bStatus,16);
-
-    }
     ULSObjectBase *obj = m_dev[route].instance->getObject(objName);
     uint32_t size = obj->set(value);
-    m_connections.cnSendSetObject(r,list.length(),obj->id,obj->_pxData,size);
+    m_connections.cnSendSetObject(r,hs,obj->id,obj->_pxData,size);
 
 }
 void ULSBusQTWrapper::requestObject(const QString &route,const QString &objName)
 {
     if(!m_dev.contains(route)) return;
 
-    QStringList list = route.split(QRegExp("\\s+"), Qt::SkipEmptyParts);
-    if(list.count() == 0) return;
     uint8_t r[15];
-    for (int i = 0; i < list.length(); i++)
-    {
-        QStringList clist = list[i].split(":");
-        bool bStatus = false;
-        r[i] = (clist[0].toUInt(&bStatus,16) << 6) | clist[1].toUInt(&bStatus,16);
+    uint32_t hs = getRoute(route,r);
+    if(hs == 0) return;
 
-    }
     u_int16_t objId = m_dev[route].instance->getObjId(objName);
-    m_connections.cnSendGetObject(r,list.length(),objId);
+    m_connections.cnSendGetObject(r,hs,objId);
 }
 
 void ULSBusQTWrapper::exploreDevices()

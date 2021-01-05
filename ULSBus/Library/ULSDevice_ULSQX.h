@@ -76,6 +76,7 @@ public:
                 .arg(pxSign->serial[1],8,16,QLatin1Char('0'))
                 .arg(pxSign->serial[2],8,16,QLatin1Char('0'))
                 .arg(pxSign->serial[3],8,16,QLatin1Char('0'));
+        out["key"] = pxSign->serial[0]^pxSign->serial[1]^pxSign->serial[2]^pxSign->serial[3];
         out["progflashingtime"] = pxSign->progflashingtime;
         out["progsize"] = pxSign->progsize;
         out["progcrc"] = pxSign->progcrc;
