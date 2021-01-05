@@ -161,8 +161,10 @@ _io_op_rezult ULSBusConnection::cnProcessSetObject()
 }
 _io_op_rezult ULSBusConnection::cnProcessSys()
 {
-    uint8_t *px = cnPrepareAnswer(CN_ACK_SETOBJ);
-    *((_cn_sys_oprezult*)px) = CN_CALL_SYS(cnclbkSys);
+    uint8_t *px = cnPrepareAnswer(CN_ACK_SYS);
+
+    volatile _cn_sys_oprezult rez = CN_CALL_SYS(cnclbkSys);
+    *((_cn_sys_oprezult*)px) = rez;
 
     uint32_t txHs = cnTxPacket->hop&0xF;
     ifTxLen = 1 + txHs + 1;
@@ -251,8 +253,8 @@ _io_op_rezult ULSBusConnection::cnSendExplorer()
      _cn_sys_packet *pxsys = (_cn_sys_packet*)cnPreparePacket(route,hs,CN_CMD_SYS);
      pxsys->syscmd = CN_SYS_CMD_SETSIGNATURE;
      pxsys->signature.key = key;
-     memcpy(pxsys->signature.fw,fw,32);
-     memcpy(pxsys->signature.ldr,ldr,32);
+     memcpy(pxsys->signature.fw,fw,16);
+     memcpy(pxsys->signature.ldr,ldr,16);
      pxsys->signature.progflashingtime = ftime;
      pxsys->signature.progsize = progsize;
      pxsys->signature.progcrc = progcrc;
@@ -413,4 +415,20 @@ _io_op_rezult ULSBusConnectionsList::cnSendSysSetSignature(uint8_t *route,uint8_
         if(current->cnSendSysSetSignature(route,hs,key,fw,ldr,ftime,progsize,progcrc) == IO_OK) return IO_OK;
     }
     return IO_ERROR;
+}
+_io_op_rezult ULSBusConnectionsList::cnSetClbkSys(_uls_cn_sys_callback func)
+{
+    begin();
+    while (next()) {
+        current->cnclbkSys = func;
+    }
+    return IO_OK;
+}
+_io_op_rezult ULSBusConnectionsList::cnSetClbkSysAck(_uls_cn_sysack_callback func)
+{
+    begin();
+    while (next()) {
+        current->cnclbkSysAck = func;
+    }
+    return IO_OK;
 }

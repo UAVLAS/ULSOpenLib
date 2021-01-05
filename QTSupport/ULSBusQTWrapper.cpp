@@ -41,6 +41,10 @@ static void cnklbkObjSended(ULSBusConnection *sc)
 {
     if(ubqtw)ubqtw->cnObjectSended(sc);
 }
+static void cnklbkSysAck(ULSBusConnection *sc,_cn_sys_oprezult rez)
+{
+    if(ubqtw)ubqtw->cnsysAckReceived(sc,rez);
+}
 ULSBusQTWrapper::ULSBusQTWrapper():
     m_dtms(50),
     m_serial(this,&m_pcDevice,&m_connections)
@@ -51,6 +55,7 @@ ULSBusQTWrapper::ULSBusQTWrapper():
     m_serial.cnclbkConnected = &cnklbkConnected;
     m_serial.cnclbkObjReceived = &cnklbkObjReceived;
     m_serial.cnclbkObjSended = &cnklbkObjSended;
+    m_serial.cnclbkSysAck = &cnklbkSysAck;
 
     QTimer *timer = new QTimer();
     connect(timer, SIGNAL(timeout()), this, SLOT(onTimer()));
@@ -155,6 +160,12 @@ void ULSBusQTWrapper::cnObjectSended(ULSBusConnection *sc)
     ULSObjectBase *obj = m_dev[route].instance->getObject(obj_id);
     if(obj) emit objectSended(route,obj->name());
 }
+void ULSBusQTWrapper::cnsysAckReceived(ULSBusConnection *sc, uint8_t rez)
+{
+    QString route(getRoute(sc));
+    if(!m_dev.contains(route))return;
+    emit sysAckReceived(route,rez);
+}
 void ULSBusQTWrapper::sendSysSetMode(const QString &route,_cn_sys_mode mode)
 {
     if(!m_dev.contains(route)) return;
@@ -163,7 +174,7 @@ void ULSBusQTWrapper::sendSysSetMode(const QString &route,_cn_sys_mode mode)
     if(hs == 0) return;
     m_connections.cnSendSysSetMode(r,hs,mode);
 }
-void ULSBusQTWrapper::sendSysErase(const QString &route,uint32_t key,uint32_t start,uint16_t len)
+void ULSBusQTWrapper::sendSysErase(const QString &route,uint32_t key,uint32_t start,uint32_t len)
 {
     if(!m_dev.contains(route)) return;
     uint8_t r[15];
@@ -171,7 +182,7 @@ void ULSBusQTWrapper::sendSysErase(const QString &route,uint32_t key,uint32_t st
     if(hs == 0) return;
     m_connections.cnSendSysErase(r,hs,key,start,len);
 }
-void ULSBusQTWrapper::sendSysWrite(const QString &route,uint32_t key,uint32_t start,uint16_t len,uint8_t *buf)
+void ULSBusQTWrapper::sendSysWrite(const QString &route,uint32_t key,uint32_t start,uint32_t len,uint8_t *buf)
 {
     if(!m_dev.contains(route)) return;
     uint8_t r[15];

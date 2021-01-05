@@ -50,8 +50,8 @@ public:
 
     void sendObject(const QString &route,const QString &objName,const QVariantMap &objData);
     void sendSysSetMode(const QString &route,_cn_sys_mode mode);
-    void sendSysErase(const QString &route,uint32_t key,uint32_t start,uint16_t len);
-    void sendSysWrite(const QString &route,uint32_t key,uint32_t start,uint16_t len,uint8_t *buf);
+    void sendSysErase(const QString &route,uint32_t key,uint32_t start,uint32_t len);
+    void sendSysWrite(const QString &route,uint32_t key,uint32_t start,uint32_t len,uint8_t *buf);
     void sendSysSignature(const QString &route,uint32_t key,char* fw,char* ldr,
                           uint32_t ftime,uint32_t progsize,uint32_t progcrc);
 
@@ -61,6 +61,7 @@ public:
     void cnObjectReceived(ULSBusConnection *sc);
     void cnStatusReceived(ULSBusConnection *sc);
     void cnObjectSended(ULSBusConnection *sc);
+    void cnsysAckReceived(ULSBusConnection *sc, uint8_t rez);
 private:
     QString getRoute(ULSBusConnection *sc);
     uint32_t getRoute(QString route,uint8_t *r);
@@ -81,6 +82,7 @@ signals:
     void objectSended(const QString &route,const QString &objName);
     void deviceConnected(const QString &route,const  QString &deviceType,const  QString &deviceName);
     void deviceDisconnected(const QString &route);
+    void sysAckReceived(const QString &route, uint8_t rez);
 private slots:
     void onTimer();
 

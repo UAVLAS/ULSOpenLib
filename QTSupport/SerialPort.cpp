@@ -31,6 +31,8 @@ SerialPort::SerialPort(QObject *parent) :
 
     connect(serialPort, &QSerialPort::readyRead, this, &SerialPort::handleReadyRead);
     connect(serialPort, &QSerialPort::errorOccurred, this, &SerialPort::handleError);
+    //    connect(serialPort, SIGNAL(error(QSerialPort::SerialPortError)), this,
+    //            SLOT(handleError(QSerialPort::SerialPortError)));
 
     serialPort->waitForReadyRead(1);
 }
@@ -42,11 +44,15 @@ bool SerialPort::open()
 };
 void SerialPort::close()
 {
+   // serialPort->flush();
+//    _txFifo.flush();
+//    _rxFifo.flush();
     serialPort->close();
+    _opened = false;
 }
 bool SerialPort::opened()
 {
-    return  _opened;//serialPort->isOpen();
+    return  _opened && serialPort->isOpen();//serialPort->isOpen();
 }
 bool SerialPort::openPort(QString name)
 {
@@ -78,6 +84,7 @@ QStringList SerialPort::getPortsList()
 
 void SerialPort::handleReadyRead()
 {
+    if(serialPort->bytesAvailable() == 0)return;
     QByteArray data = serialPort->readAll();
     for(int i = 0; i < data.length();i++)
     {
@@ -86,24 +93,34 @@ void SerialPort::handleReadyRead()
 }
 void SerialPort::transmitterUpdate(){
     uint8_t ch;
-    while(_txFifo.pull(&ch))serialPort->putChar(ch);
+    if(!opened()){_txFifo.flush();return;}
+    QSerialPortInfo *portInfo = new QSerialPortInfo(serialPort->portName());
+
+    if (portInfo->description() == "")
+    {
+        close();
+        //qDebug()  << "SerialSend NOT AVIABLE !!! \n";
+    }
+    while(_txFifo.pull(&ch)){
+        if(!serialPort->putChar(ch)){
+            close();
+        }
+    }
 }
 
 void SerialPort::handleError(QSerialPort::SerialPortError serialPortError)
 {
-     if (serialPortError == QSerialPort::ResourceError)
-     {
-    if (serialPortError == QSerialPort::ReadError) {
-        qDebug()  << QObject::tr("An I/O error occurred while reading "
+    if (serialPortError == QSerialPort::ResourceError)
+    {
+        if (serialPortError == QSerialPort::ReadError) {
+            qDebug()  << QObject::tr("An I/O error occurred while reading "
                                  "the data from port %1, error: %2")
-                     .arg(serialPort->portName())
-                     .arg(serialPort->errorString())
-                  << Qt::endl;
-     //   QCoreApplication::exit(1);
+                         .arg(serialPort->portName())
+                         .arg(serialPort->errorString())
+                      << "";
+        }
+        close();
     }
-    _opened = false;
-    serialPort->close();
-     }
 }
 
 ULSSerialPort::ULSSerialPort(QObject *parent,ULSDBase *dev,ULSBusConnectionsList* connections):
@@ -114,14 +131,14 @@ ULSSerialPort::ULSSerialPort(QObject *parent,ULSDBase *dev,ULSBusConnectionsList
 }
 _io_op_rezult ULSSerialPort::receivePacket()
 {
-    if(! serialPort->isOpen())return IO_ERROR;
+    if(!opened())return IO_ERROR;
     ifRxLen = ULSSerial::read(ifRxBuf,IF_PACKET_SIZE);
     if(ifRxLen == 0)return IO_NO_DATA;
     return IO_OK;
 };
 _io_op_rezult ULSSerialPort::sendPacket()
 {
-    if(! serialPort->isOpen())return IO_ERROR;
+    if(!opened())return IO_ERROR;
     uint32_t len = ULSSerial::write(ifTxBuf,ifTxLen);
     ifTxLen = 0;
     if(len != ifTxLen)return IO_ERROR;

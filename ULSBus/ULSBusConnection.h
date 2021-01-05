@@ -41,12 +41,14 @@ typedef enum :uint8_t{
     CN_SYS_CMD_SETMODE = 1,
     CN_SYS_CMD_ERASE = 2,
     CN_SYS_CMD_WRITE = 3,
-    CN_SYS_CMD_SETSIGNATURE = 3
+    CN_SYS_CMD_SETSIGNATURE = 4
 }_cn_sys_cmd;
 
 typedef enum :uint8_t{
-    CN_SYS_OPERATION_OK = 0,
-    CN_SYS_OPERATION_ERROR = 1
+    CN_SYS_OPERATION_UNDEFINED = 0,
+    CN_SYS_OPERATION_OK = 1,
+    CN_SYS_OPERATION_ERROR = 2,
+
 }_cn_sys_oprezult;
 typedef enum :uint8_t{
     CN_SYS_MODE_APP = 0,
@@ -88,8 +90,8 @@ typedef struct{
         }__attribute__((packed))write;
         struct{
             uint32_t  key;
-            char      fw[32];
-            char      ldr[32];
+            char      fw[16];
+            char      ldr[16];
             uint32_t  progflashingtime;
             uint32_t  progsize;
             uint32_t  progcrc;
@@ -122,6 +124,8 @@ public:
     _io_op_rezult cnSendSysSetSignature(uint8_t *route,uint8_t hs,uint32_t key,char* fw,
                                         char* ldr,uint32_t ftime,uint32_t progsize,uint32_t progcrc);
 
+    _io_op_rezult cnSetClbkSys(_uls_cn_sys_callback func);
+    _io_op_rezult cnSetClbkSysAck(_uls_cn_sysack_callback func);
     _io_op_rezult cnSendExplorer();
     _io_op_rezult open();
     _io_op_rezult setDID(uint8_t cid, uint8_t did);
