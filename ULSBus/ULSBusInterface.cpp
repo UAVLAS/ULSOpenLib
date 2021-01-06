@@ -59,7 +59,7 @@ void ULSBusInterface::task(uint32_t dtms)
     if(_did >= 0x3f) _state = IF_STATE_UNINITIALIZED;
     switch(_state){
     case IF_STATE_UNINITIALIZED:
-        if(_did == 0){
+        if(_did < 0x3f){
             _state = IF_STATE_OK;
             ifOk();
         }else{

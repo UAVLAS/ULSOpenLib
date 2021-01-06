@@ -41,7 +41,8 @@ typedef enum :uint8_t{
     CN_SYS_CMD_SETMODE = 1,
     CN_SYS_CMD_ERASE = 2,
     CN_SYS_CMD_WRITE = 3,
-    CN_SYS_CMD_SETSIGNATURE = 4
+    CN_SYS_CMD_SETSIGNATURE = 4,
+    CN_SYS_CMD_SAVECFG = 5
 }_cn_sys_cmd;
 
 typedef enum :uint8_t{
@@ -96,6 +97,9 @@ typedef struct{
             uint32_t  progsize;
             uint32_t  progcrc;
         }__attribute__((packed))signature;
+        struct{
+            uint32_t  key;
+        }__attribute__((packed))saveCfg;
 
     }__attribute__((packed));
 }__attribute__((packed))_cn_sys_packet;
@@ -128,6 +132,8 @@ public:
     _io_op_rezult cnSetClbkSysAck(_uls_cn_sysack_callback func);
     _io_op_rezult cnSendExplorer();
     _io_op_rezult open();
+    void close();
+
     _io_op_rezult setDID(uint8_t cid, uint8_t did);
 
     void task(uint32_t dtms);

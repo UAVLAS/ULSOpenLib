@@ -374,6 +374,13 @@ _io_op_rezult ULSBusConnectionsList::open()
     }
     return IO_OK;
 }
+void ULSBusConnectionsList::close()
+{
+    begin();
+    while (next()) {
+        current->close();
+    }
+}
 _io_op_rezult ULSBusConnectionsList::setDID(uint8_t cid, uint8_t did)
 {
     begin();

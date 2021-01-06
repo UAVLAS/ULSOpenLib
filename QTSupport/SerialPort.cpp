@@ -42,13 +42,12 @@ bool SerialPort::open()
     serialPort->setBaudRate(portBaudrate);
     return serialPort->open(QSerialPort::ReadWrite);
 };
-void SerialPort::close()
+void SerialPort::closePort()
 {
-   // serialPort->flush();
-//    _txFifo.flush();
-//    _rxFifo.flush();
-    serialPort->close();
+    if(!opened())return;
     _opened = false;
+    serialPort->close();
+   // qDebug()  << "Port closed.";
 }
 bool SerialPort::opened()
 {
@@ -59,15 +58,15 @@ bool SerialPort::openPort(QString name)
     QStringList ports = getPortsList();
     foreach (QString p,ports) {
         if (p.contains(name)) {
-            name = p;
-            break;
+            portName = p;
+            portBaudrate = 115200;
+            if (open()) {
+                _opened = true;
+                return true;
+            }
         }
     }
-    portName = name;
-    portBaudrate = 115200;
-    if (open()) {
-        _opened = true;
-    }
+
     return false;
 }
 
@@ -78,13 +77,17 @@ QStringList SerialPort::getPortsList()
     const auto serialPortInfos = QSerialPortInfo::availablePorts();
     for (const QSerialPortInfo &serialPortInfo : serialPortInfos) {
         portsList.append(serialPortInfo.portName());
+//        qDebug()  << "Found Port: " << serialPortInfo.portName();
+//        qDebug()  << "-Decription: " << serialPortInfo.description();
+//        qDebug()  << "-Manufacturer: " << serialPortInfo.manufacturer();
+//        qDebug()  << "-SerialNumber: " << serialPortInfo.serialNumber();
+//        qDebug()  << "-SystemLocation: " << serialPortInfo.systemLocation();
     }
     return portsList;
 }
 
 void SerialPort::handleReadyRead()
-{
-    if(serialPort->bytesAvailable() == 0)return;
+{    if(!opened())return;
     QByteArray data = serialPort->readAll();
     for(int i = 0; i < data.length();i++)
     {
@@ -94,22 +97,24 @@ void SerialPort::handleReadyRead()
 void SerialPort::transmitterUpdate(){
     uint8_t ch;
     if(!opened()){_txFifo.flush();return;}
-    QSerialPortInfo *portInfo = new QSerialPortInfo(serialPort->portName());
-
-    if (portInfo->description() == "")
-    {
-        close();
-        //qDebug()  << "SerialSend NOT AVIABLE !!! \n";
-    }
     while(_txFifo.pull(&ch)){
         if(!serialPort->putChar(ch)){
+           qDebug()  << "Port closed. Putchar";
             close();
+            return;
         }
     }
 }
 
 void SerialPort::handleError(QSerialPort::SerialPortError serialPortError)
 {
+    if (serialPortError == QSerialPort::NoError)return;
+
+    qDebug()  << QObject::tr("An I/O error occurred "
+                         "the data from port %1, error: %2")
+                 .arg(serialPort->portName())
+                 .arg(serialPort->errorString())
+              << "";
     if (serialPortError == QSerialPort::ResourceError)
     {
         if (serialPortError == QSerialPort::ReadError) {
@@ -119,6 +124,7 @@ void SerialPort::handleError(QSerialPort::SerialPortError serialPortError)
                          .arg(serialPort->errorString())
                       << "";
         }
+        qDebug()  << "Port closed. Form error";
         close();
     }
 }
@@ -131,14 +137,12 @@ ULSSerialPort::ULSSerialPort(QObject *parent,ULSDBase *dev,ULSBusConnectionsList
 }
 _io_op_rezult ULSSerialPort::receivePacket()
 {
-    if(!opened())return IO_ERROR;
     ifRxLen = ULSSerial::read(ifRxBuf,IF_PACKET_SIZE);
     if(ifRxLen == 0)return IO_NO_DATA;
     return IO_OK;
 };
 _io_op_rezult ULSSerialPort::sendPacket()
 {
-    if(!opened())return IO_ERROR;
     uint32_t len = ULSSerial::write(ifTxBuf,ifTxLen);
     ifTxLen = 0;
     if(len != ifTxLen)return IO_ERROR;

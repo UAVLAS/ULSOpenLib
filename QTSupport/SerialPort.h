@@ -42,7 +42,7 @@ public:
     SerialPort(QObject *parent = 0);
 
     bool open();
-    void close(void) override;
+    void closePort(void);
 
     bool opened();
     QStringList getPortsList(void);

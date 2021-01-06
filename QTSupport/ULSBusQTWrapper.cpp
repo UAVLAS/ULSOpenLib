@@ -46,8 +46,9 @@ static void cnklbkSysAck(ULSBusConnection *sc,_cn_sys_oprezult rez)
     if(ubqtw)ubqtw->cnsysAckReceived(sc,rez);
 }
 ULSBusQTWrapper::ULSBusQTWrapper():
-    m_dtms(50),
-    m_serial(this,&m_pcDevice,&m_connections)
+    m_dtms(30),
+    m_serial(this,&m_pcDevice,&m_connections),
+    m_serialPortName("UAVLAS")
 {
     ubqtw = this;
     m_serial.mode(SERIAL_MODE_COBS);
@@ -63,6 +64,8 @@ ULSBusQTWrapper::ULSBusQTWrapper():
 
     m_elapsed = new QElapsedTimer();
     m_elapsed->start();
+    onTimer(); // Start task now
+
 }
 void ULSBusQTWrapper::onTimer()
 {
@@ -70,12 +73,23 @@ void ULSBusQTWrapper::onTimer()
     udebugTickHandler();
     udebugElspsed(m_elapsed->nsecsElapsed()/1000000);
 
-    if(m_serial.opened()){
 
-        m_connections.task(m_dtms);
+    if(m_serial.opened()){
+        QSerialPortInfo *portInfo = new QSerialPortInfo(m_serial.serialPort->portName());
+        if (portInfo->description() == "")
+        {
+            QString msg = "Port disconnected: " + m_serial.portName;
+            uDebug(msg.toLatin1());
+            m_serial.closePort();
+        }else{
+           m_connections.task(m_dtms);
+        }
+
+
     }else{
-        if(m_serial.openPort("UAVLAS")){
-            uDebug("Port openned");
+        if(m_serial.openPort(m_serialPortName)){
+            QString msg = "Port openned: " + m_serial.portName;
+            uDebug(msg.toLatin1());
             m_serial.cnSendExplorer();
         }
     }
@@ -229,4 +243,18 @@ void ULSBusQTWrapper::exploreDevices()
 {
     m_dev.clear();
     m_connections.cnSendExplorer();
+}
+
+void ULSBusQTWrapper::exploreNewDevices()
+{
+    m_connections.cnSendExplorer();
+}
+uint16_t ULSBusQTWrapper::getDeviceType(QString typeName)
+{
+    for( auto it = m_devsLibrary.devTypes.begin(); it != m_devsLibrary.devTypes.end(); ++it ){
+        if(it.value()->typeName == typeName){
+            return it.value()->typeCode;
+        }
+    }
+    return 0xFFFF;
 }

@@ -57,11 +57,15 @@ public:
 
     void requestObject(const QString &route,const QString &objName);
     void exploreDevices();
+    void exploreNewDevices();
 
     void cnObjectReceived(ULSBusConnection *sc);
     void cnStatusReceived(ULSBusConnection *sc);
     void cnObjectSended(ULSBusConnection *sc);
     void cnsysAckReceived(ULSBusConnection *sc, uint8_t rez);
+
+    uint16_t getDeviceType(QString typeName);
+
 private:
     QString getRoute(ULSBusConnection *sc);
     uint32_t getRoute(QString route,uint8_t *r);
@@ -76,6 +80,7 @@ private:
     ULSSerialPort m_serial;
     ULSQTDevicesLibrary   m_devsLibrary;
     QHash<QString,_device_state> m_dev;
+    QString m_serialPortName;
 
 signals:
     void objectReceived(const QString &route,const QString &objName,const QVariantMap &objData);
