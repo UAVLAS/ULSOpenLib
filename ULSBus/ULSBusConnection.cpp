@@ -253,12 +253,12 @@ _io_op_rezult ULSBusConnection::cnSendExplorer()
      _cn_sys_packet *pxsys = (_cn_sys_packet*)cnPreparePacket(route,hs,CN_CMD_SYS);
      pxsys->syscmd = CN_SYS_CMD_SETSIGNATURE;
      pxsys->signature.key = key;
-     memcpy(pxsys->signature.fw,fw,16);
-     memcpy(pxsys->signature.ldr,ldr,16);
+     memcpy(pxsys->signature.fw,fw,32);
+     memcpy(pxsys->signature.ldr,ldr,32);
      pxsys->signature.progflashingtime = ftime;
      pxsys->signature.progsize = progsize;
      pxsys->signature.progcrc = progcrc;
-     ifTxLen += 1 + 12 + 16 + 64;
+     ifTxLen += 1 + sizeof(pxsys->signature);
      return  ifSend();
 }
 _io_op_rezult ULSBusConnection::cnSendGetObject(uint8_t *route,uint8_t hs,uint16_t obj_addr)

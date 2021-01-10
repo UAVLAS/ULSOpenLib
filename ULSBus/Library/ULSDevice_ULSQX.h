@@ -310,6 +310,8 @@ public:
     }
 
     ULSObjectSignature o_sys_signature;
+    uint8_t *pxCfg;
+    uint32_t lenCfg;
 };
 
 
@@ -332,6 +334,8 @@ public:
     {
         add(&o_status);
         add(&o_cfg);
+        pxCfg = o_cfg._pxData;
+        lenCfg = o_cfg.size;
     }
     ULSObjectULSQT1R1Status o_status;
     ULSObjectULSQT1R1Config o_cfg;
@@ -346,6 +350,8 @@ public:
     {
         add(&o_status);
         add(&o_cfg);
+        pxCfg = o_cfg._pxData;
+        lenCfg = o_cfg.size;
     }
     ULSObjectULSQR1R1Status o_status;
     ULSObjectULSQR1R1Config o_cfg;

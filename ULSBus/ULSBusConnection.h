@@ -91,8 +91,8 @@ typedef struct{
         }__attribute__((packed))write;
         struct{
             uint32_t  key;
-            char      fw[16];
-            char      ldr[16];
+            char      fw[32];
+            char      ldr[32];
             uint32_t  progflashingtime;
             uint32_t  progsize;
             uint32_t  progcrc;
