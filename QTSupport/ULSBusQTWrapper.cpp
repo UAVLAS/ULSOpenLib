@@ -204,6 +204,14 @@ void ULSBusQTWrapper::sendSysWrite(const QString &route,uint32_t key,uint32_t st
     if(hs == 0) return;
     m_connections.cnSendSysWrite(r,hs,key,start,len,buf);
 }
+void ULSBusQTWrapper::sendSysSaveConfig(const QString &route, uint32_t key)
+{
+    if(!m_dev.contains(route)) return;
+    uint8_t r[15];
+    uint32_t hs = getRoute(route,r);
+    if(hs == 0) return;
+    m_connections.cnSendSysSaveConfig(r,hs,key);
+}
 void ULSBusQTWrapper::sendSysSignature(const QString &route,uint32_t key,
                                        char* fw,char* ldr,uint32_t ftime,
                                        uint32_t progsize,uint32_t progcrc)

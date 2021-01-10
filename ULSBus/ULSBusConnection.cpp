@@ -266,7 +266,7 @@ _io_op_rezult ULSBusConnection::cnSendExplorer()
      if( (route[0] >> 6) != _cid)return IO_ERROR; // not our interface
      _cn_sys_packet *pxsys = (_cn_sys_packet*)cnPreparePacket(route,hs,CN_CMD_SYS);
      pxsys->syscmd = CN_SYS_CMD_SAVECFG;
-     pxsys->write.key = key;
+     pxsys->saveCfg.key = key;
      ifTxLen += 1 + 4;
      return  ifSend();
 }

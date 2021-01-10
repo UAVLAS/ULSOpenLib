@@ -52,6 +52,8 @@ public:
     void sendSysSetMode(const QString &route,_cn_sys_mode mode);
     void sendSysErase(const QString &route,uint32_t key,uint32_t start,uint32_t len);
     void sendSysWrite(const QString &route,uint32_t key,uint32_t start,uint32_t len,uint8_t *buf);
+    void sendSysSaveConfig(const QString &route,uint32_t key);
+
     void sendSysSignature(const QString &route,uint32_t key,char* fw,char* ldr,
                           uint32_t ftime,uint32_t progsize,uint32_t progcrc);
 

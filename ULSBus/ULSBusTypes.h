@@ -6,6 +6,8 @@
 #include "ULSBusConfig.h"
 #include "udebug.h"
 
+#define _ULS_OPERATION_KEY 0x24041982
+
 typedef enum{
     ULSBUS_OBJECT_PERMITION_READONLY = 0,
     ULSBUS_OBJECT_PERMITION_WRITEONLY = 1,
