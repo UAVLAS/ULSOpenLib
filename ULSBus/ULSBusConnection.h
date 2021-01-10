@@ -125,6 +125,7 @@ public:
     _io_op_rezult cnSendSysSetMode(uint8_t *route,uint8_t hs,_cn_sys_mode mode);
     _io_op_rezult cnSendSysErase(uint8_t *route,uint8_t hs,uint32_t key,uint32_t start, uint32_t len);
     _io_op_rezult cnSendSysWrite(uint8_t *route,uint8_t hs,uint32_t key,uint32_t start, uint32_t len,uint8_t *buf);
+    _io_op_rezult cnSendSysSaveConfig(uint8_t *route,uint8_t hs,uint32_t key);
     _io_op_rezult cnSendSysSetSignature(uint8_t *route,uint8_t hs,uint32_t key,char* fw,
                                         char* ldr,uint32_t ftime,uint32_t progsize,uint32_t progcrc);
 
@@ -159,6 +160,7 @@ public:
     _io_op_rezult cnSendSysSetMode(uint8_t *route,uint8_t hs,_cn_sys_mode mode);
     _io_op_rezult cnSendSysErase(uint8_t *route,uint8_t hs,uint32_t key,uint32_t start, uint32_t len);
     _io_op_rezult cnSendSysWrite(uint8_t *route,uint8_t hs,uint32_t key,uint32_t start, uint32_t len,uint8_t *buf);
+    _io_op_rezult cnSendSysSaveConfig(uint8_t *route,uint8_t hs,uint32_t key);
     _io_op_rezult cnSendSysSetSignature(uint8_t *route,uint8_t hs,uint32_t key,char* fw,char* ldr,uint32_t ftime,uint32_t progsize,uint32_t progcrc);
 
     _io_op_rezult cnProcessPacket();

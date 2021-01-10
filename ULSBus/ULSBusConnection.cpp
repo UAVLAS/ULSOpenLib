@@ -261,6 +261,15 @@ _io_op_rezult ULSBusConnection::cnSendExplorer()
      ifTxLen += 1 + sizeof(pxsys->signature);
      return  ifSend();
 }
+ _io_op_rezult ULSBusConnection::cnSendSysSaveConfig(uint8_t *route,uint8_t hs,uint32_t key)
+{
+     if( (route[0] >> 6) != _cid)return IO_ERROR; // not our interface
+     _cn_sys_packet *pxsys = (_cn_sys_packet*)cnPreparePacket(route,hs,CN_CMD_SYS);
+     pxsys->syscmd = CN_SYS_CMD_SAVECFG;
+     pxsys->write.key = key;
+     ifTxLen += 1 + 4;
+     return  ifSend();
+}
 _io_op_rezult ULSBusConnection::cnSendGetObject(uint8_t *route,uint8_t hs,uint16_t obj_addr)
 {
     if( (route[0] >> 6) != _cid)return IO_ERROR; // not our interface
@@ -438,4 +447,12 @@ _io_op_rezult ULSBusConnectionsList::cnSetClbkSysAck(_uls_cn_sysack_callback fun
         current->cnclbkSysAck = func;
     }
     return IO_OK;
+}
+_io_op_rezult ULSBusConnectionsList::cnSendSysSaveConfig(uint8_t *route,uint8_t hs,uint32_t key)
+{
+    begin();
+    while (next()) {
+        if(current->cnSendSysSaveConfig(route,hs,key) == IO_OK) return IO_OK;
+    }
+    return IO_ERROR;
 }
