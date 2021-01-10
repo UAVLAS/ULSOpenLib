@@ -73,28 +73,27 @@ void ULSBusQTWrapper::onTimer()
     udebugTickHandler();
     udebugElspsed(m_elapsed->nsecsElapsed()/1000000);
 
-
     if(m_serial.opened()){
         QSerialPortInfo *portInfo = new QSerialPortInfo(m_serial.serialPort->portName());
-        if (portInfo->description() == "")
-        {
+        if (portInfo->description() == ""){
             QString msg = "Port disconnected: " + m_serial.portName;
             uDebug(msg.toLatin1());
             m_serial.closePort();
+            for( auto it = m_dev.begin(); it != m_dev.end(); ++it ){
+                    emit deviceDisconnected(it.key());
+            }
+            m_dev.clear();
         }else{
            m_connections.task(m_dtms);
+           if((m_counter % (1000/m_dtms)) == 0) m_serial.cnSendExplorer();
         }
-
-
     }else{
         if(m_serial.openPort(m_serialPortName)){
             QString msg = "Port openned: " + m_serial.portName;
             uDebug(msg.toLatin1());
-            m_serial.cnSendExplorer();
+            exploreDevices();
         }
     }
-
-    if((m_counter % (1000/m_dtms)) == 0) m_serial.cnSendExplorer();
 
     for( auto it = m_dev.begin(); it != m_dev.end(); ++it ){
         if(it.value().timeout < m_dtms){
