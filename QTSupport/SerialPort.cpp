@@ -100,7 +100,7 @@ void SerialPort::transmitterUpdate(){
     while(_txFifo.pull(&ch)){
         if(!serialPort->putChar(ch)){
            qDebug()  << "Port closed. Putchar";
-            close();
+            closePort();
             return;
         }
     }
@@ -110,22 +110,21 @@ void SerialPort::handleError(QSerialPort::SerialPortError serialPortError)
 {
     if (serialPortError == QSerialPort::NoError)return;
 
-    qDebug()  << QObject::tr("An I/O error occurred "
-                         "the data from port %1, error: %2")
-                 .arg(serialPort->portName())
-                 .arg(serialPort->errorString())
-              << "";
-    if (serialPortError == QSerialPort::ResourceError)
+//    qDebug()  << QObject::tr("An I/O error occurred "
+//                         "the data from port %1, error: %2")
+//                 .arg(serialPort->portName())
+//                 .arg(serialPort->errorString())
+//              << "";
+    if ((serialPortError == QSerialPort::ResourceError) ||
+        (serialPortError == QSerialPort::PermissionError))
     {
-        if (serialPortError == QSerialPort::ReadError) {
-            qDebug()  << QObject::tr("An I/O error occurred while reading "
-                                 "the data from port %1, error: %2")
-                         .arg(serialPort->portName())
-                         .arg(serialPort->errorString())
-                      << "";
-        }
-        qDebug()  << "Port closed. Form error";
-        close();
+        qDebug()  << QObject::tr("An I/O error occurred while reading "
+                             "the data from port %1, error: %2")
+                     .arg(serialPort->portName())
+                     .arg(serialPort->errorString())
+                  << "";
+        //qDebug()  << "Port closed. Form error";
+        closePort();
     }
 }
 
