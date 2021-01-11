@@ -212,6 +212,12 @@ public:
         float  velDy;
         float  imuR;
         float  imuP;
+        float  Dx;
+        float  Dy;
+        float  Dz;
+        float  R;
+
+
 
     }__ULSObjectULSQR1R1Status;  // Total 128 bytes;
     __ULSObjectULSQR1R1Status var;
@@ -253,6 +259,11 @@ public:
         __ULS_GENERIC_VAR_TO_QVM(velDy);
         __ULS_GENERIC_VAR_TO_QVM(imuR);
         __ULS_GENERIC_VAR_TO_QVM(imuP);
+        __ULS_GENERIC_VAR_TO_QVM(Dx);
+        __ULS_GENERIC_VAR_TO_QVM(Dy);
+        __ULS_GENERIC_VAR_TO_QVM(Dz);
+        __ULS_GENERIC_VAR_TO_QVM(R);
+
         return out;
     };
 #endif
