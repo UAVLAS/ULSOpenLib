@@ -49,6 +49,7 @@ typedef enum :uint8_t{
     CN_SYS_OPERATION_UNDEFINED = 0,
     CN_SYS_OPERATION_OK = 1,
     CN_SYS_OPERATION_ERROR = 2,
+    CN_SYS_OPERATION_WRONGKEY = 3,
 
 }_cn_sys_oprezult;
 typedef enum :uint8_t{
