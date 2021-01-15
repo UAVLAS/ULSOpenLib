@@ -33,7 +33,7 @@
 #include <QTextStream>
 #include <QElapsedTimer>
 
-#define ULSQTW_DEVICE_TIMEOUT   2000
+#define ULSQTW_DEVICE_TIMEOUT   4000
 
 
 typedef struct{
