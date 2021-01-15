@@ -202,6 +202,7 @@ public:
         float levelA;
         float levelB;
         float prob;
+        float trianDistance;
         float posDistance;
         float posHeight;
         float posAx;
@@ -250,6 +251,7 @@ public:
         __ULS_GENERIC_VAR_TO_QVM(levelA);
         __ULS_GENERIC_VAR_TO_QVM(levelB);
         __ULS_GENERIC_VAR_TO_QVM(prob);
+        __ULS_GENERIC_VAR_TO_QVM(trianDistance);
         __ULS_GENERIC_VAR_TO_QVM(posDistance);
         __ULS_GENERIC_VAR_TO_QVM(posHeight);
         __ULS_GENERIC_VAR_TO_QVM(posAx);
