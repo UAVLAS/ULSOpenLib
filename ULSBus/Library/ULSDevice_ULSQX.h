@@ -39,6 +39,8 @@
     ,QString("%1").arg(vars[#SNAME].toString()).size());var.SNAME[QString("%1").arg(vars[#SNAME].toString()).size()] = 0; }
 
 #define __ULS_QVM_TO_FLOAT(VNAME) {var.VNAME = vars[#VNAME].toFloat();};
+#define __ULS_QVM_TO_UINT(VNAME) {var.VNAME = vars[#VNAME].toUInt();};
+
 #endif
 
 class ULSObjectSignature: public ULSObjectBase
@@ -143,6 +145,8 @@ class ULSObjectULSQT1R1Config: public ULSObjectBase
 public:
     typedef struct __attribute__((packed)){
         char name[16];
+        uint8_t ctrl;
+        float power;
         float Voff;
         float Vlow;
     }__ULSObjectULSQT1R1Config;  // Total 128 bytes;
@@ -163,6 +167,8 @@ public:
         __ULSObjectULSQT1R1Config *px = (__ULSObjectULSQT1R1Config*)buf;
         px->name[15] = 0;
         __ULS_GENERIC_STRING_TO_QVM(name);
+        __ULS_GENERIC_VAR_TO_QVM(ctrl);
+        __ULS_GENERIC_VAR_TO_QVM(power);
         __ULS_GENERIC_VAR_TO_QVM(Voff);
         __ULS_GENERIC_VAR_TO_QVM(Vlow);
         return out;
@@ -173,6 +179,8 @@ public:
         QString nm = QString("%1").arg(vars["name"].toString());
         if(nm.size()<16)memcpy( var.name, nm.toStdString().c_str() ,nm.size());
         var.name[15] = 0;
+        __ULS_QVM_TO_UINT(ctrl);
+        __ULS_QVM_TO_FLOAT(power);
         __ULS_QVM_TO_FLOAT(Voff);
         __ULS_QVM_TO_FLOAT(Vlow);
 
@@ -276,8 +284,12 @@ class ULSObjectULSQR1R1Config: public ULSObjectBase
 public:
     typedef struct __attribute__((packed)){
         char name[16];
+        float sensitivity;
         float posOffsetX;
         float posOffsetY;
+        float txOffsetX;
+        float txOffsetY;
+
     }__ULSObjectULSQR1R1Config;  // Total 128 bytes;
     __ULSObjectULSQR1R1Config var;
 
@@ -296,8 +308,11 @@ public:
         __ULSObjectULSQR1R1Config *px = (__ULSObjectULSQR1R1Config*)buf;
         px->name[15] = 0;
         __ULS_GENERIC_STRING_TO_QVM(name);
+        __ULS_GENERIC_VAR_TO_QVM(sensitivity);
         __ULS_GENERIC_VAR_TO_QVM(posOffsetX);
         __ULS_GENERIC_VAR_TO_QVM(posOffsetY);
+        __ULS_GENERIC_VAR_TO_QVM(txOffsetX);
+        __ULS_GENERIC_VAR_TO_QVM(txOffsetY);
 
         return out;
     };
@@ -307,6 +322,8 @@ public:
         var.name[15] = 0;
         __ULS_QVM_TO_FLOAT(posOffsetX);
         __ULS_QVM_TO_FLOAT(posOffsetY);
+        __ULS_QVM_TO_FLOAT(txOffsetX);
+        __ULS_QVM_TO_FLOAT(txOffsetY);
         return size;
     };
 #endif
