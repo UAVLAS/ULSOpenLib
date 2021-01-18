@@ -7,7 +7,10 @@
 #include "udebug.h"
 
 #define _ULS_OPERATION_KEY 0x24041982
-
+#define __DEVICE_KEY                                           \
+  (__DEVICE_UNIC_ID0 ^ __DEVICE_UNIC_ID1 ^ __DEVICE_UNIC_ID2 ^ \
+   __DEVICE_UNIC_ID3)
+   
 typedef enum{
     ULSBUS_OBJECT_PERMITION_READONLY = 0,
     ULSBUS_OBJECT_PERMITION_WRITEONLY = 1,
