@@ -31,9 +31,9 @@
 #define IF_PACKET_HEADER_SIZE (2)
 #define IF_PAYLOAD_SIZE (IF_PACKET_SIZE - IF_PACKET_HEADER_SIZE)
 
-#define IF_NM_DVICE_HB_TIMEOUT 1000
-#define IF_NM_PING_HB_TIMEOUT 400
-#define IF_NM_REQUESTID_TIMEOUT 200
+#define IF_NM_DVICE_HB_TIMEOUT 3000
+#define IF_NM_PING_HB_TIMEOUT 1000
+#define IF_NM_REQUESTID_TIMEOUT 100
 
 #define IF_LOCAL_DEVICES_NUM 63 // local devices 0-62 , 63 bradcast device
 
@@ -120,7 +120,7 @@ typedef struct{
 
 typedef struct
 {
-    uint8_t  id;
+    //uint8_t  id;
     uint32_t timeout;
     uint32_t uid0;
 }_local_device;
@@ -172,6 +172,8 @@ private:
     _io_op_rezult sendNM_HB();
     // Utils
     uint8_t allocateId();
+    uint8_t randomTimeout();
+    
     void resetId();
 
 protected:
@@ -187,6 +189,7 @@ private:
     uint32_t _key_cntr;
     uint32_t _didx;
     uint32_t _nm_timeout;
+    uint32_t _nm_requests;
 
 };
 
