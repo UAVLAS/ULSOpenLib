@@ -25,55 +25,74 @@
 
 #include <inttypes.h>
 #include <string.h>
+
 #include "ULSBusTypes.h"
 
 #ifdef PCQT_BUILD
-#include<QHash>
-#include<QString>
-#include<QVariantMap>
-#include<QList>
+#include <QHash>
+#include <QList>
+#include <QString>
+#include <QVariantMap>
 #endif
 
-class ULSObjectBase:public ULSListItem
-{
-public:
-    ULSObjectBase(uint16_t id,const char* name,const char* description,_ulsbus_obj_permitions permition);
-    uint16_t id;
-    uint16_t size;
-    uint16_t len;
-    uint8_t *_pxData;
-    const char *_name;
-    const char *_description;
-    _ulsbus_obj_permitions _permition;
+class ULSObjectBase : public ULSListItem {
+ public:
+  ULSObjectBase(uint16_t id, const char *name, const char *description,
+                _ulsbus_obj_permitions permition);
+  uint16_t id;
+  uint16_t size;
+  uint16_t len;
+  uint8_t *_pxData;
+  const char *_name;
+  const char *_description;
+  _ulsbus_obj_permitions _permition;
 
 #ifdef PCQT_BUILD
-    virtual QVariantMap get(uint8_t *buf){QVariantMap v;(void)v;(void)buf;return v;};
-    virtual uint32_t set(QVariantMap vars){(void)vars;return 0;};
-    QString name(){return QString().fromLatin1(_name);};
-    QString description(){return QString().fromLatin1(_description);};
+  virtual QVariantMap get(uint8_t *buf) {
+    QVariantMap v;
+    (void)v;
+    (void)buf;
+    return v;
+  };
+  virtual uint32_t set(QVariantMap vars) {
+    (void)vars;
+    return 0;
+  };
+  QString name() { return QString().fromLatin1(_name); };
+  QString description() { return QString().fromLatin1(_description); };
 #endif
-    uint32_t getData(uint8_t *buf){memcpy(buf,_pxData,size*len);return size*len;};
-    void setData(uint8_t *buf){memcpy(_pxData,buf,size*len);};
+  uint32_t getData(uint8_t *buf) {
+    memcpy(buf, _pxData, size * len);
+    return size * len;
+  };
+  void setData(uint8_t *buf) { memcpy(_pxData, buf, size * len); };
+  virtual void defaultConfig(){};
+  virtual void validateConfig(){};
+
+ protected:
+  float checkConfigF(float val, float min, float max) {
+    if (val > max) return max;
+    if (val < min) return min;
+    return val;
+  };
 };
 
-class ULSDBase: public ULSList<ULSObjectBase>
-{
-public:
-    ULSDBase(const char* tn,const uint16_t tc);
-    ULSObjectBase *getObject(uint16_t obj_id);
+class ULSDBase : public ULSList<ULSObjectBase> {
+ public:
+  ULSDBase(const char *tn, const uint16_t tc);
+  ULSObjectBase *getObject(uint16_t obj_id);
 #ifdef PCQT_BUILD
-    QVariantMap getVar(QString *objName,uint16_t obj_id,uint8_t *buf);
-    QVariantMap getVar(QString objName,uint8_t *buf);
+  QVariantMap getVar(QString *objName, uint16_t obj_id, uint8_t *buf);
+  QVariantMap getVar(QString objName, uint8_t *buf);
 
-    QString name(){return QString().fromLatin1(typeName);}
-    uint16_t getObjId(QString objName);
-    ULSObjectBase *getObject(QString objName);;
+  QString name() { return QString().fromLatin1(typeName); }
+  uint16_t getObjId(QString objName);
+  ULSObjectBase *getObject(QString objName);
+  ;
 #endif
-    const char *devname;
-    const char *typeName;
-    const uint16_t typeCode;
-
-
+  const char *devname;
+  const char *typeName;
+  const uint16_t typeCode;
 };
 
-#endif // ULSOBJECT_H
+#endif  // ULSOBJECT_H
