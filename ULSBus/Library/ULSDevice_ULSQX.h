@@ -284,6 +284,7 @@ class ULSObjectULSQR1R1Config: public ULSObjectBase
 public:
     typedef struct __attribute__((packed)){
         char name[16];
+        uint8_t ctrl;
         float sensitivity;
         float posOffsetX;
         float posOffsetY;
@@ -308,6 +309,7 @@ public:
         __ULSObjectULSQR1R1Config *px = (__ULSObjectULSQR1R1Config*)buf;
         px->name[15] = 0;
         __ULS_GENERIC_STRING_TO_QVM(name);
+        __ULS_GENERIC_VAR_TO_QVM(ctrl);
         __ULS_GENERIC_VAR_TO_QVM(sensitivity);
         __ULS_GENERIC_VAR_TO_QVM(posOffsetX);
         __ULS_GENERIC_VAR_TO_QVM(posOffsetY);
@@ -320,6 +322,8 @@ public:
     {
         __ULS_QVM_TO_STRING(name);
         var.name[15] = 0;
+        __ULS_QVM_TO_UINT(ctrl);
+        __ULS_QVM_TO_FLOAT(sensitivity);
         __ULS_QVM_TO_FLOAT(posOffsetX);
         __ULS_QVM_TO_FLOAT(posOffsetY);
         __ULS_QVM_TO_FLOAT(txOffsetX);
