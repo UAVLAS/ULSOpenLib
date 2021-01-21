@@ -362,7 +362,33 @@ class ULSObjectULSQR1R1Config : public ULSObjectBase {
   };
 #endif
 };
+class ULSObjectULSQR1R1Debug : public ULSObjectBase {
+ public:
+  typedef struct __attribute__((packed)) {
+    float beansA[37];
+    float beansB[37];
+  } __ULSObjectULSQR1R1Debug;  // Total 128 bytes;
+  __ULSObjectULSQR1R1Debug var;
 
+ public:
+  ULSObjectULSQR1R1Debug(uint16_t id)
+      : ULSObjectBase(id, "Debug", "System debug Information",
+                      ULSBUS_OBJECT_PERMITION_READONLY) {
+    size = sizeof(__ULSObjectULSQR1R1Debug);
+    len = 1;
+    _pxData = (uint8_t *)&var;
+  }
+#ifdef PCQT_BUILD
+
+  QVariantMap get(uint8_t *buf) override {
+    QVariantMap out;
+    __ULSObjectULSQR1R1Debug *px = (__ULSObjectULSQR1R1Debug *)buf;
+    __ULS_GENERIC_VARRAY_TO_QVM(beansA, 37);
+    __ULS_GENERIC_VARRAY_TO_QVM(beansB, 37);
+    return out;
+  };
+#endif
+};
 class ULSD_ULSX : public ULSDBase {
  public:
   ULSD_ULSX(const char *tn, const uint16_t tc)
@@ -398,14 +424,18 @@ class ULSD_ULSQR1R1 : public ULSD_ULSX {
   ULSD_ULSQR1R1()
       : ULSD_ULSX(__ULS_DEVICE_TYPE_ULSQR1R1_NAME, __ULS_DEVICE_TYPE_ULSQR1R1),
         o_status(0x0010),
-        o_cfg(0x0020) {
+        o_cfg(0x0020),
+        o_debug(0x030) {
     add(&o_status);
     add(&o_cfg);
+    add(&o_debug);
+    
     pxCfg = o_cfg._pxData;
     lenCfg = o_cfg.size;
   }
   ULSObjectULSQR1R1Status o_status;
   ULSObjectULSQR1R1Config o_cfg;
+  ULSObjectULSQR1R1Debug o_debug;
 };
 
 #ifdef PCQT_BUILD
