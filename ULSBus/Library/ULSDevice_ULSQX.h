@@ -180,7 +180,7 @@ class ULSObjectULSQT1R1Config : public ULSObjectBase {
     var.Voff = 6.f;
   };
   void validateConfig() override {
-    var.power = checkConfigF(var.power, 50.f, 120.f);
+    var.power = checkConfigF(var.power, 50.f, 200.f);
     var.Vlow = checkConfigF(var.Vlow, 5.f, 25.f);
     var.Voff = checkConfigF(var.Voff, 5.f, var.Vlow);
   };
