@@ -46,7 +46,9 @@ public:
 
     bool opened();
     QStringList getPortsList(void);
-    bool openPort(QString name);
+    QStringList getPortsManufacturersList();
+    QString findPort(const QString &name);
+    bool openPort(const QString &name);
 
 protected:
     void transmitterUpdate() override;
@@ -57,6 +59,8 @@ public:
    QString      portName;
    long         portBaudrate;
    QSerialPort* serialPort;
+
+
 private:
    _io_fifo<uint8_t,8*1024> _rxFifo;
    _io_fifo<uint8_t,8*1024> _txFifo;

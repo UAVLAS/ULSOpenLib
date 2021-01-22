@@ -45,6 +45,9 @@ typedef struct{
 
 class ULSBusQTWrapper: public QObject {
     Q_OBJECT
+
+
+
 public:
     ULSBusQTWrapper();
 
@@ -68,6 +71,9 @@ public:
 
     uint16_t getDeviceType(QString typeName);
 
+    void disconnectPort();
+    void reconnectPort(const QString &port);
+
 private:
     QString getRoute(ULSBusConnection *sc);
     uint32_t getRoute(QString route,uint8_t *r);
@@ -83,6 +89,7 @@ private:
     ULSQTDevicesLibrary   m_devsLibrary;
     QHash<QString,_device_state> m_dev;
     QString m_serialPortName;
+    bool m_tryConnecting;
 
 signals:
     void objectReceived(const QString &route,const QString &objName,const QVariantMap &objData);

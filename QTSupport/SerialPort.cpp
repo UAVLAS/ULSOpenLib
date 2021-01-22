@@ -44,8 +44,8 @@ bool SerialPort::open()
 };
 void SerialPort::closePort()
 {
-    if(!opened())return;
     _opened = false;
+   // if(!opened())return;
     serialPort->close();
    // qDebug()  << "Port closed.";
 }
@@ -53,35 +53,48 @@ bool SerialPort::opened()
 {
     return  _opened && serialPort->isOpen();//serialPort->isOpen();
 }
-bool SerialPort::openPort(QString name)
+bool SerialPort::openPort(const QString &name)
 {
-    QStringList ports = getPortsList();
-    foreach (QString p,ports) {
-        if (p.contains(name)) {
-            portName = p;
-            portBaudrate = 115200;
-            if (open()) {
-                _opened = true;
-                return true;
-            }
+
+    QString port = findPort(name);
+    if(port.length()){
+       // close();
+        portName = port;
+        portBaudrate = 115200;
+        if (open()) {
+            _opened = true;
+            return true;
         }
     }
-
     return false;
 }
 
-
+QString SerialPort::findPort(const QString &name)
+{
+    const auto serialPortInfos = QSerialPortInfo::availablePorts();
+    for (const QSerialPortInfo &serialPortInfo : serialPortInfos) {
+        if(serialPortInfo.portName().contains(name) || serialPortInfo.manufacturer().contains(name) ){
+            qDebug()  << "Found port: "<<serialPortInfo.portName()<<" Manufacturer:" << serialPortInfo.manufacturer();
+            return serialPortInfo.portName();
+        }
+    }
+    return "";
+}
 QStringList SerialPort::getPortsList()
 {
     QStringList portsList;
     const auto serialPortInfos = QSerialPortInfo::availablePorts();
     for (const QSerialPortInfo &serialPortInfo : serialPortInfos) {
         portsList.append(serialPortInfo.portName());
-//        qDebug()  << "Found Port: " << serialPortInfo.portName();
-//        qDebug()  << "-Decription: " << serialPortInfo.description();
-//        qDebug()  << "-Manufacturer: " << serialPortInfo.manufacturer();
-//        qDebug()  << "-SerialNumber: " << serialPortInfo.serialNumber();
-//        qDebug()  << "-SystemLocation: " << serialPortInfo.systemLocation();
+    }
+    return portsList;
+}
+QStringList SerialPort::getPortsManufacturersList()
+{
+    QStringList portsList;
+    const auto serialPortInfos = QSerialPortInfo::availablePorts();
+    for (const QSerialPortInfo &serialPortInfo : serialPortInfos) {
+        portsList.append(serialPortInfo.manufacturer());
     }
     return portsList;
 }
