@@ -56,6 +56,13 @@
 #define __ULS_QVM_TO_UINT(VNAME) \
   { var.VNAME = vars[#VNAME].toUInt(); };
 
+#define __ULS_QVM_TO_VARRAYF(VNAME, SIZE)  \
+  {\
+    QVariantList ql_##VNAME = vars[#VNAME].toList();\
+    for (int i = 0; i < SIZE; i++)\
+    var.VNAME[i] = ql_##VNAME.at(i).toFloat();\
+  };
+
 #endif
 
 class ULSObjectSignature : public ULSObjectBase {
@@ -160,6 +167,8 @@ class ULSObjectULSQT1R1Config : public ULSObjectBase {
     float power;
     float Voff;
     float Vlow;
+    float magCalOffset[3];
+    float magCalScale[3];
     uint8_t ctrl;
   } __ULSObjectULSQT1R1Config;  // Total 128 bytes;
   __ULSObjectULSQT1R1Config var;
@@ -178,6 +187,8 @@ class ULSObjectULSQT1R1Config : public ULSObjectBase {
     var.power = 100.f;
     var.Vlow = 8.f;
     var.Voff = 6.f;
+    var.magCalOffset[0] = var.magCalOffset[1] = var.magCalOffset[2] =0;
+    var.magCalScale[0] = var.magCalScale[1] = var.magCalScale[2] =1;
   };
   void validateConfig() override {
     var.power = checkConfigF(var.power, 50.f, 120.f);
@@ -194,6 +205,8 @@ class ULSObjectULSQT1R1Config : public ULSObjectBase {
     __ULS_GENERIC_VAR_TO_QVM(power);
     __ULS_GENERIC_VAR_TO_QVM(Voff);
     __ULS_GENERIC_VAR_TO_QVM(Vlow);
+    __ULS_GENERIC_VARRAY_TO_QVM(magCalOffset,3);
+    __ULS_GENERIC_VARRAY_TO_QVM(magCalScale,3);
     return out;
   };
   uint32_t set(QVariantMap vars) override {
@@ -204,7 +217,8 @@ class ULSObjectULSQT1R1Config : public ULSObjectBase {
     __ULS_QVM_TO_FLOAT(power);
     __ULS_QVM_TO_FLOAT(Voff);
     __ULS_QVM_TO_FLOAT(Vlow);
-
+    __ULS_QVM_TO_VARRAYF(magCalOffset,3);
+    __ULS_QVM_TO_VARRAYF(magCalScale,3);
     return size;
   };
 #endif
