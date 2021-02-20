@@ -205,8 +205,8 @@ class ULSObjectULSQT1R1Config : public ULSObjectBase {
     __ULS_GENERIC_VAR_TO_QVM(power);
     __ULS_GENERIC_VAR_TO_QVM(Voff);
     __ULS_GENERIC_VAR_TO_QVM(Vlow);
-    __ULS_GENERIC_VARRAY_TO_QVM(magCalOffset,3);
-    __ULS_GENERIC_VARRAY_TO_QVM(magCalScale,3);
+    __ULS_GENERIC_V3F_TO_QVM(magCalOffset);
+    __ULS_GENERIC_V3F_TO_QVM(magCalScale);
     return out;
   };
   uint32_t set(QVariantMap vars) override {
