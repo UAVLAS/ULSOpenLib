@@ -42,6 +42,8 @@
     out[#VNAME] = ql_##VNAME;                                       \
   };
 
+#define __ULS_GENERIC_V3D_TO_QVM(VNAME) __ULS_GENERIC_VARRAY_TO_QVM(VNAME,3)
+
 // SET DEFINES
 #define __ULS_QVM_TO_STRING(SNAME)                                           \
   if (QString("%1").arg(vars[#SNAME].toString()).size() < 16) {              \
@@ -234,8 +236,8 @@ class ULSObjectULSQR1R1Status : public ULSObjectBase {
     uint32_t blitzTest;
     uint32_t packCntr;
     uint16_t bitMax;
-    uint8_t qtId;
-    uint8_t synqChannel;
+    uint8_t  qtId;
+    uint8_t  synqChannel;
     uint32_t posTime;
     uint32_t emsTime;
     uint32_t synqMax;
@@ -244,21 +246,13 @@ class ULSObjectULSQR1R1Status : public ULSObjectBase {
     float levelA;
     float levelB;
     float prob;
-    float trianDistance;
-    float posDistance;
-    float posHeight;
-    float posAx;
-    float posAy;
-    float posDx;
-    float posDy;
-    float velDx;
-    float velDy;
-    float imuR;
-    float imuP;
-    float Dx;
-    float Dy;
-    float Dz;
-    float R;
+    float mrxDistance;
+    float mrxYaw;
+    float distance;
+    float ang[3];
+    float pos[3];
+    float vel[3];
+    float gimu[3];
 
   } __ULSObjectULSQR1R1Status;  // Total 128 bytes;
   __ULSObjectULSQR1R1Status var;
@@ -290,21 +284,13 @@ class ULSObjectULSQR1R1Status : public ULSObjectBase {
     __ULS_GENERIC_VAR_TO_QVM(levelA);
     __ULS_GENERIC_VAR_TO_QVM(levelB);
     __ULS_GENERIC_VAR_TO_QVM(prob);
-    __ULS_GENERIC_VAR_TO_QVM(trianDistance);
-    __ULS_GENERIC_VAR_TO_QVM(posDistance);
-    __ULS_GENERIC_VAR_TO_QVM(posHeight);
-    __ULS_GENERIC_VAR_TO_QVM(posAx);
-    __ULS_GENERIC_VAR_TO_QVM(posAy);
-    __ULS_GENERIC_VAR_TO_QVM(posDx);
-    __ULS_GENERIC_VAR_TO_QVM(posDy);
-    __ULS_GENERIC_VAR_TO_QVM(velDx);
-    __ULS_GENERIC_VAR_TO_QVM(velDy);
-    __ULS_GENERIC_VAR_TO_QVM(imuR);
-    __ULS_GENERIC_VAR_TO_QVM(imuP);
-    __ULS_GENERIC_VAR_TO_QVM(Dx);
-    __ULS_GENERIC_VAR_TO_QVM(Dy);
-    __ULS_GENERIC_VAR_TO_QVM(Dz);
-    __ULS_GENERIC_VAR_TO_QVM(R);
+    __ULS_GENERIC_VAR_TO_QVM(mrxDistance);
+    __ULS_GENERIC_VAR_TO_QVM(mrxYaw);
+    __ULS_GENERIC_VAR_TO_QVM(distance);
+    __ULS_GENERIC_V3D_TO_QVM(ang);
+    __ULS_GENERIC_V3D_TO_QVM(pos);
+    __ULS_GENERIC_V3D_TO_QVM(vel);
+    __ULS_GENERIC_V3D_TO_QVM(gimu);
 
     return out;
   };
