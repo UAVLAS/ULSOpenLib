@@ -186,7 +186,7 @@ class ULSObjectULSQT1R1Config : public ULSObjectBase {
   void defaultConfig() override {
     memcpy(var.name, "ULSQT1R1       ", 16);
     var.ctrl = 1;
-    var.power = 100.f;
+    var.power = 110.f;
     var.Vlow = 8.f;
     var.Voff = 6.f;
     var.magCalOffset[0] = var.magCalOffset[1] = var.magCalOffset[2] =0;
@@ -245,6 +245,8 @@ class ULSObjectULSQR1R1Status : public ULSObjectBase {
     float level;
     float levelA;
     float levelB;
+    float snrA;
+    float snrB;
     float prob;
     float mrxDistance;
     float mrxYaw;
@@ -283,6 +285,8 @@ class ULSObjectULSQR1R1Status : public ULSObjectBase {
     __ULS_GENERIC_VAR_TO_QVM(level);
     __ULS_GENERIC_VAR_TO_QVM(levelA);
     __ULS_GENERIC_VAR_TO_QVM(levelB);
+    __ULS_GENERIC_VAR_TO_QVM(snrA);
+    __ULS_GENERIC_VAR_TO_QVM(snrB);
     __ULS_GENERIC_VAR_TO_QVM(prob);
     __ULS_GENERIC_VAR_TO_QVM(mrxDistance);
     __ULS_GENERIC_VAR_TO_QVM(mrxYaw);
