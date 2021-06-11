@@ -164,6 +164,11 @@ class ULSObjectULSQT1R1Status : public ULSObjectBase {
 };
 class ULSObjectULSQT1R1Config : public ULSObjectBase {
  public:
+  
+  typedef enum{
+    CTLR_EMMITER_EN = 1
+  }ULSQT1R1_CTRL;
+  
   typedef struct __attribute__((packed)) {
     char name[16];
     float power;
@@ -193,7 +198,7 @@ class ULSObjectULSQT1R1Config : public ULSObjectBase {
     var.magCalScale[0] = var.magCalScale[1] = var.magCalScale[2] =1;
   };
   void validateConfig() override {
-    var.power = checkConfigF(var.power, 50.f, 120.f);
+    var.power = checkConfigF(var.power, 50.f, 150.f);
     var.Vlow = checkConfigF(var.Vlow, 5.f, 25.f);
     var.Voff = checkConfigF(var.Voff, 5.f, var.Vlow);
   };
@@ -302,6 +307,11 @@ class ULSObjectULSQR1R1Status : public ULSObjectBase {
 };
 class ULSObjectULSQR1R1Config : public ULSObjectBase {
  public:
+ typedef enum{
+    CTLR_RX_EN = 1,
+    CTLR_NOISE_DEBUG = 2,
+  }ULSQR1R1_CTRL;
+  
   typedef struct __attribute__((packed)) {
     char name[16];
     uint8_t ctrl;
