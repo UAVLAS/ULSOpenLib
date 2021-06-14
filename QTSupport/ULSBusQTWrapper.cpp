@@ -48,7 +48,7 @@ static void cnklbkSysAck(ULSBusConnection *sc,_cn_sys_oprezult rez)
 ULSBusQTWrapper::ULSBusQTWrapper():
     m_dtms(30),
     m_serial(this,&m_pcDevice,&m_connections),
-    m_serialPortName("UAVLAS"),
+    m_serialPortName("COM7"),
     m_tryConnecting(true)
 {
     ubqtw = this;
@@ -86,11 +86,14 @@ void ULSBusQTWrapper::onTimer()
 
     if(!m_tryConnecting)
     {
-        for( auto it = m_dev.begin(); it != m_dev.end(); ++it ){
-            emit deviceDisconnected(it.key());
-        }
-        m_dev.clear();
-        m_serial.closePort();
+       if(m_serial.opened()){
+           for( auto it = m_dev.begin(); it != m_dev.end(); ++it ){
+               emit deviceDisconnected(it.key());
+           }
+           m_dev.clear();
+
+           m_serial.closePort();
+       }
         return;
     }
 
@@ -255,7 +258,7 @@ void ULSBusQTWrapper::requestObject(const QString &route,const QString &objName)
     uint32_t hs = getRoute(route,r);
     if(hs == 0) return;
 
-    u_int16_t objId = m_dev[route].instance->getObjId(objName);
+    uint16_t objId = m_dev[route].instance->getObjId(objName);
     m_connections.cnSendGetObject(r,hs,objId);
 }
 
@@ -286,6 +289,6 @@ void ULSBusQTWrapper::disconnectPort()
 
 void ULSBusQTWrapper::reconnectPort(const QString &port)
 {
-    m_serialPortName  = (port.length()!=0)?port:"UAVLAS";
+    m_serialPortName  = (port.length()!=0)?port:"COM7";
     m_tryConnecting = true;
 }
