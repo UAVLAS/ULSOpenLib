@@ -48,7 +48,7 @@ static void cnklbkSysAck(ULSBusConnection *sc,_cn_sys_oprezult rez)
 ULSBusQTWrapper::ULSBusQTWrapper():
     m_dtms(30),
     m_serial(this,&m_pcDevice,&m_connections),
-    m_serialPortName("COM7"),
+    m_serialPortName("UAVLAS"),
     m_tryConnecting(true)
 {
     ubqtw = this;
@@ -73,16 +73,23 @@ void ULSBusQTWrapper::onTimer()
     m_counter++;
     udebugTickHandler();
     udebugElspsed(m_elapsed->nsecsElapsed()/1000000);
-
+    if((m_counter % (1000/m_dtms)) == 0) emit portsListUpadted(m_serial.getPortsList());
+    QStringList devices;
     for( auto it = m_dev.begin(); it != m_dev.end(); ++it ){
+
+
+
         if(it.value().timeout < m_dtms){
             emit deviceDisconnected(it.key());
             m_dev.erase(it);
             break;
         }else{
             it.value().timeout -= m_dtms;
+            devices.append(it.key());
         }
     }
+
+    emit devicesListUpadted(devices);
 
     if(!m_tryConnecting)
     {
@@ -136,7 +143,7 @@ QString ULSBusQTWrapper::getRoute(ULSBusConnection *sc)
 }
 uint32_t ULSBusQTWrapper::getRoute(QString route,uint8_t *r)
 {
-    QStringList list = route.split(QRegExp("\\s+"), Qt::SkipEmptyParts);
+    QStringList list = route.split(QRegExp("\\s+"),QString::SkipEmptyParts);
     if(list.count() == 0) return 0;
 
     for (int i = 0; i < list.length(); i++){
@@ -289,6 +296,6 @@ void ULSBusQTWrapper::disconnectPort()
 
 void ULSBusQTWrapper::reconnectPort(const QString &port)
 {
-    m_serialPortName  = (port.length()!=0)?port:"COM7";
+    m_serialPortName  = (port.length()!=0)?port:"UAVLAS";
     m_tryConnecting = true;
 }
