@@ -260,6 +260,12 @@ class ULSObjectULSQR1R1Status : public ULSObjectBase {
     float pos[3];
     float vel[3];
     float gimu[3];
+    float  pos_ned[3]; // Relative Position of transmitter in NED (North East Down)[m]
+    float  vel_ned[3]; // Ralative velocity of tranmitter in NED (North East Down) [m/s] 
+    float  pos_frd[3]; // Relative Position of transmitter in FRD (Forward Right Down) [m]
+    float  vel_frd[3]; // Ralative velocity of tranmitter in FRD (Forward Right Down)[m/s]
+    float  pos_llm[3]; // World Position of transmitter in NED (Lat Lon Msl)[m]
+    float  vel_llm[3]; // World velocity of tranmitter in NED (Lat Lon Msl) [m/s]  
 
   } __ULSObjectULSQR1R1Status;  // Total 128 bytes;
   __ULSObjectULSQR1R1Status var;
@@ -300,6 +306,12 @@ class ULSObjectULSQR1R1Status : public ULSObjectBase {
     __ULS_GENERIC_V3D_TO_QVM(pos);
     __ULS_GENERIC_V3D_TO_QVM(vel);
     __ULS_GENERIC_V3D_TO_QVM(gimu);
+    __ULS_GENERIC_V3D_TO_QVM(pos_ned); // Relative Position of transmitter in NED (North East Down)[m]
+    __ULS_GENERIC_V3D_TO_QVM(vel_ned); // Ralative velocity of tranmitter in NED (North East Down) [m/s] 
+    __ULS_GENERIC_V3D_TO_QVM(pos_frd); // Relative Position of transmitter in FRD (Forward Right Down) [m]
+    __ULS_GENERIC_V3D_TO_QVM(vel_frd); // Ralative velocity of tranmitter in FRD (Forward Right Down)[m/s]
+    __ULS_GENERIC_V3D_TO_QVM(pos_llm); // World Position of transmitter in NED (Lat Lon Msl)[m]
+    __ULS_GENERIC_V3D_TO_QVM(vel_llm); // World velocity of tranmitter in NED (Lat Lon Msl) [m/s] 
 
     return out;
   };
