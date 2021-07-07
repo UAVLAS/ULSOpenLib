@@ -96,6 +96,10 @@ signals:
     void objectSended(const QString &route,const QString &objName);
     void deviceConnected(const QString &route,const  QString &deviceType,const  QString &deviceName);
     void deviceDisconnected(const QString &route);
+    void portsListUpadted(const QStringList &ports);
+    void devicesListUpadted(const QStringList &devices);
+
+
     void sysAckReceived(const QString &route, uint8_t rez);
 private slots:
     void onTimer();

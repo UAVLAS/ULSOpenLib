@@ -47,7 +47,7 @@ void SerialPort::closePort()
     _opened = false;
    // if(!opened())return;
     serialPort->close();
-   // qDebug()  << "Port closed.";
+    qDebug()  << "Port closed.";
 }
 bool SerialPort::opened()
 {
@@ -57,9 +57,14 @@ bool SerialPort::openPort(const QString &name)
 {
 
     QString port = findPort(name);
+
     if(port.length()){
        // close();
-        portName = port;
+        #ifdef Q_OS_LINUX
+            portName = "/dev/" + port;
+        #else
+            portName = port;
+        #endif
         portBaudrate = 115200;
         if (open()) {
             _opened = true;
