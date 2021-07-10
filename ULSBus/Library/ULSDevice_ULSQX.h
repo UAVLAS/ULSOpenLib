@@ -264,7 +264,7 @@ class ULSObjectULSQR1R1Status : public ULSObjectBase {
     float  vel_ned[3]; // Ralative velocity of tranmitter in NED (North East Down) [m/s] 
     float  pos_frd[3]; // Relative Position of transmitter in FRD (Forward Right Down) [m]
     float  vel_frd[3]; // Ralative velocity of tranmitter in FRD (Forward Right Down)[m/s]
-    float  pos_wld[3]; // World Position of transmitter  (Lat Lon Msl)[d,d,m]
+    uint32_t pos_wld[3]; // World Position of transmitter  (Lat Lon Msl)[d,d,cm]
     float  vel_wld[3]; // World velocity of tranmitter in NED (North East Down) [m/s]  
 
   } __ULSObjectULSQR1R1Status;  // Total 128 bytes;
