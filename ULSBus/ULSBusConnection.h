@@ -103,7 +103,7 @@ typedef PACKED_STRUCT(){
         }saveCfg;
 
     };
-}cn_sys_packet;
+}_cn_sys_packet;
 
 
 class ULSBusConnection;
