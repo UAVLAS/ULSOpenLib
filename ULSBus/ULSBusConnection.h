@@ -144,7 +144,7 @@ public:
 class ULSBusConnection: public ULSListItem, public ULSBusInterface
 {
 public:
-    ULSBusConnection(ULSDBase *dev,ULSBusConnectionsList* connections,const char* name = __null,uint8_t did = 255,uint8_t cid = 0);
+    ULSBusConnection(ULSDBase *dev,ULSBusConnectionsList* connections,const char* name = nullptr,uint8_t did = 255,uint8_t cid = 0);
 
     _cn_packet *cnRxPacket;
     _cn_packet *cnTxPacket;
