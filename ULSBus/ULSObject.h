@@ -36,17 +36,17 @@
 #endif
 
 #ifdef _MSC_VER
-#  define PACKED_STRUCT(name) \
-    __pragma(pack(push, 1)) struct name __pragma(pack(pop))
+#  define PACKED_STRUCT() \
+    __pragma(pack(push, 1)) struct  __pragma(pack(pop))
 #elif defined(__GNUC__)
-#  define PACKED_STRUCT(name) struct __attribute__((packed)) name
+#  define PACKED_STRUCT() struct __attribute__((packed))
 #endif
 
 #ifdef _MSC_VER
 #  define PACKED_UNION(name) \
     __pragma(pack(push, 1)) union name __pragma(pack(pop))
 #elif defined(__GNUC__)
-#  define PACKED_UNION(name) union __attribute__((packed)) name
+#  define PACKED_UNION() union __attribute__((packed))
 #endif
 
 

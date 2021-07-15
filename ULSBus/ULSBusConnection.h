@@ -89,7 +89,7 @@ typedef PACKED_STRUCT(){
             uint32_t  start;
             uint32_t  len;
             uint8_t   buf[512];
-        }rite;
+        }write;
         PACKED_STRUCT(){
             uint32_t  key;
             char      fw[32];
@@ -97,7 +97,7 @@ typedef PACKED_STRUCT(){
             uint32_t  progflashingtime;
             uint32_t  progsize;
             uint32_t  progcrc;
-        }ignature;
+        }signature;
         PACKED_STRUCT(){
             uint32_t  key;
         }saveCfg;
