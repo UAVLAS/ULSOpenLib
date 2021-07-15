@@ -73,7 +73,7 @@
 #define _ULS_PACKET_STRUCT __attribute__((packed))
 #endif
 
-typedef struct __ULSObjectSignature _ULS_PACKET_STRUCT {
+typedef struct _ULS_PACKET_STRUCT {
   char fw[32];
   char ldr[32];
   uint32_t serial[4];
@@ -81,7 +81,7 @@ typedef struct __ULSObjectSignature _ULS_PACKET_STRUCT {
   uint32_t progsize;
   uint32_t progcrc;
   uint32_t type;
-};  // Total 128 bytes;
+} __ULSObjectSignature;  // Total 128 bytes;
 
 
 class ULSObjectSignature : public ULSObjectBase {
@@ -118,7 +118,7 @@ class ULSObjectSignature : public ULSObjectBase {
 #endif
 };
 
-typedef struct __ULSObjectULSQT1R1Status _ULS_PACKET_STRUCT {
+typedef struct _ULS_PACKET_STRUCT {
   uint32_t status;
   uint32_t errorr;
   float Iled[37];
@@ -132,7 +132,7 @@ typedef struct __ULSObjectULSQT1R1Status _ULS_PACKET_STRUCT {
   float imum[3];
   float imu[3];
 
-};  // Total 128 bytes;
+} __ULSObjectULSQT1R1Status;  // Total 128 bytes;
 
 class ULSObjectULSQT1R1Status : public ULSObjectBase {
  public:
@@ -173,7 +173,7 @@ typedef enum{
   CTLR_EMMITER_EN = 1
 }ULSQT1R1_CTRL;
 
-typedef struct __ULSObjectULSQT1R1Config _ULS_PACKET_STRUCT {
+typedef struct _ULS_PACKET_STRUCT {
   char name[16];
   float power;
   float Voff;
@@ -181,7 +181,7 @@ typedef struct __ULSObjectULSQT1R1Config _ULS_PACKET_STRUCT {
   float magCalOffset[3];
   float magCalScale[3];
   uint8_t ctrl;
-} ;  // Total 128 bytes;
+} __ULSObjectULSQT1R1Config;  // Total 128 bytes;
 
 
 class ULSObjectULSQT1R1Config : public ULSObjectBase {
@@ -237,7 +237,7 @@ class ULSObjectULSQT1R1Config : public ULSObjectBase {
 #endif
 };
 // ULS-QR1-R1
-typedef struct __ULSObjectULSQR1R1Status _ULS_PACKET_STRUCT {
+typedef struct _ULS_PACKET_STRUCT {
   uint32_t status;
   uint32_t errorr;
 
@@ -270,7 +270,7 @@ typedef struct __ULSObjectULSQR1R1Status _ULS_PACKET_STRUCT {
   uint32_t pos_wld[3]; // World Position of transmitter  (Lat Lon Msl)[d,d,cm]
   float  vel_wld[3]; // World velocity of tranmitter in NED (North East Down) [m/s]
 
-};  // Total 128 bytes;
+} __ULSObjectULSQR1R1Status;  // Total 128 bytes;
 
 
 class ULSObjectULSQR1R1Status : public ULSObjectBase {
@@ -322,12 +322,12 @@ class ULSObjectULSQR1R1Status : public ULSObjectBase {
   };
 #endif
 };
-typedef enum ULSQR1R1_CTRL{
+typedef enum{
    CTLR_RX_EN = 1,
    CTLR_NOISE_DEBUG = 2,
- };
+ }ULSQR1R1_CTRL;
 
- typedef struct __ULSObjectULSQR1R1Config _ULS_PACKET_STRUCT {
+ typedef struct _ULS_PACKET_STRUCT {
    char name[16];
    uint8_t ctrl;
    float sensitivity;
@@ -336,7 +336,7 @@ typedef enum ULSQR1R1_CTRL{
    float txOffsetX;
    float txOffsetY;
 
- };  // Total 128 bytes;
+ } __ULSObjectULSQR1R1Config;  // Total 128 bytes;
 
 
 
@@ -395,10 +395,10 @@ class ULSObjectULSQR1R1Config : public ULSObjectBase {
 #endif
 };
 
-typedef struct __ULSObjectULSQR1R1Debug _ULS_PACKET_STRUCT {
+typedef struct _ULS_PACKET_STRUCT {
    float beansA[37];
    float beansB[37];
- } ;  // Total 128 bytes;
+ } __ULSObjectULSQR1R1Debug;  // Total 128 bytes;
 
 
 
