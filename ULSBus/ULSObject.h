@@ -43,8 +43,8 @@
 #endif
 
 #ifdef _MSC_VER
-#  define PACKED_UNION(name) \
-    __pragma(pack(push, 1)) union name __pragma(pack(pop))
+#  define PACKED_UNION() \
+    __pragma(pack(push, 1)) union  __pragma(pack(pop))
 #elif defined(__GNUC__)
 #  define PACKED_UNION() union __attribute__((packed))
 #endif

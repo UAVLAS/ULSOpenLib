@@ -128,7 +128,7 @@ typedef struct
 class ULSBusInterface
 {
 public:
-    ULSBusInterface(const char* name = __null,uint8_t did = IF_LOCAL_DEVICES_NUM);
+    ULSBusInterface(const char* name = nullptr,uint8_t did = IF_LOCAL_DEVICES_NUM);
     virtual bool open(){return false;};
     virtual void close(){;};
     void task(uint32_t dtms);
