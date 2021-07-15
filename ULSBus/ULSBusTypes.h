@@ -24,7 +24,7 @@ typedef enum{
 class ULSListItem{
 public:
     ULSListItem(){
-        pxnext = __null;
+        pxnext = nullptr;
         };
     void* pxnext;
 };
