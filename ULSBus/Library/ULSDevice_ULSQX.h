@@ -67,19 +67,18 @@
 
 #endif
 
-class ULSObjectSignature : public ULSObjectBase {
- public:
-  typedef struct __attribute__((packed)) {
-    char fw[32];
-    char ldr[32];
-    uint32_t serial[4];
-    uint32_t progflashingtime;
-    uint32_t progsize;
-    uint32_t progcrc;
-    uint32_t type;
-  } __ULSObjectSignature;  // Total 128 bytes;
-  __ULSObjectSignature var;
+typedef struct __attribute__((packed)) {
+  char fw[32];
+  char ldr[32];
+  uint32_t serial[4];
+  uint32_t progflashingtime;
+  uint32_t progsize;
+  uint32_t progcrc;
+  uint32_t type;
+} __ULSObjectSignature;  // Total 128 bytes;
 
+
+class ULSObjectSignature : public ULSObjectBase {
  public:
   ULSObjectSignature(uint16_t id)
       : ULSObjectBase(id, "System_signature", "SystemSignature Information",
@@ -88,6 +87,7 @@ class ULSObjectSignature : public ULSObjectBase {
     len = 1;
     _pxData = (uint8_t *)&var;
   }
+  __ULSObjectSignature var;
 #ifdef PCQT_BUILD
   QVariantMap get(uint8_t *buf) override {
     QVariantMap out;
@@ -112,25 +112,23 @@ class ULSObjectSignature : public ULSObjectBase {
 #endif
 };
 
+typedef struct __attribute__((packed)) {
+  uint32_t status;
+  uint32_t errorr;
+  float Iled[37];
+  float vs;
+  float ih;
+  float il;
+  float tb;
+  float timu;
+  float imua[3];
+  float imug[3];
+  float imum[3];
+  float imu[3];
+
+} __ULSObjectULSQT1R1Status;  // Total 128 bytes;
+
 class ULSObjectULSQT1R1Status : public ULSObjectBase {
- public:
-  typedef struct __attribute__((packed)) {
-    uint32_t status;
-    uint32_t errorr;
-    float Iled[37];
-    float vs;
-    float ih;
-    float il;
-    float tb;
-    float timu;
-    float imua[3];
-    float imug[3];
-    float imum[3];
-    float imu[3];
-
-  } __ULSObjectULSQT1R1Status;  // Total 128 bytes;
-  __ULSObjectULSQT1R1Status var;
-
  public:
   ULSObjectULSQT1R1Status(uint16_t id)
       : ULSObjectBase(id, "Status", "System status Information",
@@ -138,7 +136,9 @@ class ULSObjectULSQT1R1Status : public ULSObjectBase {
     size = sizeof(__ULSObjectULSQT1R1Status);
     len = 1;
     _pxData = (uint8_t *)&var;
-  }
+    }
+  __ULSObjectULSQT1R1Status var;
+
 #ifdef PCQT_BUILD
   QVariantMap get(uint8_t *buf) override {
     QVariantMap out;
@@ -162,24 +162,23 @@ class ULSObjectULSQT1R1Status : public ULSObjectBase {
   };
 #endif
 };
-class ULSObjectULSQT1R1Config : public ULSObjectBase {
- public:
-  
-  typedef enum{
-    CTLR_EMMITER_EN = 1
-  }ULSQT1R1_CTRL;
-  
-  typedef struct __attribute__((packed)) {
-    char name[16];
-    float power;
-    float Voff;
-    float Vlow;
-    float magCalOffset[3];
-    float magCalScale[3];
-    uint8_t ctrl;
-  } __ULSObjectULSQT1R1Config;  // Total 128 bytes;
-  __ULSObjectULSQT1R1Config var;
 
+typedef enum{
+  CTLR_EMMITER_EN = 1
+}ULSQT1R1_CTRL;
+
+typedef struct __attribute__((packed)) {
+  char name[16];
+  float power;
+  float Voff;
+  float Vlow;
+  float magCalOffset[3];
+  float magCalScale[3];
+  uint8_t ctrl;
+} __ULSObjectULSQT1R1Config;  // Total 128 bytes;
+
+
+class ULSObjectULSQT1R1Config : public ULSObjectBase {
  public:
   ULSObjectULSQT1R1Config(uint16_t id)
       : ULSObjectBase(id, "Config", "System configuration",
@@ -188,6 +187,7 @@ class ULSObjectULSQT1R1Config : public ULSObjectBase {
     len = 1;
     _pxData = (uint8_t *)&var;
   }
+  __ULSObjectULSQT1R1Config var;
   void defaultConfig() override {
     memcpy(var.name, "ULSQT1R1       ", 16);
     var.ctrl = 1;
@@ -231,45 +231,43 @@ class ULSObjectULSQT1R1Config : public ULSObjectBase {
 #endif
 };
 // ULS-QR1-R1
+typedef struct __attribute__((packed)) {
+  uint32_t status;
+  uint32_t errorr;
+
+  uint32_t blitzTest;
+  uint32_t packCntr;
+  uint16_t bitMax;
+  uint8_t  qtId;
+  uint8_t  synqChannel;
+  uint32_t posTime;
+  uint32_t emsTime;
+  uint32_t synqMax;
+
+  float level;
+  float levelA;
+  float levelB;
+  float snrA;
+  float snrB;
+  float prob;
+  float mrxDistance;
+  float mrxYaw;
+  float distance;
+  float ang[3];
+  float pos[3];
+  float vel[3];
+  float gimu[3];
+  float  pos_ned[3]; // Relative Position of transmitter in NED (North East Down)[m]
+  float  vel_ned[3]; // Ralative velocity of tranmitter in NED (North East Down) [m/s]
+  float  pos_frd[3]; // Relative Position of transmitter in FRD (Forward Right Down) [m]
+  float  vel_frd[3]; // Ralative velocity of tranmitter in FRD (Forward Right Down)[m/s]
+  uint32_t pos_wld[3]; // World Position of transmitter  (Lat Lon Msl)[d,d,cm]
+  float  vel_wld[3]; // World velocity of tranmitter in NED (North East Down) [m/s]
+
+} __ULSObjectULSQR1R1Status;  // Total 128 bytes;
+
 
 class ULSObjectULSQR1R1Status : public ULSObjectBase {
- public:
-  typedef struct __attribute__((packed)) {
-    uint32_t status;
-    uint32_t errorr;
-
-    uint32_t blitzTest;
-    uint32_t packCntr;
-    uint16_t bitMax;
-    uint8_t  qtId;
-    uint8_t  synqChannel;
-    uint32_t posTime;
-    uint32_t emsTime;
-    uint32_t synqMax;
-
-    float level;
-    float levelA;
-    float levelB;
-    float snrA;
-    float snrB;
-    float prob;
-    float mrxDistance;
-    float mrxYaw;
-    float distance;
-    float ang[3];
-    float pos[3];
-    float vel[3];
-    float gimu[3];
-    float  pos_ned[3]; // Relative Position of transmitter in NED (North East Down)[m]
-    float  vel_ned[3]; // Ralative velocity of tranmitter in NED (North East Down) [m/s] 
-    float  pos_frd[3]; // Relative Position of transmitter in FRD (Forward Right Down) [m]
-    float  vel_frd[3]; // Ralative velocity of tranmitter in FRD (Forward Right Down)[m/s]
-    uint32_t pos_wld[3]; // World Position of transmitter  (Lat Lon Msl)[d,d,cm]
-    float  vel_wld[3]; // World velocity of tranmitter in NED (North East Down) [m/s]  
-
-  } __ULSObjectULSQR1R1Status;  // Total 128 bytes;
-  __ULSObjectULSQR1R1Status var;
-
  public:
   ULSObjectULSQR1R1Status(uint16_t id)
       : ULSObjectBase(id, "Status", "System status Information",
@@ -278,6 +276,7 @@ class ULSObjectULSQR1R1Status : public ULSObjectBase {
     len = 1;
     _pxData = (uint8_t *)&var;
   }
+  __ULSObjectULSQR1R1Status var;
 #ifdef PCQT_BUILD
 
   QVariantMap get(uint8_t *buf) override {
@@ -317,25 +316,25 @@ class ULSObjectULSQR1R1Status : public ULSObjectBase {
   };
 #endif
 };
+typedef enum{
+   CTLR_RX_EN = 1,
+   CTLR_NOISE_DEBUG = 2,
+ }ULSQR1R1_CTRL;
+
+ typedef struct __attribute__((packed)) {
+   char name[16];
+   uint8_t ctrl;
+   float sensitivity;
+   float posOffsetX;
+   float posOffsetY;
+   float txOffsetX;
+   float txOffsetY;
+
+ } __ULSObjectULSQR1R1Config;  // Total 128 bytes;
+
+
+
 class ULSObjectULSQR1R1Config : public ULSObjectBase {
- public:
- typedef enum{
-    CTLR_RX_EN = 1,
-    CTLR_NOISE_DEBUG = 2,
-  }ULSQR1R1_CTRL;
-  
-  typedef struct __attribute__((packed)) {
-    char name[16];
-    uint8_t ctrl;
-    float sensitivity;
-    float posOffsetX;
-    float posOffsetY;
-    float txOffsetX;
-    float txOffsetY;
-
-  } __ULSObjectULSQR1R1Config;  // Total 128 bytes;
-  __ULSObjectULSQR1R1Config var;
-
  public:
   ULSObjectULSQR1R1Config(uint16_t id)
       : ULSObjectBase(id, "Config", "System configuration",
@@ -344,6 +343,7 @@ class ULSObjectULSQR1R1Config : public ULSObjectBase {
     len = 1;
     _pxData = (uint8_t *)&var;
   }
+   __ULSObjectULSQR1R1Config var;
   void defaultConfig() override {
     memcpy(var.name, "ULSQR1R1       ", 16);
     var.ctrl = 1;
@@ -388,13 +388,15 @@ class ULSObjectULSQR1R1Config : public ULSObjectBase {
   };
 #endif
 };
+
+typedef struct __attribute__((packed)) {
+   float beansA[37];
+   float beansB[37];
+ } __ULSObjectULSQR1R1Debug;  // Total 128 bytes;
+
+
+
 class ULSObjectULSQR1R1Debug : public ULSObjectBase {
- public:
-  typedef struct __attribute__((packed)) {
-    float beansA[37];
-    float beansB[37];
-  } __ULSObjectULSQR1R1Debug;  // Total 128 bytes;
-  __ULSObjectULSQR1R1Debug var;
 
  public:
   ULSObjectULSQR1R1Debug(uint16_t id)
@@ -404,6 +406,7 @@ class ULSObjectULSQR1R1Debug : public ULSObjectBase {
     len = 1;
     _pxData = (uint8_t *)&var;
   }
+   __ULSObjectULSQR1R1Debug var;
 #ifdef PCQT_BUILD
 
   QVariantMap get(uint8_t *buf) override {
