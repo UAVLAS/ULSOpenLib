@@ -67,13 +67,13 @@
 
 #endif
 
-#ifdef PCQT_BUILD
-#define _ULS_PACKET_STRUCT
-#else
-#define _ULS_PACKET_STRUCT __attribute__((packed))
-#endif
+//#ifdef PCQT_BUILD
+//#define _ULS_PACKET_STRUCT
+//#else
+//#define _ULS_PACKET_STRUCT __attribute__((packed))
+//#endif
 
-typedef struct _ULS_PACKET_STRUCT {
+typedef PACKED_STRUCT() {
   char fw[32];
   char ldr[32];
   uint32_t serial[4];
@@ -118,7 +118,7 @@ class ULSObjectSignature : public ULSObjectBase {
 #endif
 };
 
-typedef struct _ULS_PACKET_STRUCT {
+typedef PACKED_STRUCT() {
   uint32_t status;
   uint32_t errorr;
   float Iled[37];
@@ -237,7 +237,7 @@ class ULSObjectULSQT1R1Config : public ULSObjectBase {
 #endif
 };
 // ULS-QR1-R1
-typedef struct _ULS_PACKET_STRUCT {
+typedef PACKED_STRUCT() {
   uint32_t status;
   uint32_t errorr;
 
@@ -327,7 +327,7 @@ typedef enum{
    CTLR_NOISE_DEBUG = 2,
  }ULSQR1R1_CTRL;
 
- typedef struct _ULS_PACKET_STRUCT {
+ typedef PACKED_STRUCT(){
    char name[16];
    uint8_t ctrl;
    float sensitivity;
@@ -395,7 +395,7 @@ class ULSObjectULSQR1R1Config : public ULSObjectBase {
 #endif
 };
 
-typedef struct _ULS_PACKET_STRUCT {
+typedef PACKED_STRUCT() {
    float beansA[37];
    float beansB[37];
  } __ULSObjectULSQR1R1Debug;  // Total 128 bytes;

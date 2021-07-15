@@ -57,53 +57,53 @@ typedef enum :uint8_t{
     CN_SYS_MODE_LOADER = 1
 }_cn_sys_mode;
 
-typedef struct{
+typedef PACKED_STRUCT(){
     uint8_t cmd;
     uint8_t src_did;
     uint8_t hop;
     uint8_t pld[256];
-}__attribute__((packed))_cn_packet;
+}_cn_packet;
 
-typedef struct{
+typedef PACKED_STRUCT(){
     uint32_t type;
     uint8_t  name[16];
-}__attribute__((packed))_cn_packet_status;
+}_cn_packet_status;
 
-typedef struct{
+typedef PACKED_STRUCT(){
     _cn_sys_cmd syscmd;
-    union{
+    PACKED_UNION(){
         //Sysmem messges
-        struct{
+        PACKED_STRUCT(){
             uint16_t  devtype;
-        }__attribute__((packed))ping;
-        struct{
+        }ping;
+        PACKED_STRUCT(){
             _cn_sys_mode  mode;
-        }__attribute__((packed))setmode;
-        struct{
+        }setmode;
+        PACKED_STRUCT(){
             uint32_t  key;
             uint32_t  start;
             uint32_t  len;
-        }__attribute__((packed))erase;
-        struct{
+        }erase;
+        PACKED_STRUCT(){
             uint32_t  key;
             uint32_t  start;
             uint32_t  len;
             uint8_t   buf[512];
-        }__attribute__((packed))write;
-        struct{
+        }rite;
+        PACKED_STRUCT(){
             uint32_t  key;
             char      fw[32];
             char      ldr[32];
             uint32_t  progflashingtime;
             uint32_t  progsize;
             uint32_t  progcrc;
-        }__attribute__((packed))signature;
-        struct{
+        }ignature;
+        PACKED_STRUCT(){
             uint32_t  key;
-        }__attribute__((packed))saveCfg;
+        }saveCfg;
 
-    }__attribute__((packed));
-}__attribute__((packed))_cn_sys_packet;
+    };
+}cn_sys_packet;
 
 
 class ULSBusConnection;

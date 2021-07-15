@@ -35,6 +35,21 @@
 #include <QVariantMap>
 #endif
 
+#ifdef _MSC_VER
+#  define PACKED_STRUCT(name) \
+    __pragma(pack(push, 1)) struct name __pragma(pack(pop))
+#elif defined(__GNUC__)
+#  define PACKED_STRUCT(name) struct __attribute__((packed)) name
+#endif
+
+#ifdef _MSC_VER
+#  define PACKED_UNION(name) \
+    __pragma(pack(push, 1)) union name __pragma(pack(pop))
+#elif defined(__GNUC__)
+#  define PACKED_UNION(name) union __attribute__((packed)) name
+#endif
+
+
 class ULSObjectBase : public ULSListItem {
  public:
   ULSObjectBase(uint16_t id, const char *name, const char *description,

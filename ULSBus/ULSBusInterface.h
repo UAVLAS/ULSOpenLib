@@ -77,45 +77,45 @@ typedef enum {
 
 
 // Packet structure
-typedef struct{
+typedef PACKED_STRUCT(){
     uint8_t cmd;
     uint8_t src_lid;
-    union{
+    PACKED_UNION(){
         //Sysmem messges
-        struct{
+        PACKED_STRUCT(){
             uint8_t  dsn_lid;
             uint8_t  param;
-        }__attribute__((packed))sys;
+        }ys;
         //Network messges
-        union{
+        PACKED_UNION(){
             // HB packets
-            struct{
+            PACKED_STRUCT(){
                 uint32_t uid0;
-            }__attribute__((packed))hb;
+            }hb;
             // status
-            struct{
+            PACKED_STRUCT(){
                 uint8_t dsn_lid;
-            }__attribute__((packed))get_status;
+            }get_status;
             // Request ID
-            struct{
+            PACKED_STRUCT(){
                 uint32_t key;
-            }__attribute__((packed))request_id;
+            }request_id;
             // Set Id
-            struct{
+            PACKED_STRUCT(){
                 uint8_t  new_id;
                 uint32_t key;
-            }__attribute__((packed))set_id;
-        }__attribute__((packed));
+            }set_id;
+        };
         //Blitzh messges
-        struct{
+        PACKED_STRUCT(){
             uint16_t id;
             uint8_t data[8];
-        }__attribute__((packed))blitz;
+        }blitz;
         //Buffer direct access
         uint8_t  pld[IF_PAYLOAD_SIZE]; // Payload of if_packet
-    }__attribute__((packed));
+    };
 
-}__attribute__((packed))_if_packet;
+}_if_packet;
 
 
 typedef struct
