@@ -35,19 +35,6 @@
 #include <QVariantMap>
 #endif
 
-//#ifdef _MSC_VER
-//#  define PACKED_STRUCT() \
-//    __pragma(pack(push, 1)) struct  __pragma(pack(pop))
-//#elif defined(__GNUC__)
-//#  define PACKED_STRUCT() struct __attribute__((packed))
-//#endif
-
-//#ifdef _MSC_VER
-//#  define PACKED_UNION() \
-//    __pragma(pack(push, 1)) union  __pragma(pack(pop))
-//#elif defined(__GNUC__)
-//#  define PACKED_UNION() union __attribute__((packed))
-//#endif
 
 #ifdef __GNUC__
 #define __ULS_PACKET( __Declaration__ ) __Declaration__ __attribute__((packed))

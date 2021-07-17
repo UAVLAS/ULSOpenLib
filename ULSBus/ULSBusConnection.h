@@ -75,21 +75,21 @@ typedef __ULS_PACKET( struct{
         //Sysmem messges
         __ULS_PACKET( struct{
             uint16_t  devtype;
-        }ping);
+        })ping;
         __ULS_PACKET( struct{
             _cn_sys_mode  mode;
-        }setmode);
+        })setmode;
         __ULS_PACKET( struct{
             uint32_t  key;
             uint32_t  start;
             uint32_t  len;
-        }erase);
+        })erase;
         __ULS_PACKET( struct{
             uint32_t  key;
             uint32_t  start;
             uint32_t  len;
             uint8_t   buf[512];
-        }write);
+        })write;
         __ULS_PACKET( struct{
             uint32_t  key;
             char      fw[32];
@@ -97,10 +97,10 @@ typedef __ULS_PACKET( struct{
             uint32_t  progflashingtime;
             uint32_t  progsize;
             uint32_t  progcrc;
-        }signature);
+        })signature;
         __ULS_PACKET( struct{
             uint32_t  key;
-        }saveCfg);
+        })saveCfg;
 
     });
 })_cn_sys_packet;

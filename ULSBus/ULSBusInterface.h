@@ -85,32 +85,32 @@ typedef __ULS_PACKET( struct{
         __ULS_PACKET( struct{
             uint8_t  dsn_lid;
             uint8_t  param;
-        }ys);
+        })ys;
         //Network messges
         __ULS_PACKET(union{
             // HB packets
             __ULS_PACKET( struct{
                 uint32_t uid0;
-            }hb);
+            })hb;
             // status
             __ULS_PACKET( struct{
                 uint8_t dsn_lid;
-            }get_status);
+            })get_status;
             // Request ID
             __ULS_PACKET( struct{
                 uint32_t key;
-            }request_id);
+            })request_id;
             // Set Id
             __ULS_PACKET( struct{
                 uint8_t  new_id;
                 uint32_t key;
-            }set_id);
+            })set_id;
         });
         //Blitzh messges
         __ULS_PACKET( struct{
             uint16_t id;
             uint8_t data[8];
-        }blitz);
+        })blitz;
         //Buffer direct access
         uint8_t  pld[IF_PAYLOAD_SIZE]; // Payload of if_packet
     });

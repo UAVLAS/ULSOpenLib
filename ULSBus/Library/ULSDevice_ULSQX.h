@@ -336,6 +336,10 @@ typedef enum{
 
 class ULSObjectULSQR1R1Config : public ULSObjectBase {
  public:
+  typedef enum{
+   CTLR_RX_EN = 1,
+   CTLR_NOISE_DEBUG = 2,
+ }ULSQR1R1_CTRL;
   ULSObjectULSQR1R1Config(uint16_t id)
       : ULSObjectBase(id, "Config", "System configuration",
                       ULSBUS_OBJECT_PERMITION_READWRITE) {
