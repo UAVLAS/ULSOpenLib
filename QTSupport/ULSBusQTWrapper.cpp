@@ -143,7 +143,7 @@ QString ULSBusQTWrapper::getRoute(ULSBusConnection *sc)
 }
 uint32_t ULSBusQTWrapper::getRoute(QString route,uint8_t *r)
 {
-    QStringList list = route.split(QRegExp("\\s+"),QString::SkipEmptyParts);
+    QStringList list = route.split(QRegExp("\\s+"),Qt::SkipEmptyParts);
     if(list.count() == 0) return 0;
 
     for (int i = 0; i < list.length(); i++){

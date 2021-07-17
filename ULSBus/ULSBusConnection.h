@@ -57,53 +57,53 @@ typedef enum :uint8_t{
     CN_SYS_MODE_LOADER = 1
 }_cn_sys_mode;
 
-typedef PACKED_STRUCT(){
+typedef __ULS_PACKET( struct{
     uint8_t cmd;
     uint8_t src_did;
     uint8_t hop;
     uint8_t pld[256];
-}_cn_packet;
+})_cn_packet;
 
-typedef PACKED_STRUCT(){
+typedef __ULS_PACKET( struct{
     uint32_t type;
     uint8_t  name[16];
-}_cn_packet_status;
+})_cn_packet_status;
 
-typedef PACKED_STRUCT(){
+typedef __ULS_PACKET( struct{
     _cn_sys_cmd syscmd;
-    PACKED_UNION(){
+    __ULS_PACKET( union{
         //Sysmem messges
-        PACKED_STRUCT(){
+        __ULS_PACKET( struct{
             uint16_t  devtype;
-        }ping;
-        PACKED_STRUCT(){
+        }ping);
+        __ULS_PACKET( struct{
             _cn_sys_mode  mode;
-        }setmode;
-        PACKED_STRUCT(){
+        }setmode);
+        __ULS_PACKET( struct{
             uint32_t  key;
             uint32_t  start;
             uint32_t  len;
-        }erase;
-        PACKED_STRUCT(){
+        }erase);
+        __ULS_PACKET( struct{
             uint32_t  key;
             uint32_t  start;
             uint32_t  len;
             uint8_t   buf[512];
-        }write;
-        PACKED_STRUCT(){
+        }write);
+        __ULS_PACKET( struct{
             uint32_t  key;
             char      fw[32];
             char      ldr[32];
             uint32_t  progflashingtime;
             uint32_t  progsize;
             uint32_t  progcrc;
-        }signature;
-        PACKED_STRUCT(){
+        }signature);
+        __ULS_PACKET( struct{
             uint32_t  key;
-        }saveCfg;
+        }saveCfg);
 
-    };
-}_cn_sys_packet;
+    });
+})_cn_sys_packet;
 
 
 class ULSBusConnection;
