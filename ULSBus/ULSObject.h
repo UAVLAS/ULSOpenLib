@@ -103,7 +103,7 @@ class ULSDBase : public ULSList<ULSObjectBase> {
 #endif
   const char *devname;
   const char *typeName;
-  const uint16_t typeCode;
+  uint16_t typeCode;
 };
 
 #endif  // ULSOBJECT_H
