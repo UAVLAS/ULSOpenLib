@@ -94,6 +94,7 @@ class ULSDBase : public ULSList<ULSObjectBase> {
 #ifdef PCQT_BUILD
   QVariantMap getVar(QString *objName, uint16_t obj_id, uint8_t *buf);
   QVariantMap getVar(QString objName, uint8_t *buf);
+  QVariantMap getVar(QString objName);
 
   QString name() { return QString().fromLatin1(typeName); }
   uint16_t getObjId(QString objName);

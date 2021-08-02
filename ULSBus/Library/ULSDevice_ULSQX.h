@@ -85,6 +85,7 @@ class ULSObjectSignature : public ULSObjectBase {
                       ULSBUS_OBJECT_PERMITION_READONLY) {
     size = sizeof(__ULSObjectSignature);
     len = 1;
+    var.fw[0] = 0;
     _pxData = (uint8_t *)&var;
   }
   __ULSObjectSignature var;
@@ -476,12 +477,12 @@ class ULSD_ULSQR1R1 : public ULSD_ULSX {
 class ULSQTDevicesLibrary {
  public:
   ULSQTDevicesLibrary() {
-    devTypes[__ULS_DEVICE_TYPE_ULSQT1R1] = (ULSDBase *)&devULSQT1R1;
-    devTypes[__ULS_DEVICE_TYPE_ULSQR1R1] = (ULSDBase *)&devULSQR1R1;
+    devTypes[__ULS_DEVICE_TYPE_ULSQT1R1] = (ULSD_ULSX *)&devULSQT1R1;
+    devTypes[__ULS_DEVICE_TYPE_ULSQR1R1] = (ULSD_ULSX *)&devULSQR1R1;
   };
   ULSD_ULSQT1R1 devULSQT1R1;
   ULSD_ULSQR1R1 devULSQR1R1;
-  QHash<uint, ULSDBase *> devTypes;
+  QHash<uint, ULSD_ULSX *> devTypes;
 };
 #endif
 
