@@ -73,7 +73,7 @@ QVariantMap ULSDBase::getVar(QString objName, uint8_t *buf)
     }
     return QVariantMap();
 }
-QVariantMap ULSDBase::getVar(QString objName)
+QVariantMap ULSDBase::getObjectVars(QString objName)
 {
     begin();
     while(next()){
