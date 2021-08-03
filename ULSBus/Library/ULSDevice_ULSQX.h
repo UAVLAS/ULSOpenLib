@@ -85,8 +85,8 @@ class ULSObjectSignature : public ULSObjectBase {
                       ULSBUS_OBJECT_PERMITION_READONLY) {
     size = sizeof(__ULSObjectSignature);
     len = 1;
-    var.fw[0] = 0;
     _pxData = (uint8_t *)&var;
+    memset(_pxData,0,sizeof (__ULSObjectSignature));
   }
   __ULSObjectSignature var;
 #ifdef PCQT_BUILD
@@ -477,12 +477,21 @@ class ULSD_ULSQR1R1 : public ULSD_ULSX {
 class ULSQTDevicesLibrary {
  public:
   ULSQTDevicesLibrary() {
-    devTypes[__ULS_DEVICE_TYPE_ULSQT1R1] = (ULSD_ULSX *)&devULSQT1R1;
-    devTypes[__ULS_DEVICE_TYPE_ULSQR1R1] = (ULSD_ULSX *)&devULSQR1R1;
+    devTypes[__ULS_DEVICE_TYPE_ULSQT1R1] = (const char*)__ULS_DEVICE_TYPE_ULSQT1R1_NAME;
+    devTypes[__ULS_DEVICE_TYPE_ULSQR1R1] = (const char*)__ULS_DEVICE_TYPE_ULSQR1R1_NAME;
   };
-  ULSD_ULSQT1R1 devULSQT1R1;
-  ULSD_ULSQR1R1 devULSQR1R1;
-  QHash<uint, ULSD_ULSX *> devTypes;
+//  ULSD_ULSQT1R1 devULSQT1R1;
+//  ULSD_ULSQR1R1 devULSQR1R1;
+  QHash<uint,const char*> devTypes;
+  ULSD_ULSX* createInstance(uint typecode){
+
+      switch(typecode){
+        case __ULS_DEVICE_TYPE_ULSQT1R1: return new ULSD_ULSQT1R1();
+        case __ULS_DEVICE_TYPE_ULSQR1R1: return new ULSD_ULSQR1R1();
+      }
+      return nullptr;
+
+  }
 };
 #endif
 
