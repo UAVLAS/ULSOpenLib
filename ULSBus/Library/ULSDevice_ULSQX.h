@@ -326,10 +326,10 @@ typedef enum{
    char name[16];
    uint8_t ctrl;
    float sensitivity;
-   float posOffsetX;
-   float posOffsetY;
-   float txOffsetX;
-   float txOffsetY;
+   float rxOffsetF;
+   float rxOffsetR;
+   float txOffsetF;
+   float txOffsetR;
 
  }) __ULSObjectULSQR1R1Config;  // Total 128 bytes;
 
@@ -353,17 +353,17 @@ class ULSObjectULSQR1R1Config : public ULSObjectBase {
     memcpy(var.name, "ULSQR1R1       ", 16);
     var.ctrl = 1;
     var.sensitivity = 1.f;
-    var.posOffsetX = 0.f;
-    var.posOffsetY = 0.f;
-    var.txOffsetX = 0.f;
-    var.txOffsetY = 0.f;
+    var.rxOffsetF = 0.f;
+    var.rxOffsetR = 0.f;
+    var.txOffsetF = 0.f;
+    var.txOffsetR = 0.f;
   };
   void validateConfig() override {
     var.sensitivity = checkConfigF(var.sensitivity, 0.8f, 1.2f);
-    var.posOffsetX = checkConfigF(var.posOffsetX, -1.2f, 1.2f);
-    var.posOffsetY = checkConfigF(var.posOffsetY, -1.2f, 1.2f);
-    var.txOffsetX = checkConfigF(var.txOffsetX, -1.2f, 1.2f);
-    var.txOffsetY = checkConfigF(var.txOffsetY, -1.2f, 1.2f);
+    var.rxOffsetF = checkConfigF(var.rxOffsetF, -1.2f, 1.2f);
+    var.rxOffsetR = checkConfigF(var.rxOffsetR, -1.2f, 1.2f);
+    var.txOffsetF = checkConfigF(var.txOffsetF, -1.2f, 1.2f);
+    var.txOffsetR = checkConfigF(var.txOffsetR, -1.2f, 1.2f);
   };
 #ifdef PCQT_BUILD
   QVariantMap get(uint8_t *buf) override {
@@ -373,10 +373,10 @@ class ULSObjectULSQR1R1Config : public ULSObjectBase {
     __ULS_GENERIC_STRING_TO_QVM(name);
     __ULS_GENERIC_VAR_TO_QVM(ctrl);
     __ULS_GENERIC_VAR_TO_QVM(sensitivity);
-    __ULS_GENERIC_VAR_TO_QVM(posOffsetX);
-    __ULS_GENERIC_VAR_TO_QVM(posOffsetY);
-    __ULS_GENERIC_VAR_TO_QVM(txOffsetX);
-    __ULS_GENERIC_VAR_TO_QVM(txOffsetY);
+    __ULS_GENERIC_VAR_TO_QVM(rxOffsetF);
+    __ULS_GENERIC_VAR_TO_QVM(rxOffsetR);
+    __ULS_GENERIC_VAR_TO_QVM(txOffsetF);
+    __ULS_GENERIC_VAR_TO_QVM(txOffsetR);
 
     return out;
   };
@@ -385,10 +385,10 @@ class ULSObjectULSQR1R1Config : public ULSObjectBase {
     var.name[15] = 0;
     __ULS_QVM_TO_UINT(ctrl);
     __ULS_QVM_TO_FLOAT(sensitivity);
-    __ULS_QVM_TO_FLOAT(posOffsetX);
-    __ULS_QVM_TO_FLOAT(posOffsetY);
-    __ULS_QVM_TO_FLOAT(txOffsetX);
-    __ULS_QVM_TO_FLOAT(txOffsetY);
+    __ULS_QVM_TO_FLOAT(rxOffsetF);
+    __ULS_QVM_TO_FLOAT(rxOffsetR);
+    __ULS_QVM_TO_FLOAT(txOffsetF);
+    __ULS_QVM_TO_FLOAT(txOffsetR);
     return size;
   };
 #endif
