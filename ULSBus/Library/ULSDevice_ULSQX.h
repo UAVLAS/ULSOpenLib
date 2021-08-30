@@ -340,7 +340,9 @@ class ULSObjectULSQR1R1Config : public ULSObjectBase {
   typedef enum{
    CTLR_RX_EN = 1,
    CTLR_NOISE_DEBUG = 2,
- }ULSQR1R1_CTRL;
+   CTLR_DISABLE_COMPASS = 4,
+   CTLR_DISABLE_MRX = 8,
+  }ULSQR1R1_CTRL;
   ULSObjectULSQR1R1Config(uint16_t id)
       : ULSObjectBase(id, "Config", "System configuration",
                       ULSBUS_OBJECT_PERMITION_READWRITE) {
