@@ -235,7 +235,7 @@ class ULSObjectULSQT1R1Config : public ULSObjectBase {
 typedef __ULS_PACKET( struct {
   uint32_t status;
   uint32_t errorr;
-
+  // Debug Variables
   uint32_t blitzTest;
   uint32_t packCntr;
   uint16_t bitMax;
@@ -244,6 +244,7 @@ typedef __ULS_PACKET( struct {
   uint32_t posTime;
   uint32_t emsTime;
   uint32_t synqMax;
+  // Debug Variables
 
   float level;
   float levelA;
@@ -251,20 +252,25 @@ typedef __ULS_PACKET( struct {
   float snrA;
   float snrB;
   float prob;
-  float mrxDistance;
-  float mrxYaw;
+  float mrxDistance;// Distance provided by MRX algorithm
+  float mrxYaw; // Yaw orintation provided by MRX algorithm
   float distance;
-  float ang[3];
-  float pos[3];
-  float vel[3];
-  float gimu[3];
-  float  pos_ned[3]; // Relative Position of transmitter in NED (North East Down)[m]
-  float  vel_ned[3]; // Ralative velocity of tranmitter in NED (North East Down) [m/s]
-  float  pos_frd[3]; // Relative Position of transmitter in FRD (Forward Right Down) [m]
-  float  vel_frd[3]; // Ralative velocity of tranmitter in FRD (Forward Right Down)[m/s]
+  float ang[3]; // Receiver angular position in transmitter frame [deg]
+  float pos[3]; //Receiver position in transmitter frame [m]
+  float vel[3]; //Receiver velocity in transmitter frame [m]
+  float gimu[3]; // Transmitter orientation (roll, pitch, yaw)[deg,deg,deg]
+  float  rel_pos_ned[3]; // Relative Position of transmitter (offset from receiver)in NED (North East Down)[m]
+  float  rel_vel_ned[3]; // Ralative velocity of tranmitter (offset from receiver) in NED (North East Down) [m/s]
+  float  rel_pos_frd[3]; // Relative Position of transmitter (offset from receiver) in FRD (Forward Right Down) [m]
+  float  rel_vel_frd[3]; // Ralative velocity of tranmitter (offset from receiver) in FRD (Forward Right Down)[m/s]
   uint32_t pos_wld[3]; // World Position of transmitter  (Lat Lon Msl)[d,d,cm]
   float  vel_wld[3]; // World velocity of tranmitter in NED (North East Down) [m/s]
-
+  float  abs_pos_ned[3]; // Absolute position of transmitter (vehicle frame) in NED (North East Down)[m]
+  float  abs_vel_ned[3]; // Absolute velocity of tranmitter (vehicle frame)in NED (North East Down) [m/s]
+  float  vehicle_abs_pos_ned[3]; // Absolute Position of vehicle in NED (North East Down)[m]
+  float  vehicle_abs_vel_ned[3]; // Ralative velocity of vehicle in NED (North East Down) [m/s]
+  float  vehicle_heading; // Vehicle heading information
+  
 })__ULSObjectULSQR1R1Status;  // Total 128 bytes;
 
 
@@ -306,12 +312,16 @@ class ULSObjectULSQR1R1Status : public ULSObjectBase {
     __ULS_GENERIC_V3D_TO_QVM(pos);
     __ULS_GENERIC_V3D_TO_QVM(vel);
     __ULS_GENERIC_V3D_TO_QVM(gimu);
-    __ULS_GENERIC_V3D_TO_QVM(pos_ned); // Relative Position of transmitter in NED (North East Down)[m]
-    __ULS_GENERIC_V3D_TO_QVM(vel_ned); // Ralative velocity of tranmitter in NED (North East Down) [m/s] 
-    __ULS_GENERIC_V3D_TO_QVM(pos_frd); // Relative Position of transmitter in FRD (Forward Right Down) [m]
-    __ULS_GENERIC_V3D_TO_QVM(vel_frd); // Ralative velocity of tranmitter in FRD (Forward Right Down)[m/s]
+    __ULS_GENERIC_V3D_TO_QVM(rel_pos_ned); // Relative Position of transmitter in NED (North East Down)[m]
+    __ULS_GENERIC_V3D_TO_QVM(rel_vel_ned); // Ralative velocity of tranmitter in NED (North East Down) [m/s] 
+    __ULS_GENERIC_V3D_TO_QVM(rel_pos_frd); // Relative Position of transmitter in FRD (Forward Right Down) [m]
+    __ULS_GENERIC_V3D_TO_QVM(rel_vel_frd); // Ralative velocity of tranmitter in FRD (Forward Right Down)[m/s]
     __ULS_GENERIC_V3D_TO_QVM(pos_wld); // World Position of transmitter in NED (Lat Lon Msl)[m]
-    __ULS_GENERIC_V3D_TO_QVM(vel_wld); // World velocity of tranmitter in NED (Lat Lon Msl) [m/s] 
+    __ULS_GENERIC_V3D_TO_QVM(vel_wld); // World velocity of tranmitter in NED (Lat Lon Msl) [m/s]
+    __ULS_GENERIC_V3D_TO_QVM(abs_pos_ned); // Absolute position of transmitter (vehicle frame) in NED (North East Down)[m]
+    __ULS_GENERIC_V3D_TO_QVM(abs_vel_ned); // Absolute velocity of tranmitter (vehicle frame)in NED (North East Down) [m/s] 
+    __ULS_GENERIC_V3D_TO_QVM(vehicle_abs_pos_ned); // Absolute Position of vehicle in NED (North East Down)[m]
+    __ULS_GENERIC_V3D_TO_QVM(vehicle_abs_vel_ned); // Ralative velocity of vehicle in NED (North East Down) [m/s] 
 
     return out;
   };
@@ -330,6 +340,7 @@ typedef enum{
    float rxOffsetR;
    float txOffsetF;
    float txOffsetR;
+   float predictionTime;
 
  }) __ULSObjectULSQR1R1Config;  // Total 128 bytes;
 
@@ -359,13 +370,15 @@ class ULSObjectULSQR1R1Config : public ULSObjectBase {
     var.rxOffsetR = 0.f;
     var.txOffsetF = 0.f;
     var.txOffsetR = 0.f;
+    var.predictionTime = 1.0f;
   };
   void validateConfig() override {
-    var.sensitivity = checkConfigF(var.sensitivity, 0.8f, 1.2f);
+    var.sensitivity = checkConfigF(var.sensitivity, 0.8f, 1.5f);
     var.rxOffsetF = checkConfigF(var.rxOffsetF, -1.2f, 1.2f);
     var.rxOffsetR = checkConfigF(var.rxOffsetR, -1.2f, 1.2f);
     var.txOffsetF = checkConfigF(var.txOffsetF, -1.2f, 1.2f);
     var.txOffsetR = checkConfigF(var.txOffsetR, -1.2f, 1.2f);
+    var.predictionTime = checkConfigF(var.predictionTime, 0.0f, 10.0f);
   };
 #ifdef PCQT_BUILD
   QVariantMap get(uint8_t *buf) override {
@@ -379,6 +392,7 @@ class ULSObjectULSQR1R1Config : public ULSObjectBase {
     __ULS_GENERIC_VAR_TO_QVM(rxOffsetR);
     __ULS_GENERIC_VAR_TO_QVM(txOffsetF);
     __ULS_GENERIC_VAR_TO_QVM(txOffsetR);
+    __ULS_GENERIC_VAR_TO_QVM(predictionTime);
 
     return out;
   };
@@ -391,6 +405,7 @@ class ULSObjectULSQR1R1Config : public ULSObjectBase {
     __ULS_QVM_TO_FLOAT(rxOffsetR);
     __ULS_QVM_TO_FLOAT(txOffsetF);
     __ULS_QVM_TO_FLOAT(txOffsetR);
+    __ULS_QVM_TO_FLOAT(predictionTime);
     return size;
   };
 #endif
