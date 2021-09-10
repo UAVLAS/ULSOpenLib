@@ -322,7 +322,7 @@ class ULSObjectULSQR1R1Status : public ULSObjectBase {
     __ULS_GENERIC_V3D_TO_QVM(abs_vel_ned); // Absolute velocity of tranmitter (vehicle frame)in NED (North East Down) [m/s] 
     __ULS_GENERIC_V3D_TO_QVM(vehicle_abs_pos_ned); // Absolute Position of vehicle in NED (North East Down)[m]
     __ULS_GENERIC_V3D_TO_QVM(vehicle_abs_vel_ned); // Ralative velocity of vehicle in NED (North East Down) [m/s] 
-
+   __ULS_GENERIC_VAR_TO_QVM(vehicle_heading);
     return out;
   };
 #endif
