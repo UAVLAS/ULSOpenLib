@@ -341,6 +341,7 @@ typedef enum{
    float txOffsetF;
    float txOffsetR;
    float predictionTime;
+   float platformAcc;
 
  }) __ULSObjectULSQR1R1Config;  // Total 128 bytes;
 
@@ -371,6 +372,7 @@ class ULSObjectULSQR1R1Config : public ULSObjectBase {
     var.txOffsetF = 0.f;
     var.txOffsetR = 0.f;
     var.predictionTime = 1.0f;
+    var.platformAcc = 0.0f;
   };
   void validateConfig() override {
     var.sensitivity = checkConfigF(var.sensitivity, 0.8f, 1.5f);
@@ -379,6 +381,7 @@ class ULSObjectULSQR1R1Config : public ULSObjectBase {
     var.txOffsetF = checkConfigF(var.txOffsetF, -1.2f, 1.2f);
     var.txOffsetR = checkConfigF(var.txOffsetR, -1.2f, 1.2f);
     var.predictionTime = checkConfigF(var.predictionTime, 0.0f, 10.0f);
+    var.platformAcc =  checkConfigF(var.platformAcc, 0.0f, 5.0f);
   };
 #ifdef PCQT_BUILD
   QVariantMap get(uint8_t *buf) override {
