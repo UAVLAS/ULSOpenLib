@@ -396,6 +396,7 @@ class ULSObjectULSQR1R1Config : public ULSObjectBase {
     __ULS_GENERIC_VAR_TO_QVM(txOffsetF);
     __ULS_GENERIC_VAR_TO_QVM(txOffsetR);
     __ULS_GENERIC_VAR_TO_QVM(predictionTime);
+     __ULS_GENERIC_VAR_TO_QVM(platformAcc);
 
     return out;
   };
@@ -409,6 +410,7 @@ class ULSObjectULSQR1R1Config : public ULSObjectBase {
     __ULS_QVM_TO_FLOAT(txOffsetF);
     __ULS_QVM_TO_FLOAT(txOffsetR);
     __ULS_QVM_TO_FLOAT(predictionTime);
+    __ULS_QVM_TO_FLOAT(platformAcc);
     return size;
   };
 #endif
