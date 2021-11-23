@@ -5,14 +5,15 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include "../utils/crc16.h"
-#include "../utils/io_fifo.h"
+#include "io_fifo.h"
 
 #define ULSSERIAL_STR_BUFFER_SIZE 512
 
 typedef enum{
     SERIAL_MODE_RAW = 0,
     SERIAL_MODE_ESC = 1,
-    SERIAL_MODE_COBS = 2
+    SERIAL_MODE_ESC_SIMPLE_CRC = 2,
+    SERIAL_MODE_COBS = 3
 }_serial_mode;
 
 class ULSSerial
