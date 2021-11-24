@@ -239,7 +239,8 @@ uint32_t ULSSerial::readEsc(uint8_t *buf,uint32_t sizelimit)
             else {
                 if(_escStarted) {
                     if(_mode == SERIAL_MODE_ESC_SIMPLE_CRC) {
-                        _crc -= v;
+                        _crc += v;
+                        _vlast = v;
                     } else {
                         _crc = GetCrcByte(_crc,v);
                     }
@@ -265,7 +266,8 @@ uint32_t ULSSerial::readEsc(uint8_t *buf,uint32_t sizelimit)
             }
             else if (v == 0x02) {
                 if(_mode == SERIAL_MODE_ESC_SIMPLE_CRC) {
-                    _crc -= 0x55;
+                    _crc += 0x55;
+                    _vlast = 0x55;
                 } else {
                     _crc = GetCrcByte(_crc,0x55);
                 }
@@ -274,7 +276,7 @@ uint32_t ULSSerial::readEsc(uint8_t *buf,uint32_t sizelimit)
             else if (v == 0x03) {
                 // End of pack reached
                 _escStarted = false;
-                if(_mode == SERIAL_MODE_ESC_SIMPLE_CRC) _crc &=0xFF;
+                if(_mode == SERIAL_MODE_ESC_SIMPLE_CRC) _crc =(_crc - 2*_vlast)&0xFF;
                 if(_crc != 0 ) { // CRC error
                     _rxFifo->flush_to_seeker();// Flush all data before packet
                     _crcerrors++;
@@ -300,7 +302,7 @@ uint32_t ULSSerial::readEsc(uint8_t *buf,uint32_t sizelimit)
         while (_rxFifo->pull(&v)) {
             if (cnt == (_len-crcLen)) {
                 // All data in buf
-                // Skip 2 b ytes of crc
+                // Skip  bytes of crc
                 _rxFifo->flush_to_seeker();
                 return cnt;
             }

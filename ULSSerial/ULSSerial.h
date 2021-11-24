@@ -58,6 +58,7 @@ private:
     _serial_mode _mode;
     uint16_t _crc;
     uint32_t _len;
+    uint16_t _vlast;
     uint8_t _cobs_code;
     uint8_t _cobs_counter;
     uint32_t _stage;
