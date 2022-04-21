@@ -340,6 +340,8 @@ typedef enum{
    float rxOffsetR;
    float txOffsetF;
    float txOffsetR;
+   float relPosGain;
+   float relVelGain;
    float predictionTime;
    float platformAcc;
 
@@ -371,6 +373,8 @@ class ULSObjectULSQR1R1Config : public ULSObjectBase {
     var.rxOffsetR = 0.f;
     var.txOffsetF = 0.f;
     var.txOffsetR = 0.f;
+    var.relPosGain = 1.0f;
+    var.relVelGain = 1.0f;
     var.predictionTime = 1.0f;
     var.platformAcc = 0.0f;
   };
@@ -380,6 +384,8 @@ class ULSObjectULSQR1R1Config : public ULSObjectBase {
     var.rxOffsetR = checkConfigF(var.rxOffsetR, -1.2f, 1.2f);
     var.txOffsetF = checkConfigF(var.txOffsetF, -1.2f, 1.2f);
     var.txOffsetR = checkConfigF(var.txOffsetR, -1.2f, 1.2f);
+    var.relPosGain = checkConfigF(var.relPosGain,0.5,2.0);
+    var.relVelGain = checkConfigF(var.relVelGain,0.5,2.0);
     var.predictionTime = checkConfigF(var.predictionTime, 0.0f, 10.0f);
     var.platformAcc =  checkConfigF(var.platformAcc, 0.0f, 5.0f);
   };
@@ -395,6 +401,8 @@ class ULSObjectULSQR1R1Config : public ULSObjectBase {
     __ULS_GENERIC_VAR_TO_QVM(rxOffsetR);
     __ULS_GENERIC_VAR_TO_QVM(txOffsetF);
     __ULS_GENERIC_VAR_TO_QVM(txOffsetR);
+    __ULS_GENERIC_VAR_TO_QVM(relPosGain);
+    __ULS_GENERIC_VAR_TO_QVM(relVelGain);
     __ULS_GENERIC_VAR_TO_QVM(predictionTime);
      __ULS_GENERIC_VAR_TO_QVM(platformAcc);
 
@@ -409,6 +417,8 @@ class ULSObjectULSQR1R1Config : public ULSObjectBase {
     __ULS_QVM_TO_FLOAT(rxOffsetR);
     __ULS_QVM_TO_FLOAT(txOffsetF);
     __ULS_QVM_TO_FLOAT(txOffsetR);
+    __ULS_QVM_TO_FLOAT(relPosGain);
+    __ULS_QVM_TO_FLOAT(relVelGain);
     __ULS_QVM_TO_FLOAT(predictionTime);
     __ULS_QVM_TO_FLOAT(platformAcc);
     return size;
