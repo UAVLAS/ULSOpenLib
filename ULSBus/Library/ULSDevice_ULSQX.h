@@ -384,8 +384,8 @@ class ULSObjectULSQR1R1Config : public ULSObjectBase {
     var.rxOffsetR = checkConfigF(var.rxOffsetR, -1.2f, 1.2f);
     var.txOffsetF = checkConfigF(var.txOffsetF, -1.2f, 1.2f);
     var.txOffsetR = checkConfigF(var.txOffsetR, -1.2f, 1.2f);
-    var.relPosGain = checkConfigF(var.relPosGain,0.5,2.0);
-    var.relVelGain = checkConfigF(var.relVelGain,0.5,2.0);
+    var.relPosGain = checkConfigF(var.relPosGain,0.1,5.0);
+    var.relVelGain = checkConfigF(var.relVelGain,0.1,5.0);
     var.predictionTime = checkConfigF(var.predictionTime, 0.0f, 10.0f);
     var.platformAcc =  checkConfigF(var.platformAcc, 0.0f, 5.0f);
   };
