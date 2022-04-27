@@ -1,0 +1,592 @@
+{
+    "BookVersion": "1.0",
+    "Objects": [
+        {
+            "name": "ULSObjectSignature",
+            "description": "Device system information",
+            "variables": [
+                {
+                    "name": "fw",
+                    "description": "Frimware version",
+                    "type": "char",
+                    "lenght": 32
+                },
+                {
+                    "name": "ldr",
+                    "description": "Frimware version",
+                    "type": "char",
+                    "lenght": 32
+                },
+                {
+                    "name": "serial",
+                    "description": "Serial number",
+                    "type": "uint32",
+                    "lenght": 4
+                },
+                {
+                    "name": "progflashingtime",
+                    "description": "Frimware update date",
+                    "type": "uint32"
+                },
+                {
+                    "name": "progsize",
+                    "description": "Frimware size",
+                    "type": "uint32"
+                },
+                {
+                    "name": "progcrc",
+                    "description": "Frimware CRC",
+                    "type": "uint32"
+                },
+                {
+                    "name": "type",
+                    "description": "Frimware type",
+                    "type": "uint32"
+                }
+            ]
+        },
+        {
+            "name": "ULSObjectULSQT1R1Status",
+            "description": "ULSQT1-R1 status information",
+            "variables": [
+                {
+                    "name": "status",
+                    "type": "uint32",
+                    "description": "Device status bitfield"
+                },
+                {
+                    "name": "error",
+                    "type": "uint32",
+                    "description": "Device error bitfield"
+                },
+                {
+                    "name": "Iled",
+                    "type": "uint32",
+                    "lenght": 37,
+                    "description": "Leds current"
+                },
+                {
+                    "name": "vs",
+                    "type": "float",
+                    "description": "Supply Voltage",
+                    "units": "V",
+                    "min": 0.0,
+                    "max": 30.0
+                },
+                {
+                    "name": "ih",
+                    "type": "float",
+                    "description": "Leds current monitor hi side",
+                    "units": "A",
+                    "min": 0.0,
+                    "max": 3.0
+                },
+                {
+                    "name": "il",
+                    "type": "float",
+                    "description": "Leds current monitor low side",
+                    "units": "A",
+                    "min": 0.0,
+                    "max": 3.0
+                },
+                {
+                    "name": "tb",
+                    "type": "float",
+                    "description": "Board temperatire",
+                    "units": "C"
+                },
+                {
+                    "name": "timu",
+                    "type": "float",
+                    "description": "IMU temperatire",
+                    "units": "C"
+                },
+                {
+                    "name": "imua",
+                    "type": "float",
+                    "lenght":3,
+                    "description": "IMU accelerations",
+                    "units": "m/ss"
+                },
+                {
+                    "name": "imug",
+                    "type": "float",
+                    "lenght":3,
+                    "description": "IMU gyroscopes",
+                    "units": "deg/s"
+                },
+                {
+                    "name": "imug",
+                    "type": "float",
+                    "lenght":3,
+                    "description": "IMU magnetometers",
+                    "units": "mG"
+                },
+                {
+                    "name": "imu",
+                    "type": "float",
+                    "lenght":3,
+                    "description": "IMU attitude",
+                    "units": "deg"
+                }
+            ]
+        },
+        {
+            "name": "ULSObjectULSQT1R1Config",
+            "description": "ULSQT1-R1 configuration",
+            "variables": [
+                {
+                    "name": "name",
+                    "type": "char",
+                    "lenght": 16,
+                    "default": "ULSQT1-R1",
+                    "description": "Name"
+                },
+                {
+                    "name": "power",
+                    "type": "float",
+                    "description": "Illumination power",
+                    "units": "mA",
+                    "default": "100",
+                    "min": 50,
+                    "max": 150
+                },
+                {
+                    "name": "Voff",
+                    "type": "float",
+                    "description": "Voltage to switch-off device",
+                    "units": "V",
+                    "default": "6",
+                    "min": 5,
+                    "max": 30
+                },
+                {
+                    "name": "Vlow",
+                    "type": "float",
+                    "description": "Low voltage warning",
+                    "units": "V",
+                    "default": "6",
+                    "min": 5,
+                    "max": 30
+                },
+                {
+                    "name": "magCalOffset",
+                    "type": "float",
+                    "lenght":3,
+                    "description": "Compass calibration offset",
+                    "default": [
+                        0,
+                        0,
+                        0
+                    ],
+                    "min": 0.0,
+                    "max": 3.0
+                },
+                {
+                    "name": "magCalScale",
+                    "type": "float",
+                    "lenght":3,
+                    "description": "Compass calibration scale",
+                    "default": [
+                        1,
+                        1,
+                        1
+                    ],
+                    "min": 0.1,
+                    "max": 3.0
+                },
+                {
+                    "name": "ctrl",
+                    "type": "flags_uint8",
+                    "description": "Transmitter controll byte",
+                    "default": 1,
+                    "flags": [
+                        "Illumination",
+                        "reserved"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "ULSObjectULSQR1R1Status",
+            "description": "ULSQT1-R1 status information",
+            "variables": [
+                {
+                    "name": "status",
+                    "type": "uint32",
+                    "description": "Device status bitfield"
+                },
+                {
+                    "name": "error",
+                    "type": "uint32",
+                    "description": "Device error bitfield"
+                },
+                {
+                    "name": "blitzTest",
+                    "type": "uint32",
+                    "description": "Debug: blitzTest"
+                },
+                {
+                    "name": "packCntr",
+                    "type": "uint32",
+                    "description": "Debug:"
+                },
+                {
+                    "name": "bitMax",
+                    "type": "uint16",
+                    "description": "Debug:"
+                },
+                {
+                    "name": "qtId",
+                    "type": "uint8",
+                    "description": "Debug:"
+                },
+                {
+                    "name": "synqChannel",
+                    "type": "uint8",
+                    "description": "Debug:"
+                },
+                {
+                    "name": "posTime",
+                    "type": "uint32",
+                    "description": "Debug:"
+                },
+                {
+                    "name": "emsTime",
+                    "type": "uint32",
+                    "description": "Debug:"
+                },
+                {
+                    "name": "synqMax",
+                    "type": "uint32",
+                    "description": "Debug:"
+                },
+                {
+                    "name": "level",
+                    "type": "float",
+                    "description": "Signal level",
+                    "units": "e"
+                },
+                {
+                    "name": "levelA",
+                    "type": "float",
+                    "description": "Signal level A channel",
+                    "units": "e"
+                },
+                {
+                    "name": "levelB",
+                    "type": "float",
+                    "description": "Signal level B channel",
+                    "units": "e"
+                },
+                {
+                    "name": "snrA",
+                    "type": "float",
+                    "description": "Signal to noise ratio for channel A",
+                    "units": "e"
+                },
+                {
+                    "name": "snrB",
+                    "type": "float",
+                    "description": "Signal to noise ratio for channel B",
+                    "units": "e"
+                },
+                {
+                    "name": "prob",
+                    "type": "float",
+                    "description": "Signal probability",
+                    "units": "e"
+                },
+                {
+                    "name": "mrxDistance",
+                    "type": "float",
+                    "description": "Distance provided by MRX algorithm",
+                    "units": "m"
+                },
+                {
+                    "name": "mrxYaw",
+                    "type": "float",
+                    "description": "Yaw orintation provided by MRX algorithm",
+                    "units": "deg"
+                },
+                {
+                    "name": "distance",
+                    "type": "float",
+                    "description": "Distance to transmitter",
+                    "units": "m"
+                },
+                {
+                    "name": "ang",
+                    "type": "float",
+                    "description": "Receiver angular position in transmitter frame",
+                    "units": "deg"
+                },
+                {
+                    "name": "pos",
+                    "type": "float",
+                    "description": "Receiver position in transmitter frame",
+                    "units": "m"
+                },
+                {
+                    "name": "vel",
+                    "type": "float",
+                    "description": "Receiver velocity in transmitter frame",
+                    "units": "m/s"
+                },
+                {
+                    "name": "gimu",
+                    "type": "float",
+                    "description": "Transmitter orientation (roll, pitch, yaw)",
+                    "units": "deg"
+                },
+                {
+                    "name": "rel_pos_ned",
+                    "type": "float",
+                    "lenght":3,
+                    "description": "Relative Position of transmitter (offset from receiver)in NED (North East Down)",
+                    "units": "m"
+                },
+                {
+                    "name": "rel_vel_ned",
+                    "type": "float",
+                    "lenght":3,
+                    "description": "Ralative velocity of tranmitter (offset from receiver) in NED (North East Down)",
+                    "units": "m/s"
+                },
+                {
+                    "name": "rel_pos_frd",
+                    "type": "float",
+                    "lenght":3,
+                    "description": "Relative Position of transmitter (offset from receiver) in FRD (Forward Right Down)",
+                    "units": "m"
+                },
+                {
+                    "name": "rel_vel_frd",
+                    "type": "float",
+                    "lenght":3,
+                    "description": "Ralative velocity of tranmitter (offset from receiver) in FRD (Forward Right Down)",
+                    "units": "m/s"
+                },
+                {
+                    "name": "pos_wld",
+                    "type": "uint32",
+                    "lenght":3,
+                    "description": "World Position of transmitter  (Lat Lon Msl)",
+                    "units": "deg,deg,cm"
+                },
+                {
+                    "name": "vel_wld",
+                    "type": "float",
+                    "lenght":3,
+                    "description": "World velocity of tranmitter in NED (North East Down)",
+                    "units": "m/s"
+                },
+                {
+                    "name": "abs_pos_ned",
+                    "type": "float",
+                    "lenght":3,
+                    "description": "Absolute position of transmitter (vehicle frame) in NED (North East Down)",
+                    "units": "m"
+                },
+                {
+                    "name": "abs_vel_ned",
+                    "type": "float",
+                    "description": "Absolute velocity of tranmitter (vehicle frame)in NED (North East Down)",
+                    "units": "m/s"
+                },
+                {
+                    "name": "vehicle_abs_pos_ned",
+                    "type": "float",
+                    "description": "Absolute Position of vehicle in NED (North East Down)",
+                    "units": "m"
+                },
+                {
+                    "name": "vehicle_abs_vel_ned",
+                    "type": "float",
+                    "lenght":3,
+                    "description": "Absolute velocity of vehicle in NED (North East Down)",
+                    "units": "m/s"
+                },
+                {
+                    "name": "vehicle_heading",
+                    "type": "float",
+                    "description": "Vehicle heading information",
+                    "units": "deg"
+                }
+            ]
+        },
+        {
+            "name": "ULSObjectULSQR1R1Config",
+            "description": "ULSQR1-R1 configuration",
+            "variables": [
+                {
+                    "name": "name",
+                    "type": "char",
+                    "lenght": 16,
+                    "default": "ULSQR1-R1",
+                    "description": "Name"
+                },
+                {
+                    "name": "ctrl",
+                    "type": "flags_uint8",
+                    "description": "Transmitter controll byte",
+                    "default": 1,
+                    "flags": [
+                        "Use IMU",
+                        "reserved"
+                    ]
+                },
+                {
+                    "name": "sensitivity",
+                    "type": "float",
+                    "description": "Receiver sensitivity",
+                    "default": 1.0,
+                    "min": 0.8,
+                    "max": 1.2
+                },
+                {
+                    "name": "rxOffsetF",
+                    "type": "float",
+                    "description": "Receiver offset (front)",
+                    "units": "m",
+                    "default": 0.0,
+                    "min": -1.2,
+                    "max": 1.2
+                },
+                {
+                    "name": "rxOffsetR",
+                    "type": "float",
+                    "description": "Receiver offset (right)",
+                    "units": "m",
+                    "default": 0.0,
+                    "min": -1.2,
+                    "max": 1.2
+                },
+                {
+                    "name": "txOffsetF",
+                    "type": "float",
+                    "description": "Transmitter offset (front)",
+                    "units": "m",
+                    "default": 0.0,
+                    "min": -1.2,
+                    "max": 1.2
+                },
+                {
+                    "name": "txOffsetR",
+                    "type": "float",
+                    "description": "Transmitter offset (right)",
+                    "units": "m",
+                    "default": 0.0,
+                    "min": -1.2,
+                    "max": 1.2
+                },
+                {
+                    "name": "relPosGain",
+                    "type": "float",
+                    "description": "Relative position Gain",
+                    "units": "K",
+                    "default": 1.0,
+                    "min": 0.1,
+                    "max": 5.0
+                },
+                {
+                    "name": "relVelGain",
+                    "type": "float",
+                    "description": "Relative velocity Gain",
+                    "units": "K",
+                    "default": 1.0,
+                    "min": 0.1,
+                    "max": 5.0
+                },
+                {
+                    "name": "predictionTime",
+                    "type": "float",
+                    "description": "Interval to predict positions if no signal",
+                    "units": "s",
+                    "default": 1.0,
+                    "min": 0.0,
+                    "max": 5
+                },
+                {
+                    "name": "platformAcc",
+                    "type": "float",
+                    "description": "Grount platform acceleration",
+                    "units": "m/ss",
+                    "default": 0.1,
+                    "min": 0.01,
+                    "max": 5.0
+                }
+            ]
+        },
+        {
+            "name": "ULSObjectULSQR1R1Debug",
+            "description": "Receiver Debug data",
+            "variables": [
+                {
+                    "name": "beansA",
+                    "type": "float",
+                    "lenght": 37,
+                    "description": "Debug datareceiver A"
+                },
+                {
+                    "name": "beansB",
+                    "type": "float",
+                    "lenght": 37,
+                    "description": "Debug datareceiver B"
+                }
+            ]
+        }
+    ],
+    "Devices": [
+        {
+            "name": "ULSX",
+            "description": "Generic UAVLAS device",
+            "type": "0x0001",
+            "objects": [
+                {
+                    "name": "signature",
+                    "object": "ULSObjectSignature",
+                    "address": "0x0001"
+                }
+            ]
+        },
+        {
+            "name": "ULSQR1R1",
+            "description": "UAVLAS receiver version 1 and revision 1",
+            "type": "0x0011",
+            "objects": [
+                {
+                    "name": "signature",
+                    "object": "ULSObjectSignature",
+                    "address": "0x0001"
+                }, {
+                    "name": "cfg",
+                    "object": "ULSObjectULSQR1R1Config",
+                    "address": "0x0020",
+                    "type": "config"
+                }, {
+                    "name": "debug",
+                    "object": "ULSObjectULSQR1R1Debug",
+                    "address": "0x0030"
+                }
+            ]
+        },
+        {
+            "name": "ULSQT1R1",
+            "description": "UAVLAS transmitter version 1 and revision 1",
+            "type": "0x0012",
+            "objects": [
+                {
+                    "name": "signature",
+                    "object": "ULSObjectSignature",
+                    "address": "0x0001"
+                }, {
+                    "name": "cfg",
+                    "object": "ULSObjectULSQT1R1Config",
+                    "address": "0x0020",
+                    "type": "config"
+                }
+            ]
+        }
+    ]
+}
