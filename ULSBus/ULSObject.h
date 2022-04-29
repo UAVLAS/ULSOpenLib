@@ -35,6 +35,9 @@
 #include <QVariantMap>
 #endif
 
+#define __ULS_DEVICE_TYPE_PCR1 (0x0001)
+
+#define __ULS_DEVICE_TYPE_PCR1_NAME "PCR1"
 
 #ifdef __GNUC__
 #define __ULS_PACKET( __Declaration__ ) __Declaration__ __attribute__((packed))
@@ -104,6 +107,67 @@ class ULSDBase : public ULSList<ULSObjectBase> {
   const char *devname;
   const char *typeName;
   uint16_t typeCode;
+  uint8_t *pxCfg;
+  uint32_t lenCfg;
+};
+
+// Standart Objects and devices
+typedef __ULS_PACKET( struct {
+  char fw[32];
+  char ldr[32];
+  uint32_t serial[4];
+  uint32_t progflashingtime;
+  uint32_t progsize;
+  uint32_t progcrc;
+  uint32_t type;
+})__ULSObjectSignature;  // Total 128 bytes;
+
+class ULSObjectSignature : public ULSObjectBase {
+ public:
+  ULSObjectSignature(uint16_t id)
+      : ULSObjectBase(id, "System_signature", "SystemSignature Information",
+                      ULSBUS_OBJECT_PERMITION_READONLY) {
+    size = sizeof(__ULSObjectSignature);
+    len = 1;
+    _pxData = (uint8_t *)&var;
+    memset(_pxData,0,sizeof (__ULSObjectSignature));
+  }
+  __ULSObjectSignature var;
+#ifdef PCQT_BUILD
+  QVariantMap get(uint8_t *buf) override {
+    QVariantMap out;
+    __ULSObjectSignature *pxSign = (__ULSObjectSignature *)buf;
+    pxSign->fw[31] = 0;
+    pxSign->ldr[31] = 0;
+    out["fw"] = QString().fromLatin1(pxSign->fw);
+    out["ldr"] = QString().fromLatin1(pxSign->ldr);
+    out["serial"] = QString("%1-%2-%3-%4")
+                        .arg(pxSign->serial[0], 8, 16, QLatin1Char('0'))
+                        .arg(pxSign->serial[1], 8, 16, QLatin1Char('0'))
+                        .arg(pxSign->serial[2], 8, 16, QLatin1Char('0'))
+                        .arg(pxSign->serial[3], 8, 16, QLatin1Char('0'));
+    out["key"] = pxSign->serial[0] ^ pxSign->serial[1] ^ pxSign->serial[2] ^
+                 pxSign->serial[3];
+    out["progflashingtime"] = pxSign->progflashingtime;
+    out["progsize"] = pxSign->progsize;
+    out["progcrc"] = pxSign->progcrc;
+    out["type"] = pxSign->type;
+    return out;
+  };
+#endif
+};
+class ULSD_ULSX : public ULSDBase {
+ public:
+  ULSD_ULSX(const char *tn, const uint16_t tc)
+      : ULSDBase(tn, tc), o_sys_signature(0x0001) {
+    add(&o_sys_signature);
+  }
+  ULSObjectSignature o_sys_signature;
+};
+
+class ULSD_PC : public ULSDBase {
+ public:
+  ULSD_PC() : ULSDBase(__ULS_DEVICE_TYPE_PCR1_NAME, __ULS_DEVICE_TYPE_PCR1) {}
 };
 
 #endif  // ULSOBJECT_H

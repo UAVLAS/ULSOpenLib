@@ -20,5 +20,5 @@
  * @license LGPL-3.0+ <https://spdx.org/licenses/LGPL-3.0+>
  */
 
-#include "ULSDevice_ULSQX.h"
+#include "ULSDeviceARM.h"
 

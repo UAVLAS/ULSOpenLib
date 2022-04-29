@@ -68,52 +68,6 @@
 #endif
 
 typedef __ULS_PACKET( struct {
-  char fw[32];
-  char ldr[32];
-  uint32_t serial[4];
-  uint32_t progflashingtime;
-  uint32_t progsize;
-  uint32_t progcrc;
-  uint32_t type;
-})__ULSObjectSignature;  // Total 128 bytes;
-
-
-class ULSObjectSignature : public ULSObjectBase {
- public:
-  ULSObjectSignature(uint16_t id)
-      : ULSObjectBase(id, "System_signature", "SystemSignature Information",
-                      ULSBUS_OBJECT_PERMITION_READONLY) {
-    size = sizeof(__ULSObjectSignature);
-    len = 1;
-    _pxData = (uint8_t *)&var;
-    memset(_pxData,0,sizeof (__ULSObjectSignature));
-  }
-  __ULSObjectSignature var;
-#ifdef PCQT_BUILD
-  QVariantMap get(uint8_t *buf) override {
-    QVariantMap out;
-    __ULSObjectSignature *pxSign = (__ULSObjectSignature *)buf;
-    pxSign->fw[31] = 0;
-    pxSign->ldr[31] = 0;
-    out["fw"] = QString().fromLatin1(pxSign->fw);
-    out["ldr"] = QString().fromLatin1(pxSign->ldr);
-    out["serial"] = QString("%1-%2-%3-%4")
-                        .arg(pxSign->serial[0], 8, 16, QLatin1Char('0'))
-                        .arg(pxSign->serial[1], 8, 16, QLatin1Char('0'))
-                        .arg(pxSign->serial[2], 8, 16, QLatin1Char('0'))
-                        .arg(pxSign->serial[3], 8, 16, QLatin1Char('0'));
-    out["key"] = pxSign->serial[0] ^ pxSign->serial[1] ^ pxSign->serial[2] ^
-                 pxSign->serial[3];
-    out["progflashingtime"] = pxSign->progflashingtime;
-    out["progsize"] = pxSign->progsize;
-    out["progcrc"] = pxSign->progcrc;
-    out["type"] = pxSign->type;
-    return out;
-  };
-#endif
-};
-
-typedef __ULS_PACKET( struct {
   uint32_t status;
   uint32_t errorr;
   float Iled[37];
@@ -455,36 +409,7 @@ class ULSObjectULSQR1R1Debug : public ULSObjectBase {
   };
 #endif
 };
-class ULSD_ULSX : public ULSDBase {
- public:
-  ULSD_ULSX(const char *tn, const uint16_t tc)
-      : ULSDBase(tn, tc), o_sys_signature(0x0001) {
-    add(&o_sys_signature);
-  }
 
-  ULSObjectSignature o_sys_signature;
-  uint8_t *pxCfg;
-  uint32_t lenCfg;
-};
-
-class ULSD_PC : public ULSDBase {
- public:
-  ULSD_PC() : ULSDBase(__ULS_DEVICE_TYPE_PCR1_NAME, __ULS_DEVICE_TYPE_PCR1) {}
-};
-class ULSD_ULSQT1R1 : public ULSD_ULSX {
- public:
-  ULSD_ULSQT1R1()
-      : ULSD_ULSX(__ULS_DEVICE_TYPE_ULSQT1R1_NAME, __ULS_DEVICE_TYPE_ULSQT1R1),
-        o_status(0x0010),
-        o_cfg(0x0020) {
-    add(&o_status);
-    add(&o_cfg);
-    pxCfg = o_cfg._pxData;
-    lenCfg = o_cfg.size;
-  }
-  ULSObjectULSQT1R1Status o_status;
-  ULSObjectULSQT1R1Config o_cfg;
-};
 class ULSD_ULSQR1R1 : public ULSD_ULSX {
  public:
   ULSD_ULSQR1R1()
@@ -502,6 +427,20 @@ class ULSD_ULSQR1R1 : public ULSD_ULSX {
   ULSObjectULSQR1R1Status o_status;
   ULSObjectULSQR1R1Config o_cfg;
   ULSObjectULSQR1R1Debug o_debug;
+};
+class ULSD_ULSQT1R1 : public ULSD_ULSX {
+ public:
+  ULSD_ULSQT1R1()
+      : ULSD_ULSX(__ULS_DEVICE_TYPE_ULSQT1R1_NAME, __ULS_DEVICE_TYPE_ULSQT1R1),
+        o_status(0x0010),
+        o_cfg(0x0020) {
+    add(&o_status);
+    add(&o_cfg);
+    pxCfg = o_cfg._pxData;
+    lenCfg = o_cfg.size;
+  }
+  ULSObjectULSQT1R1Status o_status;
+  ULSObjectULSQT1R1Config o_cfg;
 };
 
 #ifdef PCQT_BUILD

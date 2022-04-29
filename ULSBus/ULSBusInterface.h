@@ -24,7 +24,7 @@
 #define ULSBUSINTERFACE_H
 
 #include "ULSBusTypes.h"
-#include "ULSDevice_ULSQX.h"
+#include "ULSDevicesARM.h"
 
 #define IF_PACKET_SIZE 1324
 

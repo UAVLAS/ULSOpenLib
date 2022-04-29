@@ -2,52 +2,9 @@
     "BookVersion": "1.0",
     "Objects": [
         {
-            "name": "ULSObjectSignature",
-            "description": "Device system information",
-            "variables": [
-                {
-                    "name": "fw",
-                    "description": "Frimware version",
-                    "type": "char",
-                    "lenght": 32
-                },
-                {
-                    "name": "ldr",
-                    "description": "Frimware version",
-                    "type": "char",
-                    "lenght": 32
-                },
-                {
-                    "name": "serial",
-                    "description": "Serial number",
-                    "type": "uint32",
-                    "lenght": 4
-                },
-                {
-                    "name": "progflashingtime",
-                    "description": "Frimware update date",
-                    "type": "uint32"
-                },
-                {
-                    "name": "progsize",
-                    "description": "Frimware size",
-                    "type": "uint32"
-                },
-                {
-                    "name": "progcrc",
-                    "description": "Frimware CRC",
-                    "type": "uint32"
-                },
-                {
-                    "name": "type",
-                    "description": "Frimware type",
-                    "type": "uint32"
-                }
-            ]
-        },
-        {
-            "name": "ULSObjectULSQT1R1Status",
+            "name": "ULSQT1R1Status",
             "description": "ULSQT1-R1 status information",
+            "access": "read",
             "variables": [
                 {
                     "name": "status",
@@ -116,7 +73,7 @@
                     "units": "deg/s"
                 },
                 {
-                    "name": "imug",
+                    "name": "imum",
                     "type": "float",
                     "lenght":3,
                     "description": "IMU magnetometers",
@@ -132,8 +89,9 @@
             ]
         },
         {
-            "name": "ULSObjectULSQT1R1Config",
+            "name": "ULSQT1R1Config",
             "description": "ULSQT1-R1 configuration",
+            "access": "config",
             "variables": [
                 {
                     "name": "name",
@@ -208,8 +166,9 @@
             ]
         },
         {
-            "name": "ULSObjectULSQR1R1Status",
+            "name": "ULSQR1R1Status",
             "description": "ULSQT1-R1 status information",
+            "access": "read",
             "variables": [
                 {
                     "name": "status",
@@ -318,24 +277,28 @@
                 {
                     "name": "ang",
                     "type": "float",
+                    "lenght":3,
                     "description": "Receiver angular position in transmitter frame",
                     "units": "deg"
                 },
                 {
                     "name": "pos",
                     "type": "float",
+                    "lenght":3,
                     "description": "Receiver position in transmitter frame",
                     "units": "m"
                 },
                 {
                     "name": "vel",
                     "type": "float",
+                    "lenght":3,
                     "description": "Receiver velocity in transmitter frame",
                     "units": "m/s"
                 },
                 {
                     "name": "gimu",
                     "type": "float",
+                    "lenght":3,
                     "description": "Transmitter orientation (roll, pitch, yaw)",
                     "units": "deg"
                 },
@@ -391,12 +354,14 @@
                 {
                     "name": "abs_vel_ned",
                     "type": "float",
+                    "lenght":3,
                     "description": "Absolute velocity of tranmitter (vehicle frame)in NED (North East Down)",
                     "units": "m/s"
                 },
                 {
                     "name": "vehicle_abs_pos_ned",
                     "type": "float",
+                    "lenght":3,
                     "description": "Absolute Position of vehicle in NED (North East Down)",
                     "units": "m"
                 },
@@ -416,8 +381,9 @@
             ]
         },
         {
-            "name": "ULSObjectULSQR1R1Config",
+            "name": "ULSQR1R1Config",
             "description": "ULSQR1-R1 configuration",
+            "access": "config",
             "variables": [
                 {
                     "name": "name",
@@ -519,8 +485,9 @@
             ]
         },
         {
-            "name": "ULSObjectULSQR1R1Debug",
+            "name": "ULSQR1R1Debug",
             "description": "Receiver Debug data",
+            "access": "read",
             "variables": [
                 {
                     "name": "beansA",
@@ -539,14 +506,19 @@
     ],
     "Devices": [
         {
-            "name": "ULSX",
-            "description": "Generic UAVLAS device",
-            "type": "0x0001",
+            "name": "ULSQT1R1",
+            "description": "UAVLAS transmitter version 1 and revision 1",
+            "type": "0x0010",
             "objects": [
                 {
-                    "name": "signature",
-                    "object": "ULSObjectSignature",
-                    "address": "0x0001"
+                    "name": "status",
+                    "object": "ULSQT1R1Status",
+                    "address": "0x0010"
+                }, {
+                    "name": "cfg",
+                    "object": "ULSQT1R1Config",
+                    "address": "0x0020",
+                    "type": "config"
                 }
             ]
         },
@@ -556,36 +528,35 @@
             "type": "0x0011",
             "objects": [
                 {
-                    "name": "signature",
-                    "object": "ULSObjectSignature",
-                    "address": "0x0001"
+                    "name": "status",
+                    "object": "ULSQR1R1Status",
+                    "address": "0x0010"
                 }, {
                     "name": "cfg",
-                    "object": "ULSObjectULSQR1R1Config",
+                    "object": "ULSQR1R1Config",
                     "address": "0x0020",
                     "type": "config"
                 }, {
                     "name": "debug",
-                    "object": "ULSObjectULSQR1R1Debug",
+                    "object": "ULSQR1R1Debug",
                     "address": "0x0030"
                 }
             ]
         },
         {
-            "name": "ULSQT1R1",
-            "description": "UAVLAS transmitter version 1 and revision 1",
+            "name": "ULSQG1R1",
+            "description": "UAVLAS Reserved device",
             "type": "0x0012",
             "objects": [
-                {
-                    "name": "signature",
-                    "object": "ULSObjectSignature",
-                    "address": "0x0001"
-                }, {
-                    "name": "cfg",
-                    "object": "ULSObjectULSQT1R1Config",
-                    "address": "0x0020",
-                    "type": "config"
-                }
+                
+            ]
+        },
+        {
+            "name": "ULSQM1R1",
+            "description": "UAVLAS Reserved device",
+            "type": "0x0013",
+            "objects": [
+                
             ]
         }
     ]
