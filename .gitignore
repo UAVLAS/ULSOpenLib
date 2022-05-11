@@ -1,3 +1,2 @@
 *.pyc
-Scripts/*.pyc
-ULSBus/ULSDevicesARM.h
+*ULSDevicesARM.h
