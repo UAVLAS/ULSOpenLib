@@ -43,9 +43,10 @@ _file_header = "/** \n\
  */\n\
  \n\
 // THIS FILE GENERATED AUTOMATICALY DO NOT EDIT\n\n\
-#include \"ULSObject.h\"\n\n\
 #ifndef ULSDEVICE_ULSQX_H\n\
-#define ULSDEVICE_ULSQX_H\n\n\n"
+#define ULSDEVICE_ULSQX_H\n\n\n\
+#include \"ULSObject.h\"\n\n"
+
 
 _file_footer = "#endif  // ULSDEVICE_ULSQX_H \n"
 

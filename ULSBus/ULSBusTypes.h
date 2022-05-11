@@ -2,7 +2,6 @@
 #define ULSBUSTYPES_H
 #include <inttypes.h>
 #include <string.h>
-#include "ULSDevices.h"
 #include "ULSBusConfig.h"
 #include "udebug.h"
 

@@ -22,8 +22,6 @@
 
 #include "ULSObject.h"
 
-
-
 ULSObjectBase::ULSObjectBase(uint16_t id, const char *name, const char *description, _ulsbus_obj_permitions permition):
     ULSListItem(),
     id(id),
@@ -52,50 +50,3 @@ ULSObjectBase *ULSDBase::getObject(uint16_t obj_id)
     return nullptr;
 }
 
-#ifdef PCQT_BUILD
-QVariantMap ULSDBase::getVar(QString *objName, uint16_t obj_id, uint8_t *buf)
-{
-    begin();
-    while(next()){
-        if(current->id == obj_id){
-            *objName = current->name();
-            return current->get(buf);
-        }
-    }
-    return QVariantMap();
-}
-
-QVariantMap ULSDBase::getVar(QString objName, uint8_t *buf)
-{
-    begin();
-    while(next()){
-        if(current->name() == objName)return current->get(buf);
-    }
-    return QVariantMap();
-}
-QVariantMap ULSDBase::getObjectVars(QString objName)
-{
-    begin();
-    while(next()){
-        if(current->name() == objName)return current->get(current->_pxData);
-    }
-    return QVariantMap();
-}
-uint16_t ULSDBase::getObjId(QString objName)
-{
-    begin();
-    while(next()){
-        if(current->name() == objName)return current->id;
-    }
-    return 0xFFFF;
-}
-ULSObjectBase *ULSDBase::getObject(QString objName)
-{
-    begin();
-    while(next()){
-        if(current->name()  == objName)return current;
-    }
-    return nullptr;
-}
-
-#endif
