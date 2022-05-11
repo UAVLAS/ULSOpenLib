@@ -60,20 +60,20 @@ class ULSObjectBase : public ULSListItem {
   const char *_description;
   _ulsbus_obj_permitions _permition;
 
-#ifdef PCQT_BUILD
-  virtual QVariantMap get(uint8_t *buf) {
-    QVariantMap v;
-    (void)v;
-    (void)buf;
-    return v;
-  };
-  virtual uint32_t set(QVariantMap vars) {
-    (void)vars;
-    return 0;
-  };
-  QString name() { return QString().fromLatin1(_name); };
-  QString description() { return QString().fromLatin1(_description); };
-#endif
+// #ifdef PCQT_BUILD
+//   virtual QVariantMap get(uint8_t *buf) {
+//     QVariantMap v;
+//     (void)v;
+//     (void)buf;
+//     return v;
+//   };
+//   virtual uint32_t set(QVariantMap vars) {
+//     (void)vars;
+//     return 0;
+//   };
+//   QString name() { return QString().fromLatin1(_name); };
+//   QString description() { return QString().fromLatin1(_description); };
+// #endif
   uint32_t getData(uint8_t *buf) {
     memcpy(buf, _pxData, size * len);
     return size * len;
@@ -94,16 +94,16 @@ class ULSDBase : public ULSList<ULSObjectBase> {
  public:
   ULSDBase(const char *tn, const uint16_t tc);
   ULSObjectBase *getObject(uint16_t obj_id);
-#ifdef PCQT_BUILD
-  QVariantMap getVar(QString *objName, uint16_t obj_id, uint8_t *buf);
-  QVariantMap getVar(QString objName, uint8_t *buf);
-  QVariantMap getObjectVars(QString objName);
+// #ifdef PCQT_BUILD
+//   QVariantMap getVar(QString *objName, uint16_t obj_id, uint8_t *buf);
+//   QVariantMap getVar(QString objName, uint8_t *buf);
+//   QVariantMap getObjectVars(QString objName);
 
-  QString name() { return QString().fromLatin1(typeName); }
-  uint16_t getObjId(QString objName);
-  ULSObjectBase *getObject(QString objName);
-  ;
-#endif
+//   QString name() { return QString().fromLatin1(typeName); }
+//   uint16_t getObjId(QString objName);
+//   ULSObjectBase *getObject(QString objName);
+//   ;
+// #endif
   const char *devname;
   const char *typeName;
   uint16_t typeCode;
@@ -133,28 +133,28 @@ class ULSObjectSignature : public ULSObjectBase {
     memset(_pxData,0,sizeof (__ULSObjectSignature));
   }
   __ULSObjectSignature var;
-#ifdef PCQT_BUILD
-  QVariantMap get(uint8_t *buf) override {
-    QVariantMap out;
-    __ULSObjectSignature *pxSign = (__ULSObjectSignature *)buf;
-    pxSign->fw[31] = 0;
-    pxSign->ldr[31] = 0;
-    out["fw"] = QString().fromLatin1(pxSign->fw);
-    out["ldr"] = QString().fromLatin1(pxSign->ldr);
-    out["serial"] = QString("%1-%2-%3-%4")
-                        .arg(pxSign->serial[0], 8, 16, QLatin1Char('0'))
-                        .arg(pxSign->serial[1], 8, 16, QLatin1Char('0'))
-                        .arg(pxSign->serial[2], 8, 16, QLatin1Char('0'))
-                        .arg(pxSign->serial[3], 8, 16, QLatin1Char('0'));
-    out["key"] = pxSign->serial[0] ^ pxSign->serial[1] ^ pxSign->serial[2] ^
-                 pxSign->serial[3];
-    out["progflashingtime"] = pxSign->progflashingtime;
-    out["progsize"] = pxSign->progsize;
-    out["progcrc"] = pxSign->progcrc;
-    out["type"] = pxSign->type;
-    return out;
-  };
-#endif
+// #ifdef PCQT_BUILD
+//   QVariantMap get(uint8_t *buf) override {
+//     QVariantMap out;
+//     __ULSObjectSignature *pxSign = (__ULSObjectSignature *)buf;
+//     pxSign->fw[31] = 0;
+//     pxSign->ldr[31] = 0;
+//     out["fw"] = QString().fromLatin1(pxSign->fw);
+//     out["ldr"] = QString().fromLatin1(pxSign->ldr);
+//     out["serial"] = QString("%1-%2-%3-%4")
+//                         .arg(pxSign->serial[0], 8, 16, QLatin1Char('0'))
+//                         .arg(pxSign->serial[1], 8, 16, QLatin1Char('0'))
+//                         .arg(pxSign->serial[2], 8, 16, QLatin1Char('0'))
+//                         .arg(pxSign->serial[3], 8, 16, QLatin1Char('0'));
+//     out["key"] = pxSign->serial[0] ^ pxSign->serial[1] ^ pxSign->serial[2] ^
+//                  pxSign->serial[3];
+//     out["progflashingtime"] = pxSign->progflashingtime;
+//     out["progsize"] = pxSign->progsize;
+//     out["progcrc"] = pxSign->progcrc;
+//     out["type"] = pxSign->type;
+//     return out;
+//   };
+// #endif
 };
 class ULSD_ULSX : public ULSDBase {
  public:

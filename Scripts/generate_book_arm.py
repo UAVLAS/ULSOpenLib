@@ -151,11 +151,16 @@ def generate(objects,devices,output):
         book_file.write(" " + dev_class + "():\n")
         str_obj_init = "    " + base_class + "(__ULS_DEVICE_TYPE_" + dev["name"] + "_NAME,__ULS_DEVICE_TYPE_"+ dev["name"] + "),\n"
         
+        #class constructor
         for obj in dev["objects"]: 
             str_obj_init += "    o_" + obj["name"] + "("+ obj["address"] + "),\n"
         
         str_obj_init = str_obj_init[:-2]
         book_file.write(str_obj_init + "{\n")    
+
+        for obj in dev["objects"]: 
+            book_file.write("  add(&o_" + obj["name"] + ");\n")
+         
 
         for obj_ref in dev["objects"]: 
             for obj in objects:
