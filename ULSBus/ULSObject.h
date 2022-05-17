@@ -27,6 +27,8 @@
 #include <string.h>
 
 #include "ULSBusTypes.h"
+#include <QList>
+#include <QVariant>
 
 #define __ULS_DEVICE_TYPE_PCR1 (0x0001)
 
@@ -75,6 +77,7 @@ class ULSDBase : public ULSList<ULSObjectBase> {
  public:
   ULSDBase(const char *tn, const uint16_t tc);
   ULSObjectBase *getObject(uint16_t obj_id);
+  void setData(uint16_t obj_id,uint8_t *buf);
   const char *devname;
   const char *typeName;
   uint16_t typeCode;
@@ -104,6 +107,7 @@ class ULSObjectSignature : public ULSObjectBase {
     memset(_pxData,0,sizeof (__ULSObjectSignature));
   }
   __ULSObjectSignature var;
+
 };
 class ULSD_ULSX : public ULSDBase {
  public:

@@ -50,3 +50,8 @@ ULSObjectBase *ULSDBase::getObject(uint16_t obj_id)
     return nullptr;
 }
 
+void ULSDBase::setData(uint16_t obj_id,uint8_t *buf){
+
+    ULSObjectBase *obj = getObject(obj_id);
+    obj->setData(buf);
+}
