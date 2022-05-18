@@ -72,7 +72,7 @@ def generate(objects,devices,output):
 
 
 
-    book_file = open(output + "/ULSDevicesARM.h", "w")
+    book_file = open(output + "/ULSDevices.h", "w")
     book_file.write(_file_header)
     
     print("Devices:")
@@ -112,9 +112,9 @@ def generate(objects,devices,output):
            if "flags" in var:
 
               flags_str ="    typedef enum{\n"
-              index = 1;
+              index = 1
               for flag in var["flags"]:
-                  flags_str += "       " + var["name"] + "_" + flag + " = " + str(index) + ",\n"
+                  flags_str += "       " + flag + " = " + str(index) + ",\n"
                   index <<= 1
               flags_str = flags_str[:-2]
               flags_str += "\n    }" + obj["name"] + "_" + var["name"] + "_flags;\n\n"
@@ -157,7 +157,7 @@ def generate(objects,devices,output):
 
     for dev in devices:
         dev_class = _dev_class_name_prefix + dev["name"]
-        base_class = s_dev_class_name_prefix + "ULSX"
+        base_class = _dev_class_name_prefix + "ULSX"
         book_file.write("//" + dev["name"] +": " + dev["description"] +"\n")
         #class definition
         book_file.write("class " + dev_class + " : public " + base_class + " {\n public:\n")

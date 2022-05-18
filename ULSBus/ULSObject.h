@@ -27,13 +27,6 @@
 #include <string.h>
 
 #include "ULSBusTypes.h"
-#include <QList>
-#include <QVariant>
-
-#define __ULS_DEVICE_TYPE_PCR1 (0x0001)
-
-#define __ULS_DEVICE_TYPE_PCR1_NAME "PCR1"
-
 #ifdef __GNUC__
 #define __ULS_PACKET( __Declaration__ ) __Declaration__ __attribute__((packed))
 #endif
@@ -116,11 +109,6 @@ class ULSD_ULSX : public ULSDBase {
     add(&o_sys_signature);
   }
   ULSObjectSignature o_sys_signature;
-};
-
-class ULSD_PC : public ULSDBase {
- public:
-  ULSD_PC() : ULSDBase(__ULS_DEVICE_TYPE_PCR1_NAME, __ULS_DEVICE_TYPE_PCR1) {}
 };
 
 #endif  // ULSOBJECT_H
