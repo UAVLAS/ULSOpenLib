@@ -107,6 +107,18 @@ def generate(objects,devices,output):
         book_file.write("   size = sizeof(" + obj_struct + ");\n")
         book_file.write("   len = 1;\n")
         book_file.write("   _pxData = (uint8_t *)&var;\n  }\n")
+        # enums
+        for var in obj["variables"]:
+           if "flags" in var:
+
+              flags_str ="    typedef enum{\n"
+              index = 1;
+              for flag in var["flags"]:
+                  flags_str += "       " + var["name"] + "_" + flag + " = " + str(index) + ",\n"
+                  index <<= 1
+              flags_str = flags_str[:-2]
+              flags_str += "\n    }" + obj["name"] + "_" + var["name"] + "_flags;\n\n"
+              book_file.write(flags_str)
         if obj["access"] == "config":
             book_file.write("  void defaultConfig() override {\n")
             for var in obj["variables"]:
@@ -145,7 +157,7 @@ def generate(objects,devices,output):
 
     for dev in devices:
         dev_class = _dev_class_name_prefix + dev["name"]
-        base_class = _dev_class_name_prefix + "ULSX"
+        base_class = s_dev_class_name_prefix + "ULSX"
         book_file.write("//" + dev["name"] +": " + dev["description"] +"\n")
         #class definition
         book_file.write("class " + dev_class + " : public " + base_class + " {\n public:\n")

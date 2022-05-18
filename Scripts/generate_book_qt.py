@@ -74,8 +74,6 @@ _file_footer = "#endif  // ULSDEVICE_ULSQX_H \n"
 def generate(objects,devices,output):
     
 
-
-
     book_file = open(output + "/ULSDevices.h", "w")
     book_file.write(_file_header)
     
@@ -121,6 +119,19 @@ def generate(objects,devices,output):
                 book_file.write(" WRITE" + " var_" + var["name"])
             book_file.write(" NOTIFY" + " var_" + var["name"] + "Changed)\n")
         book_file.write("\n")
+# enums
+        for var in obj["variables"]:
+           if "flags" in var:
+
+              flags_str ="    typedef enum{\n"
+              index = 1;
+              for flag in var["flags"]:
+                  flags_str += "       " + var["name"] + "_" + flag + " = " + str(index) + ",\n"
+                  index <<= 1
+              flags_str = flags_str[:-2]
+              flags_str += "\n    }" + obj["name"] + "_" + var["name"] + "_flags;\n\n"
+              book_file.write(flags_str)
+
 #Object GET variables
         book_file.write(" //GET Variables\n")
         for var in obj["variables"]:
@@ -170,21 +181,22 @@ def generate(objects,devices,output):
         for var in obj["variables"]:
             book_file.write("    void" + " var_" + var["name"] + "Changed();\n")
 
+        book_file.write("    void updated();\n\n")
         book_file.write("\n public:\n    void dataUpdated() override{\n")
         for var in obj["variables"]:
             book_file.write("         emit " + " var_" + var["name"] + "Changed();\n")
 
-        book_file.write("     };\n")
+        book_file.write("         emit updated();\n     };\n")
 
 #Get vars map
         book_file.write("    QVariantMap getVars() override {\n        QVariantMap out;\n")
         for var in obj["variables"]:
             book_file.write("        out[\""+ var["name"] + "\"] = " + "var_" + var["name"] + "();\n")
-        book_file.write("     return out;\n     };\n")
+        book_file.write("        return out;\n     };\n")
 
 #Set vars map
         if obj_write:
-            book_file.write("    void setVars(QVariantMap vars) override{\n")
+            book_file.write("    void setVars(const QVariantMap& vars) override{\n")
 
             for var in obj["variables"]:
                 book_file.write("        " + "var_" + var["name"] + "(" + "vars[\""+ var["name"] + "\"]" + ");\n")

@@ -48,49 +48,11 @@
 #define __ULS_PACKET( __Declaration__ ) __pragma( pack(push, 1) ) __Declaration__ __pragma( pack(pop))
 #endif
 
-// GET DEFINES
-#define __ULS_GENERIC_VAR_TO_QVM(VNAME) \
-{ out[#VNAME] = px->VNAME; };
-#define __ULS_GENERIC_STRING_TO_QVM(SNAME) \
-{ out[#SNAME] = QString().fromLatin1(px->SNAME); };
-#define __ULS_GENERIC_V3F_TO_QVM(VNAME)                                  \
-{                                                                      \
-    out[#VNAME] = QList<QVariant>()                                      \
-    << (px->VNAME[0]) << (px->VNAME[1]) << (px->VNAME[2]); \
-    };
-
-#define __ULS_GENERIC_VARRAY_TO_QVM(VNAME, SIZE)                    \
-{                                                                 \
-    QList<QVariant> ql_##VNAME;                                     \
-    for (int i = 0; i < SIZE; i++) ql_##VNAME.append(px->VNAME[i]); \
-    out[#VNAME] = ql_##VNAME;                                       \
-    };
-
-#define __ULS_GENERIC_V3D_TO_QVM(VNAME) __ULS_GENERIC_VARRAY_TO_QVM(VNAME,3)
-
-// SET DEFINES
-#define __ULS_QVM_TO_STRING(SNAME)                                           \
-    if (QString("%1").arg(vars[#SNAME].toString()).size() < 16) {              \
-    memcpy(var.SNAME,                                                        \
-    QString("%1").arg(vars[#SNAME].toString()).toStdString().c_str(), \
-    QString("%1").arg(vars[#SNAME].toString()).size());               \
-    var.SNAME[QString("%1").arg(vars[#SNAME].toString()).size()] = 0;        \
-    }
-
 #define __ULS_QVM_TO_CHAR_ARRAY(SN,CN,LEN)\
     if (SN.size() < (LEN - 1)) {              \
     memcpy(CN,SN.toStdString().c_str(),SN.size()); \
     CN[SN.size()] = 0;        \
     }
-
-
-#define __ULS_QVM_TO_FLOAT(VNAME) \
-{ var.VNAME = vars[#VNAME].toFloat(); };
-#define __ULS_QVM_TO_UINT(VNAME) \
-{ var.VNAME = vars[#VNAME].toUInt(); };
-#define __ULS_QVM_TO_INT(VNAME) \
-{ var.VNAME = vars[#VNAME].toInt(); };
-
 #define __ULS_QVM_TO_VARRAYF(V,VNAME, SIZE)  \
 {\
     QVariantList ql = V.toList();\
@@ -150,7 +112,7 @@ public:
         (void)v;
         return v;
     };
-    virtual void setVars(QVariantMap vars) {
+    virtual void setVars(const QVariantMap& vars) {
         (void)vars;
     };
     QString name() { return QString().fromLatin1(_name); };
@@ -174,7 +136,6 @@ typedef __ULS_PACKET( struct {
                           uint32_t progcrc;
                           uint32_t type;
                       })__ULSObjectSignature;  // Total 128 bytes;
-
 
 
 class ULSObjectSignature : public ULSObjectBase {
@@ -232,7 +193,7 @@ signals:
     void var_progsizeChanged();
     void var_progcrcChanged();
     void var_typeChanged();
-    void var_Changed();
+    void updated();
 public:
      void dataUpdated() override{
          emit var_fwChanged();
@@ -243,7 +204,7 @@ public:
          emit var_progsizeChanged();
          emit var_progcrcChanged();
          emit var_typeChanged();
-         emit var_Changed();
+         emit updated();
      };
 
 public:
@@ -396,10 +357,6 @@ public:
         return nullptr;
     }
 
-
-
-
-
     static bool compare(const ULSDBase * const & a, const ULSDBase * const & b)
     {
         return (a->m_route.compare(b->m_route) < 0);
@@ -410,6 +367,12 @@ public:
 class ULSD_ULSX : public ULSDBase {
 
     Q_OBJECT
+public:
+    Q_PROPERTY(ULSObjectSignature* o_signature READ o_signature NOTIFY o_signatureChanged)
+
+    ULSObjectSignature* o_signature(){return &o_sys_signature;};
+signals:
+    void o_signatureChanged();
 public:
     ULSD_ULSX(const char *tn, const uint16_t tc)
         : ULSDBase(tn, tc), o_sys_signature(0x0001) {
@@ -422,8 +385,6 @@ class ULSD_PC : public ULSDBase {
 public:
     ULSD_PC() : ULSDBase(__ULS_DEVICE_TYPE_PCR1_NAME, __ULS_DEVICE_TYPE_PCR1) {}
 };
-
-
 
 
 #endif  // ULSOBJECT_H

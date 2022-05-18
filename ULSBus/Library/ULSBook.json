@@ -398,9 +398,11 @@
                     "description": "Transmitter controll byte",
                     "default": 1,
                     "flags": [
-                        "Use IMU",
-                        "reserved"
-                    ]
+                     "receiver_enabled",
+                     "noise_debug",
+                     "disable_imu",
+                     "disable_mrx"
+                       ]
                 },
                 {
                     "name": "sensitivity",
