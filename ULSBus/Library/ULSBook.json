@@ -156,12 +156,21 @@
                 {
                     "name": "ctrl",
                     "type": "flags_uint8",
-                    "description": "Transmitter controll byte",
+                    "description": "Transmitter control byte",
                     "default": 1,
                     "flags": [
                         "Illumination",
-                        "reserved"
+                        "CompassOverrideEnable"
                     ]
+                },
+                {
+                    "name": "cpsOverride",
+                    "type": "float",
+                    "description": "Overide compass value",
+                    "units": "deg",
+                    "default": "0",
+                    "min": 0,
+                    "max": 360
                 }
             ]
         },
