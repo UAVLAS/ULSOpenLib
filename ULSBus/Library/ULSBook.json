@@ -101,6 +101,12 @@
                     "description": "Name"
                 },
                 {
+                    "name": "devID",
+                    "type": "uint8",
+                    "default": 0,
+                    "description": "Beacon ID number"
+                },
+                {
                     "name": "power",
                     "type": "float",
                     "description": "Illumination power",
@@ -196,8 +202,38 @@
                 },
                 {
                     "name": "packCntr",
-                    "type": "uint32",
+                    "type": "uint16",
                     "description": "Debug:"
+                },
+                {
+                    "name": "uartErrors",
+                    "type": "uint16",
+                    "description": "Uart errors counter"
+                },
+                {
+                    "name": "uartTxPacks",
+                    "type": "uint16",
+                    "description": "Uart packets transmitted"
+                },
+                {
+                    "name": "uartRxPacks",
+                    "type": "uint16",
+                    "description": "Uart packets received"
+                },
+                {
+                    "name": "i2cErrors",
+                    "type": "uint16",
+                    "description": "I2C errors counter"
+                },
+                {
+                    "name": "i2cTxPacks",
+                    "type": "uint16",
+                    "description": "I2C packets transmitted"
+                },
+                {
+                    "name": "i2cRxPacks",
+                    "type": "uint16",
+                    "description": "I2C packets received"
                 },
                 {
                     "name": "bitMax",
@@ -492,7 +528,49 @@
                     "default": 0.1,
                     "min": 0.01,
                     "max": 5.0
+                },
+                {
+                    "name": "i2cAddress",
+                    "type": "uint8",
+                    "description": "I2C Device Address",
+                    "default": 86 
+                },
+                {
+                    "name": "i2cProtocol",
+                    "type": "opt_uint8",
+                    "description": "I2C Protocol",
+                    "default": 0,
+                    "opts": [
+                     "Ardupilot",
+                     "PX4"
+                       ]
+                },
+                {
+                    "name": "uartBrt",
+                    "type": "opt_uint8",
+                    "description": "UART Baudrate",
+                    "default": 4,
+                    "opts": [
+                     "19200",
+                     "38400",
+                     "57600",
+                     "115200",
+                     "230400",
+                     "460800",
+                     "921600"
+                       ]
+                },
+                {
+                    "name": "uartProtocol",
+                    "type": "opt_uint8",
+                    "description": "UART Protocol",
+                    "default": 0,
+                    "opts": [
+                     "Mavlink V2",
+                     "APx"
+                       ]
                 }
+
             ]
         },
         {

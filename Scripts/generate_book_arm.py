@@ -2,10 +2,6 @@
 import json
 import generate_structures
 
-datatypes = {"char": "char", "uint8": "uint8_t","uint16": "uint16_t","uint32": "uint32_t","float":"float",
-                "int8": "int8_t","int16": "int16_t","int32": "int32_t",
-                "flags_uint8": "uint8_t","flags_uint16": "uint16_t","flags_uint32": "uint32_t"}
-
 access_types = {"read":"ULSBUS_OBJECT_PERMITION_READONLY",
                 "write":"ULSBUS_OBJECT_PERMITION_WRITEONLY",
                 "read-write":"ULSBUS_OBJECT_PERMITION_READWRITE",
@@ -50,22 +46,6 @@ _file_header = "/** \n\
 
 _file_footer = "#endif  // ULSDEVICE_ULSQX_H \n"
 
-# def getArmType(type):
-#     if type == "char": return "char"
-#     if type == "uint8": return "uint8_t"
-#     if type == "uint16": return "uin16_t"
-#     if type == "uint32": return "uint32_t"
-#     if type == "int8": return "int8_t"
-#     if type == "int16": return "in16_t"
-#     if type == "int32": return "int32_t"
-#     if type == "flags_uint8": return "uint8_t"
-#     if type == "flags_uint16": return "uin16_t"
-#     if type == "flags_uint32": return "uint32_t"
-#     if type == "float": return "float"
-#     if type == "double": return "double"
-# def isTypeFlag(type):
-#     return "flags_" in type    
-
 
 def generate(objects,devices,output):
     
@@ -90,16 +70,6 @@ def generate(objects,devices,output):
     for obj in objects:
         obj_struct = generate_structures._obj_struct_name_prefix + obj["name"]
         obj_class = _obj_class_name_prefix + obj["name"]
-       # book_file.write("//" + obj["description"] + "\n")
-        #struct definition
-      #  book_file.write(_obj_struct_header)
-        # for var in obj["variables"]:
-        #     var_str = "    " + datatypes[var["type"]] + " " + var["name"]
-        #     if "lenght" in var: 
-        #          var_str += "["+ str(var["lenght"]) + "]"     
-        #     var_str += "; // " + var["description"] + "\n"
-        #     book_file.write(var_str)
-        # book_file.write("}) " + obj_struct + ";\n\n")
         #class definition
         book_file.write("class " + obj_class + " : public ULSObjectBase {\n public:\n")
         book_file.write(" " + obj_class + "(uint16_t id)\n")
@@ -126,7 +96,7 @@ def generate(objects,devices,output):
                     def_len = len(var["default"])
                     if def_len > var["lenght"]: def_len = var["lenght"]
                     str_lenght = str(def_len)
-                    book_file.write("   " + datatypes[var["type"]] + " " + var["name"] + "_def[" + str_lenght + "] = {")
+                    book_file.write("   " + generate_structures.datatypes[var["type"]] + " " + var["name"] + "_def[" + str_lenght + "] = {")
                     str_def_val = ""
                     if var["type"] == "char":    
                         for defvar in var["default"]:

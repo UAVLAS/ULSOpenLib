@@ -3,7 +3,8 @@ import json
 
 datatypes = {"char": "char", "uint8": "uint8_t","uint16": "uint16_t","uint32": "uint32_t","float":"float",
                 "int8": "int8_t","int16": "int16_t","int32": "int32_t",
-                "flags_uint8": "uint8_t","flags_uint16": "uint16_t","flags_uint32": "uint32_t"}
+                "flags_uint8": "uint8_t","flags_uint16": "uint16_t","flags_uint32": "uint32_t",
+                "opt_uint8": "uint8_t","opt_uint16": "uint16_t","opt_uint32": "uint32_t"}
 
 _obj_struct_header = "typedef __ULS_PACKET( struct {\n"
 
