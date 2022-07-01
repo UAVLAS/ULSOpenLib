@@ -131,6 +131,7 @@ uint32_t ULSSerial::writeEsc(uint8_t *buf,uint32_t size)
 uint32_t ULSSerial::read(uint8_t *buf,uint32_t sizelimit)
 {
     uint32_t size = 0;
+    receiverUpdate();
     switch (_mode) {
     case SERIAL_MODE_RAW:
         size = _rxFifo->pull(buf,sizelimit);
@@ -143,7 +144,6 @@ uint32_t ULSSerial::read(uint8_t *buf,uint32_t sizelimit)
         size = readCobs(buf,sizelimit);
         break;
     }
-    receiverUpdate();
     return size;
 }
 //==============================================================================
