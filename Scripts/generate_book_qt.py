@@ -186,13 +186,20 @@ def generate(objects,devices,output):
         book_file.write("\n public:\n    void dataUpdated() override{\n")
         for var in obj["variables"]:
             book_file.write("         emit " + " var_" + var["name"] + "Changed();\n")
-
         book_file.write("         emit updated();\n     };\n")
 
 #Get vars map
         book_file.write("    QVariantMap getVars() override {\n        QVariantMap out;\n")
         for var in obj["variables"]:
             book_file.write("        out[\""+ var["name"] + "\"] = " + "var_" + var["name"] + "();\n")
+            opt_index = 0
+            if "opts" in var:
+                book_file.write("        QVariantList "+ var["name"] + "_opts;\n")
+                for opts in var["opts"]:
+                    book_file.write("        "+ var["name"] + "_opts.append(\"" + opts + "\");\n")
+                    opt_index += 1
+                book_file.write("        out[\""+ var["name"] + "_opts\"] = " + var["name"] + "_opts;\n")
+
         book_file.write("        return out;\n     };\n")
 
 #Set vars map

@@ -177,7 +177,13 @@
                     "default": "0",
                     "min": 0,
                     "max": 360
-                }
+                },
+                {
+                    "name": "configCRC",
+                    "type": "uint16",
+                    "description": "Configuration checksumm",
+                    "default": 0
+                },
             ]
         },
         {
@@ -530,6 +536,15 @@
                     "max": 5.0
                 },
                 {
+                    "name": "positionFilterAcc",
+                    "type": "float",
+                    "description": "Position filter acceleration",
+                    "units": "m/ss",
+                    "default": 0.3,
+                    "min": 0.01,
+                    "max": 5.0
+                },
+                {
                     "name": "i2cAddress",
                     "type": "uint8",
                     "description": "I2C Device Address",
@@ -541,8 +556,8 @@
                     "description": "I2C Protocol",
                     "default": 0,
                     "opts": [
-                     "Ardupilot",
-                     "PX4"
+                     "Disabled",
+                     "Ardupilot"
                        ]
                 },
                 {
@@ -561,15 +576,12 @@
                        ]
                 },
                 {
-                    "name": "uartProtocol",
-                    "type": "opt_uint8",
-                    "description": "UART Protocol",
-                    "default": 0,
-                    "opts": [
-                     "Mavlink V2",
-                     "APx"
-                       ]
-                }
+                    "name": "configCRC",
+                    "type": "uint16",
+                    "description": "Configuration checksumm",
+                    "default": 0
+                },
+
 
             ]
         },
