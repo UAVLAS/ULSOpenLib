@@ -183,7 +183,7 @@
                     "type": "uint16",
                     "description": "Configuration checksumm",
                     "default": 0
-                },
+                }
             ]
         },
         {
@@ -580,7 +580,7 @@
                     "type": "uint16",
                     "description": "Configuration checksumm",
                     "default": 0
-                },
+                }
 
 
             ]
