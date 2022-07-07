@@ -561,6 +561,17 @@
                        ]
                 },
                 {
+                    "name": "uartProtocol",
+                    "type": "opt_uint8",
+                    "description": "UART Protocol",
+                    "default": 1,
+                    "opts": [
+                     "Disabled",
+                     "MavlinkV2",
+                     "APx"
+                       ]
+                },
+                {
                     "name": "uartBrt",
                     "type": "opt_uint8",
                     "description": "UART Baudrate",
