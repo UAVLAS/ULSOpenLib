@@ -222,6 +222,7 @@ def generate(objects,devices,output):
                 if "lenght" in var:
                     def_len = len(var["default"])
                     if def_len > var["lenght"]: def_len = var["lenght"]
+                    if var["type"] == "char": def_len += 1
                     str_lenght = str(def_len)
                     book_file.write("   " + datatypes[var["type"]] + " " + var["name"] + "_def[" + str_lenght + "] = {")
                     str_def_val = ""
@@ -231,7 +232,11 @@ def generate(objects,devices,output):
                     else:
                         for defvar in var["default"]:
                             str_def_val +=str(defvar) + ","
-                    str_def_val = str_def_val[:-1] 
+                    if var["type"] == "char":
+                         str_def_val += '0'
+                    else:
+                        str_def_val = str_def_val[:-1]
+
                     book_file.write(str_def_val + "};\n")
                     book_file.write("   for(int i=0;i<"+ str_lenght +";i++)var." + var["name"] + "[i] = " + var["name"] + "_def[i];\n")    
                 else :
