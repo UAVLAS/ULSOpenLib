@@ -159,7 +159,7 @@ public:
     };
     QString var_ldr(){
         var.ldr[31] = 0;
-        return QString().fromLatin1(var.fw);
+        return QString().fromLatin1(var.ldr);
     };
     QString var_serial(){
         return QString("%1-%2-%3-%4")
