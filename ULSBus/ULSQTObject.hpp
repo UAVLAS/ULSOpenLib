@@ -158,7 +158,7 @@ public:
         return QString().fromLatin1(var.fw);
     };
     QString var_ldr(){
-        var.fw[31] = 0;
+        var.ldr[31] = 0;
         return QString().fromLatin1(var.fw);
     };
     QString var_serial(){
