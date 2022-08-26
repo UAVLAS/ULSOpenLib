@@ -587,6 +587,17 @@
                        ]
                 },
                 {
+                    "name": "mavlinkFrames",
+                    "type": "flags_uint8",
+                    "description": "Mavlink V2 Frame variants to send",
+                    "default": 7,
+                    "flags": [
+                     "MAV_FRAME_BODY_FRD",
+                     "MAV_FRAME_LOCAL_OFFSET_NED",
+                     "MAV_FRAME_LOCAL_NED"
+                       ]
+                },
+                {
                     "name": "configCRC",
                     "type": "uint16",
                     "description": "Configuration checksumm",
