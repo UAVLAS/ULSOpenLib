@@ -129,7 +129,7 @@
                     "type": "float",
                     "description": "Low voltage warning",
                     "units": "V",
-                    "default": "6",
+                    "default": "7",
                     "min": 5,
                     "max": 30
                 },
