@@ -120,23 +120,23 @@ class ULSBusConnectionsList:public ULSList<ULSBusConnection>
 public:
     ULSBusConnectionsList(){};
     void cnForwardExplorer(ULSBusConnection *sc);
-    _io_op_rezult cnForwardPacket(uint8_t cid,ULSBusConnection *sc);
-    _io_op_rezult cnSendGetObject(uint8_t *route,uint8_t hs,uint16_t obj_addr);
-    _io_op_rezult cnSendSetObject(uint8_t *route, uint8_t hs, uint16_t obj_addr, uint8_t *buf, uint32_t size);
-    _io_op_rezult cnSendSysSetMode(uint8_t *route,uint8_t hs,_cn_sys_mode mode);
-    _io_op_rezult cnSendSysErase(uint8_t *route,uint8_t hs,uint32_t key,uint32_t start, uint32_t len);
-    _io_op_rezult cnSendSysWrite(uint8_t *route,uint8_t hs,uint32_t key,uint32_t start, uint32_t len,uint8_t *buf);
-    _io_op_rezult cnSendSysSaveConfig(uint8_t *route,uint8_t hs,uint32_t key);
-    _io_op_rezult cnSendSysSetSignature(uint8_t *route,uint8_t hs,uint32_t key,char* fw,
+    _io_op_result cnForwardPacket(uint8_t cid,ULSBusConnection *sc);
+    _io_op_result cnSendGetObject(uint8_t *route,uint8_t hs,uint16_t obj_addr);
+    _io_op_result cnSendSetObject(uint8_t *route, uint8_t hs, uint16_t obj_addr, uint8_t *buf, uint32_t size);
+    _io_op_result cnSendSysSetMode(uint8_t *route,uint8_t hs,_cn_sys_mode mode);
+    _io_op_result cnSendSysErase(uint8_t *route,uint8_t hs,uint32_t key,uint32_t start, uint32_t len);
+    _io_op_result cnSendSysWrite(uint8_t *route,uint8_t hs,uint32_t key,uint32_t start, uint32_t len,uint8_t *buf);
+    _io_op_result cnSendSysSaveConfig(uint8_t *route,uint8_t hs,uint32_t key);
+    _io_op_result cnSendSysSetSignature(uint8_t *route,uint8_t hs,uint32_t key,char* fw,
                                         char* ldr,uint32_t ftime,uint32_t progsize,uint32_t progcrc);
 
-    _io_op_rezult cnSetClbkSys(_uls_cn_sys_callback func);
-    _io_op_rezult cnSetClbkSysAck(_uls_cn_sysack_callback func);
-    _io_op_rezult cnSendExplorer();
-    _io_op_rezult open();
+    _io_op_result cnSetClbkSys(_uls_cn_sys_callback func);
+    _io_op_result cnSetClbkSysAck(_uls_cn_sysack_callback func);
+    _io_op_result cnSendExplorer();
+    _io_op_result open();
     void close();
 
-    _io_op_rezult setDID(uint8_t cid, uint8_t did);
+    _io_op_result setDID(uint8_t cid, uint8_t did);
 
     void task(uint32_t dtms);
 };
@@ -154,30 +154,30 @@ public:
     void deviceDisconnected(uint8_t id) override;
     void ifOk() override;
 
-    _io_op_rezult cnSendExplorer();
-    _io_op_rezult cnSendStatus();
-    _io_op_rezult cnSendGetObject(uint8_t *route,uint8_t hs,uint16_t obj_addr);
-    _io_op_rezult cnSendSetObject(uint8_t *route, uint8_t hs, uint16_t obj_addr, uint8_t *buf, uint32_t size);
-    _io_op_rezult cnSendSysSetMode(uint8_t *route,uint8_t hs,_cn_sys_mode mode);
-    _io_op_rezult cnSendSysErase(uint8_t *route,uint8_t hs,uint32_t key,uint32_t start, uint32_t len);
-    _io_op_rezult cnSendSysWrite(uint8_t *route,uint8_t hs,uint32_t key,uint32_t start, uint32_t len,uint8_t *buf);
-    _io_op_rezult cnSendSysSaveConfig(uint8_t *route,uint8_t hs,uint32_t key);
-    _io_op_rezult cnSendSysSetSignature(uint8_t *route,uint8_t hs,uint32_t key,char* fw,char* ldr,uint32_t ftime,uint32_t progsize,uint32_t progcrc);
+    _io_op_result cnSendExplorer();
+    _io_op_result cnSendStatus();
+    _io_op_result cnSendGetObject(uint8_t *route,uint8_t hs,uint16_t obj_addr);
+    _io_op_result cnSendSetObject(uint8_t *route, uint8_t hs, uint16_t obj_addr, uint8_t *buf, uint32_t size);
+    _io_op_result cnSendSysSetMode(uint8_t *route,uint8_t hs,_cn_sys_mode mode);
+    _io_op_result cnSendSysErase(uint8_t *route,uint8_t hs,uint32_t key,uint32_t start, uint32_t len);
+    _io_op_result cnSendSysWrite(uint8_t *route,uint8_t hs,uint32_t key,uint32_t start, uint32_t len,uint8_t *buf);
+    _io_op_result cnSendSysSaveConfig(uint8_t *route,uint8_t hs,uint32_t key);
+    _io_op_result cnSendSysSetSignature(uint8_t *route,uint8_t hs,uint32_t key,char* fw,char* ldr,uint32_t ftime,uint32_t progsize,uint32_t progcrc);
 
-    _io_op_rezult cnProcessPacket();
-    _io_op_rezult cnProcessOurPacket();
-    _io_op_rezult cnProcessExplorer();
-    _io_op_rezult cnProcessSys();
-    _io_op_rezult cnProcessGetObject();
-    _io_op_rezult cnProcessSetObject();
-    _io_op_rezult cnProcessStatus();
+    _io_op_result cnProcessPacket();
+    _io_op_result cnProcessOurPacket();
+    _io_op_result cnProcessExplorer();
+    _io_op_result cnProcessSys();
+    _io_op_result cnProcessGetObject();
+    _io_op_result cnProcessSetObject();
+    _io_op_result cnProcessStatus();
 
-    _io_op_rezult cnForwardExplorer(ULSBusConnection *src);
-    _io_op_rezult cnForwardPacket(ULSBusConnection *src);
+    _io_op_result cnForwardExplorer(ULSBusConnection *src);
+    _io_op_result cnForwardPacket(ULSBusConnection *src);
 
 
     bool send(uint8_t cmd,uint8_t dsn_network,uint8_t dsn_id,uint32_t len);
-    _io_op_rezult cnReceive();
+    _io_op_result cnReceive();
 
 
     uint8_t cnrid(){return ((_cid & 0x03)<<6)| ifid();}

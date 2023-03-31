@@ -110,18 +110,18 @@ void ULSBusInterface::task(uint32_t dtms) {
       break;
   }
 }
-_io_op_rezult ULSBusInterface::ifSend() {
+_io_op_result ULSBusInterface::ifSend() {
   ifTxPacket->cmd |= 0x10;
   return send();
 }
-_io_op_rezult ULSBusInterface::ifReceive() {
-  _io_op_rezult rez = receive();
+_io_op_result ULSBusInterface::ifReceive() {
+  _io_op_result rez = receive();
   if (rez == IO_OK) {
     ifRxPacket->cmd &= 0x0f;
   }
   return rez;
 }
-_io_op_rezult ULSBusInterface::send() {
+_io_op_result ULSBusInterface::send() {
   if ((_state != IF_STATE_OK) && ((ifTxPacket->cmd & 0x10) != 0))
     return IO_ERROR;  // Only sys commands allowed
   ifTxPacket->src_lid = _did;
@@ -129,13 +129,13 @@ _io_op_rezult ULSBusInterface::send() {
   // DEBUG_MSG("%s: Send lid:0x%.2X cmd: 0x%.2X len:
   // %d",_name,_did,ifTxPacket->cmd,ifTxLen); if(ifTxPacket->cmd!=
   // IF_CMD_NM_HB)DEBUG_PACKET(_name,"Tx",ifTxBuf,ifTxLen);
-  _io_op_rezult rez = sendPacket();
+  _io_op_result rez = sendPacket();
   if (rez == IO_OK) _nm_timeout = IF_NM_PING_HB_TIMEOUT;
   return rez;
 }
-_io_op_rezult ULSBusInterface::receive() {
+_io_op_result ULSBusInterface::receive() {
   while (ifRxLen == 0) {
-    _io_op_rezult rez = receivePacket();
+    _io_op_result rez = receivePacket();
     if (rez != IO_OK) return rez;
     // DEBUG_MSG("%s: Received lid: 0x%.2X cmd: 0x%.2X len: %d", _name,
     //           ifRxPacket->src_lid, ifRxPacket->cmd, ifRxLen);
@@ -192,7 +192,7 @@ void ULSBusInterface::processLocal() {
   ifRxLen = 0;
 }
 
-_io_op_rezult ULSBusInterface::sendNM_REQUESTID() {
+_io_op_result ULSBusInterface::sendNM_REQUESTID() {
   ifTxPacket->cmd = IF_CMD_NM_REQUEST_ID;
   ifTxLen = IF_PACKET_NM_REQUESTID_SIZE;
 
@@ -201,14 +201,14 @@ _io_op_rezult ULSBusInterface::sendNM_REQUESTID() {
   ifTxPacket->request_id.key = _key;
   return send();
 }
-_io_op_rezult ULSBusInterface::sendNM_HB() {
+_io_op_result ULSBusInterface::sendNM_HB() {
   ifTxPacket->cmd = IF_CMD_NM_HB;
   ifTxLen = IF_PACKET_NM_HB_SIZE;
 
   ifTxPacket->hb.uid0 = __DEVICE_UNIC_ID0;
   return send();
 }
-_io_op_rezult ULSBusInterface::sendNM_SETID(uint32_t key) {
+_io_op_result ULSBusInterface::sendNM_SETID(uint32_t key) {
   ifTxPacket->cmd = IF_CMD_NM_SET_ID;
   ifTxLen = IF_PACKET_NM_SETID_SIZE;
 
@@ -218,7 +218,7 @@ _io_op_rezult ULSBusInterface::sendNM_SETID(uint32_t key) {
   ifTxPacket->set_id.key = key;
   return send();
 }
-_io_op_rezult ULSBusInterface::ifSendBLITZ(uint16_t blitz_id, uint8_t* buf,
+_io_op_result ULSBusInterface::ifSendBLITZ(uint16_t blitz_id, uint8_t* buf,
                                            uint32_t size) {
   if (_state != IF_STATE_OK) return IO_ERROR;
   if (size > 8) return IO_ERROR;

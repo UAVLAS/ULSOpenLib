@@ -57,7 +57,7 @@ typedef enum {
     IO_ERROR,
     IO_ERROR_REMOTE_HOST_NOT_CONNECTED,
     IO_HOST_NOTFOUND
-}_io_op_rezult;
+}_io_op_result;
 typedef enum {
     IF_CMD_SYS = 0,
     IF_CMD_NM_HB = 1,
@@ -133,9 +133,9 @@ public:
     virtual void close(){;};
     void task(uint32_t dtms);
 
-    _io_op_rezult ifSend();
-    _io_op_rezult ifReceive();
-    _io_op_rezult ifSendBLITZ(uint16_t blitz_id,uint8_t *buf,uint32_t size);
+    _io_op_result ifSend();
+    _io_op_result ifReceive();
+    _io_op_result ifSendBLITZ(uint16_t blitz_id,uint8_t *buf,uint32_t size);
 
     _uls_if_callback ifclbkBlitzReceived;
 
@@ -153,23 +153,23 @@ public:
     uint8_t  ifTxBuf[IF_PACKET_SIZE];
 
 protected:
-    virtual _io_op_rezult sendPacket(){return IO_ERROR;};
-    virtual _io_op_rezult receivePacket(){return IO_ERROR;};
+    virtual _io_op_result sendPacket(){return IO_ERROR;};
+    virtual _io_op_result receivePacket(){return IO_ERROR;};
     virtual void deviceConnected(uint8_t id){(void)id;};
     virtual void deviceDisconnected(uint8_t id){(void)id;};
     virtual void ifOk(){};
 private:
-    _io_op_rezult send();
-    _io_op_rezult receive();
+    _io_op_result send();
+    _io_op_result receive();
     // Process received packets
     void processLocal();
     void processSYS();
     void processNM_SETID();
     void processNM_HB();
     // Send packets
-    _io_op_rezult sendNM_REQUESTID();
-    _io_op_rezult sendNM_SETID(uint32_t key);
-    _io_op_rezult sendNM_HB();
+    _io_op_result sendNM_REQUESTID();
+    _io_op_result sendNM_SETID(uint32_t key);
+    _io_op_result sendNM_HB();
     // Utils
     uint8_t allocateId();
     uint8_t randomTimeout();
