@@ -61,7 +61,7 @@ _io_op_result ULSBusConnection::cnReceive()
 {
     while(ifReceive() == IO_OK){
         if(ifRxLen < 1) continue;
-        //  DEBUG_MSG("%s: cnReceived from:0x%.2X cmd: 0x%.2X len: %d",_name,cnRxPacket->src_did ,cnRxPacket->cmd,ifRxLen);
+        DEBUG_MSG("%s: cnReceived from:0x%.2X cmd: 0x%.2X len: %d",_name,cnRxPacket->src_did ,cnRxPacket->cmd,ifRxLen);
         cnProcessPacket();
         ifRxLen = 0;
     }
@@ -79,9 +79,9 @@ _io_op_result ULSBusConnection::cnProcessPacket()
     R[rxH] =  (((_cid & 0x03)<<6)| (cnRxPacket->src_did&0x3f));
     if(cnRxPacket->cmd == CN_CMD_EXPLORER)return cnProcessExplorer();
 
-    //    DEBUG_MSG("%s: cnProcessPacket lid:0x%.2X cmd: 0x%.2X len: %d hs:%d h:%d",_name,_did,cnTxPacket->cmd,ifTxLen,rxHs,rxH);
-    //    DEBUG_PACKET(_name," cnProcessPacket Route",cnRxPacket->pld,rxHs);
-    //    DEBUG_MSG("%s: cnProcessPacket Check route id [%.2X] vs Self [%.2X]",_name,rId,ifid());
+       DEBUG_MSG("%s: cnProcessPacket lid:0x%.2X cmd: 0x%.2X len: %d hs:%d h:%d",_name,_did,cnTxPacket->cmd,ifTxLen,rxHs,rxH);
+       DEBUG_PACKET(_name," cnProcessPacket Route",cnRxPacket->pld,rxHs);
+       DEBUG_MSG("%s: cnProcessPacket Check route id [%.2X] vs Self [%.2X]",_name,rId,ifid());
 
     if(rId != ifid())return IO_OK; // just not our packet - forgot about it
     if((rxH + 1) == rxHs) return cnProcessOurPacket(); // OMG it for us !!!
@@ -111,8 +111,8 @@ _io_op_result ULSBusConnection::cnProcessExplorer()
     px->type = _dev->typeCode;
     uint32_t txHs = cnTxPacket->hop&0xF;
     ifTxLen = sizeof (_cn_packet_status) + txHs + 1;
-    //    DEBUG_MSG("%s: cnAnswer lid:0x%.2X cmd: 0x%.2X len: %d",_name,_did,cnTxPacket->cmd,ifTxLen);
-    //    DEBUG_PACKET(_name,"cnAnswer Route",cnTxPacket->pld,txHs);
+        DEBUG_MSG("%s: cnAnswer lid:0x%.2X cmd: 0x%.2X len: %d",_name,_did,cnTxPacket->cmd,ifTxLen);
+        DEBUG_PACKET(_name,"cnAnswer Route",cnTxPacket->pld,txHs);
     return ifSend();
 }
 _io_op_result ULSBusConnection::cnProcessGetObject()
@@ -133,8 +133,8 @@ _io_op_result ULSBusConnection::cnProcessGetObject()
     obj->getData(px);
     uint32_t txHs = cnTxPacket->hop&0xF;
     ifTxLen = 1 + txHs + 2 + obj->size;
-    //  DEBUG_MSG("%s: cnAnswer Object lid:0x%.2X cmd: 0x%.2X len: %d",_name,_did,cnTxPacket->cmd,ifTxLen);
-    //  DEBUG_PACKET(_name,"cnAnswer Route",cnTxPacket->pld,txHs);
+      DEBUG_MSG("%s: cnAnswer Object lid:0x%.2X cmd: 0x%.2X len: %d",_name,_did,cnTxPacket->cmd,ifTxLen);
+      DEBUG_PACKET(_name,"cnAnswer Route",cnTxPacket->pld,txHs);
     return ifSend();
 
 }
@@ -309,9 +309,9 @@ _io_op_result ULSBusConnection::cnForwardExplorer(ULSBusConnection *sc)
         cnTxPacket->pld[i] =  sc->cnRxPacket->pld[i];
     }
     cnTxPacket->hop = sc->cnRxPacket->hop + 0x11; // Inc hop and hopSize
-    // DEBUG_MSG("%s: cnForward Explorer Added route: %.2X",_name,cnTxPacket->pld[rxHs]);
+    DEBUG_MSG("%s: cnForward Explorer Added route: %.2X",_name,cnTxPacket->pld[rxHs]);
     ifTxLen = (cnTxPacket->hop & 0xF) + 1;
-    //  DEBUG_MSG("%s: cnForward Explorer lid:0x%.2X cmd: 0x%.2X len: %d",_name,_did,cnTxPacket->cmd,ifTxLen);
+    DEBUG_MSG("%s: cnForward Explorer lid:0x%.2X cmd: 0x%.2X len: %d",_name,_did,cnTxPacket->cmd,ifTxLen);
     return  ifSend();
 }
 _io_op_result ULSBusConnection::cnForwardPacket(ULSBusConnection *sc)
@@ -321,7 +321,7 @@ _io_op_result ULSBusConnection::cnForwardPacket(ULSBusConnection *sc)
     cnTxPacket->hop = sc->cnRxPacket->hop + 0x10;
 
     ifTxLen = sc->ifRxLen;
-    // DEBUG_MSG("%s: cnForward lid:0x%.2X cmd: 0x%.2X len: %d",_name,_did,cnTxPacket->cmd,ifTxLen);
+    DEBUG_MSG("%s: cnForward lid:0x%.2X cmd: 0x%.2X len: %d",_name,_did,cnTxPacket->cmd,ifTxLen);
     return  ifSend();
 }
 

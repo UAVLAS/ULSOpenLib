@@ -126,9 +126,8 @@ _io_op_result ULSBusInterface::send() {
     return IO_ERROR;  // Only sys commands allowed
   ifTxPacket->src_lid = _did;
   ifTxLen += IF_PACKET_HEADER_SIZE;
-  // DEBUG_MSG("%s: Send lid:0x%.2X cmd: 0x%.2X len:
-  // %d",_name,_did,ifTxPacket->cmd,ifTxLen); if(ifTxPacket->cmd!=
-  // IF_CMD_NM_HB)DEBUG_PACKET(_name,"Tx",ifTxBuf,ifTxLen);
+   DEBUG_MSG("%s: Send lid:0x%.2X cmd: 0x%.2X len: %d",_name,_did,ifTxPacket->cmd,ifTxLen);
+   if(ifTxPacket->cmd!=IF_CMD_NM_HB)DEBUG_PACKET(_name,"Tx",ifTxBuf,ifTxLen);
   _io_op_result rez = sendPacket();
   if (rez == IO_OK) _nm_timeout = IF_NM_PING_HB_TIMEOUT;
   return rez;
@@ -137,10 +136,10 @@ _io_op_result ULSBusInterface::receive() {
   while (ifRxLen == 0) {
     _io_op_result rez = receivePacket();
     if (rez != IO_OK) return rez;
-    // DEBUG_MSG("%s: Received lid: 0x%.2X cmd: 0x%.2X len: %d", _name,
-    //           ifRxPacket->src_lid, ifRxPacket->cmd, ifRxLen);
-    // if(ifRxPacket->cmd!= IF_CMD_NM_HB)
-    // DEBUG_PACKET(_name,"Rx",ifRxBuf,ifRxLen);
+     DEBUG_MSG("%s: Received lid: 0x%.2X cmd: 0x%.2X len: %d", _name,
+               ifRxPacket->src_lid, ifRxPacket->cmd, ifRxLen);
+     if(ifRxPacket->cmd!= IF_CMD_NM_HB)
+     DEBUG_PACKET(_name,"Rx",ifRxBuf,ifRxLen);
 
     ifRxLen -= IF_PACKET_HEADER_SIZE;
     if (ifRxPacket->src_lid == _did) {  // error duplicate address
@@ -197,7 +196,7 @@ _io_op_result ULSBusInterface::sendNM_REQUESTID() {
   ifTxLen = IF_PACKET_NM_REQUESTID_SIZE;
 
   _key = __DEVICE_KEY ^ _key_cntr;
-  // DEBUG_MSG("%s: send REQUEST ID lid:0x%.2X KEY: 0x%.4X ",_name,_did, _key);
+   DEBUG_MSG("%s: send REQUEST ID lid:0x%.2X KEY: 0x%.4X ",_name,_did, _key);
   ifTxPacket->request_id.key = _key;
   return send();
 }
@@ -213,8 +212,8 @@ _io_op_result ULSBusInterface::sendNM_SETID(uint32_t key) {
   ifTxLen = IF_PACKET_NM_SETID_SIZE;
 
   ifTxPacket->set_id.new_id = allocateId();
-  // DEBUG_MSG("%s: send SET ID lid:0x%.2X NEWID: 0x%.2X KEY:
-  // 0x%.4X",_name,_did, ifTxPacket->set_id.new_id,key);
+   DEBUG_MSG("%s: send SET ID lid:0x%.2X NEWID: 0x%.2X KEY:\
+   0x%.4X",_name,_did, ifTxPacket->set_id.new_id,key);
   ifTxPacket->set_id.key = key;
   return send();
 }
@@ -262,8 +261,8 @@ uint8_t ULSBusInterface::randomTimeout() {
   return 0;
 }
 void ULSBusInterface::processNM_SETID() {
-  // DEBUG_MSG("%s: Received SET ID new ID:0x%.2X REMKEY:0x%.4X  OUR KEY:
-  // 0x%.4X",_name,ifTxPacket->set_id.new_id,ifRxPacket->set_id.key,_key);
+   DEBUG_MSG("%s: Received SET ID new ID:0x%.2X REMKEY:0x%.4X  OUR KEY:\
+   0x%.4X",_name,ifTxPacket->set_id.new_id,ifRxPacket->set_id.key,_key);
   if (ifRxPacket->set_id.key != _key) return;
   _did = ifRxPacket->set_id.new_id;
   _state = IF_STATE_OK;

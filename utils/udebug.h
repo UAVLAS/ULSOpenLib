@@ -29,4 +29,10 @@ void uDebugPacket(const char* msg,const char* msg2, uint8_t *buf,uint32_t len);
 #define DEBUG_PACKET(MSG,MSG2,BUF,LEN) {(void)MSG;(void)MSG2;(void)BUF;(void)LEN;}
 #endif
 
+
+#ifndef ULS_DBUG_MSG
+#define ULS_DBUG_MSG(x) printf("%s\n",x);
+#endif
+
 #endif // UDEBUG_H
+
