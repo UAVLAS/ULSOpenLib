@@ -294,7 +294,7 @@ def generate(objects,devices,output):
     book_file.write("class ULSQTDevicesLibrary {\n public:\n ULSQTDevicesLibrary() {\n")
 
     for dev in devices:
-        book_file.write("  devTypes[__ULS_DEVICE_TYPE_" + dev["name"] + "] = (const char*)__ULS_DEVICE_TYPE_" + dev["name"] + ";\n")
+        book_file.write("  devTypes[__ULS_DEVICE_TYPE_" + dev["name"] + "] = (const char*)__ULS_DEVICE_TYPE_" + dev["name"] + "_NAME;\n")
 
     book_file.write("  };\n  QHash<uint,const char*> devTypes;\n")
     book_file.write("  ULSD_ULSX* createInstance(uint typecode){\n     switch(typecode){\n")
