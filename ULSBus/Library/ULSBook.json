@@ -1250,6 +1250,25 @@
                     "description": "Debug datareceiver B"
                 }
             ]
+        },
+        {
+            "name": "ULSQR1R2FttBufs",
+            "description": "Receiver fft data",
+            "access": "read",
+            "variables": [
+                {
+                    "name": "beansA",
+                    "type": "float",
+                    "lenght": 512,
+                    "description": "Debug datareceiver A"
+                },
+                {
+                    "name": "beansB",
+                    "type": "float",
+                    "lenght": 512,
+                    "description": "Debug datareceiver B"
+                }
+            ]
         }
     ],
     "Devices": [
@@ -1342,7 +1361,13 @@
                     "name": "debug",
                     "object": "ULSQR1R2Debug",
                     "address": "0x0030"
+                },
+                {
+                    "name": "fftbufs",
+                    "object": "ULSQR1R2FttBufs",
+                    "address": "0x0100"
                 }
+
             ]
         }
     ]
