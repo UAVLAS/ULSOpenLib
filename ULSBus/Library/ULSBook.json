@@ -1252,15 +1252,15 @@
             ]
         },
         {
-            "name": "ULSQR1R2FttBufs",
+            "name": "ULSQR1R2FFT",
             "description": "Receiver fft data",
             "access": "read",
             "variables": [
                 {
                     "name": "beans",
                     "type": "float",
-                    "lenght": 256,
-                    "description": "Debug datareceiver A"
+                    "lenght": 128,
+                    "description": "Debug receiver FFT"
                 }
 
             ]
@@ -1358,8 +1358,8 @@
                     "address": "0x0030"
                 },
                 {
-                    "name": "fftbufs",
-                    "object": "ULSQR1R2FttBufs",
+                    "name": "fftbuf",
+                    "object": "ULSQR1R2FFT",
                     "address": "0x0100"
                 }
 
