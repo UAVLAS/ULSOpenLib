@@ -1257,17 +1257,12 @@
             "access": "read",
             "variables": [
                 {
-                    "name": "beansA",
+                    "name": "beans",
                     "type": "float",
-                    "lenght": 128,
+                    "lenght": 256,
                     "description": "Debug datareceiver A"
-                },
-                {
-                    "name": "beansB",
-                    "type": "float",
-                    "lenght": 128,
-                    "description": "Debug datareceiver B"
                 }
+
             ]
         }
     ],
