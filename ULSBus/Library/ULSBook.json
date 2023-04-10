@@ -1259,13 +1259,13 @@
                 {
                     "name": "beansA",
                     "type": "float",
-                    "lenght": 512,
+                    "lenght": 256,
                     "description": "Debug datareceiver A"
                 },
                 {
                     "name": "beansB",
                     "type": "float",
-                    "lenght": 512,
+                    "lenght": 256,
                     "description": "Debug datareceiver B"
                 }
             ]
