@@ -683,6 +683,14 @@
                     "max": 30.0
                 },
                 {
+                    "name": "Vled",
+                    "type": "float",
+                    "description": "Led Power Voltage",
+                    "units": "V",
+                    "min": 0.0,
+                    "max": 30.0
+                },
+                {
                     "name": "tb",
                     "type": "float",
                     "description": "Board temperatire",
