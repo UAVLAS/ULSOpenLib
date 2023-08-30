@@ -80,6 +80,7 @@ def generate(objects,devices,output):
     
     print("Devices:")
     for dev in devices:
+        print(" - Device: " + dev["name"] + " Type: " + dev["type"])
         book_file.write("#define __ULS_DEVICE_TYPE_" + dev["name"] + " (" + dev["type"] + ")\n")
     book_file.write('\n')
     for dev in devices:
@@ -91,6 +92,8 @@ def generate(objects,devices,output):
     generate_structures.generate(objects,devices,book_file)
     print("Objects:")
     for obj in objects:
+        print(" ")
+        print(" - " + obj["name"] + " Description: " + obj["description"])
         obj_write = (obj["access"] == "config" or obj["access"] == "readwrite" or obj["access"] == "write")
         obj_struct = generate_structures._obj_struct_name_prefix + obj["name"]
         obj_class = _obj_class_name_prefix + obj["name"]
@@ -109,7 +112,9 @@ def generate(objects,devices,output):
         # Object definitions
         book_file.write(" Q_OBJECT\n")
         book_file.write("\n public:\n")
+        print("   Variables:")
         for var in obj["variables"]:
+            print("   - " +  var["name"] + "[" + var["type"] + "] - " + var["description"])
             book_file.write("    Q_PROPERTY(")
             if "lenght" in var:
                 book_file.write("QVariant")
@@ -220,7 +225,13 @@ def generate(objects,devices,output):
             book_file.write("  void defaultConfig() override {\n")
             for var in obj["variables"]:
                 if "lenght" in var:
-                    def_len = len(var["default"])
+                    if("default" in var):
+                        def_len = len(var["default"])
+                    else:
+                        print("-------------------------")
+                        print("Error: No default values for object: "+obj["name"] + " variable: "+var["name"])
+                        print("-------------------------")
+                        quit()
                     if def_len > var["lenght"]: def_len = var["lenght"]
                     if var["type"] == "char": def_len += 1
                     str_lenght = str(def_len)

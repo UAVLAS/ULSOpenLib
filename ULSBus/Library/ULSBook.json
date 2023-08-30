@@ -61,28 +61,28 @@
                 {
                     "name": "imua",
                     "type": "float",
-                    "lenght":3,
+                    "lenght": 3,
                     "description": "IMU accelerations",
                     "units": "m/ss"
                 },
                 {
                     "name": "imug",
                     "type": "float",
-                    "lenght":3,
+                    "lenght": 3,
                     "description": "IMU gyroscopes",
                     "units": "deg/s"
                 },
                 {
                     "name": "imum",
                     "type": "float",
-                    "lenght":3,
+                    "lenght": 3,
                     "description": "IMU magnetometers",
                     "units": "mG"
                 },
                 {
                     "name": "imu",
                     "type": "float",
-                    "lenght":3,
+                    "lenght": 3,
                     "description": "IMU attitude",
                     "units": "deg"
                 }
@@ -136,7 +136,7 @@
                 {
                     "name": "magCalOffset",
                     "type": "float",
-                    "lenght":3,
+                    "lenght": 3,
                     "description": "Compass calibration offset",
                     "default": [
                         0,
@@ -149,7 +149,7 @@
                 {
                     "name": "magCalScale",
                     "type": "float",
-                    "lenght":3,
+                    "lenght": 3,
                     "description": "Compass calibration scale",
                     "default": [
                         1,
@@ -328,98 +328,98 @@
                 {
                     "name": "ang",
                     "type": "float",
-                    "lenght":3,
+                    "lenght": 3,
                     "description": "Receiver angular position in transmitter frame",
                     "units": "deg"
                 },
                 {
                     "name": "pos",
                     "type": "float",
-                    "lenght":3,
+                    "lenght": 3,
                     "description": "Receiver position in transmitter frame",
                     "units": "m"
                 },
                 {
                     "name": "vel",
                     "type": "float",
-                    "lenght":3,
+                    "lenght": 3,
                     "description": "Receiver velocity in transmitter frame",
                     "units": "m/s"
                 },
                 {
                     "name": "gimu",
                     "type": "float",
-                    "lenght":3,
+                    "lenght": 3,
                     "description": "Transmitter orientation (roll, pitch, yaw)",
                     "units": "deg"
                 },
                 {
                     "name": "rel_pos_ned",
                     "type": "float",
-                    "lenght":3,
+                    "lenght": 3,
                     "description": "Relative Position of transmitter (offset from receiver)in NED (North East Down)",
                     "units": "m"
                 },
                 {
                     "name": "rel_vel_ned",
                     "type": "float",
-                    "lenght":3,
+                    "lenght": 3,
                     "description": "Ralative velocity of tranmitter (offset from receiver) in NED (North East Down)",
                     "units": "m/s"
                 },
                 {
                     "name": "rel_pos_frd",
                     "type": "float",
-                    "lenght":3,
+                    "lenght": 3,
                     "description": "Relative Position of transmitter (offset from receiver) in FRD (Forward Right Down)",
                     "units": "m"
                 },
                 {
                     "name": "rel_vel_frd",
                     "type": "float",
-                    "lenght":3,
+                    "lenght": 3,
                     "description": "Ralative velocity of tranmitter (offset from receiver) in FRD (Forward Right Down)",
                     "units": "m/s"
                 },
                 {
                     "name": "pos_wld",
                     "type": "uint32",
-                    "lenght":3,
+                    "lenght": 3,
                     "description": "World Position of transmitter  (Lat Lon Msl)",
                     "units": "deg,deg,cm"
                 },
                 {
                     "name": "vel_wld",
                     "type": "float",
-                    "lenght":3,
+                    "lenght": 3,
                     "description": "World velocity of tranmitter in NED (North East Down)",
                     "units": "m/s"
                 },
                 {
                     "name": "abs_pos_ned",
                     "type": "float",
-                    "lenght":3,
+                    "lenght": 3,
                     "description": "Absolute position of transmitter (vehicle frame) in NED (North East Down)",
                     "units": "m"
                 },
                 {
                     "name": "abs_vel_ned",
                     "type": "float",
-                    "lenght":3,
+                    "lenght": 3,
                     "description": "Absolute velocity of tranmitter (vehicle frame)in NED (North East Down)",
                     "units": "m/s"
                 },
                 {
                     "name": "vehicle_abs_pos_ned",
                     "type": "float",
-                    "lenght":3,
+                    "lenght": 3,
                     "description": "Absolute Position of vehicle in NED (North East Down)",
                     "units": "m"
                 },
                 {
                     "name": "vehicle_abs_vel_ned",
                     "type": "float",
-                    "lenght":3,
+                    "lenght": 3,
                     "description": "Absolute velocity of vehicle in NED (North East Down)",
                     "units": "m/s"
                 },
@@ -446,14 +446,14 @@
                 {
                     "name": "ctrl",
                     "type": "flags_uint8",
-                    "description": "Transmitter controll byte",
+                    "description": "Transmitter control byte",
                     "default": 1,
                     "flags": [
-                     "receiver_enabled",
-                     "noise_debug",
-                     "disable_imu",
-                     "disable_mrx"
-                       ]
+                        "receiver_enabled",
+                        "noise_debug",
+                        "disable_imu",
+                        "disable_mrx"
+                    ]
                 },
                 {
                     "name": "sensitivity",
@@ -548,7 +548,7 @@
                     "name": "i2cAddress",
                     "type": "uint8",
                     "description": "I2C Device Address",
-                    "default": 86 
+                    "default": 86
                 },
                 {
                     "name": "i2cProtocol",
@@ -556,9 +556,9 @@
                     "description": "I2C Protocol",
                     "default": 0,
                     "opts": [
-                     "Disabled",
-                     "Ardupilot"
-                       ]
+                        "Disabled",
+                        "Ardupilot"
+                    ]
                 },
                 {
                     "name": "uartProtocol",
@@ -566,10 +566,10 @@
                     "description": "UART Protocol",
                     "default": 1,
                     "opts": [
-                     "Disabled",
-                     "MavlinkV2",
-                     "APx"
-                       ]
+                        "Disabled",
+                        "MavlinkV2",
+                        "APx"
+                    ]
                 },
                 {
                     "name": "uartBrt",
@@ -577,14 +577,14 @@
                     "description": "UART Baudrate",
                     "default": 4,
                     "opts": [
-                     "19200",
-                     "38400",
-                     "57600",
-                     "115200",
-                     "230400",
-                     "460800",
-                     "921600"
-                       ]
+                        "19200",
+                        "38400",
+                        "57600",
+                        "115200",
+                        "230400",
+                        "460800",
+                        "921600"
+                    ]
                 },
                 {
                     "name": "mavlinkFrames",
@@ -592,10 +592,10 @@
                     "description": "Mavlink V2 Frame variants to send",
                     "default": 7,
                     "flags": [
-                     "MAV_FRAME_BODY_FRD",
-                     "MAV_FRAME_LOCAL_OFFSET_NED",
-                     "MAV_FRAME_LOCAL_NED"
-                       ]
+                        "MAV_FRAME_BODY_FRD",
+                        "MAV_FRAME_LOCAL_OFFSET_NED",
+                        "MAV_FRAME_LOCAL_NED"
+                    ]
                 },
                 {
                     "name": "configCRC",
@@ -603,8 +603,6 @@
                     "description": "Configuration checksumm",
                     "default": 0
                 }
-
-
             ]
         },
         {
@@ -639,37 +637,50 @@
                 {
                     "name": "error",
                     "type": "uint32",
-                    "description": "Device error bitfield"
+                    "description": "Device active error bitfield",
+                    "default": 0,
+                    "flags": [
+                        "illumination_error",
+                        "compass_error",
+                        "uart_rx_error",
+                        "uart_tx_error",
+                        "can_error"
+                    ]
                 },
                 {
-                    "name": "Iled",
+                    "name": "error_history",
+                    "type": "uint32",
+                    "description": "Device errors history bitfield",
+                    "default": 0,
+                    "flags": [
+                        "illumination_error",
+                        "compass_error",
+                        "uart_rx_error",
+                        "uart_tx_error",
+                        "can_error"
+                    ]
+                },
+                {
+                    "name": "Ialed",
                     "type": "float",
                     "lenght": 37,
-                    "description": "Leds current"
+                    "description": "Leds angular current",
+                    "units": "C"
                 },
                 {
-                    "name": "vs",
+                    "name": "Idled",
+                    "type": "float",
+                    "lenght": 37,
+                    "description": "Leds distance current",
+                    "units": "C"
+                },
+                {
+                    "name": "Vs",
                     "type": "float",
                     "description": "Supply Voltage",
                     "units": "V",
                     "min": 0.0,
                     "max": 30.0
-                },
-                {
-                    "name": "ih",
-                    "type": "float",
-                    "description": "Leds current monitor hi side",
-                    "units": "A",
-                    "min": 0.0,
-                    "max": 3.0
-                },
-                {
-                    "name": "il",
-                    "type": "float",
-                    "description": "Leds current monitor low side",
-                    "units": "A",
-                    "min": 0.0,
-                    "max": 3.0
                 },
                 {
                     "name": "tb",
@@ -678,36 +689,30 @@
                     "units": "C"
                 },
                 {
-                    "name": "timu",
-                    "type": "float",
-                    "description": "IMU temperatire",
-                    "units": "C"
-                },
-                {
                     "name": "imua",
                     "type": "float",
-                    "lenght":3,
+                    "lenght": 3,
                     "description": "IMU accelerations",
                     "units": "m/ss"
                 },
                 {
                     "name": "imug",
                     "type": "float",
-                    "lenght":3,
+                    "lenght": 3,
                     "description": "IMU gyroscopes",
                     "units": "deg/s"
                 },
                 {
                     "name": "imum",
                     "type": "float",
-                    "lenght":3,
+                    "lenght": 3,
                     "description": "IMU magnetometers",
                     "units": "mG"
                 },
                 {
                     "name": "imu",
                     "type": "float",
-                    "lenght":3,
+                    "lenght": 3,
                     "description": "IMU attitude",
                     "units": "deg"
                 }
@@ -735,7 +740,7 @@
                     "name": "power",
                     "type": "float",
                     "description": "Illumination power",
-                    "units": "mA",
+                    "units": "%",
                     "default": "100",
                     "min": 50,
                     "max": 150
@@ -761,7 +766,7 @@
                 {
                     "name": "magCalOffset",
                     "type": "float",
-                    "lenght":3,
+                    "lenght": 3,
                     "description": "Compass calibration offset",
                     "default": [
                         0,
@@ -774,7 +779,7 @@
                 {
                     "name": "magCalScale",
                     "type": "float",
-                    "lenght":3,
+                    "lenght": 3,
                     "description": "Compass calibration scale",
                     "default": [
                         1,
@@ -808,6 +813,64 @@
                     "type": "uint16",
                     "description": "Configuration checksumm",
                     "default": 0
+                }
+            ]
+        },
+        {
+            "name": "ULSQT1R2control",
+            "description": "ULSQT1-R2 control",
+            "access": "config",
+            "variables": [
+                {
+                    "name": "ctrl",
+                    "type": "uint32",
+                    "description": "Device control bitfield",
+                    "default": 0,
+                    "flags": [
+                        "enable_manual_levels",
+                        "imu_ovverade_enable",
+                        "imu_compass_ovverade_enable"
+                    ]
+                },
+                {
+                    "name": "emitters_disable_mask1",
+                    "type": "uint32",
+                    "description": "Emitters disable mask 1 [1-32]",
+                    "default": 0
+                },
+                {
+                    "name": "emitters_disable_mask2",
+                    "type": "uint32",
+                    "description": "Emitters disable mask 1 [32-64]",
+                    "default": 0
+                },
+                {
+                    "name": "Va_lvl",
+                    "type": "uint8",
+                    "default": 0,
+                    "description": "Emitters ASD manual level ",
+                    "min": 0,
+                    "max": 0
+                },
+                {
+                    "name": "Vd_lvl",
+                    "type": "uint8",
+                    "default": 0,
+                    "description": "Emitter DPTF manual level [0-64]",
+                    "min": 0,
+                    "max": 0
+                },
+                {
+                    "name": "imu_override",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "IMU ovveride [roll,pitch,yaw]",
+                    "units": "deg",
+                    "default": [
+                        0,
+                        0,
+                        0
+                    ]
                 }
             ]
         },
@@ -953,98 +1016,98 @@
                 {
                     "name": "ang",
                     "type": "float",
-                    "lenght":3,
+                    "lenght": 3,
                     "description": "Receiver angular position in transmitter frame",
                     "units": "deg"
                 },
                 {
                     "name": "pos",
                     "type": "float",
-                    "lenght":3,
+                    "lenght": 3,
                     "description": "Receiver position in transmitter frame",
                     "units": "m"
                 },
                 {
                     "name": "vel",
                     "type": "float",
-                    "lenght":3,
+                    "lenght": 3,
                     "description": "Receiver velocity in transmitter frame",
                     "units": "m/s"
                 },
                 {
                     "name": "gimu",
                     "type": "float",
-                    "lenght":3,
+                    "lenght": 3,
                     "description": "Transmitter orientation (roll, pitch, yaw)",
                     "units": "deg"
                 },
                 {
                     "name": "rel_pos_ned",
                     "type": "float",
-                    "lenght":3,
+                    "lenght": 3,
                     "description": "Relative Position of transmitter (offset from receiver)in NED (North East Down)",
                     "units": "m"
                 },
                 {
                     "name": "rel_vel_ned",
                     "type": "float",
-                    "lenght":3,
+                    "lenght": 3,
                     "description": "Ralative velocity of tranmitter (offset from receiver) in NED (North East Down)",
                     "units": "m/s"
                 },
                 {
                     "name": "rel_pos_frd",
                     "type": "float",
-                    "lenght":3,
+                    "lenght": 3,
                     "description": "Relative Position of transmitter (offset from receiver) in FRD (Forward Right Down)",
                     "units": "m"
                 },
                 {
                     "name": "rel_vel_frd",
                     "type": "float",
-                    "lenght":3,
+                    "lenght": 3,
                     "description": "Ralative velocity of tranmitter (offset from receiver) in FRD (Forward Right Down)",
                     "units": "m/s"
                 },
                 {
                     "name": "pos_wld",
                     "type": "uint32",
-                    "lenght":3,
+                    "lenght": 3,
                     "description": "World Position of transmitter  (Lat Lon Msl)",
                     "units": "deg,deg,cm"
                 },
                 {
                     "name": "vel_wld",
                     "type": "float",
-                    "lenght":3,
+                    "lenght": 3,
                     "description": "World velocity of tranmitter in NED (North East Down)",
                     "units": "m/s"
                 },
                 {
                     "name": "abs_pos_ned",
                     "type": "float",
-                    "lenght":3,
+                    "lenght": 3,
                     "description": "Absolute position of transmitter (vehicle frame) in NED (North East Down)",
                     "units": "m"
                 },
                 {
                     "name": "abs_vel_ned",
                     "type": "float",
-                    "lenght":3,
+                    "lenght": 3,
                     "description": "Absolute velocity of tranmitter (vehicle frame)in NED (North East Down)",
                     "units": "m/s"
                 },
                 {
                     "name": "vehicle_abs_pos_ned",
                     "type": "float",
-                    "lenght":3,
+                    "lenght": 3,
                     "description": "Absolute Position of vehicle in NED (North East Down)",
                     "units": "m"
                 },
                 {
                     "name": "vehicle_abs_vel_ned",
                     "type": "float",
-                    "lenght":3,
+                    "lenght": 3,
                     "description": "Absolute velocity of vehicle in NED (North East Down)",
                     "units": "m/s"
                 },
@@ -1071,14 +1134,14 @@
                 {
                     "name": "ctrl",
                     "type": "flags_uint8",
-                    "description": "Transmitter controll byte",
+                    "description": "Transmitter control byte",
                     "default": 1,
                     "flags": [
-                     "receiver_enabled",
-                     "noise_debug",
-                     "disable_imu",
-                     "disable_mrx"
-                       ]
+                        "receiver_enabled",
+                        "noise_debug",
+                        "disable_imu",
+                        "disable_mrx"
+                    ]
                 },
                 {
                     "name": "sensitivity",
@@ -1173,7 +1236,7 @@
                     "name": "i2cAddress",
                     "type": "uint8",
                     "description": "I2C Device Address",
-                    "default": 86 
+                    "default": 86
                 },
                 {
                     "name": "i2cProtocol",
@@ -1181,9 +1244,9 @@
                     "description": "I2C Protocol",
                     "default": 0,
                     "opts": [
-                     "Disabled",
-                     "Ardupilot"
-                       ]
+                        "Disabled",
+                        "Ardupilot"
+                    ]
                 },
                 {
                     "name": "uartProtocol",
@@ -1191,10 +1254,10 @@
                     "description": "UART Protocol",
                     "default": 1,
                     "opts": [
-                     "Disabled",
-                     "MavlinkV2",
-                     "APx"
-                       ]
+                        "Disabled",
+                        "MavlinkV2",
+                        "APx"
+                    ]
                 },
                 {
                     "name": "uartBrt",
@@ -1202,14 +1265,14 @@
                     "description": "UART Baudrate",
                     "default": 4,
                     "opts": [
-                     "19200",
-                     "38400",
-                     "57600",
-                     "115200",
-                     "230400",
-                     "460800",
-                     "921600"
-                       ]
+                        "19200",
+                        "38400",
+                        "57600",
+                        "115200",
+                        "230400",
+                        "460800",
+                        "921600"
+                    ]
                 },
                 {
                     "name": "mavlinkFrames",
@@ -1217,10 +1280,10 @@
                     "description": "Mavlink V2 Frame variants to send",
                     "default": 7,
                     "flags": [
-                     "MAV_FRAME_BODY_FRD",
-                     "MAV_FRAME_LOCAL_OFFSET_NED",
-                     "MAV_FRAME_LOCAL_NED"
-                       ]
+                        "MAV_FRAME_BODY_FRD",
+                        "MAV_FRAME_LOCAL_OFFSET_NED",
+                        "MAV_FRAME_LOCAL_NED"
+                    ]
                 },
                 {
                     "name": "configCRC",
@@ -1228,8 +1291,6 @@
                     "description": "Configuration checksumm",
                     "default": 0
                 }
-
-
             ]
         },
         {
@@ -1262,7 +1323,6 @@
                     "lenght": 128,
                     "description": "Debug receiver FFT"
                 }
-
             ]
         }
     ],
@@ -1276,7 +1336,8 @@
                     "name": "status",
                     "object": "ULSQT1R1Status",
                     "address": "0x0010"
-                }, {
+                },
+                {
                     "name": "cfg",
                     "object": "ULSQT1R1Config",
                     "address": "0x0020",
@@ -1293,12 +1354,14 @@
                     "name": "status",
                     "object": "ULSQR1R1Status",
                     "address": "0x0010"
-                }, {
+                },
+                {
                     "name": "cfg",
                     "object": "ULSQR1R1Config",
                     "address": "0x0020",
                     "type": "config"
-                }, {
+                },
+                {
                     "name": "debug",
                     "object": "ULSQR1R1Debug",
                     "address": "0x0030"
@@ -1309,17 +1372,13 @@
             "name": "ULSQG1R1",
             "description": "UAVLAS Reserved device",
             "type": "0x0012",
-            "objects": [
-                
-            ]
+            "objects": []
         },
         {
             "name": "ULSQM1R1",
             "description": "UAVLAS Reserved device",
             "type": "0x0013",
-            "objects": [
-                
-            ]
+            "objects": []
         },
         {
             "name": "ULSQT1R2",
@@ -1330,11 +1389,17 @@
                     "name": "status",
                     "object": "ULSQT1R2Status",
                     "address": "0x0010"
-                }, {
+                },
+                {
                     "name": "cfg",
                     "object": "ULSQT1R2Config",
                     "address": "0x0020",
                     "type": "config"
+                },
+                {
+                    "name": "control",
+                    "object": "ULSQT1R2control",
+                    "address": "0x0030"
                 }
             ]
         },
@@ -1347,12 +1412,14 @@
                     "name": "status",
                     "object": "ULSQR1R2Status",
                     "address": "0x0010"
-                }, {
+                },
+                {
                     "name": "cfg",
                     "object": "ULSQR1R2Config",
                     "address": "0x0020",
                     "type": "config"
-                }, {
+                },
+                {
                     "name": "debug",
                     "object": "ULSQR1R2Debug",
                     "address": "0x0030"
@@ -1362,7 +1429,6 @@
                     "object": "ULSQR1R2FFT",
                     "address": "0x0100"
                 }
-
             ]
         }
     ]
