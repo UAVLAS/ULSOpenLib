@@ -827,7 +827,7 @@
         {
             "name": "ULSQT1R2control",
             "description": "ULSQT1-R2 control",
-            "access": "config",
+            "access": "read-write",
             "variables": [
                 {
                     "name": "ctrl",
