@@ -640,6 +640,7 @@
                     "description": "Device active error bitfield",
                     "default": 0,
                     "flags": [
+                        "emitter_task_error",
                         "illumination_error",
                         "compass_error",
                         "uart_rx_error",
@@ -653,6 +654,7 @@
                     "description": "Device errors history bitfield",
                     "default": 0,
                     "flags": [
+                        "emitter_task_error",
                         "illumination_error",
                         "compass_error",
                         "uart_rx_error",
@@ -664,14 +666,14 @@
                     "name": "Ialed",
                     "type": "float",
                     "lenght": 37,
-                    "description": "Leds angular current",
+                    "description": "Leds ADS current",
                     "units": "C"
                 },
                 {
                     "name": "Idled",
                     "type": "float",
-                    "lenght": 37,
-                    "description": "Leds distance current",
+                    "lenght": 4,
+                    "description": "Leds DPTF current",
                     "units": "C"
                 },
                 {
@@ -689,6 +691,22 @@
                     "units": "V",
                     "min": 0.0,
                     "max": 30.0
+                },
+                {
+                    "name": "Va_lvl",
+                    "type": "float",
+                    "description": "Led ADS Voltage level",
+                    "units": "step",
+                    "min": 0.0,
+                    "max": 64.0
+                },
+                {
+                    "name": "Vd_lvl",
+                    "type": "float",
+                    "description": "Led DPTF Voltage level",
+                    "units": "step",
+                    "min": 0.0,
+                    "max": 64.0
                 },
                 {
                     "name": "tb",
