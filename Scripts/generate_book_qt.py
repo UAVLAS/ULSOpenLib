@@ -94,7 +94,7 @@ def generate(objects,devices,output):
     for obj in objects:
         print(" ")
         print(" - " + obj["name"] + " Description: " + obj["description"])
-        obj_write = (obj["access"] == "config" or obj["access"] == "readwrite" or obj["access"] == "write")
+        obj_write = (obj["access"] == "config" or obj["access"] == "read-write" or obj["access"] == "write")
         obj_struct = generate_structures._obj_struct_name_prefix + obj["name"]
         obj_class = _obj_class_name_prefix + obj["name"]
        # book_file.write("//" + obj["description"] + "\n")
