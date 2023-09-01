@@ -694,7 +694,7 @@
                 },
                 {
                     "name": "Va_lvl",
-                    "type": "float",
+                    "type": "uint8",
                     "description": "Led ADS Voltage level",
                     "units": "step",
                     "min": 0.0,
@@ -702,7 +702,7 @@
                 },
                 {
                     "name": "Vd_lvl",
-                    "type": "float",
+                    "type": "uint8",
                     "description": "Led DPTF Voltage level",
                     "units": "step",
                     "min": 0.0,
