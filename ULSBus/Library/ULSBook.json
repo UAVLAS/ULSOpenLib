@@ -791,7 +791,7 @@
                 },
                 {
                     "name": "indicatorBrightness",
-                    "type": "float",
+                    "type": "uint8",
                     "description": "Indicator brightness",
                     "units": "%",
                     "default": "100",
