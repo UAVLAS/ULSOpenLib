@@ -763,6 +763,15 @@
                     "description": "Beacon ID number"
                 },
                 {
+                    "name": "indicatorBrightness",
+                    "type": "uint8",
+                    "description": "Indicator brightness",
+                    "units": "%",
+                    "default": "100",
+                    "min": 0,
+                    "max": 100
+                },
+                {
                     "name": "power",
                     "type": "float",
                     "description": "Illumination power",
@@ -788,15 +797,6 @@
                     "default": "7",
                     "min": 5,
                     "max": 30
-                },
-                {
-                    "name": "indicatorBrightness",
-                    "type": "uint8",
-                    "description": "Indicator brightness",
-                    "units": "%",
-                    "default": "100",
-                    "min": 0,
-                    "max": 100
                 },
                 {
                     "name": "magCalOffset",
