@@ -790,6 +790,15 @@
                     "max": 30
                 },
                 {
+                    "name": "indicatorBrightness",
+                    "type": "float",
+                    "description": "Indicator brightness",
+                    "units": "%",
+                    "default": "100",
+                    "min": 0,
+                    "max": 100
+                },
+                {
                     "name": "magCalOffset",
                     "type": "float",
                     "lenght": 3,
