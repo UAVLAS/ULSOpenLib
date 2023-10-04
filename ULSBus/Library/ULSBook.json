@@ -663,6 +663,12 @@
                     ]
                 },
                 {
+                    "name": "vled_control_errors",
+                    "type": "uint8",
+                    "description": "Device vled line errors bitfield",
+                    "default": 0
+                },
+                {
                     "name": "Ialed",
                     "type": "float",
                     "lenght": 37,
