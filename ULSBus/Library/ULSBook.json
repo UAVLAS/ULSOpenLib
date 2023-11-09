@@ -1037,21 +1037,46 @@
                     "units": "e"
                 },
                 {
+                    "name": "dacsDistance",
+                    "type": "float",
+                    "description": "Distance provided by MRX algorithm",
+                    "units": "m"
+                },
+                {
                     "name": "mrxDistance",
                     "type": "float",
                     "description": "Distance provided by MRX algorithm",
                     "units": "m"
                 },
                 {
-                    "name": "mrxYaw",
-                    "type": "float",
-                    "description": "Yaw orintation provided by MRX algorithm",
-                    "units": "deg"
-                },
-                {
                     "name": "distance",
                     "type": "float",
                     "description": "Distance to transmitter",
+                    "units": "m"
+                },
+                {
+                    "name": "mrxYaw",
+                    "type": "float",
+                    "description": "Yaw orintation provided by MRX",
+                    "units": "deg"
+                },
+                {
+                    "name": "dacsYaw",
+                    "type": "float",
+                    "description": "Yaw orintation provided by DACS",
+                    "units": "deg"
+                },
+                {
+                    "name": "correctedYaw",
+                    "type": "float",
+                    "description": "Yaw orintation provided by calculated",
+                    "units": "deg"
+                },
+                {
+                    "name": "dacs_power",
+                    "type": "float",
+                    "lenght": 4,
+                    "description": "DACS Illumination power",
                     "units": "m"
                 },
                 {
@@ -1181,7 +1206,8 @@
                         "receiver_enabled",
                         "noise_debug",
                         "disable_imu",
-                        "disable_mrx"
+                        "disable_mrx",
+                        "disable_indication"
                     ]
                 },
                 {
@@ -1209,6 +1235,15 @@
                     "default": 0.0,
                     "min": -1.2,
                     "max": 1.2
+                },
+                {
+                    "name": "rxYaw",
+                    "type": "float",
+                    "description": "Receiver YAW orientation relative to body",
+                    "units": "m",
+                    "default": 0.0,
+                    "min": -180,
+                    "max": 180
                 },
                 {
                     "name": "txOffsetF",
