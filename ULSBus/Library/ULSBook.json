@@ -870,7 +870,8 @@
                     "flags": [
                         "enable_manual_levels",
                         "imu_ovverade_enable",
-                        "imu_compass_ovverade_enable"
+                        "imu_compass_ovverade_enable",
+                        "dacs_disable"
                     ]
                 },
                 {
