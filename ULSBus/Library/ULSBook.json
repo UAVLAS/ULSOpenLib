@@ -568,7 +568,8 @@
                     "opts": [
                         "Disabled",
                         "MavlinkV2",
-                        "APx"
+                        "APx",
+                        "ASCII"
                     ]
                 },
                 {
@@ -1333,7 +1334,8 @@
                     "opts": [
                         "Disabled",
                         "MavlinkV2",
-                        "APx"
+                        "APx",
+                        "ASCII"
                     ]
                 },
                 {
