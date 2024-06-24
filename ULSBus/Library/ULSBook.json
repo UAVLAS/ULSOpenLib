@@ -1692,6 +1692,31 @@
             ]
         },
         {
+            "name": "ULSDVOBJ_RX_Channel_Debug_v1",
+            "description": "Receiver Debug data",
+            "access": "read",
+            "variables": [
+                {
+                    "name": "beansA",
+                    "type": "float",
+                    "lenght": 37,
+                    "description": "Debug data stage A"
+                },
+                {
+                    "name": "beansB",
+                    "type": "float",
+                    "lenght": 37,
+                    "description": "Debug datar stage B"
+                },
+                {
+                    "name": "beansNoise",
+                    "type": "float",
+                    "lenght": 37,
+                    "description": "Debug data noise"
+                }
+            ]
+        },
+        {
             "name": "ULSDVOBJ_RX_Config_v1",
             "description": "Receiver General configuration",
             "access": "config",
@@ -2197,7 +2222,7 @@
         },
         {
             "name": "ULSDV_XS_R0_RXM",
-            "description": "UAVLAS XSpot tarnsmitter ",
+            "description": "UAVLAS XSpot receiver ",
             "type": "0x0031",
             "objects": [
                 {
@@ -2212,9 +2237,14 @@
                     "type": "config"
                 },
                 {
-                    "name": "debug",
-                    "object": "ULSQR1R2Debug",
+                    "name": "ch1Debug",
+                    "object": "ULSDVOBJ_RX_Channel_Debug_v1",
                     "address": "0x0030"
+                },
+                {
+                    "name": "ch2Debug",
+                    "object": "ULSDVOBJ_RX_Channel_Debug_v1",
+                    "address": "0x0031"
                 },
                 {
                     "name": "fftbuf",
