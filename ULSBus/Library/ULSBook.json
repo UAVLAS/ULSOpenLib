@@ -1420,6 +1420,16 @@
                     "description": "Device error bitfield"
                 },
                 {
+                    "name": "cpuTemp",
+                    "type": "float",
+                    "description": "CPU Temperature"
+                },
+                {
+                    "name": "cpuVoltage",
+                    "type": "float",
+                    "description": "CPU power supply voltage"
+                },
+                {
                     "name": "blitzTest",
                     "type": "uint32",
                     "description": "Debug: blitzTest"
@@ -1445,19 +1455,14 @@
                     "description": "Uart packets received"
                 },
                 {
-                    "name": "i2cErrors",
+                    "name": "CAN1RxPacks",
                     "type": "uint16",
-                    "description": "I2C errors counter"
+                    "description": "CAN1 packets received"
                 },
                 {
-                    "name": "i2cTxPacks",
+                    "name": "CAN1TxPacks",
                     "type": "uint16",
-                    "description": "I2C packets transmitted"
-                },
-                {
-                    "name": "i2cRxPacks",
-                    "type": "uint16",
-                    "description": "I2C packets received"
+                    "description": "CAN1 packets transmitted"
                 },
                 {
                     "name": "bitMax",
@@ -1517,6 +1522,18 @@
                     "name": "snrB",
                     "type": "float",
                     "description": "Signal to noise ratio for channel B",
+                    "units": "e"
+                },
+                {
+                    "name": "ch1Saturation",
+                    "type": "float",
+                    "description": "Signal saturation for channel 1",
+                    "units": "e"
+                },
+                {
+                    "name": "ch2Saturation",
+                    "type": "float",
+                    "description": "Signal saturation for channel 2",
                     "units": "e"
                 },
                 {
