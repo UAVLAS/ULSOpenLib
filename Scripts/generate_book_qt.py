@@ -284,6 +284,9 @@ def generate(objects,devices,output):
         str_obj_init = str_obj_init[:-2]
         book_file.write(str_obj_init + "{\n")    
 
+        for obj in dev["objects"]:
+            book_file.write("  o_" + obj["name"] + "._name = \"" + obj["name"] + "\";\n")
+
         for obj in dev["objects"]: 
             book_file.write("  add(&o_" + obj["name"] + ");\n")
          
