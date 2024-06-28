@@ -2209,9 +2209,14 @@
                     "type": "config"
                 },
                 {
-                    "name": "debug",
-                    "object": "ULSQR1R2Debug",
+                    "name": "ch1Debug",
+                    "object": "ULSDVOBJ_RX_Channel_Debug_v1",
                     "address": "0x0030"
+                },
+                {
+                    "name": "ch2Debug",
+                    "object": "ULSDVOBJ_RX_Channel_Debug_v1",
+                    "address": "0x0031"
                 },
                 {
                     "name": "fftbuf",
