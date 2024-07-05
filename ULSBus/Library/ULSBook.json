@@ -1725,7 +1725,7 @@
                     "name": "name",
                     "type": "char",
                     "lenght": 16,
-                    "default": "ULSQR1-R2",
+                    "default": "ULS-RX",
                     "description": "Name"
                 },
                 {
@@ -1902,8 +1902,8 @@
             ]
         },
         {
-            "name": "ULSDVOBJ_XS_R0_TXC_Status",
-            "description": "XSpot transmitter status information",
+            "name": "ULSDVOBJ_TX_Status_v1",
+            "description": "Transmitter status information",
             "access": "read",
             "variables": [
                 {
@@ -1989,15 +1989,15 @@
             ]
         },
         {
-            "name": "ULSDVOBJ_XS_R0_TXC_Config",
-            "description": "XSpot transmitter configuration",
+            "name": "ULSDVOBJ_TX_Config_v1",
+            "description": "Transmitter configuration",
             "access": "config",
             "variables": [
                 {
                     "name": "name",
                     "type": "char",
                     "lenght": 16,
-                    "default": "ULSQT1-R1",
+                    "default": "ULS-TX",
                     "description": "Name"
                 },
                 {
@@ -2083,6 +2083,65 @@
                     "type": "uint16",
                     "description": "Configuration checksumm",
                     "default": 0
+                }
+            ]
+        },
+        {
+            "name": "ULSDVOBJ_TX_Control_v1",
+            "description": "Transmitter control",
+            "access": "read-write",
+            "variables": [
+                {
+                    "name": "ctrl",
+                    "type": "uint32",
+                    "description": "Device control bitfield",
+                    "default": 0,
+                    "flags": [
+                        "enable_manual_levels",
+                        "imu_ovverade_enable",
+                        "imu_compass_ovverade_enable",
+                        "dacs_disable"
+                    ]
+                },
+                {
+                    "name": "emitters_disable_mask1",
+                    "type": "uint32",
+                    "description": "Emitters disable mask 1 [1-32]",
+                    "default": 0
+                },
+                {
+                    "name": "emitters_disable_mask2",
+                    "type": "uint32",
+                    "description": "Emitters disable mask 1 [32-64]",
+                    "default": 0
+                },
+                {
+                    "name": "Va_lvl",
+                    "type": "uint8",
+                    "default": 0,
+                    "description": "Emitters ASD manual level ",
+                    "min": 0,
+                    "max": 0
+                },
+                {
+                    "name": "Vd_lvl",
+                    "type": "uint8",
+                    "default": 0,
+                    "description": "Emitter DPTF manual level [0-64]",
+                    "min": 0,
+                    "max": 0
+                },
+                {
+                    "name": "imu_override",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "IMU ovveride [roll,pitch,yaw]",
+                    "units": "deg",
+                    "default": [
+                        0,
+                        0,
+                        0
+                    ]
                 }
             ]
         }
@@ -2265,24 +2324,19 @@
             "objects": [
                 {
                     "name": "status",
-                    "object": "ULSDVOBJ_XS_R0_TXC_Status",
+                    "object": "ULSDVOBJ_TX_Status_v1",
                     "address": "0x0010"
                 },
                 {
                     "name": "cfg",
-                    "object": "ULSDVOBJ_XS_R0_TXC_Config",
+                    "object": "ULSDVOBJ_TX_Config_v1",
                     "address": "0x0020",
                     "type": "config"
                 },
                 {
-                    "name": "debug",
-                    "object": "ULSQR1R2Debug",
+                    "name": "control",
+                    "object": "ULSDVOBJ_TX_Control_v1",
                     "address": "0x0030"
-                },
-                {
-                    "name": "fftbuf",
-                    "object": "ULSQR1R2FFT",
-                    "address": "0x0100"
                 }
             ]
         }
