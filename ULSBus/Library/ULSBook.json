@@ -1914,16 +1914,53 @@
                 {
                     "name": "error",
                     "type": "uint32",
-                    "description": "Device error bitfield"
+                    "description": "Device active error bitfield",
+                    "default": 0,
+                    "flags": [
+                        "emitter_task_error",
+                        "illumination_error",
+                        "compass_error",
+                        "uart_rx_error",
+                        "uart_tx_error",
+                        "can_error"
+                    ]
                 },
                 {
-                    "name": "Iled",
+                    "name": "error_history",
+                    "type": "uint32",
+                    "description": "Device errors history bitfield",
+                    "default": 0,
+                    "flags": [
+                        "emitter_task_error",
+                        "illumination_error",
+                        "compass_error",
+                        "uart_rx_error",
+                        "uart_tx_error",
+                        "can_error"
+                    ]
+                },
+                {
+                    "name": "vled_control_errors",
+                    "type": "uint8",
+                    "description": "Device vled line errors bitfield",
+                    "default": 0
+                },
+                {
+                    "name": "Ialed",
                     "type": "float",
                     "lenght": 37,
-                    "description": "Leds current"
+                    "description": "Leds ADS current",
+                    "units": "C"
                 },
                 {
-                    "name": "vs",
+                    "name": "Idled",
+                    "type": "float",
+                    "lenght": 4,
+                    "description": "Leds DPTF current",
+                    "units": "C"
+                },
+                {
+                    "name": "Vs",
                     "type": "float",
                     "description": "Supply Voltage",
                     "units": "V",
@@ -1931,31 +1968,33 @@
                     "max": 30.0
                 },
                 {
-                    "name": "ih",
+                    "name": "Vled",
                     "type": "float",
-                    "description": "Leds current monitor hi side",
-                    "units": "A",
+                    "description": "Led Power Voltage",
+                    "units": "V",
                     "min": 0.0,
-                    "max": 3.0
+                    "max": 30.0
                 },
                 {
-                    "name": "il",
-                    "type": "float",
-                    "description": "Leds current monitor low side",
-                    "units": "A",
+                    "name": "Va_lvl",
+                    "type": "uint8",
+                    "description": "Led ADS Voltage level",
+                    "units": "step",
                     "min": 0.0,
-                    "max": 3.0
+                    "max": 64.0
+                },
+                {
+                    "name": "Vd_lvl",
+                    "type": "uint8",
+                    "description": "Led DPTF Voltage level",
+                    "units": "step",
+                    "min": 0.0,
+                    "max": 64.0
                 },
                 {
                     "name": "tb",
                     "type": "float",
                     "description": "Board temperatire",
-                    "units": "C"
-                },
-                {
-                    "name": "timu",
-                    "type": "float",
-                    "description": "IMU temperatire",
                     "units": "C"
                 },
                 {
