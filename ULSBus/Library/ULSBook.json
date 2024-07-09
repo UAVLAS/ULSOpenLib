@@ -1322,7 +1322,7 @@
                     "description": "CAN bus device protocol",
                     "default": 0,
                     "opts": [
-                        "ULS-DECONET",
+                        "ULSDECONET",
                         "SimpleCAN"
                     ]
                 },
@@ -1851,7 +1851,7 @@
                     "description": "CAN bus device protocol",
                     "default": 0,
                     "opts": [
-                        "ULS-DECONET",
+                        "ULSDECONET",
                         "SimpleCAN"
                     ]
                 },
