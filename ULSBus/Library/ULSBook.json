@@ -1311,19 +1311,19 @@
                     "max": 5.0
                 },
                 {
-                    "name": "i2cAddress",
+                    "name": "canAdress",
                     "type": "uint8",
-                    "description": "I2C Device Address",
-                    "default": 86
+                    "description": "CAN bus device static address",
+                    "default": 0
                 },
                 {
-                    "name": "i2cProtocol",
+                    "name": "canProtocol",
                     "type": "opt_uint8",
-                    "description": "I2C Protocol",
+                    "description": "CAN bus device protocol",
                     "default": 0,
                     "opts": [
-                        "Disabled",
-                        "Ardupilot"
+                        "ULS-DECONET",
+                        "SimpleCAN"
                     ]
                 },
                 {
@@ -1840,19 +1840,19 @@
                     "max": 5.0
                 },
                 {
-                    "name": "i2cAddress",
+                    "name": "canAdress",
                     "type": "uint8",
-                    "description": "I2C Device Address",
-                    "default": 86
+                    "description": "CAN bus device static address",
+                    "default": 0
                 },
                 {
-                    "name": "i2cProtocol",
+                    "name": "canProtocol",
                     "type": "opt_uint8",
-                    "description": "I2C Protocol",
+                    "description": "CAN bus device protocol",
                     "default": 0,
                     "opts": [
-                        "Disabled",
-                        "Ardupilot"
+                        "ULS-DECONET",
+                        "SimpleCAN"
                     ]
                 },
                 {
