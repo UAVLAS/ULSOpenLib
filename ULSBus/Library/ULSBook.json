@@ -1311,10 +1311,10 @@
                     "max": 5.0
                 },
                 {
-                    "name": "canAdress",
+                    "name": "canAddress",
                     "type": "uint8",
                     "description": "CAN bus device static address",
-                    "default": 0
+                    "default": 255
                 },
                 {
                     "name": "canProtocol",
@@ -1840,7 +1840,7 @@
                     "max": 5.0
                 },
                 {
-                    "name": "canAdress",
+                    "name": "canAddress",
                     "type": "uint8",
                     "description": "CAN bus device static address",
                     "default": 0
