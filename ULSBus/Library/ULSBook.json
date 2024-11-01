@@ -1894,6 +1894,41 @@
                     ]
                 },
                 {
+                    "name": "magCalOffset",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "Compass calibration offset",
+                    "default": [
+                        0,
+                        0,
+                        0
+                    ],
+                    "min": -3.0,
+                    "max": 3.0
+                },
+                {
+                    "name": "magCalScale",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "Compass calibration scale",
+                    "default": [
+                        1,
+                        1,
+                        1
+                    ],
+                    "min": 0.1,
+                    "max": 3.0
+                },
+                {
+                    "name": "indicatorBrightness",
+                    "type": "uint8",
+                    "description": "Indicator brightness",
+                    "units": "%",
+                    "default": "100",
+                    "min": 0,
+                    "max": 100
+                },
+                {
                     "name": "configCRC",
                     "type": "uint16",
                     "description": "Configuration checksumm",
@@ -1946,18 +1981,11 @@
                     "default": 0
                 },
                 {
-                    "name": "Ialed",
+                    "name": "Iem",
                     "type": "float",
-                    "lenght": 37,
-                    "description": "Leds ADS current",
-                    "units": "C"
-                },
-                {
-                    "name": "Idled",
-                    "type": "float",
-                    "lenght": 4,
-                    "description": "Leds DPTF current",
-                    "units": "C"
+                    "lenght": 32,
+                    "description": "Emitters current monitor",
+                    "units": "A"
                 },
                 {
                     "name": "Vs",
@@ -1968,33 +1996,26 @@
                     "max": 30.0
                 },
                 {
-                    "name": "Vled",
+                    "name": "Vsu",
                     "type": "float",
-                    "description": "Led Power Voltage",
+                    "description": "Step up converter Voltage",
                     "units": "V",
                     "min": 0.0,
-                    "max": 30.0
+                    "max": 100.0
                 },
                 {
-                    "name": "Va_lvl",
-                    "type": "uint8",
-                    "description": "Led ADS Voltage level",
-                    "units": "step",
-                    "min": 0.0,
-                    "max": 64.0
-                },
-                {
-                    "name": "Vd_lvl",
-                    "type": "uint8",
-                    "description": "Led DPTF Voltage level",
-                    "units": "step",
-                    "min": 0.0,
-                    "max": 64.0
-                },
-                {
-                    "name": "tb",
+                    "name": "Vem",
                     "type": "float",
-                    "description": "Board temperatire",
+                    "description": "Emmiter board Voltage",
+                    "units": "V",
+                    "min": 0.0,
+                    "max": 100.0
+                },
+                {
+                    "name": "Tsys",
+                    "type": "float",
+                    "lenght": 4,
+                    "description": "System temperatires",
                     "units": "C"
                 },
                 {
@@ -2040,6 +2061,16 @@
                     "description": "Name"
                 },
                 {
+                    "name": "ctrl",
+                    "type": "flags_uint8",
+                    "description": "Transmitter control byte",
+                    "default": 1,
+                    "flags": [
+                        "Illumination",
+                        "CompassOverrideEnable"
+                    ]
+                },
+                {
                     "name": "devID",
                     "type": "uint8",
                     "default": 0,
@@ -2073,6 +2104,50 @@
                     "max": 30
                 },
                 {
+                    "name": "uartProtocol",
+                    "type": "opt_uint8",
+                    "description": "UART Protocol",
+                    "default": 1,
+                    "opts": [
+                        "Disabled",
+                        "ULSDECONET",
+                        "MavlinkV2",
+                        "APx",
+                        "ASCII"
+                    ]
+                },
+                {
+                    "name": "uartBrt",
+                    "type": "opt_uint8",
+                    "description": "UART Baudrate",
+                    "default": 4,
+                    "opts": [
+                        "19200",
+                        "38400",
+                        "57600",
+                        "115200",
+                        "230400",
+                        "460800",
+                        "921600"
+                    ]
+                },
+                {
+                    "name": "canAddress",
+                    "type": "uint8",
+                    "description": "CAN bus device static address",
+                    "default": 0
+                },
+                {
+                    "name": "canProtocol",
+                    "type": "opt_uint8",
+                    "description": "CAN bus device protocol",
+                    "default": 0,
+                    "opts": [
+                        "ULSDECONET",
+                        "SimpleCAN"
+                    ]
+                },
+                {
                     "name": "magCalOffset",
                     "type": "float",
                     "lenght": 3,
@@ -2099,16 +2174,6 @@
                     "max": 3.0
                 },
                 {
-                    "name": "ctrl",
-                    "type": "flags_uint8",
-                    "description": "Transmitter control byte",
-                    "default": 1,
-                    "flags": [
-                        "Illumination",
-                        "CompassOverrideEnable"
-                    ]
-                },
-                {
                     "name": "cpsOverride",
                     "type": "float",
                     "description": "Overide compass value",
@@ -2116,6 +2181,15 @@
                     "default": "0",
                     "min": 0,
                     "max": 360
+                },
+                {
+                    "name": "indicatorBrightness",
+                    "type": "uint8",
+                    "description": "Indicator brightness",
+                    "units": "%",
+                    "default": "100",
+                    "min": 0,
+                    "max": 100
                 },
                 {
                     "name": "configCRC",

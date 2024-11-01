@@ -4,6 +4,7 @@ import json
 import os
 import generate_book_arm 
 import generate_book_qt
+import generate_md
 
 parser = argparse.ArgumentParser(description='Generate UAVLAS boundle file')
 
@@ -12,6 +13,9 @@ parser.add_argument('-o', '--output',type=str, help='Output source file output_p
 parser.add_argument('-t', '--target',type=str, help='Target System [ARM,QT]')
 
 args = parser.parse_args()
+
+
+
 print("------ UAVLAS DEVICE LIBS CREATOR ------")
 print(" (C) Yury Kapacheuski 2021. ")
 
@@ -29,6 +33,10 @@ objects = data["Objects"]
 devices = data["Devices"]
  
 print("Book Version: " + data["BookVersion"])
+
+log_file = open(args.output + "/ULSDevices.md", "w")
+
+generate_md.generate(objects,devices,args.output,log_file)
 
 if args.target == "ARM":
     print("Generating Objects book for ARM")
