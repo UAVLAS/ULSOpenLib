@@ -1420,131 +1420,68 @@
                     "description": "Device error bitfield"
                 },
                 {
-                    "name": "cpuTemp",
+                    "name": "Tsys",
                     "type": "float",
-                    "description": "CPU Temperature"
+                    "lenght": 3,
+                    "description": "Syetem Temperature",
+                    "units": "C"
                 },
                 {
-                    "name": "cpuVoltage",
+                    "name": "Vsys",
                     "type": "float",
-                    "description": "CPU power supply voltage"
-                },
-                {
-                    "name": "blitzTest",
-                    "type": "uint32",
-                    "description": "Debug: blitzTest"
-                },
-                {
-                    "name": "packCntr",
-                    "type": "uint16",
-                    "description": "Debug:"
+                    "lenght": 3,
+                    "description": "System supply voltage",
+                    "units": "V"
                 },
                 {
                     "name": "uartErrors",
                     "type": "uint16",
+                    "lenght": 3,
                     "description": "Uart errors counter"
                 },
                 {
                     "name": "uartTxPacks",
                     "type": "uint16",
+                    "lenght": 3,
                     "description": "Uart packets transmitted"
                 },
                 {
                     "name": "uartRxPacks",
                     "type": "uint16",
+                    "lenght": 3,
                     "description": "Uart packets received"
                 },
                 {
-                    "name": "CAN1RxPacks",
+                    "name": "CANRxPacks",
                     "type": "uint16",
-                    "description": "CAN1 packets received"
-                },
-                {
-                    "name": "CAN1TxPacks",
-                    "type": "uint16",
-                    "description": "CAN1 packets transmitted"
-                },
-                {
-                    "name": "bitMax",
-                    "type": "uint16",
-                    "description": "Debug:"
-                },
-                {
-                    "name": "qtId",
-                    "type": "uint8",
-                    "description": "Debug:"
-                },
-                {
-                    "name": "synqChannel",
-                    "type": "uint8",
-                    "description": "Debug:"
-                },
-                {
-                    "name": "posTime",
-                    "type": "uint32",
-                    "description": "Debug:"
-                },
-                {
-                    "name": "emsTime",
-                    "type": "uint32",
-                    "description": "Debug:"
-                },
-                {
-                    "name": "synqMax",
-                    "type": "uint32",
-                    "description": "Debug:"
+                    "lenght": 3,
+                    "description": "CAN packets received"
                 },
                 {
                     "name": "level",
                     "type": "float",
+                    "lenght": 4,
                     "description": "Signal level",
-                    "units": "e"
+                    "units": "db"
                 },
                 {
-                    "name": "levelA",
+                    "name": "snr",
                     "type": "float",
-                    "description": "Signal level A channel",
-                    "units": "e"
+                    "lenght": 3,
+                    "description": "Signal to noise ratio",
+                    "units": "db"
                 },
                 {
-                    "name": "levelB",
+                    "name": "saturation",
                     "type": "float",
-                    "description": "Signal level B channel",
-                    "units": "e"
-                },
-                {
-                    "name": "snrA",
-                    "type": "float",
-                    "description": "Signal to noise ratio for channel A",
-                    "units": "e"
-                },
-                {
-                    "name": "snrB",
-                    "type": "float",
-                    "description": "Signal to noise ratio for channel B",
-                    "units": "e"
-                },
-                {
-                    "name": "ch1Saturation",
-                    "type": "float",
-                    "description": "Signal saturation for channel 1",
-                    "units": "e"
-                },
-                {
-                    "name": "ch2Saturation",
-                    "type": "float",
-                    "description": "Signal saturation for channel 2",
-                    "units": "e"
-                },
-                {
-                    "name": "prob",
-                    "type": "float",
-                    "description": "Signal probability",
+                    "lenght": 3,
+                    "description": "Signal saturation",
                     "units": "e"
                 },
                 {
                     "name": "dacsDistance",
                     "type": "float",
+                    "lenght": 2,
                     "description": "Distance provided by MRX algorithm",
                     "units": "m"
                 },
@@ -1575,15 +1512,21 @@
                 {
                     "name": "correctedYaw",
                     "type": "float",
-                    "description": "Yaw orintation provided by calculated",
+                    "description": "Yaw orintation provided by calculations",
                     "units": "deg"
                 },
                 {
-                    "name": "dacs_power",
+                    "name": "continiousYaw",
                     "type": "float",
-                    "lenght": 4,
+                    "description": "Yaw orintation not bounded ",
+                    "units": "deg"
+                },
+                {
+                    "name": "dacsPower",
+                    "type": "float",
+                    "lenght": 8,
                     "description": "DACS Illumination power",
-                    "units": "m"
+                    "units": "db"
                 },
                 {
                     "name": "ang",
@@ -1944,7 +1887,14 @@
                 {
                     "name": "status",
                     "type": "uint32",
-                    "description": "Device status bitfield"
+                    "description": "Device status bitfield",
+                    "flags": [
+                        "power_ok",
+                        "step_up_ok",
+                        "emitter_on_charge",
+                        "emitter_ok",
+                        "compass_ok"
+                    ]
                 },
                 {
                     "name": "error",

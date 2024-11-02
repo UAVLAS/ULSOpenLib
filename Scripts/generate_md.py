@@ -41,16 +41,21 @@ def generate(objects,devices,output,log_file):
         # print(" ")
         # print(" - " + obj["name"] + " Description: " + obj["description"])
         log_file.write("### " + obj["name"] + "\n **Description:** " + obj["description"] + "\n")
+        log_file.write("\n**Access:** " + obj["access"] + "\n")
+        
         # enums bitmasks
         # print("   Variables:")
         log_file.write("#### Variables\n")
-        log_file.write("|Name|Type|Lenght|Default|Description|Options and Flags\n| - | - | - | - | - | - |\n")
+        log_file.write("|Name|Units|Type|Lenght|Default|Description|Options and Flags\n| - | - | - | - | - | - | - |\n")
         for var in obj["variables"]:
            varLen = 1
            optflags = ""
            # print("   - " +  var["name"] + "[" + var["type"] + "] - " + var["description"])
            if "default" not in var:
                 var["default"] = "none"
+           if "units" not in var:
+                var["units"] = "-"
+
            if "flags" in var:
               index = 1
               optflags += "Flags: "
@@ -65,8 +70,7 @@ def generate(objects,devices,output,log_file):
                   index += 1
            if "lenght" in var:
                varLen = var["lenght"]
-           log_file.write("|" + var["name"] + "|" + var["type"] + "|" + str(varLen) + "|" + str(var["default"]) + "|" + var["description"] + "|" + optflags + '|\n')
-        
+           log_file.write("|" + var["name"] + "|" + var["units"] + "|" + var["type"] + "|" + str(varLen) + "|" + str(var["default"]) + "|" + var["description"] + "|" + optflags + '|\n')
         log_file.write(goon_top)
               #---------------------------------
 
