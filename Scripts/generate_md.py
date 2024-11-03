@@ -13,7 +13,7 @@ access_types = {"read":"ULSBUS_OBJECT_PERMITION_READONLY",
 
 
 
-title = "UAVLAS Devices Book\n"
+title = "UAVLAS Devices Book"
 goon_top = "\n[Go on top](#" + title.replace(" ","-").lower() + ")\n"
 
 def generate(objects,devices,output,log_file):
