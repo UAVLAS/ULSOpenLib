@@ -21,14 +21,14 @@ def generate(objects,devices,output,log_file):
     # print("Devices:")
     log_file.write("# " + title + "\n")
     log_file.write('## Devices\n')
-    log_file.write("|Device name|Type CODE|Description|\n| - | - | - |\n")
+    log_file.write("|Device name|Type CODE|Description|\n|---|---|---|\n")
     for dev in devices:
         # print(" - Device: " + dev["name"] + " Type: " + dev["type"])
         log_file.write("|[" + dev["name"] + "](#"+ dev["name"].lower() + ") | " + dev["type"] + "|" + dev["description"] + "|\n")
-
+    log_file.write(goon_top)
     for dev in devices:
         log_file.write("### " + dev["name"] + "\n **Description:** " + dev["description"] + "\n")
-        log_file.write("|Object|Name|Address|Type|\n| - | - | - | - |\n")
+        log_file.write("|Object|Name|Address|Type|\n|---|---|---|---|\n")
         for obj in dev["objects"]:
             if obj.get("type") == None:
                 obj["type"] = "generic"
@@ -46,7 +46,7 @@ def generate(objects,devices,output,log_file):
         # enums bitmasks
         # print("   Variables:")
         log_file.write("#### Variables\n")
-        log_file.write("|Name|Units|Type|Lenght|Default|Description|Options and Flags\n| - | - | - | - | - | - | - |\n")
+        log_file.write("|Name|Units|Type|Lenght|Default|Description|Options and Flags\n|---|---|---|---|---|---|---|\n")
         for var in obj["variables"]:
            varLen = 1
            optflags = ""
