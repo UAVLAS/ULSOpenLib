@@ -2032,7 +2032,7 @@
                     "description": "Illumination power",
                     "units": "mA",
                     "default": "100",
-                    "min": 50,
+                    "min": 0,
                     "max": 150
                 },
                 {
