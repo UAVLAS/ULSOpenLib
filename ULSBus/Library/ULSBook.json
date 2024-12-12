@@ -1458,6 +1458,11 @@
                     "description": "CAN packets received"
                 },
                 {
+                    "name": "emsPackets",
+                    "type": "uint16",
+                    "description": "Emitter packets received"
+                },
+                {
                     "name": "level",
                     "type": "float",
                     "lenght": 4,
