@@ -49,13 +49,13 @@
                 {
                     "name": "tb",
                     "type": "float",
-                    "description": "Board temperatire",
+                    "description": "Board temperature",
                     "units": "C"
                 },
                 {
                     "name": "timu",
                     "type": "float",
-                    "description": "IMU temperatire",
+                    "description": "IMU temperature",
                     "units": "C"
                 },
                 {
@@ -2567,6 +2567,62 @@
             "name": "ULSDV_ON_R0_TXC",
             "description": "UAVLAS  OnNet master receiver",
             "type": "0x0052",
+            "objects": [
+                {
+                    "name": "status",
+                    "object": "ULSDVOBJ_TX_Status_v1",
+                    "address": "0x0010"
+                },
+                {
+                    "name": "cfg",
+                    "object": "ULSDVOBJ_TX_Config_v1",
+                    "address": "0x0020",
+                    "type": "config"
+                },
+                {
+                    "name": "control",
+                    "object": "ULSDVOBJ_TX_Control_v1",
+                    "address": "0x0030"
+                }
+            ]
+        },
+        {
+            "name": "ULSDV_PC_R0_RX",
+            "description": "UAVLAS ULS-ProCopter receiver ",
+            "type": "0x0060",
+            "objects": [
+                {
+                    "name": "status",
+                    "object": "ULSDVOBJ_RX_Status_v1",
+                    "address": "0x0010"
+                },
+                {
+                    "name": "cfg",
+                    "object": "ULSDVOBJ_RX_Config_v1",
+                    "address": "0x0020",
+                    "type": "config"
+                },
+                {
+                    "name": "ch1Debug",
+                    "object": "ULSDVOBJ_RX_Channel_Debug_v1",
+                    "address": "0x0030"
+                },
+                {
+                    "name": "ch2Debug",
+                    "object": "ULSDVOBJ_RX_Channel_Debug_v1",
+                    "address": "0x0031"
+                },
+                {
+                    "name": "fftbuf",
+                    "object": "ULSQR1R2FFT",
+                    "address": "0x0100"
+                }
+            ]
+        },
+        {
+            "name": "ULSDV_PC_R0_TX",
+            "description": "UAVLAS  ULS-ProCopter transmitter",
+            "type": "0x0062",
             "objects": [
                 {
                     "name": "status",
