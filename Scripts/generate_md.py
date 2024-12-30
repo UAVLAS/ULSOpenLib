@@ -2,21 +2,21 @@
 import json
 import generate_structures
 
-access_types = {"read":"ULSBUS_OBJECT_PERMITION_READONLY",
-                "write":"ULSBUS_OBJECT_PERMITION_WRITEONLY",
-                "read-write":"ULSBUS_OBJECT_PERMITION_READWRITE",
-                "protected":"ULSBUS_OBJECT_PERMITION_PROTECTED",
-                "config":"ULSBUS_OBJECT_PERMITION_READWRITE",
-                "system":"ULSBUS_OBJECT_PERMITION_SYSCONFIG",
-                "admin": "ULSBUS_OBJECT_PERMITION_ADMIN"
+access_types = {"read": "ULSBUS_OBJECT_PERMISSION_READONLY",
+                "write": "ULSBUS_OBJECT_PERMISSION_WRITEONLY",
+                "read-write": "ULSBUS_OBJECT_PERMISSION_READWRITE",
+                "protected": "ULSBUS_OBJECT_PERMISSION_PROTECTED",
+                "config": "ULSBUS_OBJECT_PERMISSION_READWRITE",
+                "system": "ULSBUS_OBJECT_PERMISSION_SYSCONFIG",
+                "admin": "ULSBUS_OBJECT_PERMISSION_ADMIN"
                 }
 
 
-
 title = "UAVLAS Devices Book"
-goon_top = "\n[Go on top](#" + title.replace(" ","-").lower() + ")\n"
+goon_top = "\n[Go on top](#" + title.replace(" ", "-").lower() + ")\n"
 
-def generate(objects,devices,output,log_file):
+
+def generate(objects, devices, output, log_file):
 
     # print("Devices:")
     log_file.write("# " + title + "\n")
@@ -24,15 +24,18 @@ def generate(objects,devices,output,log_file):
     log_file.write("\n|Device name|Type CODE|Description|\n|---|---|---|\n")
     for dev in devices:
         # print(" - Device: " + dev["name"] + " Type: " + dev["type"])
-        log_file.write("|[" + dev["name"] + "](#"+ dev["name"].lower() + ") | " + dev["type"] + "|" + dev["description"] + "|\n")
+        log_file.write("|[" + dev["name"] + "](#" + dev["name"].lower() +
+                       ") | " + dev["type"] + "|" + dev["description"] + "|\n")
     log_file.write(goon_top)
     for dev in devices:
-        log_file.write("### " + dev["name"] + "\n **Description:** " + dev["description"] + "\n")
+        log_file.write(
+            "### " + dev["name"] + "\n **Description:** " + dev["description"] + "\n")
         log_file.write("\n|Object|Name|Address|Type|\n|---|---|---|---|\n")
         for obj in dev["objects"]:
             if obj.get("type") == None:
                 obj["type"] = "generic"
-            log_file.write("|[" + obj["object"] + "](#"+ obj["object"].lower() + ")|"+ obj["name"] + "|" + obj["address"] + "|" + obj["type"] +"|\n")
+            log_file.write("|[" + obj["object"] + "](#" + obj["object"].lower() + ")|" +
+                           obj["name"] + "|" + obj["address"] + "|" + obj["type"] + "|\n")
         log_file.write(goon_top)
 
     # print("\n Objects:")
@@ -40,39 +43,39 @@ def generate(objects,devices,output,log_file):
     for obj in objects:
         # print(" ")
         # print(" - " + obj["name"] + " Description: " + obj["description"])
-        log_file.write("### " + obj["name"] + "\n **Description:** " + obj["description"] + "\n")
+        log_file.write(
+            "### " + obj["name"] + "\n **Description:** " + obj["description"] + "\n")
         log_file.write("\n**Access:** " + obj["access"] + "\n")
 
         # enums bitmasks
         # print("   Variables:")
         log_file.write("#### Variables\n")
-        log_file.write("\n|Name|Units|Type|Lenght|Default|Description|Options and Flags\n|---|---|---|---|---|---|---|\n")
+        log_file.write(
+            "\n|Name|Units|Type|Lenght|Default|Description|Options and Flags\n|---|---|---|---|---|---|---|\n")
         for var in obj["variables"]:
-           varLen = 1
-           optflags = ""
-           # print("   - " +  var["name"] + "[" + var["type"] + "] - " + var["description"])
-           if "default" not in var:
+            varLen = 1
+            optflags = ""
+            # print("   - " +  var["name"] + "[" + var["type"] + "] - " + var["description"])
+            if "default" not in var:
                 var["default"] = "none"
-           if "units" not in var:
+            if "units" not in var:
                 var["units"] = "-"
 
-           if "flags" in var:
-              index = 1
-              optflags += "Flags: "
-              for flag in var["flags"]:
-                  optflags += flag + " = " + str(index) + "; "
-                  index <<= 1
-           if "opts" in var:
-              index = 0
-              optflags += "Options: "
-              for opts in var["opts"]:
-                  optflags += opts + " = " + str(index) + "; "
-                  index += 1
-           if "lenght" in var:
-               varLen = var["lenght"]
-           log_file.write("|" + var["name"] + "|" + var["units"] + "|" + var["type"] + "|" + str(varLen) + "|" + str(var["default"]) + "|" + var["description"] + "|" + optflags + '|\n')
+            if "flags" in var:
+                index = 1
+                optflags += "Flags: "
+                for flag in var["flags"]:
+                    optflags += flag + " = " + str(index) + "; "
+                    index <<= 1
+            if "opts" in var:
+                index = 0
+                optflags += "Options: "
+                for opts in var["opts"]:
+                    optflags += opts + " = " + str(index) + "; "
+                    index += 1
+            if "lenght" in var:
+                varLen = var["lenght"]
+            log_file.write("|" + var["name"] + "|" + var["units"] + "|" + var["type"] + "|" + str(
+                varLen) + "|" + str(var["default"]) + "|" + var["description"] + "|" + optflags + '|\n')
         log_file.write(goon_top)
-              #---------------------------------
-
-
-
+        # ---------------------------------

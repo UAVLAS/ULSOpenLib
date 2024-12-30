@@ -9,12 +9,12 @@
                 {
                     "name": "status",
                     "type": "uint32",
-                    "description": "Device status bitfield"
+                    "description": "Device status bits field"
                 },
                 {
                     "name": "error",
                     "type": "uint32",
-                    "description": "Device error bitfield"
+                    "description": "Device error bits field"
                 },
                 {
                     "name": "Iled",
@@ -172,7 +172,7 @@
                 {
                     "name": "cpsOverride",
                     "type": "float",
-                    "description": "Overide compass value",
+                    "description": "Override compass value",
                     "units": "deg",
                     "default": "0",
                     "min": 0,
@@ -181,7 +181,7 @@
                 {
                     "name": "configCRC",
                     "type": "uint16",
-                    "description": "Configuration checksumm",
+                    "description": "Configuration checksum",
                     "default": 0
                 }
             ]
@@ -194,12 +194,12 @@
                 {
                     "name": "status",
                     "type": "uint32",
-                    "description": "Device status bitfield"
+                    "description": "Device status bits field"
                 },
                 {
                     "name": "error",
                     "type": "uint32",
-                    "description": "Device error bitfield"
+                    "description": "Device error bits field"
                 },
                 {
                     "name": "blitzTest",
@@ -316,7 +316,7 @@
                 {
                     "name": "mrxYaw",
                     "type": "float",
-                    "description": "Yaw orintation provided by MRX algorithm",
+                    "description": "Yaw orientation provided by MRX algorithm",
                     "units": "deg"
                 },
                 {
@@ -364,7 +364,7 @@
                     "name": "rel_vel_ned",
                     "type": "float",
                     "lenght": 3,
-                    "description": "Ralative velocity of tranmitter (offset from receiver) in NED (North East Down)",
+                    "description": "Ralative velocity of transmitter (offset from receiver) in NED (North East Down)",
                     "units": "m/s"
                 },
                 {
@@ -378,7 +378,7 @@
                     "name": "rel_vel_frd",
                     "type": "float",
                     "lenght": 3,
-                    "description": "Ralative velocity of tranmitter (offset from receiver) in FRD (Forward Right Down)",
+                    "description": "Ralative velocity of transmitter (offset from receiver) in FRD (Forward Right Down)",
                     "units": "m/s"
                 },
                 {
@@ -392,7 +392,7 @@
                     "name": "vel_wld",
                     "type": "float",
                     "lenght": 3,
-                    "description": "World velocity of tranmitter in NED (North East Down)",
+                    "description": "World velocity of transmitter in NED (North East Down)",
                     "units": "m/s"
                 },
                 {
@@ -406,7 +406,7 @@
                     "name": "abs_vel_ned",
                     "type": "float",
                     "lenght": 3,
-                    "description": "Absolute velocity of tranmitter (vehicle frame)in NED (North East Down)",
+                    "description": "Absolute velocity of transmitter (vehicle frame)in NED (North East Down)",
                     "units": "m/s"
                 },
                 {
@@ -529,7 +529,7 @@
                 {
                     "name": "platformAcc",
                     "type": "float",
-                    "description": "Grount platform acceleration",
+                    "description": "Ground platform acceleration",
                     "units": "m/ss",
                     "default": 0.1,
                     "min": 0.01,
@@ -575,7 +575,7 @@
                 {
                     "name": "uartBrt",
                     "type": "opt_uint8",
-                    "description": "UART Baudrate",
+                    "description": "UART Baud rate",
                     "default": 4,
                     "opts": [
                         "19200",
@@ -601,7 +601,7 @@
                 {
                     "name": "configCRC",
                     "type": "uint16",
-                    "description": "Configuration checksumm",
+                    "description": "Configuration checksum",
                     "default": 0
                 }
             ]
@@ -615,13 +615,13 @@
                     "name": "beansA",
                     "type": "float",
                     "lenght": 37,
-                    "description": "Debug datareceiver A"
+                    "description": "Debug data receiver A"
                 },
                 {
                     "name": "beansB",
                     "type": "float",
                     "lenght": 37,
-                    "description": "Debug datareceiver B"
+                    "description": "Debug data receiver B"
                 }
             ]
         },
@@ -633,12 +633,12 @@
                 {
                     "name": "status",
                     "type": "uint32",
-                    "description": "Device status bitfield"
+                    "description": "Device status bits field"
                 },
                 {
                     "name": "error",
                     "type": "uint32",
-                    "description": "Device active error bitfield",
+                    "description": "Device active error bits field",
                     "default": 0,
                     "flags": [
                         "emitter_task_error",
@@ -652,7 +652,7 @@
                 {
                     "name": "error_history",
                     "type": "uint32",
-                    "description": "Device errors history bitfield",
+                    "description": "Device errors history bits field",
                     "default": 0,
                     "flags": [
                         "emitter_task_error",
@@ -666,7 +666,7 @@
                 {
                     "name": "vled_control_errors",
                     "type": "uint8",
-                    "description": "Device vled line errors bitfield",
+                    "description": "Device vled line errors bits field",
                     "default": 0
                 },
                 {
@@ -718,7 +718,7 @@
                 {
                     "name": "tb",
                     "type": "float",
-                    "description": "Board temperatire",
+                    "description": "Board temperature",
                     "units": "C"
                 },
                 {
@@ -844,7 +844,7 @@
                 {
                     "name": "cpsOverride",
                     "type": "float",
-                    "description": "Overide compass value",
+                    "description": "Override compass value",
                     "units": "deg",
                     "default": "0",
                     "min": 0,
@@ -853,7 +853,7 @@
                 {
                     "name": "configCRC",
                     "type": "uint16",
-                    "description": "Configuration checksumm",
+                    "description": "Configuration checksum",
                     "default": 0
                 }
             ]
@@ -866,12 +866,12 @@
                 {
                     "name": "ctrl",
                     "type": "uint32",
-                    "description": "Device control bitfield",
+                    "description": "Device control bits field",
                     "default": 0,
                     "flags": [
                         "enable_manual_levels",
-                        "imu_ovverade_enable",
-                        "imu_compass_ovverade_enable",
+                        "imu_override_enable",
+                        "imu_compass_override_enable",
                         "dacs_disable"
                     ]
                 },
@@ -907,7 +907,7 @@
                     "name": "imu_override",
                     "type": "float",
                     "lenght": 3,
-                    "description": "IMU ovveride [roll,pitch,yaw]",
+                    "description": "IMU override [roll,pitch,yaw]",
                     "units": "deg",
                     "default": [
                         0,
@@ -925,12 +925,12 @@
                 {
                     "name": "status",
                     "type": "uint32",
-                    "description": "Device status bitfield"
+                    "description": "Device status bits field"
                 },
                 {
                     "name": "error",
                     "type": "uint32",
-                    "description": "Device error bitfield"
+                    "description": "Device error bits field"
                 },
                 {
                     "name": "blitzTest",
@@ -1059,19 +1059,19 @@
                 {
                     "name": "mrxYaw",
                     "type": "float",
-                    "description": "Yaw orintation provided by MRX",
+                    "description": "Yaw orientation provided by MRX",
                     "units": "deg"
                 },
                 {
                     "name": "dacsYaw",
                     "type": "float",
-                    "description": "Yaw orintation provided by DACS",
+                    "description": "Yaw orientation provided by DACS",
                     "units": "deg"
                 },
                 {
                     "name": "correctedYaw",
                     "type": "float",
-                    "description": "Yaw orintation provided by calculated",
+                    "description": "Yaw orientation provided by calculated",
                     "units": "deg"
                 },
                 {
@@ -1120,7 +1120,7 @@
                     "name": "rel_vel_ned",
                     "type": "float",
                     "lenght": 3,
-                    "description": "Ralative velocity of tranmitter (offset from receiver) in NED (North East Down)",
+                    "description": "Ralative velocity of transmitter (offset from receiver) in NED (North East Down)",
                     "units": "m/s"
                 },
                 {
@@ -1134,7 +1134,7 @@
                     "name": "rel_vel_frd",
                     "type": "float",
                     "lenght": 3,
-                    "description": "Ralative velocity of tranmitter (offset from receiver) in FRD (Forward Right Down)",
+                    "description": "Ralative velocity of transmitter (offset from receiver) in FRD (Forward Right Down)",
                     "units": "m/s"
                 },
                 {
@@ -1148,7 +1148,7 @@
                     "name": "vel_wld",
                     "type": "float",
                     "lenght": 3,
-                    "description": "World velocity of tranmitter in NED (North East Down)",
+                    "description": "World velocity of transmitter in NED (North East Down)",
                     "units": "m/s"
                 },
                 {
@@ -1162,7 +1162,7 @@
                     "name": "abs_vel_ned",
                     "type": "float",
                     "lenght": 3,
-                    "description": "Absolute velocity of tranmitter (vehicle frame)in NED (North East Down)",
+                    "description": "Absolute velocity of transmitter (vehicle frame)in NED (North East Down)",
                     "units": "m/s"
                 },
                 {
@@ -1295,7 +1295,7 @@
                 {
                     "name": "platformAcc",
                     "type": "float",
-                    "description": "Grount platform acceleration",
+                    "description": "Ground platform acceleration",
                     "units": "m/ss",
                     "default": 0.1,
                     "min": 0.01,
@@ -1341,7 +1341,7 @@
                 {
                     "name": "uartBrt",
                     "type": "opt_uint8",
-                    "description": "UART Baudrate",
+                    "description": "UART baud rate",
                     "default": 4,
                     "opts": [
                         "19200",
@@ -1367,7 +1367,7 @@
                 {
                     "name": "configCRC",
                     "type": "uint16",
-                    "description": "Configuration checksumm",
+                    "description": "Configuration checksum",
                     "default": 0
                 }
             ]
@@ -1381,13 +1381,13 @@
                     "name": "beansA",
                     "type": "float",
                     "lenght": 37,
-                    "description": "Debug datareceiver A"
+                    "description": "Debug data receiver A"
                 },
                 {
                     "name": "beansB",
                     "type": "float",
                     "lenght": 37,
-                    "description": "Debug datareceiver B"
+                    "description": "Debug data receiver B"
                 }
             ]
         },
@@ -1412,18 +1412,18 @@
                 {
                     "name": "status",
                     "type": "uint32",
-                    "description": "Device status bitfield"
+                    "description": "Device status bits field"
                 },
                 {
                     "name": "error",
                     "type": "uint32",
-                    "description": "Device error bitfield"
+                    "description": "Device error bits field"
                 },
                 {
                     "name": "Tsys",
                     "type": "float",
                     "lenght": 3,
-                    "description": "Syetem Temperature",
+                    "description": "System Temperature",
                     "units": "C"
                 },
                 {
@@ -1505,25 +1505,25 @@
                 {
                     "name": "mrxYaw",
                     "type": "float",
-                    "description": "Yaw orintation provided by MRX",
+                    "description": "Yaw orientation provided by MRX",
                     "units": "deg"
                 },
                 {
                     "name": "dacsYaw",
                     "type": "float",
-                    "description": "Yaw orintation provided by DACS",
+                    "description": "Yaw orientation provided by DACS",
                     "units": "deg"
                 },
                 {
                     "name": "correctedYaw",
                     "type": "float",
-                    "description": "Yaw orintation provided by calculations",
+                    "description": "Yaw orientation provided by calculations",
                     "units": "deg"
                 },
                 {
-                    "name": "continiousYaw",
+                    "name": "continuousYaw",
                     "type": "float",
-                    "description": "Yaw orintation not bounded ",
+                    "description": "Yaw orientation not bounded ",
                     "units": "deg"
                 },
                 {
@@ -1572,7 +1572,7 @@
                     "name": "rel_vel_ned",
                     "type": "float",
                     "lenght": 3,
-                    "description": "Ralative velocity of tranmitter (offset from receiver) in NED (North East Down)",
+                    "description": "Ralative velocity of transmitter (offset from receiver) in NED (North East Down)",
                     "units": "m/s"
                 },
                 {
@@ -1586,7 +1586,7 @@
                     "name": "rel_vel_frd",
                     "type": "float",
                     "lenght": 3,
-                    "description": "Ralative velocity of tranmitter (offset from receiver) in FRD (Forward Right Down)",
+                    "description": "Ralative velocity of transmitter (offset from receiver) in FRD (Forward Right Down)",
                     "units": "m/s"
                 },
                 {
@@ -1600,7 +1600,7 @@
                     "name": "vel_wld",
                     "type": "float",
                     "lenght": 3,
-                    "description": "World velocity of tranmitter in NED (North East Down)",
+                    "description": "World velocity of transmitter in NED (North East Down)",
                     "units": "m/s"
                 },
                 {
@@ -1614,7 +1614,7 @@
                     "name": "abs_vel_ned",
                     "type": "float",
                     "lenght": 3,
-                    "description": "Absolute velocity of tranmitter (vehicle frame)in NED (North East Down)",
+                    "description": "Absolute velocity of transmitter (vehicle frame)in NED (North East Down)",
                     "units": "m/s"
                 },
                 {
@@ -1654,7 +1654,7 @@
                     "name": "beansB",
                     "type": "float",
                     "lenght": 37,
-                    "description": "Debug datar stage B"
+                    "description": "Debug data stage B"
                 },
                 {
                     "name": "beansNoise",
@@ -1772,7 +1772,7 @@
                 {
                     "name": "platformAcc",
                     "type": "float",
-                    "description": "Grount platform acceleration",
+                    "description": "Ground platform acceleration",
                     "units": "m/ss",
                     "default": 0.1,
                     "min": 0.01,
@@ -1818,7 +1818,7 @@
                 {
                     "name": "uartBrt",
                     "type": "opt_uint8",
-                    "description": "UART Baudrate",
+                    "description": "UART Baud rate",
                     "default": 4,
                     "opts": [
                         "19200",
@@ -1879,7 +1879,7 @@
                 {
                     "name": "configCRC",
                     "type": "uint16",
-                    "description": "Configuration checksumm",
+                    "description": "Configuration checksum",
                     "default": 0
                 }
             ]
@@ -1892,7 +1892,7 @@
                 {
                     "name": "status",
                     "type": "uint32",
-                    "description": "Device status bitfield",
+                    "description": "Device status bits field",
                     "flags": [
                         "power_ok",
                         "step_up_ok",
@@ -1904,7 +1904,7 @@
                 {
                     "name": "error",
                     "type": "uint32",
-                    "description": "Device active error bitfield",
+                    "description": "Device active error bits field",
                     "default": 0,
                     "flags": [
                         "emitter_task_error",
@@ -1918,7 +1918,7 @@
                 {
                     "name": "error_history",
                     "type": "uint32",
-                    "description": "Device errors history bitfield",
+                    "description": "Device errors history bits field",
                     "default": 0,
                     "flags": [
                         "emitter_task_error",
@@ -1932,7 +1932,7 @@
                 {
                     "name": "vled_control_errors",
                     "type": "uint8",
-                    "description": "Device vled line errors bitfield",
+                    "description": "Device vled line errors bits field",
                     "default": 0
                 },
                 {
@@ -1961,7 +1961,7 @@
                 {
                     "name": "Vem",
                     "type": "float",
-                    "description": "Emmiter board Voltage",
+                    "description": "Emitter board Voltage",
                     "units": "V",
                     "min": 0.0,
                     "max": 100.0
@@ -1970,7 +1970,7 @@
                     "name": "Tsys",
                     "type": "float",
                     "lenght": 4,
-                    "description": "System temperatires",
+                    "description": "System temperatures",
                     "units": "C"
                 },
                 {
@@ -2074,7 +2074,7 @@
                 {
                     "name": "uartBrt",
                     "type": "opt_uint8",
-                    "description": "UART Baudrate",
+                    "description": "UART Baud rate",
                     "default": 4,
                     "opts": [
                         "19200",
@@ -2131,7 +2131,7 @@
                 {
                     "name": "cpsOverride",
                     "type": "float",
-                    "description": "Overide compass value",
+                    "description": "Override compass value",
                     "units": "deg",
                     "default": "0",
                     "min": 0,
@@ -2149,7 +2149,7 @@
                 {
                     "name": "configCRC",
                     "type": "uint16",
-                    "description": "Configuration checksumm",
+                    "description": "Configuration checksum",
                     "default": 0
                 }
             ]
@@ -2162,12 +2162,12 @@
                 {
                     "name": "ctrl",
                     "type": "uint32",
-                    "description": "Device control bitfield",
+                    "description": "Device control bit field",
                     "default": 0,
                     "flags": [
                         "enable_manual_levels",
-                        "imu_ovverade_enable",
-                        "imu_compass_ovverade_enable",
+                        "imu_override_enable",
+                        "imu_compass_override_enable",
                         "dacs_disable"
                     ]
                 },
@@ -2203,13 +2203,26 @@
                     "name": "imu_override",
                     "type": "float",
                     "lenght": 3,
-                    "description": "IMU ovveride [roll,pitch,yaw]",
+                    "description": "IMU override [roll,pitch,yaw]",
                     "units": "deg",
                     "default": [
                         0,
                         0,
                         0
                     ]
+                }
+            ]
+        },
+        {
+            "name": "ULSDVOBJ_BLITZ_Debug_v1",
+            "description": "Blitz messages debug",
+            "access": "read",
+            "variables": [
+                {
+                    "name": "packets",
+                    "type": "uint8",
+                    "lenght": 220,
+                    "description": "Blitz 20 packets per 11 bytes (src_lid[0],blitz_id[1-2],data[3-10])"
                 }
             ]
         }
@@ -2288,6 +2301,11 @@
                     "name": "control",
                     "object": "ULSQT1R2control",
                     "address": "0x0030"
+                },
+                {
+                    "name": "blitzDebug",
+                    "object": "ULSDVOBJ_BLITZ_Debug_v1",
+                    "address": "0x0101"
                 }
             ]
         },
@@ -2316,6 +2334,11 @@
                     "name": "fftbuf",
                     "object": "ULSQR1R2FFT",
                     "address": "0x0100"
+                },
+                {
+                    "name": "blitzDebug",
+                    "object": "ULSDVOBJ_BLITZ_Debug_v1",
+                    "address": "0x0101"
                 }
             ]
         },
@@ -2349,6 +2372,11 @@
                     "name": "fftbuf",
                     "object": "ULSQR1R2FFT",
                     "address": "0x0100"
+                },
+                {
+                    "name": "blitzDebug",
+                    "object": "ULSDVOBJ_BLITZ_Debug_v1",
+                    "address": "0x0101"
                 }
             ]
         },
@@ -2382,6 +2410,11 @@
                     "name": "fftbuf",
                     "object": "ULSQR1R2FFT",
                     "address": "0x0100"
+                },
+                {
+                    "name": "blitzDebug",
+                    "object": "ULSDVOBJ_BLITZ_Debug_v1",
+                    "address": "0x0101"
                 }
             ]
         },
@@ -2405,6 +2438,11 @@
                     "name": "control",
                     "object": "ULSDVOBJ_TX_Control_v1",
                     "address": "0x0030"
+                },
+                {
+                    "name": "blitzDebug",
+                    "object": "ULSDVOBJ_BLITZ_Debug_v1",
+                    "address": "0x0101"
                 }
             ]
         },
@@ -2438,6 +2476,11 @@
                     "name": "fftbuf",
                     "object": "ULSQR1R2FFT",
                     "address": "0x0100"
+                },
+                {
+                    "name": "blitzDebug",
+                    "object": "ULSDVOBJ_BLITZ_Debug_v1",
+                    "address": "0x0101"
                 }
             ]
         },
@@ -2471,6 +2514,11 @@
                     "name": "fftbuf",
                     "object": "ULSQR1R2FFT",
                     "address": "0x0100"
+                },
+                {
+                    "name": "blitzDebug",
+                    "object": "ULSDVOBJ_BLITZ_Debug_v1",
+                    "address": "0x0101"
                 }
             ]
         },
@@ -2494,6 +2542,11 @@
                     "name": "control",
                     "object": "ULSDVOBJ_TX_Control_v1",
                     "address": "0x0030"
+                },
+                {
+                    "name": "blitzDebug",
+                    "object": "ULSDVOBJ_BLITZ_Debug_v1",
+                    "address": "0x0101"
                 }
             ]
         },
@@ -2527,6 +2580,11 @@
                     "name": "fftbuf",
                     "object": "ULSQR1R2FFT",
                     "address": "0x0100"
+                },
+                {
+                    "name": "blitzDebug",
+                    "object": "ULSDVOBJ_BLITZ_Debug_v1",
+                    "address": "0x0101"
                 }
             ]
         },
@@ -2560,6 +2618,11 @@
                     "name": "fftbuf",
                     "object": "ULSQR1R2FFT",
                     "address": "0x0100"
+                },
+                {
+                    "name": "blitzDebug",
+                    "object": "ULSDVOBJ_BLITZ_Debug_v1",
+                    "address": "0x0101"
                 }
             ]
         },
@@ -2583,6 +2646,11 @@
                     "name": "control",
                     "object": "ULSDVOBJ_TX_Control_v1",
                     "address": "0x0030"
+                },
+                {
+                    "name": "blitzDebug",
+                    "object": "ULSDVOBJ_BLITZ_Debug_v1",
+                    "address": "0x0101"
                 }
             ]
         },
@@ -2616,6 +2684,11 @@
                     "name": "fftbuf",
                     "object": "ULSQR1R2FFT",
                     "address": "0x0100"
+                },
+                {
+                    "name": "blitzDebug",
+                    "object": "ULSDVOBJ_BLITZ_Debug_v1",
+                    "address": "0x0101"
                 }
             ]
         },
@@ -2639,6 +2712,11 @@
                     "name": "control",
                     "object": "ULSDVOBJ_TX_Control_v1",
                     "address": "0x0030"
+                },
+                {
+                    "name": "blitzDebug",
+                    "object": "ULSDVOBJ_BLITZ_Debug_v1",
+                    "address": "0x0101"
                 }
             ]
         }

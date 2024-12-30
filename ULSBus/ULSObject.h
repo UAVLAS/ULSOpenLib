@@ -28,35 +28,37 @@
 
 #include "ULSBusTypes.h"
 #ifdef __GNUC__
-#define __ULS_PACKET( __Declaration__ ) __Declaration__ __attribute__((packed))
+#define __ULS_PACKET(__Declaration__) __Declaration__ __attribute__((packed))
 #endif
 
 #ifdef _MSC_VER
-#define __ULS_PACKET( __Declaration__ ) __pragma( pack(push, 1) ) __Declaration__ __pragma( pack(pop))
+#define __ULS_PACKET(__Declaration__) \
+  __pragma(pack(push, 1)) __Declaration__ __pragma(pack(pop))
 #endif
-
 
 class ULSObjectBase : public ULSListItem {
  public:
   ULSObjectBase(uint16_t id, const char *name, const char *description,
-                _ulsbus_obj_permitions permition);
+                _ulsbus_obj_permissions permission);
   uint16_t id;
   uint16_t size;
   uint16_t len;
   uint8_t *_pxData;
   const char *_name;
   const char *_description;
-  _ulsbus_obj_permitions _permition;
+  _ulsbus_obj_permissions _permission;
 
   uint32_t getData(uint8_t *buf) {
     memcpy(buf, _pxData, size * len);
     return size * len;
   };
-  void setData(uint8_t *buf) { memcpy(_pxData, buf, size * len);updated(); };
-  virtual void defaultConfig(){};
-  virtual void validateConfig(){};
-  virtual void updated(){};
-  
+  void setData(uint8_t *buf) {
+    memcpy(_pxData, buf, size * len);
+    updated();
+  };
+  virtual void defaultConfig() {};
+  virtual void validateConfig() {};
+  virtual void updated() {};
 
  protected:
   float checkConfigF(float val, float min, float max) {
@@ -70,7 +72,7 @@ class ULSDBase : public ULSList<ULSObjectBase> {
  public:
   ULSDBase(const char *tn, const uint16_t tc);
   ULSObjectBase *getObject(uint16_t obj_id);
-  void setData(uint16_t obj_id,uint8_t *buf);
+  void setData(uint16_t obj_id, uint8_t *buf);
   const char *devname;
   const char *typeName;
   uint16_t typeCode;
@@ -79,7 +81,7 @@ class ULSDBase : public ULSList<ULSObjectBase> {
 };
 
 // Standart Objects and devices
-typedef __ULS_PACKET( struct {
+typedef __ULS_PACKET(struct {
   char fw[32];
   char ldr[32];
   uint32_t serial[4];
@@ -87,20 +89,19 @@ typedef __ULS_PACKET( struct {
   uint32_t progsize;
   uint32_t progcrc;
   uint32_t type;
-})__ULSObjectSignature;  // Total 128 bytes;
+}) __ULSObjectSignature;  // Total 128 bytes;
 
 class ULSObjectSignature : public ULSObjectBase {
  public:
   ULSObjectSignature(uint16_t id)
       : ULSObjectBase(id, "System_signature", "SystemSignature Information",
-                      ULSBUS_OBJECT_PERMITION_READONLY) {
+                      ULSBUS_OBJECT_PERMISSION_READONLY) {
     size = sizeof(__ULSObjectSignature);
     len = 1;
     _pxData = (uint8_t *)&var;
-    memset(_pxData,0,sizeof (__ULSObjectSignature));
+    memset(_pxData, 0, sizeof(__ULSObjectSignature));
   }
   __ULSObjectSignature var;
-
 };
 class ULSD_ULSX : public ULSDBase {
  public:

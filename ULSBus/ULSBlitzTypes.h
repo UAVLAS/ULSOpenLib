@@ -156,4 +156,18 @@ typedef struct __attribute__((packed)) {
 
 } __uls_blitz_msg_xx_txc_imu_override;
 
+typedef struct {
+  uint8_t src_lid;
+  uint16_t msg_id;
+  union {
+    uint8_t data[8];
+    __uls_blitz_xcg1_rx_raw_measurmet xcg1_rx_raw_measurmet;
+    __uls_blitz_msg_rx_raw_measurmet rx_raw_measurmet;
+    __uls_blitz_msg_rx_pos_in_tx_frame rx_pos_in_tx_frame;
+    __uls_blitz_msg_rx_mrx rx_mrx;
+    __uls_blitz_msg_rx_dacs rx_dacs;
+  };
+
+} __blitz_common_data_struct;
+
 #endif  // ULSBLITZTYPES_H

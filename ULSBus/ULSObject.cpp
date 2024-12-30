@@ -22,36 +22,30 @@
 
 #include "ULSObject.h"
 
-ULSObjectBase::ULSObjectBase(uint16_t id, const char *name, const char *description, _ulsbus_obj_permitions permition):
-    ULSListItem(),
-    id(id),
-    _name(name),
-    _description(description),
-    _permition(permition)
-{
-    size = 0;
-    len = 0;
+ULSObjectBase::ULSObjectBase(uint16_t id, const char *name,
+                             const char *description,
+                             _ulsbus_obj_permissions permission)
+    : ULSListItem(),
+      id(id),
+      _name(name),
+      _description(description),
+      _permission(permission) {
+  size = 0;
+  len = 0;
 }
 
-ULSDBase::ULSDBase(const char *tn, const uint16_t tc):
-    ULSList(),
-    typeName(tn),
-    typeCode(tc)
-{
+ULSDBase::ULSDBase(const char *tn, const uint16_t tc)
+    : ULSList(), typeName(tn), typeCode(tc) {}
 
+ULSObjectBase *ULSDBase::getObject(uint16_t obj_id) {
+  begin();
+  while (next()) {
+    if (current->id == obj_id) return current;
+  }
+  return nullptr;
 }
 
-ULSObjectBase *ULSDBase::getObject(uint16_t obj_id)
-{
-    begin();
-    while(next()){
-        if(current->id == obj_id)return current;
-    }
-    return nullptr;
-}
-
-void ULSDBase::setData(uint16_t obj_id,uint8_t *buf){
-
-    ULSObjectBase *obj = getObject(obj_id);
-    obj->setData(buf);
+void ULSDBase::setData(uint16_t obj_id, uint8_t *buf) {
+  ULSObjectBase *obj = getObject(obj_id);
+  obj->setData(buf);
 }
