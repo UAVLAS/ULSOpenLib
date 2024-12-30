@@ -78,12 +78,12 @@ class ULSObjectBase : public QObject,public ULSListItem {
 
 public:
     ULSObjectBase(uint16_t id, const char *name, const char *description,
-                  _ulsbus_obj_permitions permition):
+                  _ulsbus_obj_permissions permition):
         ULSListItem(),
         id(id),
         _name(name),
         _description(description),
-        _permition(permition)
+        _permission(permition)
     {
         size = 0;
         len = 0;
@@ -95,7 +95,7 @@ public:
     uint8_t *_pxData;
     const char *_name;
     const char *_description;
-    _ulsbus_obj_permitions _permition;
+    _ulsbus_obj_permissions _permission;
 
     virtual void defaultConfig(){};
     virtual void validateConfig(){};
@@ -210,7 +210,7 @@ public:
 public:
     ULSObjectSignature(uint16_t id)
         : ULSObjectBase(id, "System_signature", "SystemSignature Information",
-                        ULSBUS_OBJECT_PERMITION_READONLY) {
+                        ULSBUS_OBJECT_PERMISSION_READONLY) {
         size = sizeof(__ULSObjectSignature);
         len = 1;
         _pxData = (uint8_t *)&var;
