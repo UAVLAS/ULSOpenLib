@@ -132,4 +132,28 @@ typedef struct __attribute__((packed)) {
 
 } __uls_blitz_msg_gimu_data;
 
+// Override IMU data on ground unit.
+// This data works like compass override mode and allow to set
+// roll, pitch and yaw angles on ground unit.
+// This data are transmitted to receiver over IR channel and
+// Used to calculate orientation of receiver in earth frame.
+
+#define ULS_BLITZ_MSG_ID_XX_TXC_IMU_OVERRIDE 0x0030
+typedef struct __attribute__((packed)) {
+  // Control :
+  //  BIT                             Description
+  //  0   SET ROLL                  - get IR signal
+  //  1   SET Pitch                 - signal quality OK
+  //  2   SET Yaw                   - Position estimated
+  //  3-7 reserved
+  uint8_t control;  //
+  uint8_t counter;  // packets counter
+  // angular information proportional [-180 ... +180 degrees]
+  // deg = (value_int16 * 180.f)/32767.f
+  int16_t roll;
+  int16_t pitch;
+  int16_t yaw;
+
+} __uls_blitz_msg_xx_txc_imu_override;
+
 #endif  // ULSBLITZTYPES_H
