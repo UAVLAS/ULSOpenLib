@@ -15,7 +15,7 @@ typedef struct __attribute__((packed)) {
   //  6   ULS_STATUS_RX_MRXDATA_OK  - MRX Yaw and DIstance Calculated - OK
 
   uint8_t status;  // bit[0] = (1=ok)(0=error)
-  uint8_t d;       // distance in cm
+  uint8_t d;       // distance in 10 cm
   // angular information proportional [-30000 = -30/ +30000 = +30]
   int16_t aX;
   int16_t aY;
@@ -142,9 +142,9 @@ typedef struct __attribute__((packed)) {
 typedef struct __attribute__((packed)) {
   // Control :
   //  BIT                             Description
-  //  0   SET ROLL                  - get IR signal
-  //  1   SET Pitch                 - signal quality OK
-  //  2   SET Yaw                   - Position estimated
+  //  0   SET Roll                 - Set Roll angle override
+  //  1   SET Pitch                 - Set Pitch angle override
+  //  2   SET Yaw                   - Set Yaw angle override
   //  3-7 reserved
   uint8_t control;  //
   uint8_t counter;  // packets counter
