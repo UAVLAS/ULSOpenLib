@@ -156,6 +156,9 @@ typedef struct __attribute__((packed)) {
 
 } __uls_blitz_msg_xx_txc_imu_override;
 
+//
+// Common data structure for all messages.
+//
 typedef struct {
   uint8_t src_lid;
   uint16_t msg_id;
