@@ -1365,6 +1365,18 @@
                     ]
                 },
                 {
+                    "name": "canBrt",
+                    "type": "opt_uint8",
+                    "description": "CAN baud rate",
+                    "default": 4,
+                    "opts": [
+                        "1000000",
+                        "500000",
+                        "250000",
+                        "125000"
+                    ]
+                },
+                {
                     "name": "configCRC",
                     "type": "uint16",
                     "description": "Configuration checksum",
@@ -1804,6 +1816,18 @@
                     ]
                 },
                 {
+                    "name": "canBrt",
+                    "type": "opt_uint8",
+                    "description": "CAN baud rate",
+                    "default": 4,
+                    "opts": [
+                        "1000000",
+                        "500000",
+                        "250000",
+                        "125000"
+                    ]
+                },
+                {
                     "name": "uartProtocol",
                     "type": "opt_uint8",
                     "description": "UART Protocol",
@@ -2100,6 +2124,18 @@
                     "opts": [
                         "ULSDECONET",
                         "SimpleCAN"
+                    ]
+                },
+                {
+                    "name": "canBrt",
+                    "type": "opt_uint8",
+                    "description": "CAN baud rate",
+                    "default": 4,
+                    "opts": [
+                        "1000000",
+                        "500000",
+                        "250000",
+                        "125000"
                     ]
                 },
                 {
