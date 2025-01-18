@@ -156,6 +156,28 @@ typedef struct __attribute__((packed)) {
 
 } __uls_blitz_msg_xx_txc_imu_override;
 
+// Override MAG data on ground unit.
+// This data works like compass override mode and allow to set
+// external magnetometer values on ground unit.
+// This data are transmitted to receiver over IR channel and
+// Used to calculate orientation of receiver in earth frame.
+
+#define ULS_BLITZ_MSG_ID_XX_TXC_MAG_OVERRIDE 0x0031
+typedef struct __attribute__((packed)) {
+  // Control :
+  //  BIT                             Description
+  //  0   SET override                 - Set Mag values override
+  //  1-7 reserved
+  uint8_t control;  //
+  uint8_t counter;  // packets counter
+  // magnetic field information proportional
+  // mag_value = (value_int16 * 1.f)/32767.f
+  int16_t mx;
+  int16_t my;
+  int16_t mz;
+
+} __uls_blitz_msg_xx_txc_mag_override;
+
 //
 // Common data structure for all messages.
 //
