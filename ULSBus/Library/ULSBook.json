@@ -160,6 +160,32 @@
                     "max": 3.0
                 },
                 {
+                    "name": "magCalOffsetEx",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "External compass calibration offset",
+                    "default": [
+                        0,
+                        0,
+                        0
+                    ],
+                    "min": -100.0,
+                    "max": 100.0
+                },
+                {
+                    "name": "magCalScaleEx",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "External compass calibration scale",
+                    "default": [
+                        1,
+                        1,
+                        1
+                    ],
+                    "min": 0.1,
+                    "max": 3.0
+                },
+                {
                     "name": "ctrl",
                     "type": "flags_uint8",
                     "description": "Transmitter control byte",
@@ -832,6 +858,32 @@
                     "max": 3.0
                 },
                 {
+                    "name": "magCalOffsetEx",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "External compass calibration offset",
+                    "default": [
+                        0,
+                        0,
+                        0
+                    ],
+                    "min": -100.0,
+                    "max": 100.0
+                },
+                {
+                    "name": "magCalScaleEx",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "External compass calibration scale",
+                    "default": [
+                        1,
+                        1,
+                        1
+                    ],
+                    "min": 0.01,
+                    "max": 100.0
+                },
+                {
                     "name": "ctrl",
                     "type": "flags_uint8",
                     "description": "Transmitter control byte",
@@ -1327,6 +1379,18 @@
                     ]
                 },
                 {
+                    "name": "canSpeed",
+                    "type": "opt_uint8",
+                    "description": "CAN speed",
+                    "default": 4,
+                    "opts": [
+                        "1000000",
+                        "500000",
+                        "250000",
+                        "125000"
+                    ]
+                },
+                {
                     "name": "uartProtocol",
                     "type": "opt_uint8",
                     "description": "UART Protocol",
@@ -1804,9 +1868,9 @@
                     ]
                 },
                 {
-                    "name": "canBrt",
+                    "name": "canSpeed",
                     "type": "opt_uint8",
-                    "description": "CAN baud rate",
+                    "description": "CAN speed",
                     "default": 4,
                     "opts": [
                         "1000000",
@@ -1831,6 +1895,33 @@
                     "name": "uartBrt",
                     "type": "opt_uint8",
                     "description": "UART Baud rate",
+                    "default": 4,
+                    "opts": [
+                        "19200",
+                        "38400",
+                        "57600",
+                        "115200",
+                        "230400",
+                        "460800",
+                        "921600"
+                    ]
+                },
+                {
+                    "name": "uartProtocolSec",
+                    "type": "opt_uint8",
+                    "description": "UART Protocol secondary",
+                    "default": 1,
+                    "opts": [
+                        "Disabled",
+                        "MavlinkV2",
+                        "APx",
+                        "ASCII"
+                    ]
+                },
+                {
+                    "name": "uartBrtSec",
+                    "type": "opt_uint8",
+                    "description": "UART Baud rate secondary",
                     "default": 4,
                     "opts": [
                         "19200",
@@ -1880,6 +1971,32 @@
                     "max": 30.0
                 },
                 {
+                    "name": "magCalOffsetEx",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "External compass calibration offset",
+                    "default": [
+                        0,
+                        0,
+                        0
+                    ],
+                    "min": -100.0,
+                    "max": 100.0
+                },
+                {
+                    "name": "magCalScaleEx",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "External compass calibration scale",
+                    "default": [
+                        1,
+                        1,
+                        1
+                    ],
+                    "min": 0.01,
+                    "max": 100.0
+                },
+                {
                     "name": "indicatorBrightness",
                     "type": "uint8",
                     "description": "Indicator brightness",
@@ -1910,7 +2027,9 @@
                         "step_up_ok",
                         "emitter_on_charge",
                         "emitter_ok",
-                        "compass_ok"
+                        "compass_ok",
+                        "external_compass_override_mode",
+                        "external_imu_override_mode"
                     ]
                 },
                 {
@@ -2115,9 +2234,9 @@
                     ]
                 },
                 {
-                    "name": "canBrt",
+                    "name": "canSpeed",
                     "type": "opt_uint8",
-                    "description": "CAN baud rate",
+                    "description": "CAN speed",
                     "default": 4,
                     "opts": [
                         "1000000",
@@ -2151,6 +2270,32 @@
                     ],
                     "min": 0.01,
                     "max": 30.0
+                },
+                {
+                    "name": "magCalOffsetEx",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "External compass calibration offset",
+                    "default": [
+                        0,
+                        0,
+                        0
+                    ],
+                    "min": -100.0,
+                    "max": 100.0
+                },
+                {
+                    "name": "magCalScaleEx",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "External compass calibration scale",
+                    "default": [
+                        1,
+                        1,
+                        1
+                    ],
+                    "min": 0.1,
+                    "max": 3.0
                 },
                 {
                     "name": "cpsOverride",
