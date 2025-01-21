@@ -903,6 +903,34 @@
                     "max": 360
                 },
                 {
+                    "name": "canAddress",
+                    "type": "uint8",
+                    "description": "CAN bus device static address",
+                    "default": 255
+                },
+                {
+                    "name": "canProtocol",
+                    "type": "opt_uint8",
+                    "description": "CAN bus device protocol",
+                    "default": 0,
+                    "opts": [
+                        "ULSDECONET",
+                        "SimpleCAN"
+                    ]
+                },
+                {
+                    "name": "canSpeed",
+                    "type": "opt_uint8",
+                    "description": "CAN speed",
+                    "default": 4,
+                    "opts": [
+                        "1000000",
+                        "500000",
+                        "250000",
+                        "125000"
+                    ]
+                },
+                {
                     "name": "configCRC",
                     "type": "uint16",
                     "description": "Configuration checksum",
