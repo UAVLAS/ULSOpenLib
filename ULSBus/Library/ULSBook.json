@@ -1746,10 +1746,11 @@
                     "description": "Transmitter control byte",
                     "default": 1,
                     "flags": [
-                        "receiver_enabled",
+                        "transmitter_level_compensation",
                         "noise_debug",
                         "disable_imu",
                         "disable_mrx",
+                        "disable_dacs_yaw_correction",
                         "disable_indication"
                     ]
                 },
@@ -2153,7 +2154,8 @@
                     "default": 1,
                     "flags": [
                         "Illumination",
-                        "CompassOverrideEnable"
+                        "CompassOverrideEnable",
+                        "external_compass_only_mode"
                     ]
                 },
                 {
