@@ -937,7 +937,7 @@
                     "default": 1,
                     "opts": [
                         "ASCII",
-                        "ULS-DeCoNet"
+                        "ULSDeCoNet"
                     ]
                 },
                 {
