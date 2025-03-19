@@ -355,7 +355,7 @@ void ULSSerial::writeString(const char *format,...)
 {
     va_list args;
     va_start(args, format);
-    vsprintf(_str,format, args);
+    vsnprintf(_str,512,format, args);
     va_end(args);
     write((uint8_t*)_str,(uint32_t)strlen(_str));
 }
