@@ -146,7 +146,7 @@ public:
     Q_PROPERTY(QString var_fw READ var_fw NOTIFY var_fwChanged)
     Q_PROPERTY(QString var_ldr READ var_ldr NOTIFY var_ldrChanged)
     Q_PROPERTY(QString var_serial READ var_serial NOTIFY var_serialChanged)
-    Q_PROPERTY(QString var_key READ var_key NOTIFY var_keyChanged)
+    Q_PROPERTY(uint32_t var_key READ var_key NOTIFY var_keyChanged)
     Q_PROPERTY(uint32_t var_progflashingtime READ var_progflashingtime NOTIFY var_progflashingtimeChanged)
 
     Q_PROPERTY(uint32_t var_progsize READ var_progsize NOTIFY var_progsizeChanged)
