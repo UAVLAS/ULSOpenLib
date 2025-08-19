@@ -2,10 +2,16 @@
 #define ULSBUSTYPES_H
 #include <inttypes.h>
 #include <string.h>
-#include "ULSBusConfig.h"
+//#include "ULSBusConfig.h"
 #include "udebug.h"
 
 #define _ULS_OPERATION_KEY 0x24041982
+
+#define __DEVICE_UNIC_ID0 0x00
+#define __DEVICE_UNIC_ID1 0x21
+#define __DEVICE_UNIC_ID2 0x00
+#define __DEVICE_UNIC_ID3 0x01
+
 #define __DEVICE_KEY                                           \
   (__DEVICE_UNIC_ID0 ^ __DEVICE_UNIC_ID1 ^ __DEVICE_UNIC_ID2 ^ \
    __DEVICE_UNIC_ID3)

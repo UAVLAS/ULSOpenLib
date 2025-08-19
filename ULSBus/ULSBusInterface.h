@@ -25,6 +25,7 @@
 
 #include "ULSBusTypes.h"
 #include "ULSDevices.h"
+#include "ULSObject.h"
 
 #define IF_PACKET_SIZE 1324
 
