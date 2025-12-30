@@ -621,7 +621,8 @@
                     "flags": [
                         "MAV_FRAME_BODY_FRD",
                         "MAV_FRAME_LOCAL_OFFSET_NED",
-                        "MAV_FRAME_LOCAL_NED"
+                        "MAV_FRAME_LOCAL_NED",
+                        "VISION_POSITION_ESTIMATE"
                     ]
                 },
                 {
@@ -1478,7 +1479,8 @@
                     "flags": [
                         "MAV_FRAME_BODY_FRD",
                         "MAV_FRAME_LOCAL_OFFSET_NED",
-                        "MAV_FRAME_LOCAL_NED"
+                        "MAV_FRAME_LOCAL_NED",
+                        "VISION_POSITION_ESTIMATE"
                     ]
                 },
                 {
@@ -1995,7 +1997,8 @@
                     "flags": [
                         "MAV_FRAME_BODY_FRD",
                         "MAV_FRAME_LOCAL_OFFSET_NED",
-                        "MAV_FRAME_LOCAL_NED"
+                        "MAV_FRAME_LOCAL_NED",
+                        "VISION_POSITION_ESTIMATE"
                     ]
                 },
                 {
