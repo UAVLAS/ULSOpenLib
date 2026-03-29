@@ -2776,6 +2776,71 @@
                     "address": "0x0101"
                 }
             ]
+        }, {
+            "name": "ULSDV_HL_G3_RXM",
+            "description": "UAVLAS Heli G3 receiver ",
+            "type": "0x0041",
+            "objects": [
+                {
+                    "name": "status",
+                    "object": "ULSDVOBJ_RX_Status_v1",
+                    "address": "0x0010"
+                },
+                {
+                    "name": "cfg",
+                    "object": "ULSDVOBJ_RX_Config_v1",
+                    "address": "0x0020",
+                    "type": "config"
+                },
+                {
+                    "name": "ch1Debug",
+                    "object": "ULSDVOBJ_RX_Channel_Debug_v1",
+                    "address": "0x0030"
+                },
+                {
+                    "name": "ch2Debug",
+                    "object": "ULSDVOBJ_RX_Channel_Debug_v1",
+                    "address": "0x0031"
+                },
+                {
+                    "name": "fftbuf",
+                    "object": "ULSQR1R2FFT",
+                    "address": "0x0100"
+                },
+                {
+                    "name": "blitzDebug",
+                    "object": "ULSDVOBJ_BLITZ_Debug_v1",
+                    "address": "0x0101"
+                }
+            ]
+        },
+        {
+            "name": "ULSDV_HL_G3_TXC",
+            "description": "UAVLAS  Heli G3 master receiver",
+            "type": "0x0042",
+            "objects": [
+                {
+                    "name": "status",
+                    "object": "ULSDVOBJ_TX_Status_v1",
+                    "address": "0x0010"
+                },
+                {
+                    "name": "cfg",
+                    "object": "ULSDVOBJ_TX_Config_v1",
+                    "address": "0x0020",
+                    "type": "config"
+                },
+                {
+                    "name": "control",
+                    "object": "ULSDVOBJ_TX_Control_v1",
+                    "address": "0x0030"
+                },
+                {
+                    "name": "blitzDebug",
+                    "object": "ULSDVOBJ_BLITZ_Debug_v1",
+                    "address": "0x0101"
+                }
+            ]
         },
         {
             "name": "ULSDV_ON_R0_RXS",
