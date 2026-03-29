@@ -2751,7 +2751,7 @@
         },
         {
             "name": "ULSDV_HL_R0_TXC",
-            "description": "UAVLAS  Heli master receiver",
+            "description": "UAVLAS  Heli transmitter",
             "type": "0x0042",
             "objects": [
                 {
@@ -2776,10 +2776,11 @@
                     "address": "0x0101"
                 }
             ]
-        }, {
+        },
+        {
             "name": "ULSDV_HL_G3_RXM",
             "description": "UAVLAS Heli G3 receiver ",
-            "type": "0x0041",
+            "type": "0x0043",
             "objects": [
                 {
                     "name": "status",
@@ -2816,8 +2817,8 @@
         },
         {
             "name": "ULSDV_HL_G3_TXC",
-            "description": "UAVLAS  Heli G3 master receiver",
-            "type": "0x0042",
+            "description": "UAVLAS Heli G3 transmitter",
+            "type": "0x0044",
             "objects": [
                 {
                     "name": "status",
