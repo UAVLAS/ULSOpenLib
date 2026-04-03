@@ -2804,6 +2804,16 @@
                     "address": "0x0031"
                 },
                 {
+                    "name": "ch3Debug",
+                    "object": "ULSDVOBJ_RX_Channel_Debug_v1",
+                    "address": "0x0032"
+                },
+                {
+                    "name": "ch4Debug",
+                    "object": "ULSDVOBJ_RX_Channel_Debug_v1",
+                    "address": "0x0033"
+                },
+                {
                     "name": "fftbuf",
                     "object": "ULSQR1R2FFT",
                     "address": "0x0100"
