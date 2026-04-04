@@ -224,7 +224,7 @@ class _io_fifo : public _io_fifo_base<T> {
  public:
   _io_fifo()
       : _io_fifo_base<T>(&this->_buf[0], &this->_buf[0], &this->_buf[0],
-                         &this->_buf[0], &this->_buf[SIZE]) {}
+                         &this->_buf[0], &this->_buf[SIZE-1]) {}
 
  private:
   T _buf[SIZE + 1];  // +1 sentinel so _end is a valid address that is never written
