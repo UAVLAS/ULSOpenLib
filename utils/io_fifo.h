@@ -224,10 +224,10 @@ class _io_fifo : public _io_fifo_base<T> {
  public:
   _io_fifo()
       : _io_fifo_base<T>(&this->_buf[0], &this->_buf[0], &this->_buf[0],
-                         &this->_buf[0], &this->_buf[SIZE - 1]) {}
+                         &this->_buf[0], &this->_buf[SIZE]) {}
 
  private:
-  T _buf[SIZE];  // +1 for _last space.
+  T _buf[SIZE + 1];  // +1 sentinel so _end is a valid address that is never written
 };
 
 typedef _io_fifo_base<uint8_t> _io_fifo_u8;
