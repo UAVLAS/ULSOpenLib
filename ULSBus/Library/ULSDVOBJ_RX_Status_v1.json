@@ -1,0 +1,240 @@
+{
+    "BookVersion": "1.0",
+    "Objects": [
+         {
+            "name": "ULSDVOBJ_RX_Status_v1",
+            "description": "Receiver status information",
+            "access": "read",
+            "variables": [
+                {
+                    "name": "status",
+                    "type": "uint32",
+                    "description": "Device status bits field"
+                },
+                {
+                    "name": "error",
+                    "type": "uint32",
+                    "description": "Device error bits field"
+                },
+                {
+                    "name": "Tsys",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "System Temperature",
+                    "units": "C"
+                },
+                {
+                    "name": "Vsys",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "System supply voltage",
+                    "units": "V"
+                },
+                {
+                    "name": "uartErrors",
+                    "type": "uint16",
+                    "lenght": 3,
+                    "description": "Uart errors counter"
+                },
+                {
+                    "name": "uartTxPacks",
+                    "type": "uint16",
+                    "lenght": 3,
+                    "description": "Uart packets transmitted"
+                },
+                {
+                    "name": "uartRxPacks",
+                    "type": "uint16",
+                    "lenght": 3,
+                    "description": "Uart packets received"
+                },
+                {
+                    "name": "CANRxPacks",
+                    "type": "uint16",
+                    "lenght": 3,
+                    "description": "CAN packets received"
+                },
+                {
+                    "name": "emsPackets",
+                    "type": "uint16",
+                    "description": "Emitter packets received"
+                },
+                {
+                    "name": "level",
+                    "type": "float",
+                    "lenght": 4,
+                    "description": "Signal level",
+                    "units": "db"
+                },
+                {
+                    "name": "snr",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "Signal to noise ratio",
+                    "units": "db"
+                },
+                {
+                    "name": "saturation",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "Signal saturation",
+                    "units": "e"
+                },
+                {
+                    "name": "dacsDistance",
+                    "type": "float",
+                    "lenght": 2,
+                    "description": "Distance provided by MRX algorithm",
+                    "units": "m"
+                },
+                {
+                    "name": "mrxDistance",
+                    "type": "float",
+                    "description": "Distance provided by MRX algorithm",
+                    "units": "m"
+                },
+                {
+                    "name": "distance",
+                    "type": "float",
+                    "description": "Distance to transmitter",
+                    "units": "m"
+                },
+                {
+                    "name": "mrxYaw",
+                    "type": "float",
+                    "description": "Yaw orientation provided by MRX",
+                    "units": "deg"
+                },
+                {
+                    "name": "dacsYaw",
+                    "type": "float",
+                    "description": "Yaw orientation provided by DACS",
+                    "units": "deg"
+                },
+                {
+                    "name": "correctedYaw",
+                    "type": "float",
+                    "description": "Yaw orientation provided by calculations",
+                    "units": "deg"
+                },
+                {
+                    "name": "continuousYaw",
+                    "type": "float",
+                    "description": "Yaw orientation not bounded ",
+                    "units": "deg"
+                },
+                {
+                    "name": "dacsPower",
+                    "type": "float",
+                    "lenght": 8,
+                    "description": "DACS Illumination power",
+                    "units": "db"
+                },
+                {
+                    "name": "ang",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "Receiver angular position in transmitter frame",
+                    "units": "deg"
+                },
+                {
+                    "name": "pos",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "Receiver position in transmitter frame",
+                    "units": "m"
+                },
+                {
+                    "name": "vel",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "Receiver velocity in transmitter frame",
+                    "units": "m/s"
+                },
+                {
+                    "name": "gimu",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "Transmitter orientation (roll, pitch, yaw)",
+                    "units": "deg"
+                },
+                {
+                    "name": "rel_pos_ned",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "Relative Position of transmitter (offset from receiver)in NED (North East Down)",
+                    "units": "m"
+                },
+                {
+                    "name": "rel_vel_ned",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "Ralative velocity of transmitter (offset from receiver) in NED (North East Down)",
+                    "units": "m/s"
+                },
+                {
+                    "name": "rel_pos_frd",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "Relative Position of transmitter (offset from receiver) in FRD (Forward Right Down)",
+                    "units": "m"
+                },
+                {
+                    "name": "rel_vel_frd",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "Ralative velocity of transmitter (offset from receiver) in FRD (Forward Right Down)",
+                    "units": "m/s"
+                },
+                {
+                    "name": "pos_wld",
+                    "type": "uint32",
+                    "lenght": 3,
+                    "description": "World Position of transmitter  (Lat Lon Msl)",
+                    "units": "deg,deg,cm"
+                },
+                {
+                    "name": "vel_wld",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "World velocity of transmitter in NED (North East Down)",
+                    "units": "m/s"
+                },
+                {
+                    "name": "abs_pos_ned",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "Absolute position of transmitter (vehicle frame) in NED (North East Down)",
+                    "units": "m"
+                },
+                {
+                    "name": "abs_vel_ned",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "Absolute velocity of transmitter (vehicle frame)in NED (North East Down)",
+                    "units": "m/s"
+                },
+                {
+                    "name": "vehicle_abs_pos_ned",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "Absolute Position of vehicle in NED (North East Down)",
+                    "units": "m"
+                },
+                {
+                    "name": "vehicle_abs_vel_ned",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "Absolute velocity of vehicle in NED (North East Down)",
+                    "units": "m/s"
+                },
+                {
+                    "name": "vehicle_heading",
+                    "type": "float",
+                    "description": "Vehicle heading information",
+                    "units": "deg"
+                }
+            ]
+        }
+    ]
+}

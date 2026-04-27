@@ -1,0 +1,195 @@
+{
+    "BookVersion": "1.0",
+    "Objects": [
+        {
+            "name": "ULSDVOBJ_TX_Config_v1",
+            "description": "Transmitter configuration",
+            "access": "config",
+            "variables": [
+                {
+                    "name": "name",
+                    "type": "char",
+                    "lenght": 16,
+                    "default": "ULS-TX",
+                    "description": "Name"
+                },
+                {
+                    "name": "ctrl",
+                    "type": "flags_uint8",
+                    "description": "Transmitter control byte",
+                    "default": 1,
+                    "flags": [
+                        "Illumination",
+                        "CompassOverrideEnable",
+                        "external_compass_only_mode"
+                    ]
+                },
+                {
+                    "name": "devID",
+                    "type": "uint8",
+                    "default": 0,
+                    "description": "Beacon ID number"
+                },
+                {
+                    "name": "power",
+                    "type": "float",
+                    "description": "Illumination power",
+                    "units": "mA",
+                    "default": "100",
+                    "min": 0,
+                    "max": 150
+                },
+                {
+                    "name": "Voff",
+                    "type": "float",
+                    "description": "Voltage to switch-off device",
+                    "units": "V",
+                    "default": "6",
+                    "min": 5,
+                    "max": 30
+                },
+                {
+                    "name": "Vlow",
+                    "type": "float",
+                    "description": "Low voltage warning",
+                    "units": "V",
+                    "default": "7",
+                    "min": 5,
+                    "max": 30
+                },
+                {
+                    "name": "uartProtocol",
+                    "type": "opt_uint8",
+                    "description": "UART Protocol",
+                    "default": 1,
+                    "opts": [
+                        "Disabled",
+                        "ULSDECONET",
+                        "MavlinkV2",
+                        "APx",
+                        "ASCII"
+                    ]
+                },
+                {
+                    "name": "uartBrt",
+                    "type": "opt_uint8",
+                    "description": "UART Baud rate",
+                    "default": 4,
+                    "opts": [
+                        "19200",
+                        "38400",
+                        "57600",
+                        "115200",
+                        "230400",
+                        "460800",
+                        "921600"
+                    ]
+                },
+                {
+                    "name": "canAddress",
+                    "type": "uint8",
+                    "description": "CAN bus device static address",
+                    "default": 0
+                },
+                {
+                    "name": "canProtocol",
+                    "type": "opt_uint8",
+                    "description": "CAN bus device protocol",
+                    "default": 0,
+                    "opts": [
+                        "ULSDECONET",
+                        "SimpleCAN"
+                    ]
+                },
+                {
+                    "name": "canSpeed",
+                    "type": "opt_uint8",
+                    "description": "CAN speed",
+                    "default": 4,
+                    "opts": [
+                        "1000000",
+                        "500000",
+                        "250000",
+                        "125000"
+                    ]
+                },
+                {
+                    "name": "magCalOffset",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "Compass calibration offset",
+                    "default": [
+                        0,
+                        0,
+                        0
+                    ],
+                    "min": -30.0,
+                    "max": 30.0
+                },
+                {
+                    "name": "magCalScale",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "Compass calibration scale",
+                    "default": [
+                        1,
+                        1,
+                        1
+                    ],
+                    "min": 0.01,
+                    "max": 30.0
+                },
+                {
+                    "name": "magCalOffsetEx",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "External compass calibration offset",
+                    "default": [
+                        0,
+                        0,
+                        0
+                    ],
+                    "min": -100.0,
+                    "max": 100.0
+                },
+                {
+                    "name": "magCalScaleEx",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "External compass calibration scale",
+                    "default": [
+                        1,
+                        1,
+                        1
+                    ],
+                    "min": 0.01,
+                    "max": 100.0
+                },
+                {
+                    "name": "cpsOverride",
+                    "type": "float",
+                    "description": "Override compass value",
+                    "units": "deg",
+                    "default": "0",
+                    "min": 0,
+                    "max": 360
+                },
+                {
+                    "name": "indicatorBrightness",
+                    "type": "uint8",
+                    "description": "Indicator brightness",
+                    "units": "%",
+                    "default": "100",
+                    "min": 0,
+                    "max": 100
+                },
+                {
+                    "name": "configCRC",
+                    "type": "uint16",
+                    "description": "Configuration checksum",
+                    "default": 0
+                }
+            ]
+        }
+    ]
+}

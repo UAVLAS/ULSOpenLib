@@ -1,0 +1,126 @@
+{
+    "BookVersion": "1.0",
+    "Objects": [
+        {
+            "name": "ULSDVOBJ_TX_Status_v1",
+            "description": "Transmitter status information",
+            "access": "read",
+            "variables": [
+                {
+                    "name": "status",
+                    "type": "uint32",
+                    "description": "Device status bits field",
+                    "flags": [
+                        "power_ok",
+                        "step_up_ok",
+                        "emitter_on_charge",
+                        "emitter_ok",
+                        "compass_ok",
+                        "external_compass_override_mode",
+                        "external_imu_override_mode"
+                    ]
+                },
+                {
+                    "name": "error",
+                    "type": "uint32",
+                    "description": "Device active error bits field",
+                    "default": 0,
+                    "flags": [
+                        "emitter_task_error",
+                        "illumination_error",
+                        "compass_error",
+                        "uart_rx_error",
+                        "uart_tx_error",
+                        "can_error"
+                    ]
+                },
+                {
+                    "name": "error_history",
+                    "type": "uint32",
+                    "description": "Device errors history bits field",
+                    "default": 0,
+                    "flags": [
+                        "emitter_task_error",
+                        "illumination_error",
+                        "compass_error",
+                        "uart_rx_error",
+                        "uart_tx_error",
+                        "can_error"
+                    ]
+                },
+                {
+                    "name": "vled_control_errors",
+                    "type": "uint8",
+                    "description": "Device vled line errors bits field",
+                    "default": 0
+                },
+                {
+                    "name": "Iem",
+                    "type": "float",
+                    "lenght": 32,
+                    "description": "Emitters current monitor",
+                    "units": "A"
+                },
+                {
+                    "name": "Vs",
+                    "type": "float",
+                    "description": "Supply Voltage",
+                    "units": "V",
+                    "min": 0.0,
+                    "max": 30.0
+                },
+                {
+                    "name": "Vsu",
+                    "type": "float",
+                    "description": "Step up converter Voltage",
+                    "units": "V",
+                    "min": 0.0,
+                    "max": 100.0
+                },
+                {
+                    "name": "Vem",
+                    "type": "float",
+                    "description": "Emitter board Voltage",
+                    "units": "V",
+                    "min": 0.0,
+                    "max": 100.0
+                },
+                {
+                    "name": "Tsys",
+                    "type": "float",
+                    "lenght": 4,
+                    "description": "System temperatures",
+                    "units": "C"
+                },
+                {
+                    "name": "imua",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "IMU accelerations",
+                    "units": "m/ss"
+                },
+                {
+                    "name": "imug",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "IMU gyroscopes",
+                    "units": "deg/s"
+                },
+                {
+                    "name": "imum",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "IMU magnetometers",
+                    "units": "mG"
+                },
+                {
+                    "name": "imu",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "IMU attitude",
+                    "units": "deg"
+                }
+            ]
+        }
+    ]
+}

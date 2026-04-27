@@ -1,0 +1,18 @@
+{
+    "BookVersion": "1.0",
+    "Objects": [
+        {
+            "name": "ULSDVOBJ_BLITZ_Debug_v1",
+            "description": "Blitz messages debug",
+            "access": "read",
+            "variables": [
+                {
+                    "name": "packets",
+                    "type": "uint8",
+                    "lenght": 220,
+                    "description": "Blitz 20 packets per 11 bytes (src_lid[0],blitz_id[1-2],data[3-10])"
+                }
+            ]
+        }
+    ]
+}

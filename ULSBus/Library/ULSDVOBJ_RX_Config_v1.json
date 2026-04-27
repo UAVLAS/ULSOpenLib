@@ -1,0 +1,292 @@
+{
+    "BookVersion": "1.0",
+    "Objects": [
+        {
+            "name": "ULSDVOBJ_RX_Config_v1",
+            "description": "Receiver General configuration",
+            "access": "config",
+            "variables": [
+                {
+                    "name": "name",
+                    "type": "char",
+                    "lenght": 16,
+                    "default": "ULS-RX",
+                    "description": "Name"
+                },
+                {
+                    "name": "ctrl",
+                    "type": "flags_uint8",
+                    "description": "Transmitter control byte",
+                    "default": 1,
+                    "flags": [
+                        "transmitter_level_compensation",
+                        "noise_debug",
+                        "disable_imu",
+                        "disable_mrx",
+                        "disable_dacs_yaw_correction",
+                        "disable_indication"
+                    ]
+                },
+                {
+                    "name": "sensitivity",
+                    "type": "float",
+                    "description": "Receiver sensitivity",
+                    "default": 1.0,
+                    "min": 0.8,
+                    "max": 1.2
+                },
+                {
+                    "name": "rxOffsetF",
+                    "type": "float",
+                    "description": "Receiver offset (front)",
+                    "units": "m",
+                    "default": 0.0,
+                    "min": -1.2,
+                    "max": 1.2
+                },
+                {
+                    "name": "rxOffsetR",
+                    "type": "float",
+                    "description": "Receiver offset (right)",
+                    "units": "m",
+                    "default": 0.0,
+                    "min": -1.2,
+                    "max": 1.2
+                },
+                {
+                    "name": "rxYaw",
+                    "type": "float",
+                    "description": "Receiver YAW orientation relative to body",
+                    "units": "m",
+                    "default": 0.0,
+                    "min": -180,
+                    "max": 180
+                },
+                {
+                    "name": "txOffsetF",
+                    "type": "float",
+                    "description": "Transmitter offset (front)",
+                    "units": "m",
+                    "default": 0.0,
+                    "min": -1.2,
+                    "max": 1.2
+                },
+                {
+                    "name": "txOffsetR",
+                    "type": "float",
+                    "description": "Transmitter offset (right)",
+                    "units": "m",
+                    "default": 0.0,
+                    "min": -1.2,
+                    "max": 1.2
+                },
+                {
+                    "name": "relPosGain",
+                    "type": "float",
+                    "description": "Relative position Gain",
+                    "units": "K",
+                    "default": 1.0,
+                    "min": 0.1,
+                    "max": 5.0
+                },
+                {
+                    "name": "relVelGain",
+                    "type": "float",
+                    "description": "Relative velocity Gain",
+                    "units": "K",
+                    "default": 1.0,
+                    "min": 0.1,
+                    "max": 5.0
+                },
+                {
+                    "name": "predictionTime",
+                    "type": "float",
+                    "description": "Interval to predict positions if no signal",
+                    "units": "s",
+                    "default": 1.0,
+                    "min": 0.0,
+                    "max": 5
+                },
+                {
+                    "name": "platformAcc",
+                    "type": "float",
+                    "description": "Ground platform acceleration",
+                    "units": "m/ss",
+                    "default": 0.1,
+                    "min": 0.01,
+                    "max": 5.0
+                },
+                {
+                    "name": "positionFilterAcc",
+                    "type": "float",
+                    "description": "Position filter acceleration",
+                    "units": "m/ss",
+                    "default": 0.3,
+                    "min": 0.01,
+                    "max": 5.0
+                },
+                {
+                    "name": "canAddress",
+                    "type": "uint8",
+                    "description": "CAN bus device static address",
+                    "default": 0
+                },
+                {
+                    "name": "canProtocol",
+                    "type": "opt_uint8",
+                    "description": "CAN bus device protocol",
+                    "default": 0,
+                    "opts": [
+                        "ULSDECONET",
+                        "SimpleCAN"
+                    ]
+                },
+                {
+                    "name": "canSpeed",
+                    "type": "opt_uint8",
+                    "description": "CAN speed",
+                    "default": 4,
+                    "opts": [
+                        "1000000",
+                        "500000",
+                        "250000",
+                        "125000"
+                    ]
+                },
+                {
+                    "name": "uartProtocol",
+                    "type": "opt_uint8",
+                    "description": "UART Protocol",
+                    "default": 1,
+                    "opts": [
+                        "Disabled",
+                        "MavlinkV2",
+                        "APx",
+                        "ASCII"
+                    ]
+                },
+                {
+                    "name": "uartBrt",
+                    "type": "opt_uint8",
+                    "description": "UART Baud rate",
+                    "default": 4,
+                    "opts": [
+                        "19200",
+                        "38400",
+                        "57600",
+                        "115200",
+                        "230400",
+                        "460800",
+                        "921600"
+                    ]
+                },
+                {
+                    "name": "uartProtocolSec",
+                    "type": "opt_uint8",
+                    "description": "UART Protocol secondary",
+                    "default": 1,
+                    "opts": [
+                        "Disabled",
+                        "MavlinkV2",
+                        "APx",
+                        "ASCII"
+                    ]
+                },
+                {
+                    "name": "uartBrtSec",
+                    "type": "opt_uint8",
+                    "description": "UART Baud rate secondary",
+                    "default": 4,
+                    "opts": [
+                        "19200",
+                        "38400",
+                        "57600",
+                        "115200",
+                        "230400",
+                        "460800",
+                        "921600"
+                    ]
+                },
+                {
+                    "name": "mavlinkFrames",
+                    "type": "flags_uint8",
+                    "description": "Mavlink V2 Frame variants to send",
+                    "default": 7,
+                    "flags": [
+                        "MAV_FRAME_BODY_FRD",
+                        "MAV_FRAME_LOCAL_OFFSET_NED",
+                        "MAV_FRAME_LOCAL_NED",
+                        "VISION_POSITION_ESTIMATE"
+                    ]
+                },
+                {
+                    "name": "magCalOffset",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "Compass calibration offset",
+                    "default": [
+                        0,
+                        0,
+                        0
+                    ],
+                    "min": -30.0,
+                    "max": 30.0
+                },
+                {
+                    "name": "magCalScale",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "Compass calibration scale",
+                    "default": [
+                        1,
+                        1,
+                        1
+                    ],
+                    "min": 0.01,
+                    "max": 30.0
+                },
+                {
+                    "name": "magCalOffsetEx",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "External compass calibration offset",
+                    "default": [
+                        0,
+                        0,
+                        0
+                    ],
+                    "min": -100.0,
+                    "max": 100.0
+                },
+                {
+                    "name": "magCalScaleEx",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "External compass calibration scale",
+                    "default": [
+                        1,
+                        1,
+                        1
+                    ],
+                    "min": 0.01,
+                    "max": 100.0
+                },
+                {
+                    "name": "indicatorBrightness",
+                    "type": "uint8",
+                    "description": "Indicator brightness",
+                    "units": "%",
+                    "default": "100",
+                    "min": 0,
+                    "max": 100
+                },
+                {
+                    "name": "configCRC",
+                    "type": "uint16",
+                    "description": "Configuration checksum",
+                    "default": 0
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,376 @@
+ {
+    "BookVersion": "1.0",
+    "Objects": [
+        {
+            "name": "ULSQT1R2Status",
+            "description": "ULSQT1-R2 status information",
+            "access": "read",
+            "variables": [
+                {
+                    "name": "status",
+                    "type": "uint32",
+                    "description": "Device status bits field"
+                },
+                {
+                    "name": "error",
+                    "type": "uint32",
+                    "description": "Device active error bits field",
+                    "default": 0,
+                    "flags": [
+                        "emitter_task_error",
+                        "illumination_error",
+                        "compass_error",
+                        "uart_rx_error",
+                        "uart_tx_error",
+                        "can_error"
+                    ]
+                },
+                {
+                    "name": "error_history",
+                    "type": "uint32",
+                    "description": "Device errors history bits field",
+                    "default": 0,
+                    "flags": [
+                        "emitter_task_error",
+                        "illumination_error",
+                        "compass_error",
+                        "uart_rx_error",
+                        "uart_tx_error",
+                        "can_error"
+                    ]
+                },
+                {
+                    "name": "vled_control_errors",
+                    "type": "uint8",
+                    "description": "Device vled line errors bits field",
+                    "default": 0
+                },
+                {
+                    "name": "Ialed",
+                    "type": "float",
+                    "lenght": 37,
+                    "description": "Leds ADS current",
+                    "units": "C"
+                },
+                {
+                    "name": "Idled",
+                    "type": "float",
+                    "lenght": 4,
+                    "description": "Leds DPTF current",
+                    "units": "C"
+                },
+                {
+                    "name": "Vs",
+                    "type": "float",
+                    "description": "Supply Voltage",
+                    "units": "V",
+                    "min": 0.0,
+                    "max": 30.0
+                },
+                {
+                    "name": "Vled",
+                    "type": "float",
+                    "description": "Led Power Voltage",
+                    "units": "V",
+                    "min": 0.0,
+                    "max": 30.0
+                },
+                {
+                    "name": "Va_lvl",
+                    "type": "uint8",
+                    "description": "Led ADS Voltage level",
+                    "units": "step",
+                    "min": 0.0,
+                    "max": 64.0
+                },
+                {
+                    "name": "Vd_lvl",
+                    "type": "uint8",
+                    "description": "Led DPTF Voltage level",
+                    "units": "step",
+                    "min": 0.0,
+                    "max": 64.0
+                },
+                {
+                    "name": "tb",
+                    "type": "float",
+                    "description": "Board temperature",
+                    "units": "C"
+                },
+                {
+                    "name": "imua",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "IMU accelerations",
+                    "units": "m/ss"
+                },
+                {
+                    "name": "imug",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "IMU gyroscopes",
+                    "units": "deg/s"
+                },
+                {
+                    "name": "imum",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "IMU magnetometers",
+                    "units": "mG"
+                },
+                {
+                    "name": "imu",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "IMU attitude",
+                    "units": "deg"
+                }
+            ]
+        },
+        {
+            "name": "ULSQT1R2Config",
+            "description": "ULSQT1-R2 configuration",
+            "access": "config",
+            "variables": [
+                {
+                    "name": "name",
+                    "type": "char",
+                    "lenght": 16,
+                    "default": "ULSQT1-R2",
+                    "description": "Name"
+                },
+                {
+                    "name": "devID",
+                    "type": "uint8",
+                    "default": 0,
+                    "description": "Beacon ID number"
+                },
+                {
+                    "name": "indicatorBrightness",
+                    "type": "uint8",
+                    "description": "Indicator brightness",
+                    "units": "%",
+                    "default": "100",
+                    "min": 0,
+                    "max": 100
+                },
+                {
+                    "name": "power",
+                    "type": "float",
+                    "description": "Illumination power",
+                    "units": "%",
+                    "default": "100",
+                    "min": 50,
+                    "max": 150
+                },
+                {
+                    "name": "Voff",
+                    "type": "float",
+                    "description": "Voltage to switch-off device",
+                    "units": "V",
+                    "default": "6",
+                    "min": 5,
+                    "max": 30
+                },
+                {
+                    "name": "Vlow",
+                    "type": "float",
+                    "description": "Low voltage warning",
+                    "units": "V",
+                    "default": "7",
+                    "min": 5,
+                    "max": 30
+                },
+                {
+                    "name": "magCalOffset",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "Compass calibration offset",
+                    "default": [
+                        0,
+                        0,
+                        0
+                    ],
+                    "min": -3.0,
+                    "max": 3.0
+                },
+                {
+                    "name": "magCalScale",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "Compass calibration scale",
+                    "default": [
+                        1,
+                        1,
+                        1
+                    ],
+                    "min": 0.1,
+                    "max": 3.0
+                },
+                {
+                    "name": "magCalOffsetEx",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "External compass calibration offset",
+                    "default": [
+                        0,
+                        0,
+                        0
+                    ],
+                    "min": -100.0,
+                    "max": 100.0
+                },
+                {
+                    "name": "magCalScaleEx",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "External compass calibration scale",
+                    "default": [
+                        1,
+                        1,
+                        1
+                    ],
+                    "min": 0.01,
+                    "max": 100.0
+                },
+                {
+                    "name": "ctrl",
+                    "type": "flags_uint8",
+                    "description": "Transmitter control byte",
+                    "default": 1,
+                    "flags": [
+                        "Illumination",
+                        "CompassOverrideEnable"
+                    ]
+                },
+                {
+                    "name": "cpsOverride",
+                    "type": "float",
+                    "description": "Override compass value",
+                    "units": "deg",
+                    "default": "0",
+                    "min": 0,
+                    "max": 360
+                },
+                {
+                    "name": "canAddress",
+                    "type": "uint8",
+                    "description": "CAN bus device static address",
+                    "default": 255
+                },
+                {
+                    "name": "canProtocol",
+                    "type": "opt_uint8",
+                    "description": "CAN bus device protocol",
+                    "default": 0,
+                    "opts": [
+                        "ULSDECONET",
+                        "SimpleCAN"
+                    ]
+                },
+                {
+                    "name": "canSpeed",
+                    "type": "opt_uint8",
+                    "description": "CAN speed",
+                    "default": 4,
+                    "opts": [
+                        "1000000",
+                        "500000",
+                        "250000",
+                        "125000"
+                    ]
+                },
+                {
+                    "name": "uartProtocol",
+                    "type": "opt_uint8",
+                    "description": "UART Protocol",
+                    "default": 1,
+                    "opts": [
+                        "ASCII",
+                        "ULSDeCoNet"
+                    ]
+                },
+                {
+                    "name": "uartBrt",
+                    "type": "opt_uint8",
+                    "description": "UART baud rate",
+                    "default": 4,
+                    "opts": [
+                        "19200",
+                        "38400",
+                        "57600",
+                        "115200",
+                        "230400",
+                        "460800",
+                        "921600"
+                    ]
+                },
+                {
+                    "name": "configCRC",
+                    "type": "uint16",
+                    "description": "Configuration checksum",
+                    "default": 0
+                }
+            ]
+        },
+        {
+            "name": "ULSQT1R2control",
+            "description": "ULSQT1-R2 control",
+            "access": "read-write",
+            "variables": [
+                {
+                    "name": "ctrl",
+                    "type": "uint32",
+                    "description": "Device control bits field",
+                    "default": 0,
+                    "flags": [
+                        "enable_manual_levels",
+                        "imu_override_enable",
+                        "imu_compass_override_enable",
+                        "dacs_disable"
+                    ]
+                },
+                {
+                    "name": "emitters_disable_mask1",
+                    "type": "uint32",
+                    "description": "Emitters disable mask 1 [1-32]",
+                    "default": 0
+                },
+                {
+                    "name": "emitters_disable_mask2",
+                    "type": "uint32",
+                    "description": "Emitters disable mask 1 [32-64]",
+                    "default": 0
+                },
+                {
+                    "name": "Va_lvl",
+                    "type": "uint8",
+                    "default": 0,
+                    "description": "Emitters ASD manual level ",
+                    "min": 0,
+                    "max": 0
+                },
+                {
+                    "name": "Vd_lvl",
+                    "type": "uint8",
+                    "default": 0,
+                    "description": "Emitter DPTF manual level [0-64]",
+                    "min": 0,
+                    "max": 0
+                },
+                {
+                    "name": "imu_override",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "IMU override [roll,pitch,yaw]",
+                    "units": "deg",
+                    "default": [
+                        0,
+                        0,
+                        0
+                    ]
+                }
+            ]
+        }
+    ]
+}

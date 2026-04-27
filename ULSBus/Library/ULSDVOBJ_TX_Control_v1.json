@@ -1,0 +1,64 @@
+{
+    "BookVersion": "1.0",
+    "Objects": [
+        {
+            "name": "ULSDVOBJ_TX_Control_v1",
+            "description": "Transmitter control",
+            "access": "read-write",
+            "variables": [
+                {
+                    "name": "ctrl",
+                    "type": "uint32",
+                    "description": "Device control bit field",
+                    "default": 0,
+                    "flags": [
+                        "enable_manual_levels",
+                        "imu_override_enable",
+                        "imu_compass_override_enable",
+                        "dacs_disable"
+                    ]
+                },
+                {
+                    "name": "emitters_disable_mask1",
+                    "type": "uint32",
+                    "description": "Emitters disable mask 1 [1-32]",
+                    "default": 0
+                },
+                {
+                    "name": "emitters_disable_mask2",
+                    "type": "uint32",
+                    "description": "Emitters disable mask 2 [33-64]",
+                    "default": 0
+                },
+                {
+                    "name": "Va_lvl",
+                    "type": "uint8",
+                    "default": 0,
+                    "description": "Emitters ASD manual level ",
+                    "min": 0,
+                    "max": 0
+                },
+                {
+                    "name": "Vd_lvl",
+                    "type": "uint8",
+                    "default": 0,
+                    "description": "Emitter DPTF manual level [0-64]",
+                    "min": 0,
+                    "max": 0
+                },
+                {
+                    "name": "imu_override",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "IMU override [roll,pitch,yaw]",
+                    "units": "deg",
+                    "default": [
+                        0,
+                        0,
+                        0
+                    ]
+                }
+            ]
+        }
+    ]
+}

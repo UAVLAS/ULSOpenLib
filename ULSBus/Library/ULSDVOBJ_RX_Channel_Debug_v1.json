@@ -1,0 +1,30 @@
+{
+    "BookVersion": "1.0",
+    "Objects": [
+        {
+            "name": "ULSDVOBJ_RX_Channel_Debug_v1",
+            "description": "Receiver Debug data",
+            "access": "read",
+            "variables": [
+                {
+                    "name": "beansA",
+                    "type": "float",
+                    "lenght": 37,
+                    "description": "Debug data stage A"
+                },
+                {
+                    "name": "beansB",
+                    "type": "float",
+                    "lenght": 37,
+                    "description": "Debug data stage B"
+                },
+                {
+                    "name": "beansNoise",
+                    "type": "float",
+                    "lenght": 37,
+                    "description": "Debug data noise"
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,215 @@
+{
+    "Objects": [
+        {
+            "name": "ULSQT1R1Status",
+            "description": "ULSQT1-R1 status information",
+            "access": "read",
+            "variables": [
+                {
+                    "name": "status",
+                    "type": "uint32",
+                    "description": "Device status bits field"
+                },
+                {
+                    "name": "error",
+                    "type": "uint32",
+                    "description": "Device error bits field"
+                },
+                {
+                    "name": "Iled",
+                    "type": "float",
+                    "lenght": 37,
+                    "description": "Leds current"
+                },
+                {
+                    "name": "vs",
+                    "type": "float",
+                    "description": "Supply Voltage",
+                    "units": "V",
+                    "min": 0.0,
+                    "max": 30.0
+                },
+                {
+                    "name": "ih",
+                    "type": "float",
+                    "description": "Leds current monitor hi side",
+                    "units": "A",
+                    "min": 0.0,
+                    "max": 3.0
+                },
+                {
+                    "name": "il",
+                    "type": "float",
+                    "description": "Leds current monitor low side",
+                    "units": "A",
+                    "min": 0.0,
+                    "max": 3.0
+                },
+                {
+                    "name": "tb",
+                    "type": "float",
+                    "description": "Board temperature",
+                    "units": "C"
+                },
+                {
+                    "name": "timu",
+                    "type": "float",
+                    "description": "IMU temperature",
+                    "units": "C"
+                },
+                {
+                    "name": "imua",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "IMU accelerations",
+                    "units": "m/ss"
+                },
+                {
+                    "name": "imug",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "IMU gyroscopes",
+                    "units": "deg/s"
+                },
+                {
+                    "name": "imum",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "IMU magnetometers",
+                    "units": "mG"
+                },
+                {
+                    "name": "imu",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "IMU attitude",
+                    "units": "deg"
+                }
+            ]
+        },
+        {
+        "name": "ULSQT1R1Config",
+            "description": "ULSQT1-R1 configuration",
+            "access": "config",
+            "variables": [
+                {
+                    "name": "name",
+                    "type": "char",
+                    "lenght": 16,
+                    "default": "ULSQT1-R1",
+                    "description": "Name"
+                },
+                {
+                    "name": "devID",
+                    "type": "uint8",
+                    "default": 0,
+                    "description": "Beacon ID number"
+                },
+                {
+                    "name": "power",
+                    "type": "float",
+                    "description": "Illumination power",
+                    "units": "mA",
+                    "default": "100",
+                    "min": 50,
+                    "max": 150
+                },
+                {
+                    "name": "Voff",
+                    "type": "float",
+                    "description": "Voltage to switch-off device",
+                    "units": "V",
+                    "default": "6",
+                    "min": 5,
+                    "max": 30
+                },
+                {
+                    "name": "Vlow",
+                    "type": "float",
+                    "description": "Low voltage warning",
+                    "units": "V",
+                    "default": "7",
+                    "min": 5,
+                    "max": 30
+                },
+                {
+                    "name": "magCalOffset",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "Compass calibration offset",
+                    "default": [
+                        0,
+                        0,
+                        0
+                    ],
+                    "min": -3.0,
+                    "max": 3.0
+                },
+                {
+                    "name": "magCalScale",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "Compass calibration scale",
+                    "default": [
+                        1,
+                        1,
+                        1
+                    ],
+                    "min": 0.1,
+                    "max": 3.0
+                },
+                {
+                    "name": "magCalOffsetEx",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "External compass calibration offset",
+                    "default": [
+                        0,
+                        0,
+                        0
+                    ],
+                    "min": -100.0,
+                    "max": 100.0
+                },
+                {
+                    "name": "magCalScaleEx",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "External compass calibration scale",
+                    "default": [
+                        1,
+                        1,
+                        1
+                    ],
+                    "min": 0.01,
+                    "max": 100.0
+                },
+                {
+                    "name": "ctrl",
+                    "type": "flags_uint8",
+                    "description": "Transmitter control byte",
+                    "default": 1,
+                    "flags": [
+                        "Illumination",
+                        "CompassOverrideEnable"
+                    ]
+                },
+                {
+                    "name": "cpsOverride",
+                    "type": "float",
+                    "description": "Override compass value",
+                    "units": "deg",
+                    "default": "0",
+                    "min": 0,
+                    "max": 360
+                },
+                {
+                    "name": "configCRC",
+                    "type": "uint16",
+                    "description": "Configuration checksum",
+                    "default": 0
+                }
+            ]
+        }
+    ]
+}
