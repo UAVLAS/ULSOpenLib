@@ -208,6 +208,9 @@ _io_op_result ULSBusConnection::cnSendExplorer() {
   ifTxLen = (cnTxPacket->hop & 0xF) + 1;
   return ifSend();
 }
+_io_op_result ULSBusConnection::cnSendStatus() {
+  return cnSendExplorer();
+}
 _io_op_result ULSBusConnection::cnSendSysErase(uint8_t *route, uint8_t hs,
                                                uint32_t key, uint32_t start,
                                                uint32_t len) {
