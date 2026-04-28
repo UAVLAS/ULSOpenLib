@@ -68,7 +68,7 @@ def _merge_book_data(book_files):
 
 
 print("------ UAVLAS DEVICE LIBS CREATOR ------")
-print(" (C) Yury Kapacheuski 2021. ")
+print(" (C) Yury Kapacheuski 2026. ")
 
 print("Book: " + args.book)
 print("Output dir: " + args.output)
