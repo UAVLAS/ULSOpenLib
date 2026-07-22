@@ -50,6 +50,102 @@
             ]
         },
         {
+            "name": "ULSDV_HL_G3_RXMR2",
+            "description": "UAVLAS Heli G3 receiver rev.2",
+            "type": "0x0045",
+            "objects": [
+                {
+                    "name": "status",
+                    "object": "ULSDVOBJ_RX_Status_v1",
+                    "address": "0x0010"
+                },
+                {
+                    "name": "cfg",
+                    "object": "ULSDVOBJ_RX_Config_v2",
+                    "address": "0x0020",
+                    "type": "config"
+                },
+                {
+                    "name": "ch1Debug",
+                    "object": "ULSDVOBJ_RX_Channel_Debug_v1",
+                    "address": "0x0030"
+                },
+                {
+                    "name": "ch2Debug",
+                    "object": "ULSDVOBJ_RX_Channel_Debug_v1",
+                    "address": "0x0031"
+                },
+                {
+                    "name": "ch3Debug",
+                    "object": "ULSDVOBJ_RX_Channel_Debug_v1",
+                    "address": "0x0032"
+                },
+                {
+                    "name": "ch4Debug",
+                    "object": "ULSDVOBJ_RX_Channel_Debug_v1",
+                    "address": "0x0033"
+                },
+                {
+                    "name": "fftbuf",
+                    "object": "ULSQR1R2FFT",
+                    "address": "0x0100"
+                },
+                {
+                    "name": "blitzDebug",
+                    "object": "ULSDVOBJ_BLITZ_Debug_v1",
+                    "address": "0x0101"
+                }
+            ]
+        },
+        {
+            "name": "ULSDV_XS_G3_RXMR2",
+            "description": "UAVLAS XSpot G3 receiver rev.2",
+            "type": "0x0033",
+            "objects": [
+                {
+                    "name": "status",
+                    "object": "ULSDVOBJ_RX_Status_v1",
+                    "address": "0x0010"
+                },
+                {
+                    "name": "cfg",
+                    "object": "ULSDVOBJ_RX_Config_v2",
+                    "address": "0x0020",
+                    "type": "config"
+                },
+                {
+                    "name": "ch1Debug",
+                    "object": "ULSDVOBJ_RX_Channel_Debug_v1",
+                    "address": "0x0030"
+                },
+                {
+                    "name": "ch2Debug",
+                    "object": "ULSDVOBJ_RX_Channel_Debug_v1",
+                    "address": "0x0031"
+                },
+                {
+                    "name": "ch3Debug",
+                    "object": "ULSDVOBJ_RX_Channel_Debug_v1",
+                    "address": "0x0032"
+                },
+                {
+                    "name": "ch4Debug",
+                    "object": "ULSDVOBJ_RX_Channel_Debug_v1",
+                    "address": "0x0033"
+                },
+                {
+                    "name": "fftbuf",
+                    "object": "ULSQR1R2FFT",
+                    "address": "0x0100"
+                },
+                {
+                    "name": "blitzDebug",
+                    "object": "ULSDVOBJ_BLITZ_Debug_v1",
+                    "address": "0x0101"
+                }
+            ]
+        },
+        {
             "name": "ULSDV_HL_G3_TXC",
             "description": "UAVLAS Heli G3 transmitter",
             "type": "0x0044",
