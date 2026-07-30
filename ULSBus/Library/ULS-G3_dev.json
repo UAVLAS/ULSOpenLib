@@ -146,6 +146,39 @@
             ]
         },
         {
+            "name": "ULSDV_XC_G3_RX",
+            "description": "UAVLAS XCopter G3 receiver",
+            "type": "0x0022",
+            "objects": [
+                {
+                    "name": "status",
+                    "object": "ULSQR1R2Status",
+                    "address": "0x0010"
+                },
+                {
+                    "name": "cfg",
+                    "object": "ULSQR1R2Config",
+                    "address": "0x0020",
+                    "type": "config"
+                },
+                {
+                    "name": "debug",
+                    "object": "ULSQR1R2Debug",
+                    "address": "0x0030"
+                },
+                {
+                    "name": "fftbuf",
+                    "object": "ULSQR1R2FFT",
+                    "address": "0x0100"
+                },
+                {
+                    "name": "blitzDebug",
+                    "object": "ULSDVOBJ_BLITZ_Debug_v1",
+                    "address": "0x0101"
+                }
+            ]
+        },
+        {
             "name": "ULSDV_HL_G3_TXC",
             "description": "UAVLAS Heli G3 transmitter",
             "type": "0x0044",
