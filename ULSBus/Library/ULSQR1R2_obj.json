@@ -57,9 +57,10 @@
                     "description": "I2C packets received"
                 },
                 {
-                    "name": "bitMax",
+                    "name": "saturation",
                     "type": "uint16",
-                    "description": "Debug:"
+                    "description": "Receiver front-end level (2500 mV = saturation limit)",
+                    "units": "mV"
                 },
                 {
                     "name": "qtId",
