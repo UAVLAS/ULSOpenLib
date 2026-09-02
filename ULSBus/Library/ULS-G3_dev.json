@@ -94,6 +94,11 @@
                     "name": "blitzDebug",
                     "object": "ULSDVOBJ_BLITZ_Debug_v1",
                     "address": "0x0101"
+                },
+                {
+                    "name": "emsg3Debug",
+                    "object": "ULSDVOBJ_EMSG3_DPTF_Debug_v1",
+                    "address": "0x0102"
                 }
             ]
         },
@@ -142,6 +147,11 @@
                     "name": "blitzDebug",
                     "object": "ULSDVOBJ_BLITZ_Debug_v1",
                     "address": "0x0101"
+                },
+                {
+                    "name": "emsg3Debug",
+                    "object": "ULSDVOBJ_EMSG3_DPTF_Debug_v1",
+                    "address": "0x0102"
                 }
             ]
         },

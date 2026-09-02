@@ -1,0 +1,112 @@
+{
+    "BookVersion": "1.0",
+    "Objects": [
+        {
+            "name": "ULSDVOBJ_EMSG3_DPTF_Debug_v1",
+            "description": "EMSP G3 DPTF receiver debug (hardware in the loop)",
+            "access": "read",
+            "variables": [
+                {
+                    "name": "samples",
+                    "type": "uint32",
+                    "description": "ADC samples fed to the receiver since reset"
+                },
+                {
+                    "name": "packetsOk",
+                    "type": "uint32",
+                    "description": "Packets whose CRC passed"
+                },
+                {
+                    "name": "packetsBad",
+                    "type": "uint32",
+                    "description": "Detections above threshold where every candidate failed CRC"
+                },
+                {
+                    "name": "hilMatched",
+                    "type": "uint32",
+                    "description": "Decoded payloads matching a known HIL test payload"
+                },
+                {
+                    "name": "hilMismatched",
+                    "type": "uint32",
+                    "description": "Decoded payloads matching no known HIL test payload"
+                },
+                {
+                    "name": "metricQ8",
+                    "type": "uint32",
+                    "description": "Detection metric of the last attempt, 1/256ths"
+                },
+                {
+                    "name": "noiseFloor",
+                    "type": "uint32",
+                    "description": "Tracked chip magnitude noise floor"
+                },
+                {
+                    "name": "marginQ8",
+                    "type": "uint32",
+                    "description": "Worst per-symbol best/second slot ratio of the last packet, 1/256ths"
+                },
+                {
+                    "name": "peakMag",
+                    "type": "uint32",
+                    "description": "Largest chip magnitude in the captured stage"
+                },
+                {
+                    "name": "magShift",
+                    "type": "uint8",
+                    "description": "chipMag right shift: raw magnitude = chipMag << magShift"
+                },
+                {
+                    "name": "candidate",
+                    "type": "uint8",
+                    "description": "Which ranked candidate decoded the last packet (0 = best peak)"
+                },
+                {
+                    "name": "chipPeriods",
+                    "type": "uint8",
+                    "description": "Carrier periods per chip the firmware was built with"
+                },
+                {
+                    "name": "flags",
+                    "type": "flags_uint8",
+                    "description": "snapshot_valid,hil_active,payload_matched",
+                    "options": [
+                        "snapshot_valid",
+                        "hil_active",
+                        "payload_matched"
+                    ]
+                },
+                {
+                    "name": "payload",
+                    "type": "uint8",
+                    "lenght": 6,
+                    "description": "Last decoded payload"
+                },
+                {
+                    "name": "expected",
+                    "type": "uint8",
+                    "lenght": 6,
+                    "description": "HIL payload it was matched against"
+                },
+                {
+                    "name": "slots",
+                    "type": "uint8",
+                    "lenght": 16,
+                    "description": "Decoded PPM slot index per symbol"
+                },
+                {
+                    "name": "symbolMarginQ8",
+                    "type": "uint16",
+                    "lenght": 16,
+                    "description": "Per-symbol best/second slot magnitude ratio, 1/256ths"
+                },
+                {
+                    "name": "chipMag",
+                    "type": "uint16",
+                    "lenght": 154,
+                    "description": "Chip magnitude envelope of one stage: 8 guard, 18 preamble (6 ruler marks), 128 payload"
+                }
+            ]
+        }
+    ]
+}
