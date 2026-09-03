@@ -1,0 +1,289 @@
+{
+    "BookVersion": "1.0",
+    "Objects": [
+        {
+            "name": "ULSDVOBJ_EIGC_Status_v1",
+            "description": "External IMU/GNSS/Compass module status and navigation solution",
+            "access": "read",
+            "variables": [
+                {
+                    "name": "status",
+                    "type": "uint32",
+                    "description": "Device status bits field",
+                    "default": 0,
+                    "flags": [
+                        "power_ok",
+                        "gnss_ok",
+                        "gnss_fix",
+                        "gnss_time_valid",
+                        "compass1_ok",
+                        "compass2_ok",
+                        "compass_redundancy_ok",
+                        "imu_ok",
+                        "fram_ok",
+                        "ble_ok",
+                        "ble_drone_linked",
+                        "peer_linked",
+                        "attitude_valid",
+                        "heading_valid",
+                        "gnss_compass_valid",
+                        "platform_solution_valid",
+                        "offset_configured",
+                        "calibration_valid"
+                    ]
+                },
+                {
+                    "name": "error",
+                    "type": "uint32",
+                    "description": "Device active error bits field",
+                    "default": 0,
+                    "flags": [
+                        "gnss_error",
+                        "gnss_timeout",
+                        "compass1_error",
+                        "compass2_error",
+                        "compass_disagreement",
+                        "imu_error",
+                        "fram_error",
+                        "ble_error",
+                        "peer_timeout",
+                        "peer_offset_missing",
+                        "baseline_out_of_range",
+                        "i2c_error",
+                        "spi_error",
+                        "uart_error",
+                        "can_error",
+                        "config_error"
+                    ]
+                },
+                {
+                    "name": "error_history",
+                    "type": "uint32",
+                    "description": "Device errors history bits field",
+                    "default": 0,
+                    "flags": [
+                        "gnss_error",
+                        "gnss_timeout",
+                        "compass1_error",
+                        "compass2_error",
+                        "compass_disagreement",
+                        "imu_error",
+                        "fram_error",
+                        "ble_error",
+                        "peer_timeout",
+                        "peer_offset_missing",
+                        "baseline_out_of_range",
+                        "i2c_error",
+                        "spi_error",
+                        "uart_error",
+                        "can_error",
+                        "config_error"
+                    ]
+                },
+                {
+                    "name": "role",
+                    "type": "opt_uint8",
+                    "description": "Role of this module in the GNSS compass pair",
+                    "default": 0,
+                    "opts": [
+                        "Undefined",
+                        "Primary",
+                        "Secondary"
+                    ]
+                },
+                {
+                    "name": "fixType",
+                    "type": "opt_uint8",
+                    "description": "GNSS fix type reported by the receiver",
+                    "default": 0,
+                    "opts": [
+                        "NoFix",
+                        "DeadReckoning",
+                        "Fix2D",
+                        "Fix3D",
+                        "GNSS_DR",
+                        "TimeOnly"
+                    ]
+                },
+                {
+                    "name": "numSV",
+                    "type": "uint8",
+                    "description": "Satellites used in the navigation solution",
+                    "default": 0
+                },
+                {
+                    "name": "headingSource",
+                    "type": "opt_uint8",
+                    "description": "Source the reported heading is currently derived from",
+                    "default": 0,
+                    "opts": [
+                        "None",
+                        "Magnetic",
+                        "GNSSCompass",
+                        "Fused"
+                    ]
+                },
+                {
+                    "name": "lat",
+                    "type": "int32",
+                    "description": "Latitude of this module antenna",
+                    "units": "1e-7 deg",
+                    "default": 0
+                },
+                {
+                    "name": "lon",
+                    "type": "int32",
+                    "description": "Longitude of this module antenna",
+                    "units": "1e-7 deg",
+                    "default": 0
+                },
+                {
+                    "name": "height",
+                    "type": "float",
+                    "description": "Height above mean sea level of this module antenna",
+                    "units": "m",
+                    "default": 0.0
+                },
+                {
+                    "name": "hAcc",
+                    "type": "float",
+                    "description": "Horizontal position accuracy estimate",
+                    "units": "m",
+                    "default": 0.0,
+                    "min": 0.0,
+                    "max": 1000.0
+                },
+                {
+                    "name": "vAcc",
+                    "type": "float",
+                    "description": "Vertical position accuracy estimate",
+                    "units": "m",
+                    "default": 0.0,
+                    "min": 0.0,
+                    "max": 1000.0
+                },
+                {
+                    "name": "vel",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "Velocity of this module in NED frame (N,E,D)",
+                    "units": "m/s",
+                    "default": 0.0,
+                    "min": -100.0,
+                    "max": 100.0
+                },
+                {
+                    "name": "sAcc",
+                    "type": "float",
+                    "description": "Speed accuracy estimate",
+                    "units": "m/s",
+                    "default": 0.0,
+                    "min": 0.0,
+                    "max": 100.0
+                },
+                {
+                    "name": "pDOP",
+                    "type": "float",
+                    "description": "Position dilution of precision",
+                    "default": 0.0,
+                    "min": 0.0,
+                    "max": 100.0
+                },
+                {
+                    "name": "platformLat",
+                    "type": "int32",
+                    "description": "Latitude of the platform centre, this module position corrected by its configured offset",
+                    "units": "1e-7 deg",
+                    "default": 0
+                },
+                {
+                    "name": "platformLon",
+                    "type": "int32",
+                    "description": "Longitude of the platform centre",
+                    "units": "1e-7 deg",
+                    "default": 0
+                },
+                {
+                    "name": "platformHeight",
+                    "type": "float",
+                    "description": "Height above mean sea level of the platform centre",
+                    "units": "m",
+                    "default": 0.0
+                },
+                {
+                    "name": "platformVel",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "Velocity of the platform centre in NED frame (N,E,D)",
+                    "units": "m/s",
+                    "default": 0.0,
+                    "min": -100.0,
+                    "max": 100.0
+                },
+                {
+                    "name": "attitude",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "Platform attitude (roll,pitch,yaw), yaw is true heading",
+                    "units": "deg",
+                    "default": 0.0,
+                    "min": -180.0,
+                    "max": 360.0
+                },
+                {
+                    "name": "attitudeAcc",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "Attitude accuracy estimate (roll,pitch,yaw)",
+                    "units": "deg",
+                    "default": 0.0,
+                    "min": 0.0,
+                    "max": 180.0
+                },
+                {
+                    "name": "utcYear",
+                    "type": "uint16",
+                    "description": "UTC year from the GNSS receiver",
+                    "default": 0
+                },
+                {
+                    "name": "utcDate",
+                    "type": "uint8",
+                    "lenght": 2,
+                    "description": "UTC month and day from the GNSS receiver",
+                    "default": 0
+                },
+                {
+                    "name": "utcTime",
+                    "type": "uint8",
+                    "lenght": 3,
+                    "description": "UTC hour, minute and second from the GNSS receiver",
+                    "default": 0
+                },
+                {
+                    "name": "tAcc",
+                    "type": "uint32",
+                    "description": "Time accuracy estimate",
+                    "units": "ns",
+                    "default": 0
+                },
+                {
+                    "name": "temperature",
+                    "type": "float",
+                    "description": "Board temperature reported by the magnetometer die sensor",
+                    "units": "C",
+                    "default": 0.0,
+                    "min": -75.0,
+                    "max": 125.0
+                },
+                {
+                    "name": "uptime",
+                    "type": "uint32",
+                    "description": "Time since power on",
+                    "units": "s",
+                    "default": 0
+                }
+            ]
+        }
+    ]
+}

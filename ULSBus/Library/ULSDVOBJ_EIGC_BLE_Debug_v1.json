@@ -1,0 +1,140 @@
+{
+    "BookVersion": "1.0",
+    "Objects": [
+        {
+            "name": "ULSDVOBJ_EIGC_BLE_Debug_v1",
+            "description": "BMD-345 radio link debug. This is the secondary telemetry channel to the drone, specified to about 1000 m, over which the platform centre position and velocity are sent so the drone can close on the platform until the IR landing system acquires it",
+            "access": "read",
+            "variables": [
+                {
+                    "name": "bleStatus",
+                    "type": "uint32",
+                    "description": "State of the module and of the link to the drone",
+                    "default": 0,
+                    "flags": [
+                        "module_present",
+                        "module_booted",
+                        "module_held_in_reset",
+                        "uart_link_ok",
+                        "advertising",
+                        "drone_connected",
+                        "drone_authenticated",
+                        "telemetry_streaming",
+                        "firmware_mismatch"
+                    ]
+                },
+                {
+                    "name": "linkState",
+                    "type": "opt_uint8",
+                    "description": "Connection state of the drone link",
+                    "default": 0,
+                    "opts": [
+                        "Down",
+                        "Booting",
+                        "Advertising",
+                        "Connecting",
+                        "Connected",
+                        "Error"
+                    ]
+                },
+                {
+                    "name": "rssi",
+                    "type": "int8",
+                    "description": "Received signal strength of the drone link",
+                    "units": "dBm",
+                    "default": 0,
+                    "min": -128,
+                    "max": 20
+                },
+                {
+                    "name": "txPower",
+                    "type": "int8",
+                    "description": "Transmit power currently in use",
+                    "units": "dBm",
+                    "default": 0,
+                    "min": -40,
+                    "max": 20
+                },
+                {
+                    "name": "droneAddress",
+                    "type": "uint8",
+                    "lenght": 6,
+                    "description": "Bluetooth address of the connected drone",
+                    "default": 0
+                },
+                {
+                    "name": "droneDistance",
+                    "type": "float",
+                    "description": "Distance from the platform centre to the drone, from the position the drone reports back. Sanity check on whether the link range matches the geometry",
+                    "units": "m",
+                    "default": 0.0,
+                    "min": 0.0,
+                    "max": 5000.0
+                },
+                {
+                    "name": "linkUptime",
+                    "type": "uint32",
+                    "description": "Time the current drone connection has been up",
+                    "units": "s",
+                    "default": 0
+                },
+                {
+                    "name": "connectCount",
+                    "type": "uint16",
+                    "description": "Drone connections established since power on",
+                    "default": 0
+                },
+                {
+                    "name": "disconnectCount",
+                    "type": "uint16",
+                    "description": "Drone connections lost since power on",
+                    "default": 0
+                },
+                {
+                    "name": "telemetrySent",
+                    "type": "uint32",
+                    "description": "Platform position and velocity updates sent to the drone",
+                    "default": 0
+                },
+                {
+                    "name": "telemetryAcked",
+                    "type": "uint32",
+                    "description": "Platform updates the drone acknowledged",
+                    "default": 0
+                },
+                {
+                    "name": "uartTxPackets",
+                    "type": "uint32",
+                    "description": "Packets sent to the BMD-345 over the module UART",
+                    "default": 0
+                },
+                {
+                    "name": "uartRxPackets",
+                    "type": "uint32",
+                    "description": "Packets received from the BMD-345 over the module UART",
+                    "default": 0
+                },
+                {
+                    "name": "uartErrors",
+                    "type": "uint32",
+                    "description": "Framing, overrun and protocol errors on the module UART",
+                    "default": 0
+                },
+                {
+                    "name": "lastTelemetryAge",
+                    "type": "uint32",
+                    "description": "Time since the last platform update was accepted by the module",
+                    "units": "ms",
+                    "default": 0
+                },
+                {
+                    "name": "moduleVersion",
+                    "type": "char",
+                    "lenght": 16,
+                    "description": "Firmware version string reported by the BMD-345",
+                    "default": ""
+                }
+            ]
+        }
+    ]
+}

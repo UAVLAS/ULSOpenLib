@@ -1,0 +1,137 @@
+{
+    "BookVersion": "1.0",
+    "Objects": [
+        {
+            "name": "ULSDVOBJ_EIGC_GNSS_Debug_v1",
+            "description": "External IMU/GNSS/Compass module GNSS receiver and time pulse debug",
+            "access": "read",
+            "variables": [
+                {
+                    "name": "gnssStatus",
+                    "type": "uint32",
+                    "description": "GNSS receiver link and solution bits",
+                    "default": 0,
+                    "flags": [
+                        "receiver_configured",
+                        "ubx_stream_ok",
+                        "nav_pvt_fresh",
+                        "fix_ok",
+                        "diff_solution",
+                        "date_valid",
+                        "time_valid",
+                        "time_fully_resolved",
+                        "pps_present",
+                        "pps_locked",
+                        "antenna_ok"
+                    ]
+                },
+                {
+                    "name": "rxMessages",
+                    "type": "uint32",
+                    "description": "UBX messages accepted from the receiver",
+                    "default": 0
+                },
+                {
+                    "name": "rxChecksumErrors",
+                    "type": "uint32",
+                    "description": "UBX frames rejected on checksum",
+                    "default": 0
+                },
+                {
+                    "name": "rxOverruns",
+                    "type": "uint32",
+                    "description": "UBX frames whose payload exceeded the receive buffer and were skipped",
+                    "default": 0
+                },
+                {
+                    "name": "cfgNaks",
+                    "type": "uint32",
+                    "description": "Configuration messages the receiver rejected with UBX-ACK-NAK",
+                    "default": 0
+                },
+                {
+                    "name": "pvtAge",
+                    "type": "uint32",
+                    "description": "Time since the last UBX-NAV-PVT was decoded",
+                    "units": "ms",
+                    "default": 0
+                },
+                {
+                    "name": "pvtRate",
+                    "type": "float",
+                    "description": "Measured navigation solution rate",
+                    "units": "Hz",
+                    "default": 0.0,
+                    "min": 0.0,
+                    "max": 25.0
+                },
+                {
+                    "name": "ppsCount",
+                    "type": "uint32",
+                    "description": "Time pulse edges counted since power on",
+                    "default": 0
+                },
+                {
+                    "name": "ppsInterval",
+                    "type": "float",
+                    "description": "Measured interval between time pulse edges, a direct check that the receiver time base is sane",
+                    "units": "ms",
+                    "default": 0.0,
+                    "min": 0.0,
+                    "max": 2000.0
+                },
+                {
+                    "name": "ppsOffset",
+                    "type": "float",
+                    "description": "Offset between the time pulse edge and the local time base at that instant",
+                    "units": "us",
+                    "default": 0.0,
+                    "min": -1000000.0,
+                    "max": 1000000.0
+                },
+                {
+                    "name": "satellitesUsed",
+                    "type": "uint8",
+                    "lenght": 4,
+                    "description": "Satellites used per constellation (GPS, GLONASS, Galileo, BeiDou)",
+                    "default": 0
+                },
+                {
+                    "name": "satellitesVisible",
+                    "type": "uint8",
+                    "description": "Satellites tracked in total",
+                    "default": 0
+                },
+                {
+                    "name": "iTOW",
+                    "type": "uint32",
+                    "description": "GPS time of week of the last solution",
+                    "units": "ms",
+                    "default": 0
+                },
+                {
+                    "name": "hAcc",
+                    "type": "float",
+                    "description": "Horizontal accuracy estimate of the last solution",
+                    "units": "m",
+                    "default": 0.0,
+                    "min": 0.0,
+                    "max": 1000.0
+                },
+                {
+                    "name": "resetCount",
+                    "type": "uint16",
+                    "description": "Times the receiver has been hardware reset since power on",
+                    "default": 0
+                },
+                {
+                    "name": "lastNavPvt",
+                    "type": "uint8",
+                    "lenght": 92,
+                    "description": "Raw payload of the last UBX-NAV-PVT, for offline decoding of anything not surfaced above",
+                    "default": 0
+                }
+            ]
+        }
+    ]
+}

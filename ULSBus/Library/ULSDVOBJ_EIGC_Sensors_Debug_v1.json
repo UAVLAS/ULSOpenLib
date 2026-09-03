@@ -1,0 +1,197 @@
+{
+    "BookVersion": "1.0",
+    "Objects": [
+        {
+            "name": "ULSDVOBJ_EIGC_Sensors_Debug_v1",
+            "description": "External IMU/GNSS/Compass module raw sensor debug. Both magnetometers are shown side by side so the redundant pair can be compared directly",
+            "access": "read",
+            "variables": [
+                {
+                    "name": "sensorStatus",
+                    "type": "uint32",
+                    "description": "Per sensor presence and health bits",
+                    "default": 0,
+                    "flags": [
+                        "compass1_present",
+                        "compass1_calibrated",
+                        "compass1_saturated",
+                        "compass2_present",
+                        "compass2_calibrated",
+                        "compass2_saturated",
+                        "imu_present",
+                        "imu_accel_saturated",
+                        "imu_gyro_saturated",
+                        "compass1_in_use",
+                        "compass2_in_use"
+                    ]
+                },
+                {
+                    "name": "compass1Raw",
+                    "type": "int32",
+                    "lenght": 3,
+                    "description": "Compass 1 (MMC5983MA) raw 18 bit offset binary output (X,Y,Z)",
+                    "default": 0
+                },
+                {
+                    "name": "compass1Field",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "Compass 1 field after offset and scale correction (X,Y,Z)",
+                    "units": "uT",
+                    "default": 0.0,
+                    "min": -800.0,
+                    "max": 800.0
+                },
+                {
+                    "name": "compass1Heading",
+                    "type": "float",
+                    "description": "Tilt compensated heading from compass 1",
+                    "units": "deg",
+                    "default": 0.0,
+                    "min": 0.0,
+                    "max": 360.0
+                },
+                {
+                    "name": "compass1Bridge",
+                    "type": "int32",
+                    "lenght": 3,
+                    "description": "Compass 1 bridge offset measured by the SET/RESET pair (X,Y,Z)",
+                    "default": 0
+                },
+                {
+                    "name": "compass2Raw",
+                    "type": "int32",
+                    "lenght": 3,
+                    "description": "Compass 2 (PNI RM3100) raw 24 bit signed counts (X,Y,Z)",
+                    "default": 0
+                },
+                {
+                    "name": "compass2Field",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "Compass 2 field after offset and scale correction (X,Y,Z)",
+                    "units": "uT",
+                    "default": 0.0,
+                    "min": -800.0,
+                    "max": 800.0
+                },
+                {
+                    "name": "compass2Heading",
+                    "type": "float",
+                    "description": "Tilt compensated heading from compass 2",
+                    "units": "deg",
+                    "default": 0.0,
+                    "min": 0.0,
+                    "max": 360.0
+                },
+                {
+                    "name": "compass2CycleCount",
+                    "type": "uint16",
+                    "description": "RM3100 cycle count in use, which sets its gain and conversion time",
+                    "default": 200,
+                    "min": 30,
+                    "max": 400
+                },
+                {
+                    "name": "compassDisagreement",
+                    "type": "float",
+                    "description": "Heading difference between the two magnetometers. The key redundancy indicator: a growing value means one compass is being disturbed",
+                    "units": "deg",
+                    "default": 0.0,
+                    "min": 0.0,
+                    "max": 180.0
+                },
+                {
+                    "name": "compassFieldMagnitude",
+                    "type": "float",
+                    "lenght": 2,
+                    "description": "Total field magnitude measured by each compass. Should agree with each other and with the local earth field",
+                    "units": "uT",
+                    "default": 0.0,
+                    "min": 0.0,
+                    "max": 800.0
+                },
+                {
+                    "name": "accel",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "Accelerometer, board frame (X,Y,Z)",
+                    "units": "g",
+                    "default": 0.0,
+                    "min": -16.0,
+                    "max": 16.0
+                },
+                {
+                    "name": "gyro",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "Gyroscope, board frame (X,Y,Z)",
+                    "units": "deg/s",
+                    "default": 0.0,
+                    "min": -2000.0,
+                    "max": 2000.0
+                },
+                {
+                    "name": "accelRaw",
+                    "type": "int16",
+                    "lenght": 3,
+                    "description": "Accelerometer raw counts (X,Y,Z)",
+                    "default": 0
+                },
+                {
+                    "name": "gyroRaw",
+                    "type": "int16",
+                    "lenght": 3,
+                    "description": "Gyroscope raw counts (X,Y,Z)",
+                    "default": 0
+                },
+                {
+                    "name": "tilt",
+                    "type": "float",
+                    "lenght": 2,
+                    "description": "Roll and pitch derived from the accelerometer, used to tilt compensate both compasses",
+                    "units": "deg",
+                    "default": 0.0,
+                    "min": -180.0,
+                    "max": 180.0
+                },
+                {
+                    "name": "sampleCounters",
+                    "type": "uint32",
+                    "lenght": 3,
+                    "description": "Samples taken from compass 1, compass 2 and the IMU",
+                    "default": 0
+                },
+                {
+                    "name": "errorCounters",
+                    "type": "uint32",
+                    "lenght": 3,
+                    "description": "Bus errors seen on compass 1, compass 2 and the IMU",
+                    "default": 0
+                },
+                {
+                    "name": "sampleRates",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "Measured sample rate of compass 1, compass 2 and the IMU",
+                    "units": "Hz",
+                    "default": 0.0,
+                    "min": 0.0,
+                    "max": 1000.0
+                },
+                {
+                    "name": "framStatus",
+                    "type": "uint8",
+                    "description": "F-RAM status register as last read",
+                    "default": 0
+                },
+                {
+                    "name": "framErrors",
+                    "type": "uint32",
+                    "description": "F-RAM transfer errors",
+                    "default": 0
+                }
+            ]
+        }
+    ]
+}

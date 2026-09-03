@@ -1,0 +1,224 @@
+{
+    "BookVersion": "1.0",
+    "Objects": [
+        {
+            "name": "ULSDVOBJ_EIGC_Peer_v1",
+            "description": "GNSS compass debug: the last navigation Blitz message decoded from the paired module and the platform solution derived from it",
+            "access": "read",
+            "variables": [
+                {
+                    "name": "peerStatus",
+                    "type": "uint32",
+                    "description": "State of the pairing and of the derived solution",
+                    "default": 0,
+                    "flags": [
+                        "peer_seen",
+                        "peer_fresh",
+                        "peer_fix_ok",
+                        "peer_offset_known",
+                        "epoch_matched",
+                        "baseline_valid",
+                        "baseline_in_tolerance",
+                        "yaw_valid",
+                        "yaw_ambiguity_resolved",
+                        "this_module_is_primary",
+                        "platform_solution_published"
+                    ]
+                },
+                {
+                    "name": "peerLid",
+                    "type": "uint8",
+                    "description": "Logical id of the module the last message came from",
+                    "default": 0
+                },
+                {
+                    "name": "peerSeq",
+                    "type": "uint8",
+                    "description": "Sequence number of the last decoded peer message",
+                    "default": 0
+                },
+                {
+                    "name": "peerAge",
+                    "type": "uint32",
+                    "description": "Time since the last peer message was decoded",
+                    "units": "ms",
+                    "default": 0
+                },
+                {
+                    "name": "peerRate",
+                    "type": "float",
+                    "description": "Measured rate peer messages are arriving at",
+                    "units": "Hz",
+                    "default": 0.0,
+                    "min": 0.0,
+                    "max": 25.0
+                },
+                {
+                    "name": "peerLost",
+                    "type": "uint32",
+                    "description": "Peer messages missing according to the sequence number",
+                    "default": 0
+                },
+                {
+                    "name": "peerLat",
+                    "type": "int32",
+                    "description": "Latitude reported by the peer antenna",
+                    "units": "1e-7 deg",
+                    "default": 0
+                },
+                {
+                    "name": "peerLon",
+                    "type": "int32",
+                    "description": "Longitude reported by the peer antenna",
+                    "units": "1e-7 deg",
+                    "default": 0
+                },
+                {
+                    "name": "peerHeight",
+                    "type": "float",
+                    "description": "Height above mean sea level reported by the peer antenna",
+                    "units": "m",
+                    "default": 0.0
+                },
+                {
+                    "name": "peerOffset",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "Offset of the peer antenna from the platform centre as the peer reports it (forward,right,down)",
+                    "units": "m",
+                    "default": 0.0,
+                    "min": -10.0,
+                    "max": 10.0
+                },
+                {
+                    "name": "peerHeading",
+                    "type": "float",
+                    "description": "Magnetic heading reported by the peer",
+                    "units": "deg",
+                    "default": 0.0,
+                    "min": 0.0,
+                    "max": 360.0
+                },
+                {
+                    "name": "peerHAcc",
+                    "type": "float",
+                    "description": "Horizontal accuracy reported by the peer",
+                    "units": "m",
+                    "default": 0.0,
+                    "min": 0.0,
+                    "max": 1000.0
+                },
+                {
+                    "name": "peerNumSV",
+                    "type": "uint8",
+                    "description": "Satellites used by the peer",
+                    "default": 0
+                },
+                {
+                    "name": "epochSkew",
+                    "type": "int32",
+                    "description": "Difference between the peer message iTOW and the local solution it was paired with. A large value means the two fixes are not simultaneous and the baseline will smear when the platform moves",
+                    "units": "ms",
+                    "default": 0
+                },
+                {
+                    "name": "baselineNED",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "Vector from this module antenna to the peer antenna in NED frame (N,E,D)",
+                    "units": "m",
+                    "default": 0.0,
+                    "min": -50.0,
+                    "max": 50.0
+                },
+                {
+                    "name": "baselineLength",
+                    "type": "float",
+                    "description": "Measured distance between the two antennas. Compared against baselineNominal to sanity check the pair",
+                    "units": "m",
+                    "default": 0.0,
+                    "min": 0.0,
+                    "max": 50.0
+                },
+                {
+                    "name": "baselineError",
+                    "type": "float",
+                    "description": "Measured baseline minus the configured nominal baseline. The single best indicator that the GNSS compass is healthy",
+                    "units": "m",
+                    "default": 0.0,
+                    "min": -50.0,
+                    "max": 50.0
+                },
+                {
+                    "name": "baselineHeading",
+                    "type": "float",
+                    "description": "True heading of the baseline vector, before the mounting geometry of the two modules is removed",
+                    "units": "deg",
+                    "default": 0.0,
+                    "min": 0.0,
+                    "max": 360.0
+                },
+                {
+                    "name": "baselinePitch",
+                    "type": "float",
+                    "description": "Elevation of the baseline vector. Should stay near zero on a level platform and is a useful check on height quality",
+                    "units": "deg",
+                    "default": 0.0,
+                    "min": -90.0,
+                    "max": 90.0
+                },
+                {
+                    "name": "gnssYaw",
+                    "type": "float",
+                    "description": "Platform yaw derived from the baseline alone, the GNSS compass output",
+                    "units": "deg",
+                    "default": 0.0,
+                    "min": 0.0,
+                    "max": 360.0
+                },
+                {
+                    "name": "gnssYawAcc",
+                    "type": "float",
+                    "description": "Accuracy estimate of the GNSS compass yaw, driven by the position accuracies and the baseline length",
+                    "units": "deg",
+                    "default": 0.0,
+                    "min": 0.0,
+                    "max": 180.0
+                },
+                {
+                    "name": "magYawDelta",
+                    "type": "float",
+                    "description": "GNSS compass yaw minus magnetic yaw. Large values point at magnetic disturbance or a wrong declination",
+                    "units": "deg",
+                    "default": 0.0,
+                    "min": -180.0,
+                    "max": 180.0
+                },
+                {
+                    "name": "platformCentreOffsetUsed",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "Offset actually applied to reduce this module fix to the platform centre (forward,right,down)",
+                    "units": "m",
+                    "default": 0.0,
+                    "min": -10.0,
+                    "max": 10.0
+                },
+                {
+                    "name": "solutionAge",
+                    "type": "uint32",
+                    "description": "Time since the platform solution was last updated",
+                    "units": "ms",
+                    "default": 0
+                },
+                {
+                    "name": "rejectCounters",
+                    "type": "uint32",
+                    "lenght": 4,
+                    "description": "Peer messages rejected for: stale epoch, bad peer fix, baseline out of tolerance, missing peer offset",
+                    "default": 0
+                }
+            ]
+        }
+    ]
+}

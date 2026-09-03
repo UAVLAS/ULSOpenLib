@@ -1,0 +1,361 @@
+{
+    "BookVersion": "1.0",
+    "Objects": [
+        {
+            "name": "ULSDVOBJ_EIGC_Config_v1",
+            "description": "External IMU/GNSS/Compass module configuration",
+            "access": "config",
+            "variables": [
+                {
+                    "name": "name",
+                    "type": "char",
+                    "lenght": 16,
+                    "default": "ULS-EIGC",
+                    "description": "Name"
+                },
+                {
+                    "name": "ctrl",
+                    "type": "flags_uint32",
+                    "description": "Module function enable bits",
+                    "default": 271,
+                    "flags": [
+                        "compass1_enable",
+                        "compass2_enable",
+                        "imu_enable",
+                        "gnss_enable",
+                        "gnss_compass_enable",
+                        "blitz_publish_enable",
+                        "ble_enable",
+                        "ble_telemetry_enable",
+                        "auto_declination",
+                        "use_peer_attitude",
+                        "publish_platform_centre"
+                    ]
+                },
+                {
+                    "name": "role",
+                    "type": "opt_uint8",
+                    "description": "Role in the GNSS compass pair. The primary publishes the platform solution; both exchange Blitz navigation messages",
+                    "default": 1,
+                    "opts": [
+                        "Undefined",
+                        "Primary",
+                        "Secondary"
+                    ]
+                },
+                {
+                    "name": "devID",
+                    "type": "uint8",
+                    "description": "Module ID number",
+                    "default": 0
+                },
+                {
+                    "name": "offset",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "Position of this module antenna relative to the platform centre, platform body frame, forward/right/down. Used to reduce this module fix to the platform centre and to form the GNSS compass baseline",
+                    "units": "m",
+                    "default": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "min": -10.0,
+                    "max": 10.0
+                },
+                {
+                    "name": "mountOffset",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "Mounting orientation of the board relative to the platform body frame (roll,pitch,yaw)",
+                    "units": "deg",
+                    "default": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "min": -180.0,
+                    "max": 180.0
+                },
+                {
+                    "name": "declination",
+                    "type": "float",
+                    "description": "Magnetic declination applied when auto_declination is off",
+                    "units": "deg",
+                    "default": 0.0,
+                    "min": -180.0,
+                    "max": 180.0
+                },
+                {
+                    "name": "compassPreferred",
+                    "type": "opt_uint8",
+                    "description": "Which magnetometer to trust when both are healthy",
+                    "default": 0,
+                    "opts": [
+                        "Auto",
+                        "Compass1_MMC5983MA",
+                        "Compass2_RM3100"
+                    ]
+                },
+                {
+                    "name": "compassDisagreementLimit",
+                    "type": "float",
+                    "description": "Heading difference between the two magnetometers above which compass_disagreement is raised",
+                    "units": "deg",
+                    "default": 15.0,
+                    "min": 1.0,
+                    "max": 90.0
+                },
+                {
+                    "name": "compass1Offset",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "Compass 1 hard iron offset (X,Y,Z)",
+                    "units": "uT",
+                    "default": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "min": -500.0,
+                    "max": 500.0
+                },
+                {
+                    "name": "compass1Scale",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "Compass 1 soft iron scale (X,Y,Z)",
+                    "default": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "min": 0.1,
+                    "max": 10.0
+                },
+                {
+                    "name": "compass2Offset",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "Compass 2 hard iron offset (X,Y,Z)",
+                    "units": "uT",
+                    "default": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "min": -500.0,
+                    "max": 500.0
+                },
+                {
+                    "name": "compass2Scale",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "Compass 2 soft iron scale (X,Y,Z)",
+                    "default": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "min": 0.1,
+                    "max": 10.0
+                },
+                {
+                    "name": "gyroOffset",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "Gyroscope zero rate offset (X,Y,Z)",
+                    "units": "deg/s",
+                    "default": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "min": -50.0,
+                    "max": 50.0
+                },
+                {
+                    "name": "accelOffset",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "Accelerometer zero offset (X,Y,Z)",
+                    "units": "g",
+                    "default": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "min": -1.0,
+                    "max": 1.0
+                },
+                {
+                    "name": "gnssRate",
+                    "type": "opt_uint8",
+                    "description": "GNSS navigation solution rate",
+                    "default": 2,
+                    "opts": [
+                        "1Hz",
+                        "2Hz",
+                        "5Hz",
+                        "10Hz"
+                    ]
+                },
+                {
+                    "name": "gnssDynModel",
+                    "type": "opt_uint8",
+                    "description": "GNSS dynamic platform model",
+                    "default": 1,
+                    "opts": [
+                        "Portable",
+                        "Stationary",
+                        "Pedestrian",
+                        "Automotive",
+                        "Sea",
+                        "Airborne1g"
+                    ]
+                },
+                {
+                    "name": "baselineNominal",
+                    "type": "float",
+                    "description": "Expected distance between the two module antennas. The GNSS compass solution is rejected when the measured baseline differs from this by more than baselineTolerance",
+                    "units": "m",
+                    "default": 1.0,
+                    "min": 0.1,
+                    "max": 20.0
+                },
+                {
+                    "name": "baselineTolerance",
+                    "type": "float",
+                    "description": "Allowed deviation of the measured baseline from baselineNominal",
+                    "units": "m",
+                    "default": 0.25,
+                    "min": 0.01,
+                    "max": 5.0
+                },
+                {
+                    "name": "peerLid",
+                    "type": "uint8",
+                    "description": "ULS bus logical id of the paired module. 0 accepts any peer publishing the navigation Blitz message",
+                    "default": 0
+                },
+                {
+                    "name": "blitzNavId",
+                    "type": "uint16",
+                    "description": "Blitz message id this module publishes its navigation data on and listens for from the peer",
+                    "default": 1,
+                    "min": 0,
+                    "max": 65535
+                },
+                {
+                    "name": "blitzRate",
+                    "type": "opt_uint8",
+                    "description": "Rate the navigation Blitz message is published at",
+                    "default": 2,
+                    "opts": [
+                        "1Hz",
+                        "2Hz",
+                        "5Hz",
+                        "10Hz"
+                    ]
+                },
+                {
+                    "name": "peerTimeout",
+                    "type": "uint16",
+                    "description": "Time without a peer Blitz message after which peer_timeout is raised and the GNSS compass solution is dropped",
+                    "units": "ms",
+                    "default": 2000,
+                    "min": 100,
+                    "max": 30000
+                },
+                {
+                    "name": "bleName",
+                    "type": "char",
+                    "lenght": 16,
+                    "default": "ULS-PLATFORM",
+                    "description": "Advertised name of the BLE telemetry link to the drone"
+                },
+                {
+                    "name": "bleTxPower",
+                    "type": "opt_uint8",
+                    "description": "BLE transmit power. The link is specified to about 1000 m, so the highest setting is the default. Values are -8, -4, 0, +4 and +8 dBm; the option names avoid the sign characters because they become C identifiers in the generated book",
+                    "default": 4,
+                    "opts": [
+                        "Minus8dBm",
+                        "Minus4dBm",
+                        "Zero0dBm",
+                        "Plus4dBm",
+                        "Plus8dBm"
+                    ]
+                },
+                {
+                    "name": "bleTelemetryRate",
+                    "type": "opt_uint8",
+                    "description": "Rate the platform centre position and velocity are sent to the drone",
+                    "default": 1,
+                    "opts": [
+                        "1Hz",
+                        "2Hz",
+                        "5Hz",
+                        "10Hz"
+                    ]
+                },
+                {
+                    "name": "bleKey",
+                    "type": "uint8",
+                    "lenght": 16,
+                    "description": "Shared key used to pair and authenticate the drone telemetry link",
+                    "default": [
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0
+                    ]
+                },
+                {
+                    "name": "serialProtocol",
+                    "type": "opt_uint8",
+                    "description": "RS-422 / debug header protocol",
+                    "default": 1,
+                    "opts": [
+                        "Disabled",
+                        "ULSDECONET",
+                        "MavlinkV2",
+                        "NMEA",
+                        "ASCII"
+                    ]
+                },
+                {
+                    "name": "serialBaudrate",
+                    "type": "uint32",
+                    "description": "RS-422 / debug header baud rate",
+                    "units": "bit/s",
+                    "default": 115200
+                },
+                {
+                    "name": "canBitrate",
+                    "type": "opt_uint8",
+                    "description": "CAN bus bit rate. Note the bus termination R3 is permanently fitted on this board",
+                    "default": 2,
+                    "opts": [
+                        "125k",
+                        "250k",
+                        "500k",
+                        "1M"
+                    ]
+                }
+            ]
+        }
+    ]
+}

@@ -1,7 +1,7 @@
 {
     "BookVersion": "1.0",
     "Devices": [
-         {
+        {
             "name": "ULSDV_HL_G3_RXM",
             "description": "UAVLAS Heli G3 receiver ",
             "type": "0x0043",
@@ -213,6 +213,44 @@
                     "name": "blitzDebug",
                     "object": "ULSDVOBJ_BLITZ_Debug_v1",
                     "address": "0x0101"
+                }
+            ]
+        },
+        {
+            "name": "ULSDV_XX_EIGC_G3",
+            "description": "UAVLAS External IMU/GNSS/Compass module G3",
+            "type": "0x0070",
+            "objects": [
+                {
+                    "name": "status",
+                    "object": "ULSDVOBJ_EIGC_Status_v1",
+                    "address": "0x0010"
+                },
+                {
+                    "name": "cfg",
+                    "object": "ULSDVOBJ_EIGC_Config_v1",
+                    "address": "0x0020",
+                    "type": "config"
+                },
+                {
+                    "name": "sensorsDebug",
+                    "object": "ULSDVOBJ_EIGC_Sensors_Debug_v1",
+                    "address": "0x0030"
+                },
+                {
+                    "name": "gnssDebug",
+                    "object": "ULSDVOBJ_EIGC_GNSS_Debug_v1",
+                    "address": "0x0031"
+                },
+                {
+                    "name": "peerDebug",
+                    "object": "ULSDVOBJ_EIGC_Peer_v1",
+                    "address": "0x0032"
+                },
+                {
+                    "name": "bleDebug",
+                    "object": "ULSDVOBJ_EIGC_BLE_Debug_v1",
+                    "address": "0x0033"
                 }
             ]
         }
