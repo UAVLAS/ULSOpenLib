@@ -89,10 +89,10 @@
                     "description": "HIL payload it was matched against"
                 },
                 {
-                    "name": "slots",
+                    "name": "symbolSlots",
                     "type": "uint8",
                     "lenght": 16,
-                    "description": "Decoded PPM slot index per symbol"
+                    "description": "Decoded PPM slot index per symbol (named symbolSlots because \"slots\" is a Qt keyword and breaks moc in the generated Qt book)"
                 },
                 {
                     "name": "symbolMarginQ8",
