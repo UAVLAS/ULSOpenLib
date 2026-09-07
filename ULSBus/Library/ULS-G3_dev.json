@@ -253,6 +253,24 @@
                     "address": "0x0033"
                 }
             ]
+        },
+        {
+            "name": "ULSDV_XX_EIGC_G3_BLE",
+            "description": "BMD-345 BLE module on the UAVLAS External IMU/GNSS/Compass module G3. A node in its own right: it sits behind the STM32 USART4 link and is explored, configured and updated over the ULS bus like any other device",
+            "type": "0x0071",
+            "objects": [
+                {
+                    "name": "status",
+                    "object": "ULSDVOBJ_EIGC_BLE_Debug_v1",
+                    "address": "0x0010"
+                },
+                {
+                    "name": "cfg",
+                    "object": "ULSDVOBJ_EIGC_BLE_Config_v1",
+                    "address": "0x0020",
+                    "type": "config"
+                }
+            ]
         }
     ]
 }

@@ -1,0 +1,72 @@
+{
+    "BookVersion": "1.0",
+    "Objects": [
+        {
+            "name": "ULSDVOBJ_EIGC_BLE_Config_v1",
+            "description": "Configuration of the BMD-345 BLE module on the ULS-XX-EIGC-G3. Owned by the module itself, not by the STM32: the module is a separate node on the ULS bus, reached through the STM32 USART4 link",
+            "access": "config",
+            "variables": [
+                {
+                    "name": "name",
+                    "type": "char",
+                    "lenght": 16,
+                    "default": "ULS-EIGC-BLE",
+                    "description": "Name"
+                },
+                {
+                    "name": "ctrl",
+                    "type": "flags_uint32",
+                    "description": "Module function enable bits",
+                    "default": 3,
+                    "flags": [
+                        "advertising_enable",
+                        "telemetry_enable",
+                        "pairing_required",
+                        "fem_enable",
+                        "usb_console_enable"
+                    ]
+                },
+                {
+                    "name": "devID",
+                    "type": "uint8",
+                    "description": "Module ID number. Matches the devID of the STM32 it is fitted to",
+                    "default": 0
+                },
+                {
+                    "name": "txPower",
+                    "type": "int8",
+                    "description": "Requested transmit power. The achievable maximum depends on whether the SKY66112 front end is enabled and on the antenna fitted to the U.FL",
+                    "units": "dBm",
+                    "default": 0,
+                    "min": -40,
+                    "max": 20
+                },
+                {
+                    "name": "advInterval",
+                    "type": "uint16",
+                    "description": "Advertising interval",
+                    "units": "ms",
+                    "default": 100,
+                    "min": 20,
+                    "max": 10000
+                },
+                {
+                    "name": "telemetryRate",
+                    "type": "uint16",
+                    "description": "Rate at which platform position and velocity are pushed to the drone",
+                    "units": "Hz",
+                    "default": 10,
+                    "min": 1,
+                    "max": 50
+                },
+                {
+                    "name": "droneAddress",
+                    "type": "uint8",
+                    "lenght": 6,
+                    "description": "Bluetooth address of the drone to connect to. All zero means accept any drone that passes pairing",
+                    "default": [0, 0, 0, 0, 0, 0]
+                }
+            ]
+        }
+    ]
+}
