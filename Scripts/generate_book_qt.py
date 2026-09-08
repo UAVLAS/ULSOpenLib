@@ -197,7 +197,7 @@ def generate(objects, devices, output):
                                         var["name"] + " = v.toUInt();\n")
                     else:
                         book_file.write("        var." +
-                                        var["name"] + "v.toInt();\n")
+                                        var["name"] + " = v.toInt();\n")
 
                 book_file.write("        };\n")
 # Signals
