@@ -1,5 +1,8 @@
 #ifndef ULSBUSCONFIG_H
 #define ULSBUSCONFIG_H
+/* The tests exist to exercise the join path, so they always build it in. */
+#define ULSBUS_AUTH
+
 #define ULS_ENTER_CRITICAL void()
 #define ULS_EXIT_CRITICAL void()
 #define ULS_DISABLE_IRQ void()

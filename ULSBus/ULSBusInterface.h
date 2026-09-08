@@ -24,8 +24,25 @@
 #define ULSBUSINTERFACE_H
 
 #include "ULSBusTypes.h"
-#include "ULSCrypto.h"
 #include "ULSDevices.h"
+
+/*
+ * Authorization is opt-in per device, through the ULSBusConfig.h every device
+ * already supplies:
+ *
+ *   #define ULSBUS_AUTH
+ *
+ * Off by default because it is not free and almost nothing wants it yet: the
+ * handshake plus the AES/CMAC it needs is about 3.9 KByte of flash, and on a
+ * device with no policed interface every byte of that is dead. Measured on
+ * uls-qr1-r2, whose RAM_EXEC region is already tight.
+ *
+ * With it off, ifAuthRequired() is a compile-time false, so every guard in
+ * the join path folds away and the linker drops ULSCrypto entirely.
+ */
+#if defined(ULSBUS_AUTH)
+#include "ULSCrypto.h"
+#endif
 
 #define IF_PACKET_SIZE 1324
 
@@ -131,7 +148,7 @@ typedef struct {
  * grant, or no fleet key provisioned.
  */
 typedef bool (*_uls_if_secret_callback)(uint8_t level, uint32_t joinerUid,
-                                        uint8_t key[ULS_AES_KEY_SIZE]);
+                                        uint8_t key[16]);
 
 typedef enum {
   IF_STATE_UNINITIALIZED = 0,
@@ -215,8 +232,11 @@ class ULSBusInterface {
 
   /*
    * Turn authorization on for this interface. Until this is called the
-   * interface is open and behaves exactly as it always has.
+   * interface is open and behaves exactly as it always has. Returns IO_ERROR
+   * on a device built without ULSBUS_AUTH - a policy that silently did
+   * nothing would be far worse than one that refuses to be set.
    */
+#if defined(ULSBUS_AUTH)
   _io_op_result ifSetAuthPolicy(uint8_t required, uint8_t grantLevel,
                                 _uls_if_secret_callback secret);
 
@@ -225,6 +245,13 @@ class ULSBusInterface {
    * interface grants no level because it checked nothing. */
   uint8_t ifAuthLevel() { return _authLevel; }
   bool ifAuthRequired() { return _authPolicy.required != ULS_AUTH_LEVEL_NONE; }
+#else
+  _io_op_result ifSetAuthPolicy(uint8_t, uint8_t, _uls_if_secret_callback) {
+    return IO_ERROR;
+  }
+  uint8_t ifAuthLevel() { return ULS_AUTH_LEVEL_NONE; }
+  static constexpr bool ifAuthRequired() { return false; }
+#endif
 
   _uls_if_callback ifclbkBlitzReceived;
 
@@ -260,6 +287,7 @@ class ULSBusInterface {
   _io_op_result sendNM_REQUESTID();
   _io_op_result sendNM_SETID(uint32_t key);
   _io_op_result sendNM_HB();
+#if defined(ULSBUS_AUTH)
   // Authorization
   void processAUTH_REQUEST();
   void processAUTH_CHALLENGE();
@@ -273,6 +301,7 @@ class ULSBusInterface {
                  const uint8_t nonce[16], uint32_t uid, uint8_t level,
                  uint8_t proof[16]);
   void authReset();
+#endif
   // Utils
   uint8_t allocateId();
   uint8_t randomTimeout();
@@ -289,6 +318,7 @@ class ULSBusInterface {
   _if_state _state;
   _local_device _locals[IF_LOCAL_DEVICES_NUM + 1];
 
+#if defined(ULSBUS_AUTH)
   _if_auth_policy _authPolicy;
   _uls_if_secret_callback _authSecretClbk;
   uint8_t _authLevel;      /* what the peer on this link proved */
@@ -298,6 +328,7 @@ class ULSBusInterface {
   uint32_t _authTimeout;   /* countdown for IF_STATE_AUTH */
   uint32_t _authLockout;   /* set after too many bad answers */
   uint8_t _authAttempts;
+#endif
 
  private:
   uint32_t _key;

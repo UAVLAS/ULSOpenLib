@@ -36,16 +36,22 @@ ULSBusInterface::ULSBusInterface(const char* name, uint8_t did)
       _key_cntr(0),
       _didx(0),
       _nm_timeout(0),
-      _nm_requests(0),
+      _nm_requests(0)
+#if defined(ULSBUS_AUTH)
+      ,
       _authSecretClbk(nullptr),
       _authLevel(ULS_AUTH_LEVEL_NONE),
       _authPeerUid(0),
       _authTimeout(0),
       _authLockout(0),
-      _authAttempts(0) {
+      _authAttempts(0)
+#endif
+{
+#if defined(ULSBUS_AUTH)
   _authPolicy.required = ULS_AUTH_LEVEL_NONE;  // open, as it always was
   _authPolicy.grantLevel = ULS_AUTH_LEVEL_NONE;
   memset(_authNonce, 0, sizeof(_authNonce));
+#endif
   ifRxLen = 0;
   ifTxLen = 0;
   ifRxPacket = (_if_packet*)ifRxBuf;
@@ -62,6 +68,7 @@ void ULSBusInterface::task(uint32_t dtms) {
     _did = _static_did;
   }
   _key_cntr++;
+#if defined(ULSBUS_AUTH)
   if (_authTimeout) {
     _authTimeout = (_authTimeout > dtms) ? (_authTimeout - dtms) : 0;
     if (_authTimeout == 0) {
@@ -75,6 +82,7 @@ void ULSBusInterface::task(uint32_t dtms) {
   if (_authLockout) {
     _authLockout = (_authLockout > dtms) ? (_authLockout - dtms) : 0;
   }
+#endif
   if (_nm_timeout >= dtms) {
     _nm_timeout -= dtms;
   } else {
@@ -99,11 +107,15 @@ void ULSBusInterface::task(uint32_t dtms) {
       } else {
         if (_nm_timeout == 0) {  // Request ID each IF_NM_REQUESTID_TIMEOUT
           if (_nm_requests < 5) {
+#if defined(ULSBUS_AUTH)
             if (ifAuthRequired()) {
               sendAUTH_REQUEST();
             } else {
               sendNM_REQUESTID();
             }
+#else
+            sendNM_REQUESTID();
+#endif
             _nm_requests++;
           } else if (ifAuthRequired()) {
             /* The self-assign fallback below picks a free id when no master
@@ -252,6 +264,7 @@ void ULSBusInterface::processLocal() {
           (!ifAuthRequired()))
         sendNM_SETID(ifRxPacket->request_id.key);
       break;
+#if defined(ULSBUS_AUTH)
     case IF_CMD_NM_AUTH_REQUEST:
       if ((ifRxLen == IF_PACKET_AUTH_REQUEST_SIZE) && (_did == 0x0))
         processAUTH_REQUEST();
@@ -266,6 +279,7 @@ void ULSBusInterface::processLocal() {
     case IF_CMD_NM_AUTH_REJECT:
       if (ifRxLen == IF_PACKET_AUTH_REJECT_SIZE) processAUTH_REJECT();
       break;
+#endif
     case IF_CMD_NM_SET_ID:
       if (ifRxLen == IF_PACKET_NM_SETID_SIZE) processNM_SETID();
       break;
@@ -364,7 +378,9 @@ void ULSBusInterface::processNM_SETID() {
     return;
   }
   _did = ifRxPacket->set_id.new_id;
+#if defined(ULSBUS_AUTH)
   _authTimeout = 0;
+#endif
   _state = IF_STATE_OK;
   sendNM_HB();  // Send PING answer;
   ifOk();
@@ -376,13 +392,16 @@ void ULSBusInterface::processNM_HB() {
 void ULSBusInterface::resetId() {
   _did = IF_LOCAL_DEVICES_NUM;
   _state = IF_STATE_ERROR;
+#if defined(ULSBUS_AUTH)
   /* A link that dropped and came back is not the same link. Re-authenticate:
    * carrying a grant across would let it outlive the peer that earned it. */
   authReset();
+#endif
 }
 
 void ULSBusInterface::processSYS() {}
 
+#if defined(ULSBUS_AUTH)
 /* ------------------------------------------------------------------------
  * Authorization
  *
@@ -615,3 +634,4 @@ void ULSBusInterface::processAUTH_REJECT() {
   authReset();
   _state = IF_STATE_ERROR;
 }
+#endif  // ULSBUS_AUTH
