@@ -1,0 +1,25 @@
+{
+    "BookVersion": "1.0",
+    "Objects": [
+        {
+            "name": "ULSDVOBJ_EIGC_BLE_Key_v1",
+            "description": "Commissioning secrets for the BMD-345 BLE module. Write-only on purpose - ULSBusConnection::cnProcessGetObject refuses a WRITEONLY object, so once these are in they cannot be read back over the bus by anyone, including ULS Tools. Written once at commissioning over a wired link, never over the air. See devs-nrf/RADIO.md",
+            "access": "write",
+            "variables": [
+                {
+                    "name": "fleetKey",
+                    "type": "uint8",
+                    "lenght": 16,
+                    "description": "Fleet secret. The per-unit beacon key is CMAC(fleetKey, deviceSerial) and the service passkey is derived from the same pair, so this one write provisions both. Identical across every unit of a fleet; a unit whose fleetKey is all zero signs nothing and is rejected by every peer that has one",
+                    "default": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+                },
+                {
+                    "name": "keyEpoch",
+                    "type": "uint32",
+                    "description": "Increments each time the fleet is rekeyed. A beacon carries the sender's epoch so a half-rekeyed fleet is diagnosable instead of merely silent: a peer that rejects everything can say whether the epochs disagree",
+                    "default": 0
+                }
+            ]
+        }
+    ]
+}

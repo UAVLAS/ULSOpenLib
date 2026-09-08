@@ -3,44 +3,48 @@
     "Objects": [
         {
             "name": "ULSDVOBJ_EIGC_BLE_Debug_v1",
-            "description": "BMD-345 radio link debug. This is the secondary telemetry channel to the drone, specified to about 1000 m, over which the platform centre position and velocity are sent so the drone can close on the platform until the IR landing system acquires it",
+            "description": "BMD-345 radio state. This is the secondary telemetry channel to the drone, specified to about 1000 m, over which the platform centre position and velocity are broadcast so the drone can close on the platform until the IR landing system acquires it. The telemetry leg is connectionless - the counters below are beacons sent and heard, not a connection - while the service leg is a GATT connection carrying the ULS bus for a PC. See devs-nrf/RADIO.md",
             "access": "read",
             "variables": [
                 {
                     "name": "bleStatus",
                     "type": "uint32",
-                    "description": "State of the module and of the link to the drone",
+                    "description": "State of the module, of the telemetry broadcast and of the service link",
                     "default": 0,
                     "flags": [
                         "module_present",
                         "module_booted",
                         "module_held_in_reset",
                         "uart_link_ok",
-                        "advertising",
-                        "drone_connected",
-                        "drone_authenticated",
-                        "telemetry_streaming",
+                        "telemetry_broadcasting",
+                        "peer_heard",
+                        "peer_fresh",
+                        "service_advertising",
+                        "service_connected",
+                        "service_authenticated",
+                        "coded_phy_active",
+                        "fleet_key_present",
                         "firmware_mismatch"
                     ]
                 },
                 {
                     "name": "linkState",
                     "type": "opt_uint8",
-                    "description": "Connection state of the drone link",
+                    "description": "State of the telemetry leg. Broadcasting means this unit is transmitting; Tracking means it is also hearing an accepted peer",
                     "default": 0,
                     "opts": [
                         "Down",
                         "Booting",
-                        "Advertising",
-                        "Connecting",
-                        "Connected",
+                        "NoKey",
+                        "Broadcasting",
+                        "Tracking",
                         "Error"
                     ]
                 },
                 {
                     "name": "rssi",
                     "type": "int8",
-                    "description": "Received signal strength of the drone link",
+                    "description": "Signal strength of the last accepted peer beacon. The one number that says whether the range budget is holding",
                     "units": "dBm",
                     "default": 0,
                     "min": -128,
@@ -56,75 +60,111 @@
                     "max": 20
                 },
                 {
-                    "name": "droneAddress",
-                    "type": "uint8",
-                    "lenght": 6,
-                    "description": "Bluetooth address of the connected drone",
+                    "name": "peerSerial",
+                    "type": "uint32",
+                    "description": "Serial number of the peer being tracked, from its beacon. The ULS serial, not a Bluetooth address - the BLE address is derived from it and is of no interest to an operator",
                     "default": 0
                 },
                 {
-                    "name": "droneDistance",
+                    "name": "peerDistance",
                     "type": "float",
-                    "description": "Distance from the platform centre to the drone, from the position the drone reports back. Sanity check on whether the link range matches the geometry",
+                    "description": "Distance from the platform centre to the tracked peer, computed from the position in its beacon. Sanity check on whether the link range matches the geometry",
                     "units": "m",
                     "default": 0.0,
                     "min": 0.0,
                     "max": 5000.0
                 },
                 {
-                    "name": "linkUptime",
+                    "name": "peersHeard",
+                    "type": "uint8",
+                    "description": "Distinct peers whose beacons were accepted in the last few seconds. In a zone with several platforms and several drones this is the number that says whether the airtime budget is being met - it is not 0 or 1 in normal operation",
+                    "default": 0
+                },
+                {
+                    "name": "beaconsSent",
                     "type": "uint32",
-                    "description": "Time the current drone connection has been up",
-                    "units": "s",
+                    "description": "Telemetry beacons transmitted since power on",
                     "default": 0
                 },
                 {
-                    "name": "connectCount",
-                    "type": "uint16",
-                    "description": "Drone connections established since power on",
-                    "default": 0
-                },
-                {
-                    "name": "disconnectCount",
-                    "type": "uint16",
-                    "description": "Drone connections lost since power on",
-                    "default": 0
-                },
-                {
-                    "name": "telemetrySent",
+                    "name": "beaconsRx",
                     "type": "uint32",
-                    "description": "Platform position and velocity updates sent to the drone",
+                    "description": "Beacons received and accepted since power on",
                     "default": 0
                 },
                 {
-                    "name": "telemetryAcked",
+                    "name": "beaconsRejectedFleet",
                     "type": "uint32",
-                    "description": "Platform updates the drone acknowledged",
+                    "description": "Beacons dropped for a foreign fleetId. Expected to be non-zero wherever another operator shares the zone; a large number is information, not a fault",
                     "default": 0
                 },
                 {
-                    "name": "uartTxPackets",
+                    "name": "beaconsRejectedAuth",
                     "type": "uint32",
-                    "description": "Packets sent to the BMD-345 over the module UART",
+                    "description": "Beacons of this fleet whose signature failed. Any non-zero value here means either a mis-provisioned unit or someone transmitting who should not be - the two are told apart by beaconsRejectedEpoch",
                     "default": 0
                 },
                 {
-                    "name": "uartRxPackets",
+                    "name": "beaconsRejectedEpoch",
                     "type": "uint32",
-                    "description": "Packets received from the BMD-345 over the module UART",
+                    "description": "Beacons rejected because the sender's keyEpoch differs from this unit's. This is what a half-finished rekey looks like",
                     "default": 0
                 },
                 {
-                    "name": "uartErrors",
+                    "name": "beaconsRejectedReplay",
                     "type": "uint32",
-                    "description": "Framing, overrun and protocol errors on the module UART",
+                    "description": "Beacons whose signature verified but which were stale or out of sequence - a replay, or a peer whose GNSS time is wrong",
+                    "default": 0
+                },
+                {
+                    "name": "lastBeaconAge",
+                    "type": "uint32",
+                    "description": "Time since the last accepted peer beacon. Compare against beaconMaxAge in the config object",
+                    "units": "ms",
                     "default": 0
                 },
                 {
                     "name": "lastTelemetryAge",
                     "type": "uint32",
-                    "description": "Time since the last platform update was accepted by the module",
+                    "description": "Time since the STM32 last supplied a platform position for this unit to broadcast. A stale value here means the fault is on the wire, not in the air",
                     "units": "ms",
+                    "default": 0
+                },
+                {
+                    "name": "serviceConnectCount",
+                    "type": "uint16",
+                    "description": "Service connections established since power on",
+                    "default": 0
+                },
+                {
+                    "name": "serviceRejectCount",
+                    "type": "uint16",
+                    "description": "Service connections dropped for failing to authenticate, and privileged ULS bus commands refused on an unauthenticated link",
+                    "default": 0
+                },
+                {
+                    "name": "serviceUptime",
+                    "type": "uint32",
+                    "description": "Time the current service connection has been up",
+                    "units": "s",
+                    "default": 0
+                },
+                {
+                    "name": "uartTxPackets",
+                    "type": "uint32",
+                    "description": "ULS bus packets sent to the BMD-345 over USART4",
+                    "default": 0
+                },
+                {
+                    "name": "uartRxPackets",
+                    "type": "uint32",
+                    "description": "ULS bus packets received from the BMD-345 over USART4",
+                    "default": 0
+                },
+                {
+                    "name": "uartErrors",
+                    "type": "uint32",
+                    "description": "Framing, overrun and protocol errors on USART4",
                     "default": 0
                 },
                 {
