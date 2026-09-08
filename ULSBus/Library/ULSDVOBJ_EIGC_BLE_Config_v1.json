@@ -3,7 +3,7 @@
     "Objects": [
         {
             "name": "ULSDVOBJ_EIGC_BLE_Config_v1",
-            "description": "Configuration of the BMD-345 BLE module on the ULS-XX-EIGC-G3. Owned by the module itself, not by the STM32: the module is a separate node on the ULS bus, reached through the STM32 USART4 link",
+            "description": "Configuration of the BMD-345 BLE module on the ULS-XX-EIGC-G3. Owned by the module itself, not by the STM32: the module is a separate node on the ULS bus, reached through the STM32 USART4 link. See devs-nrf/RADIO.md for the link design these fields configure",
             "access": "config",
             "variables": [
                 {
@@ -11,25 +11,34 @@
                     "type": "char",
                     "lenght": 16,
                     "default": "ULS-EIGC-BLE",
-                    "description": "Name"
+                    "description": "Name. Shown by ULS Tools in the scan list and carried in the service advertisement, never in the telemetry beacon"
                 },
                 {
                     "name": "ctrl",
                     "type": "flags_uint32",
-                    "description": "Module function enable bits",
-                    "default": 3,
+                    "description": "Module function enable bits. Default 15 = telemetry_enable | service_adv_enable | require_bonding | coded_phy_enable. require_bonding is on by default deliberately: the service link can write config and push firmware, so an unbonded peer must not have it",
+                    "default": 15,
                     "flags": [
-                        "advertising_enable",
                         "telemetry_enable",
-                        "pairing_required",
+                        "service_adv_enable",
+                        "require_bonding",
+                        "coded_phy_enable",
                         "fem_enable",
-                        "usb_console_enable"
+                        "usb_console_enable",
+                        "accept_unsigned_beacons",
+                        "beacon_role_is_drone"
                     ]
                 },
                 {
                     "name": "devID",
                     "type": "uint8",
                     "description": "Module ID number. Matches the devID of the STM32 it is fitted to",
+                    "default": 0
+                },
+                {
+                    "name": "fleetId",
+                    "type": "uint16",
+                    "description": "Fleet this unit belongs to. Beacons carrying a different fleetId are dropped before the signature is even checked, so several operators can share a zone. Not a secret and not a security boundary on its own - the fleet key is what makes a beacon trustworthy",
                     "default": 0
                 },
                 {
@@ -42,29 +51,56 @@
                     "max": 20
                 },
                 {
-                    "name": "advInterval",
+                    "name": "telemetryRateFar",
                     "type": "uint16",
-                    "description": "Advertising interval",
-                    "units": "ms",
-                    "default": 100,
-                    "min": 20,
-                    "max": 10000
+                    "description": "Beacon rate used beyond nearRange, on Coded PHY. This is the advertising interval - in a connectionless design the beacon rate and the advertising rate are one number, not two. Keep it low: every device in the zone shares the three primary advertising channels",
+                    "units": "Hz",
+                    "default": 2,
+                    "min": 1,
+                    "max": 20
                 },
                 {
-                    "name": "telemetryRate",
+                    "name": "telemetryRateNear",
                     "type": "uint16",
-                    "description": "Rate at which platform position and velocity are pushed to the drone",
+                    "description": "Beacon rate used within nearRange, where the 1M PHY is enough and airtime per beacon is far cheaper",
                     "units": "Hz",
                     "default": 10,
                     "min": 1,
                     "max": 50
                 },
                 {
-                    "name": "droneAddress",
-                    "type": "uint8",
-                    "lenght": 6,
-                    "description": "Bluetooth address of the drone to connect to. All zero means accept any drone that passes pairing",
-                    "default": [0, 0, 0, 0, 0, 0]
+                    "name": "nearRange",
+                    "type": "uint16",
+                    "description": "Distance to the peer below which the module switches from Coded PHY at telemetryRateFar to 1M PHY at telemetryRateNear. Zero pins it to the far setting",
+                    "units": "m",
+                    "default": 150,
+                    "min": 0,
+                    "max": 2000
+                },
+                {
+                    "name": "beaconMaxAge",
+                    "type": "uint16",
+                    "description": "A received beacon older than this by the receiver's own GNSS clock is discarded as a replay. Wants to be larger than the worst GNSS time offset between two units and smaller than any useful replay window",
+                    "units": "ms",
+                    "default": 2000,
+                    "min": 100,
+                    "max": 30000
+                },
+                {
+                    "name": "serviceAdvTimeout",
+                    "type": "uint16",
+                    "description": "Connectable service advertising stops this long after boot, leaving a deployed unit with no connectable surface at all - it only broadcasts. Zero means advertise forever, which is for the bench",
+                    "units": "s",
+                    "default": 300,
+                    "min": 0,
+                    "max": 65535
+                },
+                {
+                    "name": "peerSerials",
+                    "type": "uint32",
+                    "lenght": 4,
+                    "description": "Serial numbers of the peers this unit will talk to. All zero means accept any peer of the same fleet whose beacon signature verifies. This narrows an already authenticated set - it is not what keeps strangers out",
+                    "default": [0, 0, 0, 0]
                 }
             ]
         }

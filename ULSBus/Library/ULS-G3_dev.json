@@ -269,6 +269,11 @@
                     "object": "ULSDVOBJ_EIGC_BLE_Config_v1",
                     "address": "0x0020",
                     "type": "config"
+                },
+                {
+                    "name": "key",
+                    "object": "ULSDVOBJ_EIGC_BLE_Key_v1",
+                    "address": "0x0021"
                 }
             ]
         }
