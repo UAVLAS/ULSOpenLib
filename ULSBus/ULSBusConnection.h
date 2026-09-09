@@ -57,11 +57,18 @@ typedef enum : uint8_t {
   CN_SYS_MODE_LOADER = 1
 } _cn_sys_mode;
 
+/*
+ * Always a cast over ifRxBuf/ifTxBuf, never allocated on its own. pld used to
+ * be declared as 256 bytes, which stopped being true long ago - the largest
+ * object in the library is 444 - and only worked because the buffer behind
+ * the cast is IF_PACKET_SIZE. Declared at its real extent so that indexing it
+ * and taking its size agree with the memory it actually covers.
+ */
 typedef __ULS_PACKET(struct {
   uint8_t cmd;
   uint8_t src_did;
   uint8_t hop;
-  uint8_t pld[256];
+  uint8_t pld[IF_PACKET_SIZE - 3];
 }) _cn_packet;
 
 typedef __ULS_PACKET(struct {

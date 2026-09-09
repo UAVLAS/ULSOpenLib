@@ -47,5 +47,6 @@ ULSObjectBase *ULSDBase::getObject(uint16_t obj_id) {
 
 void ULSDBase::setData(uint16_t obj_id, uint8_t *buf) {
   ULSObjectBase *obj = getObject(obj_id);
+  if (obj == nullptr) return;  // an id this device does not carry
   obj->setData(buf);
 }
