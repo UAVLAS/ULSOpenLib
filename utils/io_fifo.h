@@ -154,6 +154,21 @@ class _io_fifo_base {
     return true;
   }
   void releasecobs() { _last = _cobs; }
+  /*
+   * Abandon a COBS frame that did not fit. pushcobs() writes ahead of _last
+   * and only releasecobs() makes those bytes visible to the reader, so a
+   * frame can be dropped whole - which is the only correct thing to do with
+   * a half-written one. Without this the caller's only options were to
+   * commit a truncated frame or to leak the space.
+   */
+  void resetcobs() { _cobs = _last; }
+  /* Bytes that can still be pushed. One slot is always kept free, because
+   * _last + 1 == _first is how the fifo says "full". */
+  uint32_t space() {
+    uint32_t used = count();
+    uint32_t total = size();
+    return (total > (used + 1)) ? (total - used - 1) : 0;
+  }
   uint32_t push(T *src, uint32_t len) {
     uint32_t tmp = len;
     while (len) {

@@ -142,8 +142,37 @@ static inline void cnPutObjId(uint8_t *px, uint16_t obj_id) {
   px[1] = (uint8_t)((obj_id >> 8) & 0xff);
 }
 
+/*
+ * How many bytes an object actually occupies on the wire. getData()/setData()
+ * have always copied size*len; only the length written into the packet used
+ * to be a bare `size`, so an object with len > 1 would have announced a short
+ * packet while memcpy ran off the end of the buffer. Every generated object
+ * sets len = 1, so this has never fired - it is written the consistent way so
+ * it never can.
+ */
+static inline uint32_t cnObjWireLen(ULSObjectBase *obj) {
+  uint32_t len = (obj->len == 0) ? 1u : (uint32_t)obj->len;
+  return (uint32_t)obj->size * len;
+}
+
+/*
+ * The largest object this hop can carry, given a route of hs bytes.
+ *
+ * A GETOBJ answer is: 2 interface header + 1 hop + hs route + 2 object id +
+ * the object itself, and all of that has to fit in the ifTxBuf the packet is
+ * assembled in. Nothing used to check it, so an oversized object simply ran
+ * past the end of the buffer and corrupted whatever the linker had put after
+ * it. With IF_PACKET_SIZE at 1324 the ceiling is 1318 bytes on a direct link
+ * and 1304 at the maximum route depth.
+ */
+static inline uint32_t cnObjMaxLen(uint32_t hs) {
+  const uint32_t overhead = IF_PACKET_HEADER_SIZE + 1 + hs + 2;
+  return (IF_PACKET_SIZE > overhead) ? (IF_PACKET_SIZE - overhead) : 0;
+}
+
 _io_op_result ULSBusConnection::cnProcessGetObject() {
-  uint16_t obj_id = cnGetObjId(&cnRxPacket->pld[cnRxPacket->hop & 0xf]);
+  uint32_t rxHs = cnRxPacket->hop & 0xf;
+  uint16_t obj_id = cnGetObjId(&cnRxPacket->pld[rxHs]);
 
   ULSObjectBase *obj = _dev->getObject(obj_id);
   if (obj == nullptr) {
@@ -154,20 +183,28 @@ _io_op_result ULSBusConnection::cnProcessGetObject() {
       (obj->_permission != ULSBUS_OBJECT_PERMISSION_READONLY))
     return IO_ERROR;
 
+  uint32_t objLen = cnObjWireLen(obj);
+  if (objLen > cnObjMaxLen(rxHs)) {
+    DEBUG_MSG("%s: Object [0x%.4X] too big for packet: %d > %d", _name, obj_id,
+              objLen, cnObjMaxLen(rxHs));
+    return IO_ERROR;
+  }
+
   uint8_t *px = cnPrepareAnswer(CN_ACK_GETOBJ);
   cnPutObjId(px, obj_id);
   px += 2;
   obj->getData(px);
   uint32_t txHs = cnTxPacket->hop & 0xF;
-  ifTxLen = 1 + txHs + 2 + obj->size;
+  ifTxLen = 1 + txHs + 2 + objLen;
   DEBUG_MSG("%s: cnAnswer Object lid:0x%.2X cmd: 0x%.2X len: %d", _name, _did,
             cnTxPacket->cmd, ifTxLen);
   DEBUG_PACKET(_name, "cnAnswer Route", cnTxPacket->pld, txHs);
   return ifSend();
 }
 _io_op_result ULSBusConnection::cnProcessSetObject() {
-  uint16_t obj_id = cnGetObjId(&cnRxPacket->pld[cnRxPacket->hop & 0xf]);
-  uint8_t *obj_px = ((uint8_t *)&cnRxPacket->pld[(cnRxPacket->hop & 0xf) + 2]);
+  uint32_t rxHs = cnRxPacket->hop & 0xf;
+  uint16_t obj_id = cnGetObjId(&cnRxPacket->pld[rxHs]);
+  uint8_t *obj_px = ((uint8_t *)&cnRxPacket->pld[rxHs + 2]);
 
   ULSObjectBase *obj = _dev->getObject(obj_id);
   if (obj == nullptr) {
@@ -177,6 +214,20 @@ _io_op_result ULSBusConnection::cnProcessSetObject() {
   if ((obj->_permission != ULSBUS_OBJECT_PERMISSION_READWRITE) &&
       (obj->_permission != ULSBUS_OBJECT_PERMISSION_WRITEONLY))
     return IO_ERROR;
+
+  /*
+   * setData() copies the object's own length out of the packet, so a SETOBJ
+   * that is short - truncated on the wire, or simply malformed - used to read
+   * past the end of what was actually received and write the garbage into the
+   * live object. ifRxLen here is the connection-layer length: hop + route +
+   * object id + data.
+   */
+  uint32_t objLen = cnObjWireLen(obj);
+  if (ifRxLen < (1 + rxHs + 2 + objLen)) {
+    DEBUG_MSG("%s: SETOBJ [0x%.4X] short packet: %d < %d", _name, obj_id,
+              ifRxLen, (1 + rxHs + 2 + objLen));
+    return IO_ERROR;
+  }
 
   obj->setData(obj_px);
   uint8_t *px = cnPrepareAnswer(CN_ACK_SETOBJ);
@@ -320,6 +371,7 @@ _io_op_result ULSBusConnection::cnSendSetObject(uint8_t *route, uint8_t hs,
                                                 uint16_t obj_addr, uint8_t *buf,
                                                 uint32_t size) {
   if ((route[0] >> 6) != _cid) return IO_ERROR;  // not our interface
+  if (size > cnObjMaxLen(hs)) return IO_ERROR;   // would overrun ifTxBuf
 
   cnTxPacket->cmd = CN_CMD_SETOBJ;
   cnTxPacket->hop = (0 << 4) | hs;
