@@ -114,8 +114,36 @@ _io_op_result ULSBusConnection::cnProcessExplorer() {
   DEBUG_PACKET(_name, "cnAnswer Route", cnTxPacket->pld, txHs);
   return ifSend();
 }
+
+/*
+ * The object id sits at pld[hop size], and pld itself is at offset 3 of
+ * _cn_packet. So its address is odd for every EVEN hop size - which is to say
+ * for every RELAYED packet, since a directly attached peer has hop size 1 and
+ * a one-hop relay has 2.
+ *
+ * That is fatal on ARMv6-M. The Cortex-M0+ on ULS-XX-EIGC-G3 has no unaligned
+ * access support at all, so the `*(uint16_t *)` these four sites used to do
+ * compiled to LDRH/STRH on an odd address and took a HardFault the first time
+ * the device was asked for an object through a relay. It never showed up
+ * before because that board is the first M0+ in the tree to forward anything,
+ * and a packet it merely forwards is moved with memcpy and never read as a
+ * halfword.
+ *
+ * Byte-wise, little-endian, exactly as cnSendGetObject() and
+ * cnSendSetObject() already write the same field on the other side of the
+ * wire. Alignment-proof everywhere and free on the M4/M7 boards, where the
+ * two byte loads fold into the same work the halfword did.
+ */
+static inline uint16_t cnGetObjId(const uint8_t *px) {
+  return (uint16_t)(px[0] | ((uint16_t)px[1] << 8));
+}
+static inline void cnPutObjId(uint8_t *px, uint16_t obj_id) {
+  px[0] = (uint8_t)(obj_id & 0xff);
+  px[1] = (uint8_t)((obj_id >> 8) & 0xff);
+}
+
 _io_op_result ULSBusConnection::cnProcessGetObject() {
-  uint16_t obj_id = *((uint16_t *)&cnRxPacket->pld[cnRxPacket->hop & 0xf]);
+  uint16_t obj_id = cnGetObjId(&cnRxPacket->pld[cnRxPacket->hop & 0xf]);
 
   ULSObjectBase *obj = _dev->getObject(obj_id);
   if (obj == nullptr) {
@@ -127,7 +155,7 @@ _io_op_result ULSBusConnection::cnProcessGetObject() {
     return IO_ERROR;
 
   uint8_t *px = cnPrepareAnswer(CN_ACK_GETOBJ);
-  *((uint16_t *)px) = obj_id;
+  cnPutObjId(px, obj_id);
   px += 2;
   obj->getData(px);
   uint32_t txHs = cnTxPacket->hop & 0xF;
@@ -138,7 +166,7 @@ _io_op_result ULSBusConnection::cnProcessGetObject() {
   return ifSend();
 }
 _io_op_result ULSBusConnection::cnProcessSetObject() {
-  uint16_t obj_id = *((uint16_t *)&cnRxPacket->pld[cnRxPacket->hop & 0xf]);
+  uint16_t obj_id = cnGetObjId(&cnRxPacket->pld[cnRxPacket->hop & 0xf]);
   uint8_t *obj_px = ((uint8_t *)&cnRxPacket->pld[(cnRxPacket->hop & 0xf) + 2]);
 
   ULSObjectBase *obj = _dev->getObject(obj_id);
@@ -152,7 +180,7 @@ _io_op_result ULSBusConnection::cnProcessSetObject() {
 
   obj->setData(obj_px);
   uint8_t *px = cnPrepareAnswer(CN_ACK_SETOBJ);
-  *((uint16_t *)px) = obj_id;
+  cnPutObjId(px, obj_id);
 
   uint32_t txHs = cnTxPacket->hop & 0xF;
   ifTxLen = 1 + txHs + 2;
