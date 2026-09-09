@@ -33,25 +33,42 @@ uint32_t ULSSerial::write(uint8_t *buf,uint32_t size)
     transmitterUpdate();
     return size;
 }
+/*
+ * A frame that does not fit is dropped whole, and the caller is told.
+ *
+ * This used to ignore every pushcobs() result and then releasecobs() the
+ * frame regardless, so a full tx fifo produced a truncated COBS frame on the
+ * wire and still returned `size` - which the transports read as IO_OK. The
+ * far end saw a CRC error, the reply was lost, and nothing anywhere knew a
+ * packet had been dropped. That is what a burst of object requests hits: the
+ * device answers all of them into one 2 KB fifo and silently corrupts the
+ * tail of the burst.
+ *
+ * pushcobs() writes ahead of the fifo's tail and only releasecobs() publishes
+ * the bytes, so backing out is just resetcobs().
+ */
 uint32_t ULSSerial::writeCobs(uint8_t *buf,uint32_t size)
 {
     uint8_t *pxcobs;
     uint8_t code;
     uint32_t len = size + 2;
     uint16_t crc = 0xFFFF;
+    bool overflow = false;
+
+    if(size == 0)return 0;
 
     // Start block
     pxcobs = _txFifo->pxcobs();
     code = 1;
-    _txFifo->pushcobs(0);
+    if(!_txFifo->pushcobs(0)) overflow = true;
 
-    while(len > 2U) {
+    while((len > 2U) && !overflow) {
         if (code != 0xFF) {
             len--;
             uint8_t v = *buf++;
             crc = GetCrcByte(crc,v);
             if (v != 0) {
-                _txFifo->pushcobs(v);
+                if(!_txFifo->pushcobs(v)){ overflow = true; break; }
                 code++;
                 continue;
             }
@@ -60,17 +77,17 @@ uint32_t ULSSerial::writeCobs(uint8_t *buf,uint32_t size)
         // Start block
         pxcobs = _txFifo->pxcobs();
         code = 1;
-        _txFifo->pushcobs(0);
+        if(!_txFifo->pushcobs(0)) overflow = true;
     }
     // send CRC
     buf = (uint8_t*)&crc;
-    while(len > 0U)
+    while((len > 0U) && !overflow)
     {
         if (code != 0xFF) {
             len--;
             uint8_t c = *buf++;
             if (c != 0) {
-                _txFifo->pushcobs(c);
+                if(!_txFifo->pushcobs(c)){ overflow = true; break; }
                 code++;
                 continue;
             }
@@ -79,11 +96,20 @@ uint32_t ULSSerial::writeCobs(uint8_t *buf,uint32_t size)
         // Start block
         pxcobs = _txFifo->pxcobs();
         code = 1;
-        _txFifo->pushcobs(0);
+        if(!_txFifo->pushcobs(0)) overflow = true;
     }
 
-    *pxcobs = code; // finish block
-    _txFifo->pushcobs(0);
+    if(!overflow){
+        *pxcobs = code; // finish block
+        if(!_txFifo->pushcobs(0)) overflow = true;
+    }
+
+    if(overflow){
+        _txFifo->resetcobs(); // nothing was published - drop the whole frame
+        _packeterrors++;
+        return 0;
+    }
+
     _txFifo->releasecobs();
     return size;
 }
@@ -93,6 +119,18 @@ uint32_t ULSSerial::writeEsc(uint8_t *buf,uint32_t size)
     uint32_t N = size;
 
     if (size == 0)return 0;
+
+    /*
+     * push() publishes immediately, so unlike the COBS path this one cannot
+     * back out half way - a mid-frame failure would leave the leading bytes
+     * of a truncated frame in the fifo. Reserve the worst case up front
+     * instead: two framing bytes, every payload byte escaped, two crc bytes
+     * each possibly escaped, two end bytes.
+     */
+    if(_txFifo->space() < ((size * 2U) + 8U)){
+        _packeterrors++;
+        return 0;
+    }
 
     if(!_txFifo->push(0x55))return 0;
     if(!_txFifo->push(0x01))return 0;
