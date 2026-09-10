@@ -248,10 +248,31 @@ class ULSDBase : public QObject,public ULSList<ULSObjectBase> {
     Q_OBJECT
 
 public:
+    /*
+     * devname is the *instance* name this device announces in its explorer
+     * answer, and it was missing from this list. Nothing on the Qt side ever
+     * assigned it either - ULSD_PC and ULSD_ULSX below only pass a type name
+     * and code through - so it held whatever the surrounding storage
+     * happened to contain, and ULSBusConnection::cnProcessExplorer() read 16
+     * bytes through it the moment a peer explored us. ULSD_PC is an ordinary
+     * member of ULSBusQTWrapper and both transports answer explorers off it,
+     * so this crashed on connect as soon as the garbage stopped being a
+     * readable address. Default it to the type name, which is what the
+     * wrapper would show anyway, and let a device override it.
+     *
+     * pxCfg/lenCfg were indeterminate for the same reason; nothing here uses
+     * them yet, but they are a pointer and a length that get passed to
+     * memcpy on the firmware side of this same class.
+     *
+     * In declaration order, so this list cannot silently reorder again.
+     */
     ULSDBase(const char *tn, const uint16_t tc):
         //QObject(this),
         ULSList(),
         typeCode(tc),
+        pxCfg(nullptr),
+        lenCfg(0),
+        devname(tn),
         typeName(tn){
     }
     ULSObjectBase *getObject(uint16_t obj_id){

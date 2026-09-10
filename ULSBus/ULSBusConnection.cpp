@@ -104,8 +104,18 @@ _io_op_result ULSBusConnection::cnProcessExplorer() {
   // Prepare answer
   _cn_packet_status *px = (_cn_packet_status *)cnPrepareAnswer(CN_ACK_EXPLORER);
 
-  memcpy((uint8_t *)px->name, _dev->devname, 16);
-  px->name[15] = 0;
+  /*
+   * devname is a NUL-terminated string, not a 16-byte field, so it cannot be
+   * copied with a fixed-size memcpy: every name shorter than 16 bytes read
+   * past its end, and for a string literal that is an out-of-bounds read of
+   * whatever follows it in .rodata. Copy up to the field size, stop at the
+   * terminator, and zero the rest so the wire content is deterministic
+   * instead of trailing whatever the over-read picked up.
+   */
+  uint32_t n = 0;
+  while (n < (sizeof(px->name) - 1) && _dev->devname[n]) n++;
+  memcpy((uint8_t *)px->name, _dev->devname, n);
+  memset((uint8_t *)px->name + n, 0, sizeof(px->name) - n);
   px->type = _dev->typeCode;
   uint32_t txHs = cnTxPacket->hop & 0xF;
   ifTxLen = sizeof(_cn_packet_status) + txHs + 1;

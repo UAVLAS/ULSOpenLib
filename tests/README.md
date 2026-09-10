@@ -21,7 +21,7 @@ g++ -std=c++17 -O1 -I tests/hostif -I utils -I ULSBus -I ULSSerial \
 |---|---|
 | `test_crypto.cpp` | AES-128 against the FIPS-197 example, CMAC against all four RFC 4493 vectors, plus the PRNG and key-derivation behaviour bus authorization relies on |
 | `test_auth.cpp` | Two `ULSBusInterface` instances wired back to back: that a matching fleet key admits, that a wrong one does not, that a legacy unauthenticated joiner is refused by a policed master, and that an unadmitted interface cannot send upper-layer traffic |
-| `test_objects.cpp` | Two `ULSBusConnection` instances wired back to back over COBS, with a device carrying real objects: that a GETOBJ comes back with the object's bytes, that a 444-byte object (the largest in the library) survives the round trip intact, that permissions are enforced, that a SETOBJ writes what it was given, and that a burst of requests is answered in full |
+| `test_objects.cpp` | Two `ULSBusConnection` instances wired back to back over COBS, with a device carrying real objects: that a GETOBJ comes back with the object's bytes, that a 444-byte object (the largest in the library) survives the round trip intact, that permissions are enforced, that a SETOBJ writes what it was given, that a burst of requests is answered in full, and that an explorer answer names a device whose `devname` was never assigned, zero pads the field and truncates a name too long for it |
 | `hostif/` | The two headers a device normally supplies — `ULSBusConfig.h` and `ULSDevices.h` — stubbed just enough to build the interface on a host |
 
 Run `test_crypto` after any change to `utils/ULSCrypto.cpp`. A cipher that is
@@ -38,5 +38,17 @@ Nothing in a single-node build would have shown that.
 
 Run `test_objects` after any change to the object paths in
 `ULSBus/ULSBusConnection.cpp` or to the framing in `ULSSerial/ULSSerial.cpp`.
+
+Its explorer checks exist because `cnProcessExplorer()` is the one place that
+reads `ULSDBase::devname`, and nothing had ever covered it. `devname` was not
+in the `ULSDBase` constructor's initializer list at all, so a device that did
+not assign it - which is every subclass in the tree, including the `ULSD_PC`
+the Qt wrapper hands to both of its transports - answered an explorer by
+copying 16 bytes through an indeterminate pointer. It stayed invisible for as
+long as the surrounding storage happened to hold a readable address. The
+padding check is the second half of the same bug: the copy was a fixed 16
+bytes out of a NUL-terminated string, so any name shorter than the field read
+past the end of its own literal, and the wrapper builds a `QString` straight
+off that field.
 It is the only thing that exercises a whole GETOBJ/SETOBJ round trip, bounds
 checks included, without a device on the bench.
