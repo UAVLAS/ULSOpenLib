@@ -5,6 +5,7 @@ import os
 import generate_book_arm
 import generate_book_qt
 import generate_md
+import uls_schema
 
 parser = argparse.ArgumentParser(description='Generate UAVLAS bundle file')
 
@@ -12,6 +13,8 @@ parser.add_argument('-b', '--book', type=str, help='Devices book')
 parser.add_argument('-o', '--output', type=str,
                     help='Output source file output_path/ULSDevices.h')
 parser.add_argument('-t', '--target', type=str, help='Target System [ARM,QT]')
+parser.add_argument('--schema-no-descriptions', action='store_true',
+                    help='Leave descriptions out of device schemas (smaller flash)')
 
 args = parser.parse_args()
 
@@ -93,5 +96,8 @@ if args.target == "ARM":
 if args.target == "QT":
     print("Generating Objects book for QT")
     generate_book_qt.generate(objects, devices, args.output)
+
+uls_schema.generate(objects, devices, args.output, args.target,
+                    args.schema_no_descriptions)
 
 print("------ Book generated ------")

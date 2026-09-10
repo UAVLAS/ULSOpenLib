@@ -34,8 +34,27 @@ ULSObjectBase::ULSObjectBase(uint16_t id, const char *name,
   len = 0;
 }
 
+/*
+ * devname is the *instance* name a device announces in its explorer answer,
+ * and it was left out of this list entirely. A firmware device always assigns
+ * it - from the config's name field, or "Loader" in a bootloader - so the
+ * omission never showed there. The Qt side does not: ULSD_PC and ULSD_ULSX
+ * only forward the type name and code, so the pointer held whatever the
+ * surrounding storage happened to contain, and cnProcessExplorer() read 16
+ * bytes through it as soon as a peer explored us. Default it to the type name
+ * so it is always a valid string, and let a device override it as before.
+ *
+ * pxCfg/lenCfg are the same shape of trap: the generated device constructors
+ * set them, but a device with no config object left them indeterminate and
+ * the config save path copies lenCfg bytes through pxCfg.
+ */
 ULSDBase::ULSDBase(const char *tn, const uint16_t tc)
-    : ULSList(), typeName(tn), typeCode(tc) {}
+    : ULSList(),
+      devname(tn),
+      typeName(tn),
+      typeCode(tc),
+      pxCfg(nullptr),
+      lenCfg(0) {}
 
 ULSObjectBase *ULSDBase::getObject(uint16_t obj_id) {
   begin();

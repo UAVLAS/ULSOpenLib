@@ -108,6 +108,21 @@ static void onObjReceived(ULSBusConnection *sc)
 }
 static void onObjSended(ULSBusConnection *) { acksSeen++; }
 
+/* -- what an explorer answer carried -------------------------------------- */
+static uint32_t lastStatusType = 0;
+static uint8_t  lastStatusName[16];
+static int      statusSeen = 0;
+
+static void onStatusReceived(ULSBusConnection *sc)
+{
+  uint32_t hs = sc->cnRxPacket->hop & 0xF;
+  const _cn_packet_status *px =
+      (const _cn_packet_status *)&sc->cnRxPacket->pld[hs];
+  lastStatusType = px->type;
+  memcpy(lastStatusName, px->name, sizeof(lastStatusName));
+  statusSeen++;
+}
+
 /* One bus tick on both ends, a few times over, so a request and its answer
  * both get carried. */
 static void pump(ULSBusConnectionsList &a, ULSBusConnectionsList &b, int n = 4)
@@ -202,6 +217,44 @@ int main()
   pcCns.cnSendGetObject(route, 1, 0x0010);
   pump(pcCns, devCns, 8);
   check(repliesSeen == 3, "burst: three queued requests get three replies");
+
+  /* -- the explorer answer, the only thing that ever reads devname --------
+   *
+   * The device explores the PC end here rather than the other way round,
+   * because pcDev is a plain ULSD_ULSX that never assigns devname - exactly
+   * as ULSD_PC in the Qt wrapper does not - and answering an explorer is
+   * what reads it. That read used to be a fixed 16-byte memcpy through an
+   * uninitialized pointer, so it faulted as soon as the garbage stopped
+   * being a readable address. Prefilling the name with 0xAA keeps the two
+   * halves of the check honest: the announced string, and the padding after
+   * it, both have to be written by the answer rather than left over.
+   */
+  dev.cnclbkStatusReceived = &onStatusReceived;
+  statusSeen = 0;
+  memset(lastStatusName, 0xAA, sizeof(lastStatusName));
+  check(dev.cnSendExplorer() == IO_OK,
+        "explorer: request accepted by the connection");
+  pump(pcCns, devCns);
+  check(statusSeen == 1, "explorer: exactly one answer");
+  check(lastStatusType == 0x0001, "explorer: answer carries the device type");
+  check(strcmp((const char *)lastStatusName, "PC") == 0,
+        "explorer: a device that never set devname names its type");
+  bool padded = true;
+  for (size_t i = strlen("PC"); i < sizeof(lastStatusName); i++)
+    if (lastStatusName[i] != 0) padded = false;
+  check(padded, "explorer: the name field is zero padded, not over-read");
+
+  /* A name that fills the field must still come back terminated, since the
+   * wrapper builds a QString straight off it. */
+  device.devname = "0123456789ABCDEFGH";
+  pc.cnclbkStatusReceived = &onStatusReceived;
+  statusSeen = 0;
+  memset(lastStatusName, 0xAA, sizeof(lastStatusName));
+  pc.cnSendExplorer();
+  pump(pcCns, devCns);
+  check(statusSeen == 1, "explorer: an over-long name is still answered");
+  check(strcmp((const char *)lastStatusName, "0123456789ABCDE") == 0,
+        "explorer: an over-long name is truncated and terminated");
 
   std::printf("\n%s\n", failures ? "SOME TESTS FAILED" : "objects round trip");
   return failures ? 1 : 0;
