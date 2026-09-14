@@ -211,15 +211,16 @@ _ARM_HEADER = """/**
 // Compressed object schemas, one per device type, served as objects
 // ULS_SCHEMA_PAGE_ID_FIRST + n (page 0 = header, page n = n-th data page).
 // Format: ULSOpenLib/Scripts/uls_schema.py. Each schema's data sits in an
-// inline function, so only the one a firmware references is linked in.
+// inline function, so only the one a firmware references is linked in. The
+// generated device classes in ULSDevices.h point ULSDBase::pxSchema at their
+// own; define ULS_NO_DEVICE_SCHEMA to build a firmware without it.
 
 #ifndef ULSDEVICESCHEMAS_H
 #define ULSDEVICESCHEMAS_H
 
 #include <inttypes.h>
-#include <stddef.h>
 
-#include "ULSDevices.h"
+#include "ULSBusTypes.h"
 
 """
 
@@ -231,35 +232,39 @@ def _c_bytes(data, indent="      "):
     return ",\n".join(lines)
 
 
+def write_layout_asserts(out, objects, struct_prefix):
+    """
+    The schema's offsets are computed here, not by the compiler. Emitted into
+    ULSDevices.h after the structs so the compiler confirms them against the
+    bytes firmware really sends.
+    """
+    out.write("// Device schema layout must match these structs "
+              "(Scripts/uls_schema.py).\n")
+    for obj in objects:
+        obj_type = build_object_type(obj)
+        st = struct_prefix + obj["name"]
+        out.write("static_assert(sizeof(%s) == %d, \"%s size\");\n" %
+                  (st, obj_type["size"], obj["name"]))
+        for var in obj_type["variables"]:
+            out.write("static_assert(offsetof(%s, %s) == %d, "
+                      "\"%s.%s offset\");\n" %
+                      (st, var["name"], var["offset"], obj["name"],
+                       var["name"]))
+    out.write("\n")
+
+
 def write_arm_header(path, schemas, blobs):
     with open(path, "w") as out:
         out.write(_ARM_HEADER)
-        out.write("#define ULS_SCHEMA_FORMAT (%d)\n" % SCHEMA_FORMAT)
-        out.write("#define ULS_SCHEMA_HEADER_SIZE (%d)\n" % SCHEMA_HEADER_SIZE)
-        out.write("#define ULS_SCHEMA_PAGE_SIZE (%d)\n" % SCHEMA_PAGE_SIZE)
-        out.write("#define ULS_SCHEMA_PAGE_ID_FIRST (0x%04X)\n" %
-                  SCHEMA_PAGE_ID_FIRST)
-        out.write("#define ULS_SCHEMA_PAGE_ID_LAST (0x%04X)\n\n" %
-                  SCHEMA_PAGE_ID_LAST)
-
-        # The schema's offsets are computed here, not by the compiler; make
-        # the compiler confirm them against the structs firmware really sends.
-        out.write("// Schema layout must match the generated structs.\n")
-        checked = set()
-        for schema in schemas:
-            for type_name, obj_type in sorted(schema["types"].items()):
-                if type_name in checked:
-                    continue
-                checked.add(type_name)
-                st = "__ULSObjectStruct_" + type_name
-                out.write("static_assert(sizeof(%s) == %d, \"%s size\");\n" %
-                          (st, obj_type["size"], type_name))
-                for var in obj_type["variables"]:
-                    out.write("static_assert(offsetof(%s, %s) == %d, "
-                              "\"%s.%s offset\");\n" %
-                              (st, var["name"], var["offset"], type_name,
-                               var["name"]))
-        out.write("\n")
+        # The bus code parses the blob; make it refuse a mismatched library.
+        out.write("static_assert(ULS_SCHEMA_FORMAT == %d, "
+                  "\"schema format vs ULSBusTypes.h\");\n" % SCHEMA_FORMAT)
+        out.write("static_assert(ULS_SCHEMA_HEADER_SIZE == %d, "
+                  "\"schema header vs ULSBusTypes.h\");\n" % SCHEMA_HEADER_SIZE)
+        out.write("static_assert(ULS_SCHEMA_PAGE_ID_FIRST == 0x%04X && "
+                  "ULS_SCHEMA_PAGE_ID_LAST == 0x%04X, "
+                  "\"schema pages vs ULSBusTypes.h\");\n\n" %
+                  (SCHEMA_PAGE_ID_FIRST, SCHEMA_PAGE_ID_LAST))
 
         for schema, blob in zip(schemas, blobs):
             header = parse_header(blob)

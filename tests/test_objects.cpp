@@ -133,7 +133,7 @@ static void pump(ULSBusConnectionsList &a, ULSBusConnectionsList &b, int n = 4)
   }
 }
 
-int main()
+int main(int argc, char **argv)
 {
   static _io_fifo<uint8_t, 8 * 1024> pcToDev;
   static _io_fifo<uint8_t, 8 * 1024> devToPc;
@@ -255,6 +255,112 @@ int main()
   check(statusSeen == 1, "explorer: an over-long name is still answered");
   check(strcmp((const char *)lastStatusName, "0123456789ABCDE") == 0,
         "explorer: an over-long name is truncated and terminated");
+
+  /* -- device schema pages ------------------------------------------------
+   *
+   * Objects 0xFE00 + n are not in the object list: they are slices of the
+   * schema blob, page 0 the 32-byte header and page n the n-th pageSize
+   * slice of the compressed stream, sized from the blob's own header. A
+   * synthetic blob of 2100 "compressed" bytes in 1024-byte pages is three
+   * data pages, the last one short.
+   */
+  {
+    static uint8_t blob[ULS_SCHEMA_HEADER_SIZE + 2100];
+    const uint32_t zLen = 2100, pageSize = 1024, pageCount = 3;
+    memset(blob, 0, ULS_SCHEMA_HEADER_SIZE);
+    memcpy(blob, "ULSS", 4);
+    blob[4] = ULS_SCHEMA_FORMAT;
+    blob[5] = 1;
+    blob[6] = pageSize & 0xff;  blob[7] = pageSize >> 8;
+    blob[8] = pageCount & 0xff; blob[9] = pageCount >> 8;
+    for (int i = 0; i < 4; i++) blob[16 + i] = (uint8_t)(zLen >> (8 * i));
+    for (uint32_t i = 0; i < zLen; i++)
+      blob[ULS_SCHEMA_HEADER_SIZE + i] = (uint8_t)(i * 13 + 5);
+
+    repliesSeen = 0;
+    pcCns.cnSendGetObject(route, 1, ULS_SCHEMA_PAGE_ID_FIRST);
+    pump(pcCns, devCns);
+    check(repliesSeen == 0, "schema: a device without one does not answer");
+
+    device.pxSchema = blob;
+    device.lenSchema = sizeof(blob);
+
+    repliesSeen = 0;
+    pcCns.cnSendGetObject(route, 1, ULS_SCHEMA_PAGE_ID_FIRST);
+    pump(pcCns, devCns);
+    check((repliesSeen == 1) && (lastObjId == ULS_SCHEMA_PAGE_ID_FIRST) &&
+              (lastLen == ULS_SCHEMA_HEADER_SIZE) &&
+              (memcmp(lastData, blob, ULS_SCHEMA_HEADER_SIZE) == 0),
+          "schema: page 0 is the header alone");
+
+    static uint8_t joined[sizeof(blob)];
+    uint32_t got = 0;
+    bool sizes = true;
+    for (uint32_t n = 1; n <= pageCount; n++) {
+      repliesSeen = 0;
+      pcCns.cnSendGetObject(route, 1, (uint16_t)(ULS_SCHEMA_PAGE_ID_FIRST + n));
+      pump(pcCns, devCns);
+      const uint32_t want = (n < pageCount) ? pageSize : zLen - 2 * pageSize;
+      if ((repliesSeen != 1) || (lastLen != want)) sizes = false;
+      memcpy(joined + got, lastData, lastLen);
+      got += lastLen;
+    }
+    check(sizes, "schema: full pages then a short last page");
+    check((got == zLen) &&
+              (memcmp(joined, blob + ULS_SCHEMA_HEADER_SIZE, zLen) == 0),
+          "schema: data pages rejoin into the compressed stream");
+
+    repliesSeen = 0;
+    pcCns.cnSendGetObject(route, 1, (uint16_t)(ULS_SCHEMA_PAGE_ID_FIRST + 4));
+    pcCns.cnSendGetObject(route, 1, ULS_SCHEMA_PAGE_ID_LAST);
+    pump(pcCns, devCns);
+    check(repliesSeen == 0, "schema: pages past the end are not answered");
+
+    blob[0] = 'X';
+    repliesSeen = 0;
+    pcCns.cnSendGetObject(route, 1, ULS_SCHEMA_PAGE_ID_FIRST);
+    pump(pcCns, devCns);
+    check(repliesSeen == 0, "schema: a blob without the magic is not served");
+    blob[0] = 'U';
+
+    blob[16] = 0x35; blob[17] = 0x08;  /* zLen 2101: one past the blob */
+    repliesSeen = 0;
+    pcCns.cnSendGetObject(route, 1, (uint16_t)(ULS_SCHEMA_PAGE_ID_FIRST + 3));
+    pump(pcCns, devCns);
+    check(repliesSeen == 0, "schema: a header claiming more than the blob holds");
+    device.pxSchema = nullptr;
+    device.lenSchema = 0;
+  }
+
+  /* -- a real generated blob, when given one: every page read over the bus
+   * must put back the exact file (./test_objects build/book/schemas/X.ulss) */
+  if (argc > 1) {
+    static uint8_t file[64 * 1024];
+    FILE *fp = std::fopen(argv[1], "rb");
+    size_t fileLen = fp ? std::fread(file, 1, sizeof(file), fp) : 0;
+    if (fp) std::fclose(fp);
+    check(fileLen > ULS_SCHEMA_HEADER_SIZE, "schema file: loaded");
+    device.pxSchema = file;
+    device.lenSchema = (uint32_t)fileLen;
+
+    static uint8_t joined[sizeof(file)];
+    uint32_t got = 0;
+    uint32_t pages = (uint32_t)file[8] | ((uint32_t)file[9] << 8);
+    bool answered = true;
+    for (uint32_t n = 0; n <= pages; n++) {
+      repliesSeen = 0;
+      pcCns.cnSendGetObject(route, 1, (uint16_t)(ULS_SCHEMA_PAGE_ID_FIRST + n));
+      pump(pcCns, devCns);
+      if (repliesSeen != 1) answered = false;
+      memcpy(joined + got, lastData, lastLen);
+      got += lastLen;
+    }
+    check(answered, "schema file: every page answered");
+    check((got == fileLen) && (memcmp(joined, file, fileLen) == 0),
+          "schema file: pages rebuild the file byte for byte");
+    device.pxSchema = nullptr;
+    device.lenSchema = 0;
+  }
 
   std::printf("\n%s\n", failures ? "SOME TESTS FAILED" : "objects round trip");
   return failures ? 1 : 0;

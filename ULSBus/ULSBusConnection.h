@@ -211,6 +211,7 @@ class ULSBusConnection : public ULSListItem, public ULSBusInterface {
  private:
   uint8_t *cnPrepareAnswer(uint8_t cmd);
   uint8_t *cnPreparePacket(uint8_t *route, uint8_t hs, uint8_t cmd);
+  _io_op_result cnProcessGetSchemaPage(uint16_t obj_id);
 
  private:
   uint8_t _cid;

@@ -15,13 +15,19 @@ g++ -std=c++17 -O1 -I tests/hostif -I utils -I ULSBus -I ULSSerial \
     -o /tmp/test_objects tests/test_objects.cpp ULSBus/ULSBusConnection.cpp \
     ULSBus/ULSBusInterface.cpp ULSBus/ULSObject.cpp ULSSerial/ULSSerial.cpp \
     utils/ULSCrypto.cpp && /tmp/test_objects
+
+# optional: serve a real generated schema over the loop and rebuild it
+/tmp/test_objects build/book/schemas/ULSDV_XX_EIGC_G3.ulss
+
+python3 -m unittest discover -s Scripts -p 'test_*.py'
 ```
 
 | | |
 |---|---|
 | `test_crypto.cpp` | AES-128 against the FIPS-197 example, CMAC against all four RFC 4493 vectors, plus the PRNG and key-derivation behaviour bus authorization relies on |
 | `test_auth.cpp` | Two `ULSBusInterface` instances wired back to back: that a matching fleet key admits, that a wrong one does not, that a legacy unauthenticated joiner is refused by a policed master, and that an unadmitted interface cannot send upper-layer traffic |
-| `test_objects.cpp` | Two `ULSBusConnection` instances wired back to back over COBS, with a device carrying real objects: that a GETOBJ comes back with the object's bytes, that a 444-byte object (the largest in the library) survives the round trip intact, that permissions are enforced, that a SETOBJ writes what it was given, that a burst of requests is answered in full, and that an explorer answer names a device whose `devname` was never assigned, zero pads the field and truncates a name too long for it |
+| `test_objects.cpp` | Two `ULSBusConnection` instances wired back to back over COBS, with a device carrying real objects: that a GETOBJ comes back with the object's bytes, that a 444-byte object (the largest in the library) survives the round trip intact, that permissions are enforced, that a SETOBJ writes what it was given, that a burst of requests is answered in full, and that an explorer answer names a device whose `devname` was never assigned, zero pads the field and truncates a name too long for it. Also the device schema pages (objects `0xFE00 + n`): header page, full and short data pages, nothing answered past the end, for a device without a schema, or for a blob whose header is bad; given a `.ulss` file it serves that and checks the pages rebuild it byte for byte |
+| `../Scripts/test_uls_schema.py` | The schema generator: every library device round trips page by page, layout offsets are packed, `layoutHash` ignores metadata but tracks layout, and bad books are refused |
 | `hostif/` | The two headers a device normally supplies — `ULSBusConfig.h` and `ULSDevices.h` — stubbed just enough to build the interface on a host |
 
 Run `test_crypto` after any change to `utils/ULSCrypto.cpp`. A cipher that is

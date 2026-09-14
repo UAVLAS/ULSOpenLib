@@ -180,9 +180,70 @@ static inline uint32_t cnObjMaxLen(uint32_t hs) {
   return (IF_PACKET_SIZE > overhead) ? (IF_PACKET_SIZE - overhead) : 0;
 }
 
+static inline uint32_t cnGetU16(const uint8_t *px) {
+  return (uint32_t)px[0] | ((uint32_t)px[1] << 8);
+}
+static inline uint32_t cnGetU32(const uint8_t *px) {
+  return cnGetU16(px) | (cnGetU16(px + 2) << 16);
+}
+
+/*
+ * One page of the device schema. Page 0 is the 32-byte header, so a tool that
+ * already has this schema cached pays one small read; page n >= 1 is the n-th
+ * pageSize slice of the compressed stream. Page size and count are taken from
+ * the blob's own header rather than compiled in, so the blob stays the single
+ * description of its layout. Anything that does not look like a schema, or a
+ * page past the end, is answered like an unknown object: not at all.
+ */
+_io_op_result ULSBusConnection::cnProcessGetSchemaPage(uint16_t obj_id) {
+  const uint8_t *blob = _dev->pxSchema;
+  const uint32_t blobLen = _dev->lenSchema;
+  if ((blob == nullptr) || (blobLen < ULS_SCHEMA_HEADER_SIZE) ||
+      (memcmp(blob, "ULSS", 4) != 0) || (blob[4] != ULS_SCHEMA_FORMAT)) {
+    DEBUG_MSG("%s: No schema for page [0x%.4X]", _name, obj_id);
+    return IO_ERROR;
+  }
+  const uint32_t pageSize = cnGetU16(blob + 6);
+  const uint32_t pageCount = cnGetU16(blob + 8);
+  const uint32_t zLen = cnGetU32(blob + 16);
+  if ((pageSize == 0) || (zLen > blobLen - ULS_SCHEMA_HEADER_SIZE)) {
+    return IO_ERROR;
+  }
+
+  const uint32_t index = obj_id - ULS_SCHEMA_PAGE_ID_FIRST;
+  const uint8_t *pagePx = blob;
+  uint32_t pageLen = ULS_SCHEMA_HEADER_SIZE;
+  if (index > 0) {
+    const uint32_t start = (index - 1) * pageSize;
+    if ((index > pageCount) || (start >= zLen)) return IO_ERROR;
+    pagePx = blob + ULS_SCHEMA_HEADER_SIZE + start;
+    pageLen = zLen - start;
+    if (pageLen > pageSize) pageLen = pageSize;
+  }
+
+  uint32_t rxHs = cnRxPacket->hop & 0xf;
+  if (pageLen > cnObjMaxLen(rxHs)) {
+    DEBUG_MSG("%s: Schema page [0x%.4X] too big for packet: %d > %d", _name,
+              obj_id, pageLen, cnObjMaxLen(rxHs));
+    return IO_ERROR;
+  }
+
+  uint8_t *px = cnPrepareAnswer(CN_ACK_GETOBJ);
+  cnPutObjId(px, obj_id);
+  memcpy(px + 2, pagePx, pageLen);
+  uint32_t txHs = cnTxPacket->hop & 0xF;
+  ifTxLen = 1 + txHs + 2 + pageLen;
+  return ifSend();
+}
+
 _io_op_result ULSBusConnection::cnProcessGetObject() {
   uint32_t rxHs = cnRxPacket->hop & 0xf;
   uint16_t obj_id = cnGetObjId(&cnRxPacket->pld[rxHs]);
+
+  if ((obj_id >= ULS_SCHEMA_PAGE_ID_FIRST) &&
+      (obj_id <= ULS_SCHEMA_PAGE_ID_LAST)) {
+    return cnProcessGetSchemaPage(obj_id);
+  }
 
   ULSObjectBase *obj = _dev->getObject(obj_id);
   if (obj == nullptr) {

@@ -78,6 +78,10 @@ class ULSDBase : public ULSList<ULSObjectBase> {
   uint16_t typeCode;
   uint8_t *pxCfg;
   uint32_t lenCfg;
+  // Device schema blob (header + compressed book) served as the
+  // ULS_SCHEMA_PAGE_ID_* objects; nullptr when the device carries none.
+  const uint8_t *pxSchema;
+  uint32_t lenSchema;
 };
 
 // Standart Objects and devices

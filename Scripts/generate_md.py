@@ -32,6 +32,10 @@ def generate(objects, devices, output, log_file):
             "### " + dev["name"] + "\n **Description:** " + dev["description"] + "\n")
         log_file.write("\n|Object|Name|Address|Type|\n|---|---|---|---|\n")
         for obj in dev["objects"]:
+            # A copy: the placeholders below are for this table only. The
+            # dicts are shared with the generators that run after this one,
+            # and uls_schema.py used to pack "generic" into device schemas.
+            obj = dict(obj)
             if obj.get("type") == None:
                 obj["type"] = "generic"
             log_file.write("|[" + obj["object"] + "](#" + obj["object"].lower() + ")|" +
@@ -53,6 +57,9 @@ def generate(objects, devices, output, log_file):
         log_file.write(
             "\n|Name|Units|Type|Lenght|Default|Description|Options and Flags\n|---|---|---|---|---|---|---|\n")
         for var in obj["variables"]:
+            # A copy, for the same reason: "none" and "-" are table filler,
+            # and used to ship inside device schemas (and change their hash).
+            var = dict(var)
             varLen = 1
             optflags = ""
             # print("   - " +  var["name"] + "[" + var["type"] + "] - " + var["description"])

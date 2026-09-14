@@ -54,7 +54,9 @@ ULSDBase::ULSDBase(const char *tn, const uint16_t tc)
       typeName(tn),
       typeCode(tc),
       pxCfg(nullptr),
-      lenCfg(0) {}
+      lenCfg(0),
+      pxSchema(nullptr),
+      lenSchema(0) {}
 
 ULSObjectBase *ULSDBase::getObject(uint16_t obj_id) {
   begin();

@@ -273,7 +273,9 @@ public:
         pxCfg(nullptr),
         lenCfg(0),
         devname(tn),
-        typeName(tn){
+        typeName(tn),
+        pxSchema(nullptr),
+        lenSchema(0){
     }
     ULSObjectBase *getObject(uint16_t obj_id){
         begin();
@@ -295,6 +297,9 @@ public:
     uint32_t lenCfg;
     const char *devname;
     const char *typeName;
+    // Device schema served by ULSBusConnection; the tool carries none.
+    const uint8_t *pxSchema;
+    uint32_t lenSchema;
 
 
 

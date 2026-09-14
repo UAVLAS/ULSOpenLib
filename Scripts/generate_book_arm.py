@@ -1,6 +1,7 @@
 
 import json
 import generate_structures
+import uls_schema
 
 access_types = {"read": "ULSBUS_OBJECT_PERMISSION_READONLY",
                 "write": "ULSBUS_OBJECT_PERMISSION_WRITEONLY",
@@ -41,7 +42,9 @@ _file_header = "/** \n\
 // THIS FILE GENERATED AUTOMATICALLY DO NOT EDIT\n\n\
 #ifndef ULSDEVICE_ULSQX_H\n\
 #define ULSDEVICE_ULSQX_H\n\n\n\
-#include \"ULSObject.h\"\n\n"
+#include <stddef.h>\n\n\
+#include \"ULSObject.h\"\n\
+#include \"ULSDeviceSchemas.h\"\n\n"
 
 
 _file_footer = "#endif  // ULSDEVICE_ULSQX_H \n"
@@ -65,6 +68,8 @@ def generate(objects, devices, output):
     book_file.write("\n")
 
     generate_structures.generate(objects, devices, book_file)
+    uls_schema.write_layout_asserts(book_file, objects,
+                                    generate_structures._obj_struct_name_prefix)
     print("Objects:")
     for obj in objects:
         print(" ")
@@ -190,6 +195,12 @@ def generate(objects, devices, output):
                                     obj_ref["name"] + "._pxData;\n")
                     book_file.write("  lenCfg = o_" +
                                     obj_ref["name"] + ".size;\n")
+
+        book_file.write("#ifndef ULS_NO_DEVICE_SCHEMA\n")
+        book_file.write("  pxSchema = ULSSchema_" + dev["name"] + "::data();\n")
+        book_file.write("  lenSchema = ULSSchema_" +
+                        dev["name"] + "::size();\n")
+        book_file.write("#endif\n")
 
         book_file.write("  };\n")
         for obj_ref in dev["objects"]:
