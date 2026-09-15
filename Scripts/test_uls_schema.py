@@ -50,6 +50,16 @@ class LibrarySchemas(unittest.TestCase):
             self.assertEqual(decoded, schema, dev["name"])
             self.assertEqual(header["devType"], int(dev["type"], 0))
 
+    def test_dashboards_travel_in_the_schema(self):
+        with_dashboard = [d for d in self.devices if "dashboard" in d]
+        self.assertTrue(with_dashboard)
+        for dev in with_dashboard:
+            blob = uls_schema.pack_schema(
+                uls_schema.build_device_schema(dev, self.objects))
+            _, decoded = uls_schema.unpack_blob(blob)
+            self.assertEqual(decoded["device"]["dashboard"], dev["dashboard"],
+                             dev["name"])
+
     def test_layout_is_packed_and_matches_type_sizes(self):
         for name, obj in self.objects.items():
             t = uls_schema.build_object_type(obj)
@@ -135,6 +145,45 @@ class Rejects(unittest.TestCase):
         bad["variables"][0]["type"] = "double"
         with self.assertRaises(ValueError):
             uls_schema.build_object_type(bad)
+
+    def test_bad_dashboard_is_refused(self):
+        dev = self.device()
+        dev["objects"][0]["type"] = "config"
+        dev["objects"].append({"name": "st", "object": "T_v1",
+                               "address": "0x0010"})
+        bad = [
+            {"widget": "nope", "series": ["cfg.a"]},
+            {"widget": "realtime"},
+            {"widget": "realtime", "series": ["cfg.a"], "colour": "red"},
+            {"widget": "realtime", "series": ["other.a"]},
+            {"widget": "realtime", "series": ["cfg.missing"]},
+            {"widget": "realtime", "series": ["cfg.b[3]"]},
+            {"widget": "realtime", "series": ["cfg.b#1"]},
+            {"widget": "realtime", "series": ["cfg.a#8"]},
+            {"widget": "realtime", "series": ["cfg.a*"]},
+            {"widget": "realtime", "series": []},
+            {"widget": "cartesian", "x": "cfg.b", "y": "cfg.a"},
+            {"widget": "waterfall", "source": "cfg.a"},
+            {"widget": "waterfall", "source": "cfg.b[1]"},
+            {"widget": "map", "lat": "cfg.a", "lon": "cfg.a", "vel": "cfg.a"},
+            {"widget": "compass", "field": "cfg.b", "offset": "st.b",
+             "scale": "cfg.b"},
+            {"widget": "compass", "field": "cfg.b", "offset": "cfg.b*2",
+             "scale": "cfg.b"},
+        ]
+        for widget in bad:
+            dev["dashboard"] = {"sections": [{"widgets": [widget]}]}
+            with self.assertRaises(ValueError, msg=repr(widget)):
+                uls_schema.build_device_schema(dev, {"T_v1": self.OBJ})
+        dev["dashboard"] = {"sections": [{"widgets": [
+            {"widget": "realtime", "series": ["cfg.b", {"ref": "cfg.a#7"}]},
+            {"widget": "cartesian", "x": "cfg.b[0]*1e-3", "y": "cfg.a"},
+            {"widget": "waterfall", "source": "st.b"},
+            {"widget": "compass", "field": "st.b", "offset": "cfg.b",
+             "scale": "cfg.b"},
+        ]}]}
+        schema = uls_schema.build_device_schema(dev, {"T_v1": self.OBJ})
+        self.assertEqual(schema["device"]["dashboard"], dev["dashboard"])
 
     def test_corrupt_page(self):
         blob = bytearray(uls_schema.pack_schema(

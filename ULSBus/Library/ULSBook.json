@@ -80,7 +80,77 @@
                     "object": "ULSDVOBJ_BLITZ_Debug_v1",
                     "address": "0x0101"
                 }
-            ]
+            ],
+            "dashboard": {
+                "rate": 100,
+                "sections": [
+                    {
+                        "title": "IMU",
+                        "widgets": [
+                            {
+                                "widget": "realtime",
+                                "title": "Attitude",
+                                "series": ["status.imu"],
+                                "labels": ["Roll", "Pitch", "Yaw"]
+                            },
+                            {
+                                "widget": "realtime",
+                                "title": "Gyroscopes",
+                                "series": ["status.imug"],
+                                "labels": ["P", "Q", "R"]
+                            },
+                            {
+                                "widget": "realtime",
+                                "title": "Accelerometers",
+                                "series": ["status.imua"],
+                                "labels": ["X", "Y", "Z"]
+                            },
+                            {
+                                "widget": "realtime",
+                                "title": "Magnetometer",
+                                "series": ["status.imum"],
+                                "labels": ["X", "Y", "Z"]
+                            }
+                        ]
+                    },
+                    {
+                        "title": "Emitters",
+                        "widgets": [
+                            {
+                                "widget": "bar",
+                                "title": "Main LED currents",
+                                "span": 2,
+                                "series": ["status.Ialed"]
+                            },
+                            {
+                                "widget": "bar",
+                                "title": "Direction LED currents",
+                                "series": ["status.Idled"]
+                            },
+                            {
+                                "widget": "realtime",
+                                "title": "System",
+                                "series": ["status.Vs", "status.Vled", "status.tb"],
+                                "labels": ["Vs", "Vled", "Board temp."]
+                            }
+                        ]
+                    },
+                    {
+                        "title": "Compass",
+                        "widgets": [
+                            {
+                                "widget": "compass",
+                                "title": "Compass calibration",
+                                "span": 2,
+                                "field": "status.imum",
+                                "offset": "cfg.magCalOffset",
+                                "scale": "cfg.magCalScale",
+                                "normalize": true
+                            }
+                        ]
+                    }
+                ]
+            }
         },
         {
             "name": "ULSQR1R2",

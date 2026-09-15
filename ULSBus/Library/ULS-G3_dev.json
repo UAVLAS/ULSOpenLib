@@ -47,7 +47,152 @@
                     "object": "ULSDVOBJ_BLITZ_Debug_v1",
                     "address": "0x0101"
                 }
-            ]
+            ],
+            "dashboard": {
+                "rate": 100,
+                "sections": [
+                    {
+                        "title": "Position",
+                        "widgets": [
+                            {
+                                "widget": "cartesian",
+                                "title": "Relative position",
+                                "x": "status.rel_pos_ned[1]",
+                                "y": "status.rel_pos_ned[0]",
+                                "labels": [
+                                    "East",
+                                    "North"
+                                ],
+                                "trace": 300
+                            },
+                            {
+                                "widget": "realtime",
+                                "title": "Relative position NED",
+                                "series": [
+                                    "status.rel_pos_ned"
+                                ],
+                                "labels": [
+                                    "North",
+                                    "East",
+                                    "Down"
+                                ]
+                            },
+                            {
+                                "widget": "realtime",
+                                "title": "Distance",
+                                "series": [
+                                    "status.distance",
+                                    "status.mrxDistance",
+                                    "status.dacsDistance"
+                                ],
+                                "labels": [
+                                    "Distance",
+                                    "MRX",
+                                    "DACS A",
+                                    "DACS B"
+                                ]
+                            },
+                            {
+                                "widget": "realtime",
+                                "title": "Yaw",
+                                "series": [
+                                    "status.correctedYaw",
+                                    "status.mrxYaw",
+                                    "status.dacsYaw"
+                                ],
+                                "labels": [
+                                    "Corrected",
+                                    "MRX",
+                                    "DACS"
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "title": "Signal",
+                        "widgets": [
+                            {
+                                "widget": "realtime",
+                                "title": "Level",
+                                "series": [
+                                    "status.level"
+                                ]
+                            },
+                            {
+                                "widget": "realtime",
+                                "title": "SNR",
+                                "series": [
+                                    "status.snr"
+                                ]
+                            },
+                            {
+                                "widget": "bar",
+                                "title": "DACS power",
+                                "series": [
+                                    "status.dacsPower"
+                                ]
+                            },
+                            {
+                                "widget": "bar",
+                                "title": "Saturation",
+                                "series": [
+                                    "status.saturation"
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "title": "Spectrum",
+                        "widgets": [
+                            {
+                                "widget": "waterfall",
+                                "title": "FFT",
+                                "span": 2,
+                                "source": "fftbuf.beans"
+                            },
+                            {
+                                "widget": "waterfall",
+                                "title": "Channel 1",
+                                "source": "ch1Debug.beansA"
+                            },
+                            {
+                                "widget": "waterfall",
+                                "title": "Channel 2",
+                                "source": "ch2Debug.beansA"
+                            },
+                            {
+                                "widget": "waterfall",
+                                "title": "Channel 3",
+                                "source": "ch3Debug.beansA"
+                            },
+                            {
+                                "widget": "waterfall",
+                                "title": "Channel 4",
+                                "source": "ch4Debug.beansA"
+                            }
+                        ]
+                    },
+                    {
+                        "title": "System",
+                        "widgets": [
+                            {
+                                "widget": "realtime",
+                                "title": "Temperature",
+                                "series": [
+                                    "status.Tsys"
+                                ]
+                            },
+                            {
+                                "widget": "realtime",
+                                "title": "Voltage",
+                                "series": [
+                                    "status.Vsys"
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
         },
         {
             "name": "ULSDV_HL_G3_RXMR2",
@@ -100,7 +245,152 @@
                     "object": "ULSDVOBJ_EMSG3_DPTF_Debug_v1",
                     "address": "0x0102"
                 }
-            ]
+            ],
+            "dashboard": {
+                "rate": 100,
+                "sections": [
+                    {
+                        "title": "Position",
+                        "widgets": [
+                            {
+                                "widget": "cartesian",
+                                "title": "Relative position",
+                                "x": "status.rel_pos_ned[1]",
+                                "y": "status.rel_pos_ned[0]",
+                                "labels": [
+                                    "East",
+                                    "North"
+                                ],
+                                "trace": 300
+                            },
+                            {
+                                "widget": "realtime",
+                                "title": "Relative position NED",
+                                "series": [
+                                    "status.rel_pos_ned"
+                                ],
+                                "labels": [
+                                    "North",
+                                    "East",
+                                    "Down"
+                                ]
+                            },
+                            {
+                                "widget": "realtime",
+                                "title": "Distance",
+                                "series": [
+                                    "status.distance",
+                                    "status.mrxDistance",
+                                    "status.dacsDistance"
+                                ],
+                                "labels": [
+                                    "Distance",
+                                    "MRX",
+                                    "DACS A",
+                                    "DACS B"
+                                ]
+                            },
+                            {
+                                "widget": "realtime",
+                                "title": "Yaw",
+                                "series": [
+                                    "status.correctedYaw",
+                                    "status.mrxYaw",
+                                    "status.dacsYaw"
+                                ],
+                                "labels": [
+                                    "Corrected",
+                                    "MRX",
+                                    "DACS"
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "title": "Signal",
+                        "widgets": [
+                            {
+                                "widget": "realtime",
+                                "title": "Level",
+                                "series": [
+                                    "status.level"
+                                ]
+                            },
+                            {
+                                "widget": "realtime",
+                                "title": "SNR",
+                                "series": [
+                                    "status.snr"
+                                ]
+                            },
+                            {
+                                "widget": "bar",
+                                "title": "DACS power",
+                                "series": [
+                                    "status.dacsPower"
+                                ]
+                            },
+                            {
+                                "widget": "bar",
+                                "title": "Saturation",
+                                "series": [
+                                    "status.saturation"
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "title": "Spectrum",
+                        "widgets": [
+                            {
+                                "widget": "waterfall",
+                                "title": "FFT",
+                                "span": 2,
+                                "source": "fftbuf.beans"
+                            },
+                            {
+                                "widget": "waterfall",
+                                "title": "Channel 1",
+                                "source": "ch1Debug.beansA"
+                            },
+                            {
+                                "widget": "waterfall",
+                                "title": "Channel 2",
+                                "source": "ch2Debug.beansA"
+                            },
+                            {
+                                "widget": "waterfall",
+                                "title": "Channel 3",
+                                "source": "ch3Debug.beansA"
+                            },
+                            {
+                                "widget": "waterfall",
+                                "title": "Channel 4",
+                                "source": "ch4Debug.beansA"
+                            }
+                        ]
+                    },
+                    {
+                        "title": "System",
+                        "widgets": [
+                            {
+                                "widget": "realtime",
+                                "title": "Temperature",
+                                "series": [
+                                    "status.Tsys"
+                                ]
+                            },
+                            {
+                                "widget": "realtime",
+                                "title": "Voltage",
+                                "series": [
+                                    "status.Vsys"
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
         },
         {
             "name": "ULSDV_XS_G3_RXMR2",
@@ -153,7 +443,152 @@
                     "object": "ULSDVOBJ_EMSG3_DPTF_Debug_v1",
                     "address": "0x0102"
                 }
-            ]
+            ],
+            "dashboard": {
+                "rate": 100,
+                "sections": [
+                    {
+                        "title": "Position",
+                        "widgets": [
+                            {
+                                "widget": "cartesian",
+                                "title": "Relative position",
+                                "x": "status.rel_pos_ned[1]",
+                                "y": "status.rel_pos_ned[0]",
+                                "labels": [
+                                    "East",
+                                    "North"
+                                ],
+                                "trace": 300
+                            },
+                            {
+                                "widget": "realtime",
+                                "title": "Relative position NED",
+                                "series": [
+                                    "status.rel_pos_ned"
+                                ],
+                                "labels": [
+                                    "North",
+                                    "East",
+                                    "Down"
+                                ]
+                            },
+                            {
+                                "widget": "realtime",
+                                "title": "Distance",
+                                "series": [
+                                    "status.distance",
+                                    "status.mrxDistance",
+                                    "status.dacsDistance"
+                                ],
+                                "labels": [
+                                    "Distance",
+                                    "MRX",
+                                    "DACS A",
+                                    "DACS B"
+                                ]
+                            },
+                            {
+                                "widget": "realtime",
+                                "title": "Yaw",
+                                "series": [
+                                    "status.correctedYaw",
+                                    "status.mrxYaw",
+                                    "status.dacsYaw"
+                                ],
+                                "labels": [
+                                    "Corrected",
+                                    "MRX",
+                                    "DACS"
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "title": "Signal",
+                        "widgets": [
+                            {
+                                "widget": "realtime",
+                                "title": "Level",
+                                "series": [
+                                    "status.level"
+                                ]
+                            },
+                            {
+                                "widget": "realtime",
+                                "title": "SNR",
+                                "series": [
+                                    "status.snr"
+                                ]
+                            },
+                            {
+                                "widget": "bar",
+                                "title": "DACS power",
+                                "series": [
+                                    "status.dacsPower"
+                                ]
+                            },
+                            {
+                                "widget": "bar",
+                                "title": "Saturation",
+                                "series": [
+                                    "status.saturation"
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "title": "Spectrum",
+                        "widgets": [
+                            {
+                                "widget": "waterfall",
+                                "title": "FFT",
+                                "span": 2,
+                                "source": "fftbuf.beans"
+                            },
+                            {
+                                "widget": "waterfall",
+                                "title": "Channel 1",
+                                "source": "ch1Debug.beansA"
+                            },
+                            {
+                                "widget": "waterfall",
+                                "title": "Channel 2",
+                                "source": "ch2Debug.beansA"
+                            },
+                            {
+                                "widget": "waterfall",
+                                "title": "Channel 3",
+                                "source": "ch3Debug.beansA"
+                            },
+                            {
+                                "widget": "waterfall",
+                                "title": "Channel 4",
+                                "source": "ch4Debug.beansA"
+                            }
+                        ]
+                    },
+                    {
+                        "title": "System",
+                        "widgets": [
+                            {
+                                "widget": "realtime",
+                                "title": "Temperature",
+                                "series": [
+                                    "status.Tsys"
+                                ]
+                            },
+                            {
+                                "widget": "realtime",
+                                "title": "Voltage",
+                                "series": [
+                                    "status.Vsys"
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
         },
         {
             "name": "ULSDV_XC_G3_RX",
@@ -214,7 +649,84 @@
                     "object": "ULSDVOBJ_BLITZ_Debug_v1",
                     "address": "0x0101"
                 }
-            ]
+            ],
+            "dashboard": {
+                "rate": 100,
+                "sections": [
+                    {
+                        "title": "Emitters",
+                        "widgets": [
+                            {
+                                "widget": "bar",
+                                "title": "Emitter currents",
+                                "span": 2,
+                                "series": [
+                                    "status.Iem"
+                                ]
+                            },
+                            {
+                                "widget": "realtime",
+                                "title": "Supply",
+                                "series": [
+                                    "status.Vs",
+                                    "status.Vsu",
+                                    "status.Vem"
+                                ],
+                                "labels": [
+                                    "Vs",
+                                    "Vsu",
+                                    "Vem"
+                                ]
+                            },
+                            {
+                                "widget": "realtime",
+                                "title": "Temperature",
+                                "series": [
+                                    "status.Tsys"
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "title": "IMU",
+                        "widgets": [
+                            {
+                                "widget": "realtime",
+                                "title": "Attitude",
+                                "series": [
+                                    "status.imu"
+                                ],
+                                "labels": [
+                                    "Roll",
+                                    "Pitch",
+                                    "Yaw"
+                                ]
+                            },
+                            {
+                                "widget": "realtime",
+                                "title": "Magnetometer",
+                                "series": [
+                                    "status.imum"
+                                ],
+                                "labels": [
+                                    "X",
+                                    "Y",
+                                    "Z"
+                                ]
+                            },
+                            {
+                                "widget": "compass",
+                                "title": "Compass calibration",
+                                "span": 2,
+                                "field": "status.imum",
+                                "offset": "cfg.magCalOffset",
+                                "scale": "cfg.magCalScale",
+                                "normalize": true
+                            }
+                        ]
+                    }
+                ]
+            }
         },
         {
             "name": "ULSDV_XX_EIGC_G3",
@@ -252,7 +764,230 @@
                     "object": "ULSDVOBJ_EIGC_BLE_Debug_v1",
                     "address": "0x0033"
                 }
-            ]
+            ],
+            "dashboard": {
+                "rate": 100,
+                "sections": [
+                    {
+                        "title": "Navigation",
+                        "widgets": [
+                            {
+                                "widget": "map",
+                                "title": "GNSS position",
+                                "span": 2,
+                                "lat": "status.lat*1e-7",
+                                "lon": "status.lon*1e-7",
+                                "alt": "status.height",
+                                "fix": "status.status#2",
+                                "hAcc": "status.hAcc",
+                                "vAcc": "status.vAcc",
+                                "vel": "status.vel",
+                                "numSV": "status.numSV",
+                                "heading": "status.attitude[2]"
+                            },
+                            {
+                                "widget": "realtime",
+                                "title": "Platform attitude",
+                                "series": [
+                                    "status.attitude"
+                                ],
+                                "labels": [
+                                    "Roll",
+                                    "Pitch",
+                                    "Yaw"
+                                ]
+                            },
+                            {
+                                "widget": "realtime",
+                                "title": "Velocity NED",
+                                "series": [
+                                    "status.vel",
+                                    "status.sAcc"
+                                ],
+                                "labels": [
+                                    "Vn",
+                                    "Ve",
+                                    "Vd",
+                                    "sAcc"
+                                ]
+                            },
+                            {
+                                "widget": "realtime",
+                                "title": "Solution quality",
+                                "series": [
+                                    "status.hAcc",
+                                    "status.vAcc",
+                                    "status.pDOP",
+                                    "status.numSV"
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "title": "Compasses",
+                        "widgets": [
+                            {
+                                "widget": "compass",
+                                "title": "Compass 1 (MMC5983MA)",
+                                "field": "sensorsDebug.compass1Field",
+                                "offset": "cfg.compass1Offset",
+                                "scale": "cfg.compass1Scale",
+                                "normalize": false,
+                                "limit": 60
+                            },
+                            {
+                                "widget": "compass",
+                                "title": "Compass 2 (RM3100)",
+                                "field": "sensorsDebug.compass2Field",
+                                "offset": "cfg.compass2Offset",
+                                "scale": "cfg.compass2Scale",
+                                "normalize": false,
+                                "limit": 60
+                            },
+                            {
+                                "widget": "realtime",
+                                "title": "Headings",
+                                "series": [
+                                    "sensorsDebug.compass1Heading",
+                                    "sensorsDebug.compass2Heading",
+                                    "sensorsDebug.compassDisagreement"
+                                ],
+                                "labels": [
+                                    "Compass 1",
+                                    "Compass 2",
+                                    "Disagreement"
+                                ]
+                            },
+                            {
+                                "widget": "realtime",
+                                "title": "Field magnitude",
+                                "series": [
+                                    "sensorsDebug.compassFieldMagnitude"
+                                ],
+                                "labels": [
+                                    "Compass 1",
+                                    "Compass 2"
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "title": "Sensors",
+                        "widgets": [
+                            {
+                                "widget": "realtime",
+                                "title": "Accelerometer",
+                                "series": [
+                                    "sensorsDebug.accel"
+                                ],
+                                "labels": [
+                                    "X",
+                                    "Y",
+                                    "Z"
+                                ]
+                            },
+                            {
+                                "widget": "realtime",
+                                "title": "Gyroscope",
+                                "series": [
+                                    "sensorsDebug.gyro"
+                                ],
+                                "labels": [
+                                    "X",
+                                    "Y",
+                                    "Z"
+                                ]
+                            },
+                            {
+                                "widget": "realtime",
+                                "title": "Tilt",
+                                "series": [
+                                    "sensorsDebug.tilt"
+                                ],
+                                "labels": [
+                                    "Roll",
+                                    "Pitch"
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "title": "GNSS",
+                        "widgets": [
+                            {
+                                "widget": "bar",
+                                "title": "Satellites",
+                                "series": [
+                                    "gnssDebug.satellitesUsed",
+                                    "gnssDebug.satellitesVisible"
+                                ],
+                                "labels": [
+                                    "GPS",
+                                    "GLONASS",
+                                    "Galileo",
+                                    "BeiDou",
+                                    "Visible"
+                                ]
+                            },
+                            {
+                                "widget": "realtime",
+                                "title": "PVT",
+                                "series": [
+                                    "gnssDebug.pvtRate",
+                                    "gnssDebug.pvtAge",
+                                    "gnssDebug.hAcc"
+                                ]
+                            },
+                            {
+                                "widget": "realtime",
+                                "title": "PPS",
+                                "series": [
+                                    "gnssDebug.ppsInterval",
+                                    "gnssDebug.ppsOffset"
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "title": "GNSS compass",
+                        "widgets": [
+                            {
+                                "widget": "cartesian",
+                                "title": "Baseline",
+                                "x": "peerDebug.baselineNED[1]",
+                                "y": "peerDebug.baselineNED[0]",
+                                "labels": [
+                                    "East",
+                                    "North"
+                                ],
+                                "trace": 300
+                            },
+                            {
+                                "widget": "realtime",
+                                "title": "Yaw",
+                                "series": [
+                                    "peerDebug.gnssYaw",
+                                    "peerDebug.magYawDelta",
+                                    "peerDebug.baselineError"
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "title": "BLE",
+                        "widgets": [
+                            {
+                                "widget": "realtime",
+                                "title": "Link",
+                                "series": [
+                                    "bleDebug.rssi",
+                                    "bleDebug.peerDistance"
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
         },
         {
             "name": "ULSDV_XX_EIGC_G3_BLE",

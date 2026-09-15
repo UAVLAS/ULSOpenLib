@@ -34,6 +34,7 @@ Run directly to inspect a generated blob:
 
 import json
 import os
+import re
 import struct
 import sys
 import zlib
@@ -104,6 +105,140 @@ def build_object_type(obj, strip_descriptions=False):
     return result
 
 
+# A device's dashboard (ULSBus/Library/DASHBOARD.md) says which widgets show
+# which object data. It travels in the schema as the book spells it; these
+# checks make a firmware build fail on a reference the tool could not resolve.
+
+_REF_RE = re.compile(r"^([A-Za-z_]\w*)\.([A-Za-z_]\w*)"
+                     r"(?:\[(\d+)\])?(?:#(\d+))?"
+                     r"(?:\*([-+]?(?:\d+\.?\d*|\.\d+)(?:[eE][-+]?\d+)?))?$")
+
+_INT_TYPES = ("uint8", "int8", "uint16", "int16", "uint32", "int32",
+              "flags_uint8", "flags_uint16", "flags_uint32",
+              "opt_uint8", "opt_uint16", "opt_uint32")
+
+_COMMON_WIDGET_KEYS = ("widget", "title", "span", "height", "rate")
+
+# widget: (required keys, optional keys)
+DASHBOARD_WIDGETS = {
+    "realtime": (("series",), ("window", "labels", "min", "max")),
+    "bar": (("series",), ("labels", "min", "max")),
+    "cartesian": (("x", "y"), ("trace", "limit", "labels")),
+    "waterfall": (("source",), ("min", "max", "history")),
+    "map": (("lat", "lon"), ("alt", "fix", "hAcc", "vAcc", "vel", "numSV",
+                             "heading")),
+    "compass": (("field", "offset", "scale"), ("normalize", "limit")),
+}
+
+
+def _resolve_ref(ref, instances, types, where):
+    """(instance, variable, index, bit) for a reference, or ValueError."""
+    if not isinstance(ref, str):
+        raise ValueError("%s: reference must be a string, got %r" % (where, ref))
+    m = _REF_RE.match(ref)
+    if not m:
+        raise ValueError("%s: bad reference %r" % (where, ref))
+    inst_name, var_name, index, bit, _ = m.groups()
+    inst = instances.get(inst_name)
+    if inst is None:
+        raise ValueError("%s: no object %r on the device" % (where, inst_name))
+    var = next((v for v in types[inst["object"]]["variables"]
+                if v["name"] == var_name), None)
+    if var is None:
+        raise ValueError("%s: %s has no variable %r" % (where, inst_name,
+                                                        var_name))
+    if var["type"] == "char":
+        raise ValueError("%s: %s is text" % (where, ref))
+    index = None if index is None else int(index)
+    if index is not None and index >= var["count"]:
+        raise ValueError("%s: %s has %d elements" % (where, ref, var["count"]))
+    bit = None if bit is None else int(bit)
+    if bit is not None and (var["type"] not in _INT_TYPES or
+                            bit >= 8 * var["size"]):
+        raise ValueError("%s: bit %d of %s" % (where, bit, ref))
+    return inst, var, index, bit
+
+
+def _scalar_ref(ref, instances, types, where):
+    inst, var, index, bit = _resolve_ref(ref, instances, types, where)
+    if index is None and var["count"] != 1:
+        raise ValueError("%s: %s is an array; pick an element" % (where, ref))
+    return inst, var
+
+
+def _vector_ref(ref, instances, types, where, count=3):
+    inst, var, index, bit = _resolve_ref(ref, instances, types, where)
+    if index is not None or bit is not None or var["count"] != count:
+        raise ValueError("%s: %s must be a whole %d-element variable" %
+                         (where, ref, count))
+    return inst, var
+
+
+def validate_dashboard(dashboard, instances, types, device_name=""):
+    """Raises ValueError unless every widget resolves against the device."""
+    by_name = {inst["name"]: inst for inst in instances}
+    if not isinstance(dashboard, dict) or \
+            not isinstance(dashboard.get("sections"), list):
+        raise ValueError("%s dashboard: needs a sections list" % device_name)
+    for s, section in enumerate(dashboard["sections"]):
+        widgets = section.get("widgets")
+        if not isinstance(widgets, list):
+            raise ValueError("%s dashboard section %d: needs a widgets list" %
+                             (device_name, s))
+        for w, widget in enumerate(widgets):
+            kind = widget.get("widget")
+            where = "%s dashboard %s/%s" % (
+                device_name, section.get("title", s),
+                widget.get("title", "%s %d" % (kind, w)))
+            if kind not in DASHBOARD_WIDGETS:
+                raise ValueError("%s: unknown widget %r" % (where, kind))
+            required, optional = DASHBOARD_WIDGETS[kind]
+            for key in required:
+                if key not in widget:
+                    raise ValueError("%s: missing %r" % (where, key))
+            for key in widget:
+                if key not in required + optional + _COMMON_WIDGET_KEYS:
+                    raise ValueError("%s: unknown key %r" % (where, key))
+            _validate_widget(kind, widget, by_name, types, where)
+
+
+def _validate_widget(kind, widget, instances, types, where):
+    if kind in ("realtime", "bar"):
+        series = widget["series"]
+        if not isinstance(series, list) or not series:
+            raise ValueError("%s: series must be a non-empty list" % where)
+        for entry in series:
+            ref = entry.get("ref") if isinstance(entry, dict) else entry
+            _resolve_ref(ref, instances, types, where)
+    elif kind == "cartesian":
+        _scalar_ref(widget["x"], instances, types, where)
+        _scalar_ref(widget["y"], instances, types, where)
+    elif kind == "waterfall":
+        _, var, index, bit = _resolve_ref(widget["source"], instances, types,
+                                          where)
+        if index is not None or bit is not None or var["count"] < 2:
+            raise ValueError("%s: waterfall source must be a whole array" %
+                             where)
+    elif kind == "map":
+        for key in ("lat", "lon", "alt", "fix", "hAcc", "vAcc", "numSV",
+                    "heading"):
+            if key in widget:
+                _scalar_ref(widget[key], instances, types, where)
+        if "vel" in widget:
+            _vector_ref(widget["vel"], instances, types, where)
+    elif kind == "compass":
+        _vector_ref(widget["field"], instances, types, where)
+        for key in ("offset", "scale"):
+            ref = widget[key]
+            if "*" in ref:
+                raise ValueError("%s: %s is written back; no scale" %
+                                 (where, key))
+            inst, var = _vector_ref(ref, instances, types, where)
+            if var["type"] != "float" or inst.get("type") != "config":
+                raise ValueError("%s: %s must be a float config variable" %
+                                 (where, key))
+
+
 def build_device_schema(dev, objects_by_name, strip_descriptions=False):
     instances = []
     types = {}
@@ -129,6 +264,9 @@ def build_device_schema(dev, objects_by_name, strip_descriptions=False):
               "type": _parse_int(dev["type"])}
     if strip_descriptions:
         _strip_descriptions(device)
+    if "dashboard" in dev:
+        validate_dashboard(dev["dashboard"], instances, types, dev["name"])
+        device["dashboard"] = dev["dashboard"]
     return {"format": SCHEMA_FORMAT,
             "device": device,
             "objects": instances,
