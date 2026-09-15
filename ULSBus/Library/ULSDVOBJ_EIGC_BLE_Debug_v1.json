@@ -62,7 +62,7 @@
                 {
                     "name": "peerSerial",
                     "type": "uint32",
-                    "description": "Serial number of the peer being tracked, from its beacon. The ULS serial, not a Bluetooth address - the BLE address is derived from it and is of no interest to an operator",
+                    "description": "Serial number of the peer being tracked, from its beacon. The ULS serial, not a Bluetooth address - an operator thinks in serials; this module's own address is in bleAddress",
                     "default": 0
                 },
                 {
@@ -173,6 +173,24 @@
                     "lenght": 16,
                     "description": "Firmware version string reported by the BMD-345",
                     "default": ""
+                },
+                {
+                    "name": "bleAddress",
+                    "type": "char",
+                    "lenght": 18,
+                    "description": "Bluetooth identity address the module advertises and connects with, most significant byte first, e.g. 54:64:DE:F1:02:9D. Normally the factory public address printed on the BMD-345 label (data matrix <type:3><address:12><hw/fw:4>). Shown here because macOS, iOS and browsers never reveal a peripheral's address to an application",
+                    "default": ""
+                },
+                {
+                    "name": "bleAddressType",
+                    "type": "opt_uint8",
+                    "description": "Where bleAddress comes from. Public is the factory address from UICR. RandomStatic means UICR was erased (a full chip erase) and the module fell back to an address derived from its serial - restore the factory one with devs-nrf/flash.sh --set-mac <label code>",
+                    "default": 0,
+                    "opts": [
+                        "None",
+                        "Public",
+                        "RandomStatic"
+                    ]
                 }
             ]
         }
