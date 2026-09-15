@@ -621,7 +621,160 @@
                     "object": "ULSDVOBJ_BLITZ_Debug_v1",
                     "address": "0x0101"
                 }
-            ]
+            ],
+            "dashboard": {
+                "rate": 100,
+                "sections": [
+                    {
+                        "title": "Position",
+                        "widgets": [
+                            {
+                                "widget": "cartesian",
+                                "title": "Relative position",
+                                "x": "status.rel_pos_ned[1]",
+                                "y": "status.rel_pos_ned[0]",
+                                "labels": [
+                                    "East",
+                                    "North"
+                                ],
+                                "trace": 300
+                            },
+                            {
+                                "widget": "realtime",
+                                "title": "Relative position NED",
+                                "series": [
+                                    "status.rel_pos_ned"
+                                ],
+                                "labels": [
+                                    "North",
+                                    "East",
+                                    "Down"
+                                ]
+                            },
+                            {
+                                "widget": "realtime",
+                                "title": "Relative velocity NED",
+                                "series": [
+                                    "status.rel_vel_ned"
+                                ],
+                                "labels": [
+                                    "North",
+                                    "East",
+                                    "Down"
+                                ]
+                            },
+                            {
+                                "widget": "realtime",
+                                "title": "Transmitter angles",
+                                "series": [
+                                    "status.ang"
+                                ],
+                                "labels": [
+                                    "X",
+                                    "Y",
+                                    "Z"
+                                ]
+                            },
+                            {
+                                "widget": "realtime",
+                                "title": "Distance",
+                                "series": [
+                                    "status.distance",
+                                    "status.mrxDistance",
+                                    "status.dacsDistance"
+                                ],
+                                "labels": [
+                                    "Distance",
+                                    "MRX",
+                                    "DACS"
+                                ]
+                            },
+                            {
+                                "widget": "realtime",
+                                "title": "Yaw",
+                                "series": [
+                                    "status.correctedYaw",
+                                    "status.mrxYaw",
+                                    "status.dacsYaw"
+                                ],
+                                "labels": [
+                                    "Corrected",
+                                    "MRX",
+                                    "DACS"
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "title": "Signal",
+                        "widgets": [
+                            {
+                                "widget": "realtime",
+                                "title": "Level",
+                                "series": [
+                                    "status.level",
+                                    "status.levelA",
+                                    "status.levelB"
+                                ],
+                                "labels": [
+                                    "Level",
+                                    "A",
+                                    "B"
+                                ]
+                            },
+                            {
+                                "widget": "realtime",
+                                "title": "SNR and probability",
+                                "series": [
+                                    "status.snrA",
+                                    "status.snrB",
+                                    "status.prob"
+                                ],
+                                "labels": [
+                                    "SNR A",
+                                    "SNR B",
+                                    "Probability"
+                                ]
+                            },
+                            {
+                                "widget": "bar",
+                                "title": "DACS power",
+                                "series": [
+                                    "status.dacs_power"
+                                ]
+                            },
+                            {
+                                "widget": "realtime",
+                                "title": "Front-end saturation",
+                                "series": [
+                                    "status.saturation"
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "title": "Spectrum",
+                        "widgets": [
+                            {
+                                "widget": "waterfall",
+                                "title": "FFT",
+                                "span": 2,
+                                "source": "fftbuf.beans"
+                            },
+                            {
+                                "widget": "waterfall",
+                                "title": "Beans A",
+                                "source": "debug.beansA"
+                            },
+                            {
+                                "widget": "waterfall",
+                                "title": "Beans B",
+                                "source": "debug.beansB"
+                            }
+                        ]
+                    }
+                ]
+            }
         },
         {
             "name": "ULSDV_HL_G3_TXC",
@@ -717,10 +870,17 @@
                             {
                                 "widget": "compass",
                                 "title": "Compass calibration",
-                                "span": 2,
                                 "field": "status.imum",
                                 "offset": "cfg.magCalOffset",
                                 "scale": "cfg.magCalScale",
+                                "normalize": true
+                            },
+                            {
+                                "widget": "compass",
+                                "title": "External compass calibration",
+                                "field": "status.imum",
+                                "offset": "cfg.magCalOffsetEx",
+                                "scale": "cfg.magCalScaleEx",
                                 "normalize": true
                             }
                         ]
@@ -1010,7 +1170,104 @@
                     "object": "ULSDVOBJ_EIGC_BLE_Key_v1",
                     "address": "0x0021"
                 }
-            ]
+            ],
+            "dashboard": {
+                "rate": 200,
+                "sections": [
+                    {
+                        "title": "Radio link",
+                        "widgets": [
+                            {
+                                "widget": "realtime",
+                                "title": "Signal",
+                                "series": [
+                                    "status.rssi",
+                                    "status.txPower"
+                                ],
+                                "labels": [
+                                    "RSSI",
+                                    "TX power"
+                                ]
+                            },
+                            {
+                                "widget": "realtime",
+                                "title": "Peer distance",
+                                "series": [
+                                    "status.peerDistance"
+                                ],
+                                "labels": [
+                                    "Distance"
+                                ]
+                            },
+                            {
+                                "widget": "realtime",
+                                "title": "Message age",
+                                "series": [
+                                    "status.lastBeaconAge",
+                                    "status.lastTelemetryAge"
+                                ],
+                                "labels": [
+                                    "Beacon",
+                                    "Telemetry"
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "title": "Counters",
+                        "widgets": [
+                            {
+                                "widget": "bar",
+                                "title": "Beacons",
+                                "series": [
+                                    "status.beaconsSent",
+                                    "status.beaconsRx",
+                                    "status.beaconsRejectedFleet",
+                                    "status.beaconsRejectedAuth",
+                                    "status.beaconsRejectedEpoch",
+                                    "status.beaconsRejectedReplay"
+                                ],
+                                "labels": [
+                                    "Sent",
+                                    "Received",
+                                    "Fleet",
+                                    "Auth",
+                                    "Epoch",
+                                    "Replay"
+                                ]
+                            },
+                            {
+                                "widget": "bar",
+                                "title": "Service link",
+                                "series": [
+                                    "status.serviceConnectCount",
+                                    "status.serviceRejectCount",
+                                    "status.peersHeard"
+                                ],
+                                "labels": [
+                                    "Connects",
+                                    "Rejects",
+                                    "Peers heard"
+                                ]
+                            },
+                            {
+                                "widget": "bar",
+                                "title": "UART to the STM32",
+                                "series": [
+                                    "status.uartTxPackets",
+                                    "status.uartRxPackets",
+                                    "status.uartErrors"
+                                ],
+                                "labels": [
+                                    "TX",
+                                    "RX",
+                                    "Errors"
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
         }
     ]
 }
