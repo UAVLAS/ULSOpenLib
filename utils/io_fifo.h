@@ -207,17 +207,25 @@ class _io_fifo_base {
   }
   bool seek(T *ch) {
     __fifo_enter_critical();
+    /*
+     * _last is read once. Where the critical section compiles to nothing
+     * (the nRF52840) the receive ISR moves it while this runs, and a wrap
+     * between two separate reads made an in-range seeker look out of range:
+     * it was rewound to _first in the middle of a frame, and the COBS parser
+     * lost its place.
+     */
+    T *last = _last;
     // check seecker outside buffer for some cases
-    if (_last < _first) {
-      if (!((_seeker >= _first) || (_seeker <= _last))) {
+    if (last < _first) {
+      if (!((_seeker >= _first) || (_seeker <= last))) {
         seek_start();
       }
-    } else if (_last > _first) {
-      if (!((_seeker >= _first) && (_seeker <= _last))) {
+    } else if (last > _first) {
+      if (!((_seeker >= _first) && (_seeker <= last))) {
         seek_start();
       }
     }
-    if (_seeker == _last) {
+    if (_seeker == last) {
       __fifo_exit_critical();
       return false;
     }

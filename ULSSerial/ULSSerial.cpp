@@ -185,6 +185,15 @@ uint32_t ULSSerial::read(uint8_t *buf,uint32_t sizelimit)
     return size;
 }
 //==============================================================================
+/*
+ * A 0x00 is always a frame delimiter - COBS removes every other zero - so it
+ * is where the parser resynchronises. This used to take a zero at a code
+ * position as the code and a zero inside a block as data, and checked the
+ * length only once a frame had ended. After one truncated frame (a peer reset
+ * mid-packet, a dropped byte) it could then skip every later delimiter,
+ * never flush, and let the rx fifo fill: from there the ISR drops every byte
+ * and the link stays dead until this end resets.
+ */
 bool ULSSerial::readCobsCheck(uint32_t sizelimit)
 {
     uint8_t v=0;
@@ -192,6 +201,10 @@ bool ULSSerial::readCobsCheck(uint32_t sizelimit)
         switch(_stage)
         {
         case 0: // Start Of packet
+            if(v == 0) { // Empty frame or line noise, nothing to parse
+                _rxFifo->flush_to_seeker();
+                break;
+            }
             _cobs_code = _cobs_counter = v;
             _stage = 1;
             _len = 0;
@@ -200,6 +213,12 @@ bool ULSSerial::readCobsCheck(uint32_t sizelimit)
         case 1:// Analayzing packet
             _cobs_counter--;
             if(_cobs_counter != 0) {
+                if((v == 0) || (_len >= sizelimit + 2)) { // Broken frame
+                    _stage = 0;
+                    _packeterrors++;
+                    _rxFifo->flush_to_seeker();
+                    break;
+                }
                 _len++;
                 _crc = GetCrcByte(_crc,v);
             } else {
