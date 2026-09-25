@@ -340,6 +340,134 @@
                         ]
                     },
                     {
+                        "title": "IR link",
+                        "widgets": [
+                            {
+                                "widget": "waterfall",
+                                "title": "DPTF chip envelope - 8 guard | 18 preamble | 128 payload",
+                                "span": 2,
+                                "height": 260,
+                                "source": "emsg3Debug.chipMag",
+                                "history": 64
+                            },
+                            {
+                                "widget": "realtime",
+                                "title": "Detection metric (threshold 1.3)",
+                                "series": [
+                                    "emsg3Debug.metricQ8*0.00390625",
+                                    "emsg3Debug.marginQ8*0.00390625"
+                                ],
+                                "labels": [
+                                    "Preamble peak",
+                                    "Worst symbol margin"
+                                ],
+                                "min": 0
+                            },
+                            {
+                                "widget": "realtime",
+                                "title": "Peak vs noise floor",
+                                "series": [
+                                    "emsg3Debug.peakMag",
+                                    "emsg3Debug.noiseFloor"
+                                ],
+                                "labels": [
+                                    "Peak chip",
+                                    "Noise floor"
+                                ],
+                                "min": 0
+                            },
+                            {
+                                "widget": "bar",
+                                "title": "Packets",
+                                "series": [
+                                    "emsg3Debug.packetsOk",
+                                    "emsg3Debug.packetsBad",
+                                    "emsg3Debug.hilMatched",
+                                    "emsg3Debug.hilMismatched"
+                                ],
+                                "labels": [
+                                    "CRC ok",
+                                    "CRC bad",
+                                    "HIL matched",
+                                    "HIL mismatched"
+                                ],
+                                "min": 0
+                            },
+                            {
+                                "widget": "bar",
+                                "title": "Receiver state",
+                                "series": [
+                                    "emsg3Debug.flags#0",
+                                    "emsg3Debug.flags#1",
+                                    "emsg3Debug.flags#2",
+                                    "emsg3Debug.candidate",
+                                    "emsg3Debug.magShift",
+                                    "emsg3Debug.chipPeriods"
+                                ],
+                                "labels": [
+                                    "Snapshot valid",
+                                    "HIL active",
+                                    "Payload matched",
+                                    "Candidate",
+                                    "Mag shift",
+                                    "Chip periods"
+                                ],
+                                "min": 0
+                            },
+                            {
+                                "widget": "bar",
+                                "title": "Per-symbol margin, best/second slot",
+                                "span": 2,
+                                "series": [
+                                    "emsg3Debug.symbolMarginQ8*0.00390625"
+                                ],
+                                "min": 0
+                            },
+                            {
+                                "widget": "bar",
+                                "title": "Decoded PPM slot per symbol",
+                                "span": 2,
+                                "series": [
+                                    "emsg3Debug.symbolSlots"
+                                ],
+                                "min": 0,
+                                "max": 7
+                            },
+                            {
+                                "widget": "bar",
+                                "title": "Payload decoded vs sent",
+                                "span": 2,
+                                "series": [
+                                    "emsg3Debug.payload",
+                                    "emsg3Debug.expected"
+                                ],
+                                "labels": [
+                                    "rx 0",
+                                    "rx 1",
+                                    "rx 2",
+                                    "rx 3",
+                                    "rx 4",
+                                    "rx 5",
+                                    "tx 0",
+                                    "tx 1",
+                                    "tx 2",
+                                    "tx 3",
+                                    "tx 4",
+                                    "tx 5"
+                                ],
+                                "min": 0,
+                                "max": 255
+                            },
+                            {
+                                "widget": "realtime",
+                                "title": "ADC samples fed to the receiver",
+                                "series": [
+                                    "emsg3Debug.samples"
+                                ]
+                            }
+                        ]
+                    },
+                    {
                         "title": "Spectrum",
                         "widgets": [
                             {
