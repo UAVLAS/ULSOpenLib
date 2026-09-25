@@ -6,6 +6,9 @@ the device schema (`Scripts/uls_schema.py`), so a tool built before the device
 still draws its page. `uls_schema.py` checks every reference against the
 device's objects and fails the build on one it cannot resolve.
 
+How objects and variables are named and hidden in a tool is in
+[BOOK.md](BOOK.md).
+
 ```json
 "dashboard": {
   "rate": 100,

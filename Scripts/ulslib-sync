@@ -1,0 +1,178 @@
+#!/usr/bin/env bash
+#
+# Keep one ULSOpenLib across the projects that embed it as a submodule.
+#
+# Copyright: 2026 by UAVLAS <www.uavlas.com>
+# SPDX-License-Identifier: LGPL-3.0-or-later
+#
+# The problem this solves: ULSQX, ULSTools and ULSToolsX each carry their own
+# clone of this library, so a one-line change used to mean commit, push to
+# GitHub, fetch in the other projects, check out dev, and bump three gitlinks.
+#
+# Two things replace that:
+#
+#   1. A shared working tree (ULSOpenLib-dev) that every project can be built
+#      against directly, with no commit at all. Point the builds at it:
+#
+#        export ULSOPENLIB_ROOT=$HOME/Projects/UAVLAS/ULSOpenLib-dev
+#
+#      ULSQX and ULSTools take it as -DULSOPENLIB_ROOT too; ULSToolsX's Flutter
+#      hook and build_wasm.sh read the environment variable.
+#
+#   2. A bare repository (.libhub/ULSOpenLib.git) used as a local exchange
+#      point, so moving commits between the projects never touches the network.
+#      GitHub stays the publishing target, reached only by `publish`.
+#
+# Layout it expects, all under one workspace directory:
+#
+#   UAVLAS/
+#     .libhub/ULSOpenLib.git   bare, local only - the exchange point
+#     ULSOpenLib-dev/          the shared working tree you edit
+#     ULSQX/ULSOpenLib         submodule, remote "hub" -> .libhub
+#     ULSTools/ULSOpenLib      same
+#     ULSToolsX/ULSOpenLib     same
+#
+# Commands:
+#
+#   status    (default) where every copy stands
+#   sync      hub -> every project submodule, fast-forward, stage the gitlink
+#   share     shared tree -> hub, then sync (this is the everyday one)
+#   publish   shared tree -> GitHub, then share
+#   fetch     bring GitHub's dev into the shared tree
+#
+set -euo pipefail
+
+BRANCH=dev
+
+# The workspace is whichever ancestor holds .libhub; override with
+# ULSLIB_WORKSPACE when this script is run from somewhere else entirely.
+find_workspace() {
+  if [ -n "${ULSLIB_WORKSPACE:-}" ]; then echo "${ULSLIB_WORKSPACE}"; return; fi
+  local d
+  d="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+  while [ "$d" != "/" ]; do
+    [ -d "$d/.libhub/ULSOpenLib.git" ] && { echo "$d"; return; }
+    d="$(dirname "$d")"
+  done
+  echo "error: no .libhub/ULSOpenLib.git above $(dirname "${BASH_SOURCE[0]}")." >&2
+  echo "       Set ULSLIB_WORKSPACE to the directory that holds it." >&2
+  exit 1
+}
+
+WS="$(find_workspace)"
+HUB="$WS/.libhub/ULSOpenLib.git"
+SHARED="$WS/ULSOpenLib-dev"
+
+# Every sibling that embeds this library, read from .gitmodules rather than
+# hardcoded, so a new project is picked up by merely existing.
+projects() {
+  local d
+  for d in "$WS"/*/; do
+    [ -f "${d}.gitmodules" ] || continue
+    grep -q 'ULSOpenLib' "${d}.gitmodules" || continue
+    [ -d "${d}ULSOpenLib/.git" ] || [ -f "${d}ULSOpenLib/.git" ] || continue
+    printf '%s\n' "${d%/}"
+  done
+}
+
+short() { git -C "$1" rev-parse --short "${2:-HEAD}" 2>/dev/null || echo "-"; }
+dirty() { [ -n "$(git -C "$1" status --porcelain 2>/dev/null)" ] && echo " *dirty*" || true; }
+
+cmd_status() {
+  echo "workspace: $WS"
+  echo
+  if [ -d "$SHARED" ]; then
+    local head; head="$(short "$SHARED")"
+    echo "shared tree  $head  $(git -C "$SHARED" rev-parse --abbrev-ref HEAD)$(dirty "$SHARED")"
+    echo "             $SHARED"
+  else
+    echo "shared tree  (missing: $SHARED)"
+  fi
+  echo "hub          $(short "$HUB" "$BRANCH")  $BRANCH"
+  echo
+  local p name sm smhead gitlink branch
+  for p in $(projects); do
+    name="$(basename "$p")"
+    sm="$p/ULSOpenLib"
+    smhead="$(short "$sm")"
+    branch="$(git -C "$sm" rev-parse --abbrev-ref HEAD)"
+    [ "$branch" = "HEAD" ] && branch="detached"
+    gitlink="$(git -C "$p" ls-tree HEAD ULSOpenLib 2>/dev/null | awk '{print substr($3,1,7)}')"
+    printf '%-12s %s  %-9s' "$name" "$smhead" "$branch"
+    [ "$smhead" != "$(short "$HUB" "$BRANCH")" ] && printf ' behind-hub'
+    [ -n "$gitlink" ] && [ "${gitlink}" != "${smhead}" ] && printf ' gitlink=%s' "$gitlink"
+    printf '%s\n' "$(dirty "$sm")"
+  done
+  echo
+  echo "build against the shared tree with:"
+  echo "  export ULSOPENLIB_ROOT=$SHARED"
+}
+
+# Fast-forward only, always: a divergence is something to look at, not to
+# resolve behind your back. One project being in no state to update - an
+# archived checkout with no hub remote, a submodule parked on another branch -
+# reports itself and leaves the rest of the run alone.
+cmd_sync() {
+  local p name sm before after
+  for p in $(projects); do
+    name="$(basename "$p")"
+    sm="$p/ULSOpenLib"
+    if ! git -C "$sm" remote get-url hub >/dev/null 2>&1; then
+      echo "$name: no hub remote, skipping" >&2
+      continue
+    fi
+    if [ "$(git -C "$sm" rev-parse --abbrev-ref HEAD)" != "$BRANCH" ]; then
+      echo "$name: submodule is not on $BRANCH, skipping" >&2
+      continue
+    fi
+    if ! git -C "$sm" fetch --quiet hub 2>/dev/null; then
+      echo "$name: cannot reach the hub, skipping" >&2
+      continue
+    fi
+    before="$(short "$sm")"
+    if ! git -C "$sm" merge --quiet --ff-only "hub/$BRANCH" >/dev/null 2>&1; then
+      echo "$name: cannot fast-forward to hub/$BRANCH - diverged, resolve by hand" >&2
+      continue
+    fi
+    after="$(short "$sm")"
+    if [ "$before" != "$after" ]; then
+      git -C "$p" add ULSOpenLib
+      echo "$name: $before -> $after  (gitlink staged, commit when ready)"
+    else
+      echo "$name: $after  up to date"
+    fi
+  done
+}
+
+# The shared tree is the usual source, but a commit made inside a project's own
+# submodule is just as valid - push whichever is ahead.
+cmd_share() {
+  if [ -n "$(git -C "$SHARED" status --porcelain)" ]; then
+    echo "note: $SHARED has uncommitted changes; only commits are shared" >&2
+  fi
+  git -C "$SHARED" push --quiet hub "$BRANCH:$BRANCH"
+  echo "hub: $(short "$HUB" "$BRANCH")  (from the shared tree)"
+  cmd_sync
+}
+
+cmd_publish() {
+  cmd_share
+  git -C "$SHARED" push origin "$BRANCH:$BRANCH"
+  echo "pushed $BRANCH to GitHub"
+}
+
+cmd_fetch() {
+  git -C "$SHARED" fetch origin
+  git -C "$SHARED" merge --ff-only "origin/$BRANCH"
+  echo "shared tree: $(short "$SHARED")"
+  cmd_share
+}
+
+case "${1:-status}" in
+  status)  cmd_status ;;
+  sync)    cmd_sync ;;
+  share)   cmd_share ;;
+  publish) cmd_publish ;;
+  fetch)   cmd_fetch ;;
+  *) echo "usage: ulslib-sync [status|sync|share|publish|fetch]" >&2; exit 2 ;;
+esac

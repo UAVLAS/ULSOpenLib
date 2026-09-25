@@ -5,6 +5,7 @@
             "name": "ULSDVOBJ_BLITZ_Debug_v1",
             "description": "Blitz messages debug",
             "access": "read",
+            "level": "developer",
             "variables": [
                 {
                     "name": "packets",

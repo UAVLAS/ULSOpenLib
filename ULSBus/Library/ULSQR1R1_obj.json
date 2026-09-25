@@ -1,6 +1,6 @@
 {
     "Objects": [
-           {
+        {
             "name": "ULSQR1R1Status",
             "description": "ULSQT1-R1 status information",
             "access": "read",
@@ -275,7 +275,8 @@
                     "description": "Receiver sensitivity",
                     "default": 1.0,
                     "min": 0.8,
-                    "max": 1.2
+                    "max": 1.2,
+                    "level": "advanced"
                 },
                 {
                     "name": "rxOffsetF",
@@ -320,7 +321,8 @@
                     "units": "K",
                     "default": 1.0,
                     "min": 0.1,
-                    "max": 5.0
+                    "max": 5.0,
+                    "level": "advanced"
                 },
                 {
                     "name": "relVelGain",
@@ -329,7 +331,8 @@
                     "units": "K",
                     "default": 1.0,
                     "min": 0.1,
-                    "max": 5.0
+                    "max": 5.0,
+                    "level": "advanced"
                 },
                 {
                     "name": "predictionTime",
@@ -338,7 +341,8 @@
                     "units": "s",
                     "default": 1.0,
                     "min": 0.0,
-                    "max": 5
+                    "max": 5,
+                    "level": "advanced"
                 },
                 {
                     "name": "platformAcc",
@@ -347,7 +351,8 @@
                     "units": "m/ss",
                     "default": 0.1,
                     "min": 0.01,
-                    "max": 5.0
+                    "max": 5.0,
+                    "level": "advanced"
                 },
                 {
                     "name": "positionFilterAcc",
@@ -356,7 +361,8 @@
                     "units": "m/ss",
                     "default": 0.3,
                     "min": 0.01,
-                    "max": 5.0
+                    "max": 5.0,
+                    "level": "advanced"
                 },
                 {
                     "name": "i2cAddress",
@@ -417,7 +423,8 @@
                     "name": "configCRC",
                     "type": "uint16",
                     "description": "Configuration checksum",
-                    "default": 0
+                    "default": 0,
+                    "level": "developer"
                 }
             ]
         },
@@ -425,6 +432,7 @@
             "name": "ULSQR1R1Debug",
             "description": "Receiver Debug data",
             "access": "read",
+            "level": "developer",
             "variables": [
                 {
                     "name": "beansA",

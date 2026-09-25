@@ -5,6 +5,7 @@
             "name": "ULSDVOBJ_EMSG3_DPTF_Debug_v1",
             "description": "EMSP G3 DPTF receiver debug (hardware in the loop)",
             "access": "read",
+            "level": "developer",
             "variables": [
                 {
                     "name": "samples",

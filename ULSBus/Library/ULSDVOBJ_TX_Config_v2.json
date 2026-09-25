@@ -46,7 +46,8 @@
                     "units": "V",
                     "default": "6",
                     "min": 5,
-                    "max": 30
+                    "max": 30,
+                    "level": "advanced"
                 },
                 {
                     "name": "Vlow",
@@ -55,7 +56,8 @@
                     "units": "V",
                     "default": "7",
                     "min": 5,
-                    "max": 30
+                    "max": 30,
+                    "level": "advanced"
                 },
                 {
                     "name": "serial1Protocol",
@@ -85,7 +87,7 @@
                         "921600"
                     ]
                 },
-                                {
+                {
                     "name": "serial1Options",
                     "type": "uint8",
                     "description": "Serial port 1 Options",
@@ -97,7 +99,8 @@
                         "tx_termination_enabled",
                         "rx_inverted",
                         "tx_inverted"
-                    ]
+                    ],
+                    "level": "advanced"
                 },
                 {
                     "name": "serial2Protocol",
@@ -139,7 +142,8 @@
                         "tx_termination_enabled",
                         "rx_inverted",
                         "tx_inverted"
-                    ]
+                    ],
+                    "level": "advanced"
                 },
                 {
                     "name": "can1Address",
@@ -176,7 +180,8 @@
                     "default": 0,
                     "flags": [
                         "termination_enabled"
-                    ]
+                    ],
+                    "level": "advanced"
                 },
                 {
                     "name": "can2Address",
@@ -213,9 +218,9 @@
                     "default": 0,
                     "flags": [
                         "termination_enabled"
-                    ]
+                    ],
+                    "level": "advanced"
                 },
-
                 {
                     "name": "magCalOffset",
                     "type": "float",
@@ -227,7 +232,8 @@
                         0
                     ],
                     "min": -30.0,
-                    "max": 30.0
+                    "max": 30.0,
+                    "level": "service"
                 },
                 {
                     "name": "magCalScale",
@@ -240,7 +246,8 @@
                         1
                     ],
                     "min": 0.01,
-                    "max": 30.0
+                    "max": 30.0,
+                    "level": "service"
                 },
                 {
                     "name": "magCalOffsetEx",
@@ -253,7 +260,8 @@
                         0
                     ],
                     "min": -100.0,
-                    "max": 100.0
+                    "max": 100.0,
+                    "level": "service"
                 },
                 {
                     "name": "magCalScaleEx",
@@ -266,7 +274,8 @@
                         1
                     ],
                     "min": 0.01,
-                    "max": 100.0
+                    "max": 100.0,
+                    "level": "service"
                 },
                 {
                     "name": "cpsOverride",
@@ -275,7 +284,8 @@
                     "units": "deg",
                     "default": "0",
                     "min": 0,
-                    "max": 360
+                    "max": 360,
+                    "level": "service"
                 },
                 {
                     "name": "indicatorBrightness",
@@ -290,7 +300,8 @@
                     "name": "configCRC",
                     "type": "uint16",
                     "description": "Configuration checksum",
-                    "default": 0
+                    "default": 0,
+                    "level": "developer"
                 }
             ]
         }

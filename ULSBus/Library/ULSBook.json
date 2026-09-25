@@ -13,6 +13,7 @@
                 },
                 {
                     "name": "cfg",
+                    "title": "Config",
                     "object": "ULSQT1R1Config",
                     "address": "0x0020",
                     "type": "config"
@@ -157,6 +158,7 @@
                 },
                 {
                     "name": "cfg",
+                    "title": "Config",
                     "object": "ULSQR1R1Config",
                     "address": "0x0020",
                     "type": "config"
@@ -320,6 +322,7 @@
                 },
                 {
                     "name": "cfg",
+                    "title": "Config",
                     "object": "ULSQT1R2Config",
                     "address": "0x0020",
                     "type": "config"
@@ -331,6 +334,7 @@
                 },
                 {
                     "name": "blitzDebug",
+                    "title": "Blitz",
                     "object": "ULSDVOBJ_BLITZ_Debug_v1",
                     "address": "0x0101"
                 }
@@ -461,6 +465,7 @@
                 },
                 {
                     "name": "cfg",
+                    "title": "Config",
                     "object": "ULSQR1R2Config",
                     "address": "0x0020",
                     "type": "config"
@@ -472,11 +477,13 @@
                 },
                 {
                     "name": "fftbuf",
+                    "title": "FFT",
                     "object": "ULSQR1R2FFT",
                     "address": "0x0100"
                 },
                 {
                     "name": "blitzDebug",
+                    "title": "Blitz",
                     "object": "ULSDVOBJ_BLITZ_Debug_v1",
                     "address": "0x0101"
                 }
@@ -647,27 +654,32 @@
                 },
                 {
                     "name": "cfg",
+                    "title": "Config",
                     "object": "ULSDVOBJ_RX_Config_v1",
                     "address": "0x0020",
                     "type": "config"
                 },
                 {
                     "name": "ch1Debug",
+                    "title": "Channel 1",
                     "object": "ULSDVOBJ_RX_Channel_Debug_v1",
                     "address": "0x0030"
                 },
                 {
                     "name": "ch2Debug",
+                    "title": "Channel 2",
                     "object": "ULSDVOBJ_RX_Channel_Debug_v1",
                     "address": "0x0031"
                 },
                 {
                     "name": "fftbuf",
+                    "title": "FFT",
                     "object": "ULSQR1R2FFT",
                     "address": "0x0100"
                 },
                 {
                     "name": "blitzDebug",
+                    "title": "Blitz",
                     "object": "ULSDVOBJ_BLITZ_Debug_v1",
                     "address": "0x0101"
                 }
@@ -763,27 +775,32 @@
                 },
                 {
                     "name": "cfg",
+                    "title": "Config",
                     "object": "ULSDVOBJ_RX_Config_v1",
                     "address": "0x0020",
                     "type": "config"
                 },
                 {
                     "name": "ch1Debug",
+                    "title": "Channel 1",
                     "object": "ULSDVOBJ_RX_Channel_Debug_v1",
                     "address": "0x0030"
                 },
                 {
                     "name": "ch2Debug",
+                    "title": "Channel 2",
                     "object": "ULSDVOBJ_RX_Channel_Debug_v1",
                     "address": "0x0031"
                 },
                 {
                     "name": "fftbuf",
+                    "title": "FFT",
                     "object": "ULSQR1R2FFT",
                     "address": "0x0100"
                 },
                 {
                     "name": "blitzDebug",
+                    "title": "Blitz",
                     "object": "ULSDVOBJ_BLITZ_Debug_v1",
                     "address": "0x0101"
                 }
@@ -960,6 +977,7 @@
                 },
                 {
                     "name": "cfg",
+                    "title": "Config",
                     "object": "ULSDVOBJ_TX_Config_v1",
                     "address": "0x0020",
                     "type": "config"
@@ -971,6 +989,7 @@
                 },
                 {
                     "name": "blitzDebug",
+                    "title": "Blitz",
                     "object": "ULSDVOBJ_BLITZ_Debug_v1",
                     "address": "0x0101"
                 }
@@ -1101,27 +1120,32 @@
                 },
                 {
                     "name": "cfg",
+                    "title": "Config",
                     "object": "ULSDVOBJ_RX_Config_v1",
                     "address": "0x0020",
                     "type": "config"
                 },
                 {
                     "name": "ch1Debug",
+                    "title": "Channel 1",
                     "object": "ULSDVOBJ_RX_Channel_Debug_v1",
                     "address": "0x0030"
                 },
                 {
                     "name": "ch2Debug",
+                    "title": "Channel 2",
                     "object": "ULSDVOBJ_RX_Channel_Debug_v1",
                     "address": "0x0031"
                 },
                 {
                     "name": "fftbuf",
+                    "title": "FFT",
                     "object": "ULSQR1R2FFT",
                     "address": "0x0100"
                 },
                 {
                     "name": "blitzDebug",
+                    "title": "Blitz",
                     "object": "ULSDVOBJ_BLITZ_Debug_v1",
                     "address": "0x0101"
                 }
@@ -1217,27 +1241,32 @@
                 },
                 {
                     "name": "cfg",
+                    "title": "Config",
                     "object": "ULSDVOBJ_RX_Config_v1",
                     "address": "0x0020",
                     "type": "config"
                 },
                 {
                     "name": "ch1Debug",
+                    "title": "Channel 1",
                     "object": "ULSDVOBJ_RX_Channel_Debug_v1",
                     "address": "0x0030"
                 },
                 {
                     "name": "ch2Debug",
+                    "title": "Channel 2",
                     "object": "ULSDVOBJ_RX_Channel_Debug_v1",
                     "address": "0x0031"
                 },
                 {
                     "name": "fftbuf",
+                    "title": "FFT",
                     "object": "ULSQR1R2FFT",
                     "address": "0x0100"
                 },
                 {
                     "name": "blitzDebug",
+                    "title": "Blitz",
                     "object": "ULSDVOBJ_BLITZ_Debug_v1",
                     "address": "0x0101"
                 }
@@ -1414,6 +1443,7 @@
                 },
                 {
                     "name": "cfg",
+                    "title": "Config",
                     "object": "ULSDVOBJ_TX_Config_v1",
                     "address": "0x0020",
                     "type": "config"
@@ -1425,6 +1455,7 @@
                 },
                 {
                     "name": "blitzDebug",
+                    "title": "Blitz",
                     "object": "ULSDVOBJ_BLITZ_Debug_v1",
                     "address": "0x0101"
                 }
@@ -1555,27 +1586,32 @@
                 },
                 {
                     "name": "cfg",
+                    "title": "Config",
                     "object": "ULSDVOBJ_RX_Config_v1",
                     "address": "0x0020",
                     "type": "config"
                 },
                 {
                     "name": "ch1Debug",
+                    "title": "Channel 1",
                     "object": "ULSDVOBJ_RX_Channel_Debug_v1",
                     "address": "0x0030"
                 },
                 {
                     "name": "ch2Debug",
+                    "title": "Channel 2",
                     "object": "ULSDVOBJ_RX_Channel_Debug_v1",
                     "address": "0x0031"
                 },
                 {
                     "name": "fftbuf",
+                    "title": "FFT",
                     "object": "ULSQR1R2FFT",
                     "address": "0x0100"
                 },
                 {
                     "name": "blitzDebug",
+                    "title": "Blitz",
                     "object": "ULSDVOBJ_BLITZ_Debug_v1",
                     "address": "0x0101"
                 }
@@ -1671,27 +1707,32 @@
                 },
                 {
                     "name": "cfg",
+                    "title": "Config",
                     "object": "ULSDVOBJ_RX_Config_v1",
                     "address": "0x0020",
                     "type": "config"
                 },
                 {
                     "name": "ch1Debug",
+                    "title": "Channel 1",
                     "object": "ULSDVOBJ_RX_Channel_Debug_v1",
                     "address": "0x0030"
                 },
                 {
                     "name": "ch2Debug",
+                    "title": "Channel 2",
                     "object": "ULSDVOBJ_RX_Channel_Debug_v1",
                     "address": "0x0031"
                 },
                 {
                     "name": "fftbuf",
+                    "title": "FFT",
                     "object": "ULSQR1R2FFT",
                     "address": "0x0100"
                 },
                 {
                     "name": "blitzDebug",
+                    "title": "Blitz",
                     "object": "ULSDVOBJ_BLITZ_Debug_v1",
                     "address": "0x0101"
                 }
@@ -1868,6 +1909,7 @@
                 },
                 {
                     "name": "cfg",
+                    "title": "Config",
                     "object": "ULSDVOBJ_TX_Config_v1",
                     "address": "0x0020",
                     "type": "config"
@@ -1879,6 +1921,7 @@
                 },
                 {
                     "name": "blitzDebug",
+                    "title": "Blitz",
                     "object": "ULSDVOBJ_BLITZ_Debug_v1",
                     "address": "0x0101"
                 }
@@ -2009,27 +2052,32 @@
                 },
                 {
                     "name": "cfg",
+                    "title": "Config",
                     "object": "ULSDVOBJ_RX_Config_v1",
                     "address": "0x0020",
                     "type": "config"
                 },
                 {
                     "name": "ch1Debug",
+                    "title": "Channel 1",
                     "object": "ULSDVOBJ_RX_Channel_Debug_v1",
                     "address": "0x0030"
                 },
                 {
                     "name": "ch2Debug",
+                    "title": "Channel 2",
                     "object": "ULSDVOBJ_RX_Channel_Debug_v1",
                     "address": "0x0031"
                 },
                 {
                     "name": "fftbuf",
+                    "title": "FFT",
                     "object": "ULSQR1R2FFT",
                     "address": "0x0100"
                 },
                 {
                     "name": "blitzDebug",
+                    "title": "Blitz",
                     "object": "ULSDVOBJ_BLITZ_Debug_v1",
                     "address": "0x0101"
                 }
@@ -2125,6 +2173,7 @@
                 },
                 {
                     "name": "cfg",
+                    "title": "Config",
                     "object": "ULSDVOBJ_TX_Config_v1",
                     "address": "0x0020",
                     "type": "config"
@@ -2136,6 +2185,7 @@
                 },
                 {
                     "name": "blitzDebug",
+                    "title": "Blitz",
                     "object": "ULSDVOBJ_BLITZ_Debug_v1",
                     "address": "0x0101"
                 }

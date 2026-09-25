@@ -75,7 +75,8 @@
                         0.0
                     ],
                     "min": -180.0,
-                    "max": 180.0
+                    "max": 180.0,
+                    "level": "advanced"
                 },
                 {
                     "name": "declination",
@@ -84,7 +85,8 @@
                     "units": "deg",
                     "default": 0.0,
                     "min": -180.0,
-                    "max": 180.0
+                    "max": 180.0,
+                    "level": "advanced"
                 },
                 {
                     "name": "compassPreferred",
@@ -95,7 +97,8 @@
                         "Auto",
                         "Compass1_MMC5983MA",
                         "Compass2_RM3100"
-                    ]
+                    ],
+                    "level": "advanced"
                 },
                 {
                     "name": "compassDisagreementLimit",
@@ -104,7 +107,8 @@
                     "units": "deg",
                     "default": 15.0,
                     "min": 1.0,
-                    "max": 90.0
+                    "max": 90.0,
+                    "level": "advanced"
                 },
                 {
                     "name": "compass1Offset",
@@ -118,7 +122,8 @@
                         0.0
                     ],
                     "min": -500.0,
-                    "max": 500.0
+                    "max": 500.0,
+                    "level": "service"
                 },
                 {
                     "name": "compass1Scale",
@@ -131,7 +136,8 @@
                         1.0
                     ],
                     "min": 0.1,
-                    "max": 10.0
+                    "max": 10.0,
+                    "level": "service"
                 },
                 {
                     "name": "compass2Offset",
@@ -145,7 +151,8 @@
                         0.0
                     ],
                     "min": -500.0,
-                    "max": 500.0
+                    "max": 500.0,
+                    "level": "service"
                 },
                 {
                     "name": "compass2Scale",
@@ -158,7 +165,8 @@
                         1.0
                     ],
                     "min": 0.1,
-                    "max": 10.0
+                    "max": 10.0,
+                    "level": "service"
                 },
                 {
                     "name": "gyroOffset",
@@ -172,7 +180,8 @@
                         0.0
                     ],
                     "min": -50.0,
-                    "max": 50.0
+                    "max": 50.0,
+                    "level": "service"
                 },
                 {
                     "name": "accelOffset",
@@ -186,7 +195,8 @@
                         0.0
                     ],
                     "min": -1.0,
-                    "max": 1.0
+                    "max": 1.0,
+                    "level": "service"
                 },
                 {
                     "name": "gnssRate",
@@ -198,7 +208,8 @@
                         "2Hz",
                         "5Hz",
                         "10Hz"
-                    ]
+                    ],
+                    "level": "advanced"
                 },
                 {
                     "name": "gnssDynModel",
@@ -212,7 +223,8 @@
                         "Automotive",
                         "Sea",
                         "Airborne1g"
-                    ]
+                    ],
+                    "level": "advanced"
                 },
                 {
                     "name": "baselineNominal",
@@ -221,7 +233,8 @@
                     "units": "m",
                     "default": 1.0,
                     "min": 0.1,
-                    "max": 20.0
+                    "max": 20.0,
+                    "level": "advanced"
                 },
                 {
                     "name": "baselineTolerance",
@@ -230,13 +243,15 @@
                     "units": "m",
                     "default": 0.25,
                     "min": 0.01,
-                    "max": 5.0
+                    "max": 5.0,
+                    "level": "advanced"
                 },
                 {
                     "name": "peerLid",
                     "type": "uint8",
                     "description": "ULS bus logical id of the paired module. 0 accepts any peer publishing the navigation Blitz message",
-                    "default": 0
+                    "default": 0,
+                    "level": "advanced"
                 },
                 {
                     "name": "blitzNavId",
@@ -244,7 +259,8 @@
                     "description": "Blitz message id this module publishes its navigation data on and listens for from the peer",
                     "default": 1,
                     "min": 0,
-                    "max": 65535
+                    "max": 65535,
+                    "level": "advanced"
                 },
                 {
                     "name": "blitzRate",
@@ -256,7 +272,8 @@
                         "2Hz",
                         "5Hz",
                         "10Hz"
-                    ]
+                    ],
+                    "level": "advanced"
                 },
                 {
                     "name": "peerTimeout",
@@ -265,7 +282,8 @@
                     "units": "ms",
                     "default": 2000,
                     "min": 100,
-                    "max": 30000
+                    "max": 30000,
+                    "level": "advanced"
                 },
                 {
                     "name": "bleName",
@@ -285,7 +303,8 @@
                         "Zero0dBm",
                         "Plus4dBm",
                         "Plus8dBm"
-                    ]
+                    ],
+                    "level": "advanced"
                 },
                 {
                     "name": "bleTelemetryRate",
@@ -297,7 +316,8 @@
                         "2Hz",
                         "5Hz",
                         "10Hz"
-                    ]
+                    ],
+                    "level": "advanced"
                 },
                 {
                     "name": "bleKey",

@@ -5,6 +5,7 @@
             "name": "ULSDVOBJ_EIGC_Peer_v1",
             "description": "GNSS compass debug: the last navigation Blitz message decoded from the paired module and the platform solution derived from it",
             "access": "read",
+            "level": "service",
             "variables": [
                 {
                     "name": "peerStatus",

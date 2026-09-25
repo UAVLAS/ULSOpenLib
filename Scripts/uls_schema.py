@@ -75,11 +75,28 @@ def _strip_descriptions(item):
     return item
 
 
+# Who a tool should show an object or a variable to. Absent means everyone, so
+# an ordinary parameter carries no key at all and costs the schema nothing.
+# The values are ordered and each tier includes the ones before it. A tool that
+# meets a level it does not know must treat it as the most hidden one, so a
+# tier added here can never expose anything in tools already in the field.
+LEVELS = ("advanced", "service", "developer")
+
+
+def _check_level(item, where):
+    level = item.get("level")
+    if level is not None and level not in LEVELS:
+        raise ValueError("%s: unknown level %r, expected one of %s" %
+                         (where, level, ", ".join(LEVELS)))
+
+
 def build_object_type(obj, strip_descriptions=False):
     """One object type with explicit layout and its layoutHash."""
     variables = []
     offset = 0
+    _check_level(obj, "Object %s" % obj["name"])
     for var in obj["variables"]:
+        _check_level(var, "Object %s variable %s" % (obj["name"], var["name"]))
         if var["type"] not in TYPE_SIZES:
             raise ValueError("Object %s variable %s: unknown type %s" %
                              (obj["name"], var["name"], var["type"]))
@@ -98,6 +115,8 @@ def build_object_type(obj, strip_descriptions=False):
               "description": obj.get("description", ""),
               "access": obj["access"],
               "size": offset,
+              # Only when the book says so: absent is the ordinary case.
+              **({"level": obj["level"]} if "level" in obj else {}),
               "layoutHash": zlib.crc32(_canonical(layout)),
               "variables": variables}
     if strip_descriptions:
@@ -247,6 +266,7 @@ def build_device_schema(dev, objects_by_name, strip_descriptions=False):
         if type_name not in objects_by_name:
             raise ValueError("Device %s object %s: no object type %s in book" %
                              (dev["name"], ref["name"], type_name))
+        _check_level(ref, "Device %s object %s" % (dev["name"], ref["name"]))
         address = _parse_int(ref["address"])
         if SCHEMA_PAGE_ID_FIRST <= address <= SCHEMA_PAGE_ID_LAST:
             raise ValueError("Device %s object %s: address 0x%04X is reserved "

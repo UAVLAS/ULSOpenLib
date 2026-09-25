@@ -46,7 +46,8 @@
                     "units": "V",
                     "default": "6",
                     "min": 5,
-                    "max": 30
+                    "max": 30,
+                    "level": "advanced"
                 },
                 {
                     "name": "Vlow",
@@ -55,7 +56,8 @@
                     "units": "V",
                     "default": "7",
                     "min": 5,
-                    "max": 30
+                    "max": 30,
+                    "level": "advanced"
                 },
                 {
                     "name": "uartProtocol",
@@ -124,7 +126,8 @@
                         0
                     ],
                     "min": -30.0,
-                    "max": 30.0
+                    "max": 30.0,
+                    "level": "service"
                 },
                 {
                     "name": "magCalScale",
@@ -137,7 +140,8 @@
                         1
                     ],
                     "min": 0.01,
-                    "max": 30.0
+                    "max": 30.0,
+                    "level": "service"
                 },
                 {
                     "name": "magCalOffsetEx",
@@ -150,7 +154,8 @@
                         0
                     ],
                     "min": -100.0,
-                    "max": 100.0
+                    "max": 100.0,
+                    "level": "service"
                 },
                 {
                     "name": "magCalScaleEx",
@@ -163,7 +168,8 @@
                         1
                     ],
                     "min": 0.01,
-                    "max": 100.0
+                    "max": 100.0,
+                    "level": "service"
                 },
                 {
                     "name": "cpsOverride",
@@ -172,7 +178,8 @@
                     "units": "deg",
                     "default": "0",
                     "min": 0,
-                    "max": 360
+                    "max": 360,
+                    "level": "service"
                 },
                 {
                     "name": "indicatorBrightness",
@@ -187,7 +194,8 @@
                     "name": "configCRC",
                     "type": "uint16",
                     "description": "Configuration checksum",
-                    "default": 0
+                    "default": 0,
+                    "level": "developer"
                 }
             ]
         }

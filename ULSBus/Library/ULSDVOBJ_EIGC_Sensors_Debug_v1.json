@@ -5,6 +5,7 @@
             "name": "ULSDVOBJ_EIGC_Sensors_Debug_v1",
             "description": "External IMU/GNSS/Compass module raw sensor debug. Both magnetometers are shown side by side so the redundant pair can be compared directly",
             "access": "read",
+            "level": "service",
             "variables": [
                 {
                     "name": "sensorStatus",

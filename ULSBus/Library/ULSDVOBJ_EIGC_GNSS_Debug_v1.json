@@ -5,6 +5,7 @@
             "name": "ULSDVOBJ_EIGC_GNSS_Debug_v1",
             "description": "External IMU/GNSS/Compass module GNSS receiver and time pulse debug",
             "access": "read",
+            "level": "service",
             "variables": [
                 {
                     "name": "gnssStatus",

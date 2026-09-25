@@ -13,37 +13,44 @@
                 },
                 {
                     "name": "cfg",
+                    "title": "Config",
                     "object": "ULSDVOBJ_RX_Config_v2",
                     "address": "0x0020",
                     "type": "config"
                 },
                 {
                     "name": "ch1Debug",
+                    "title": "Channel 1",
                     "object": "ULSDVOBJ_RX_Channel_Debug_v1",
                     "address": "0x0030"
                 },
                 {
                     "name": "ch2Debug",
+                    "title": "Channel 2",
                     "object": "ULSDVOBJ_RX_Channel_Debug_v1",
                     "address": "0x0031"
                 },
                 {
                     "name": "ch3Debug",
+                    "title": "Channel 3",
                     "object": "ULSDVOBJ_RX_Channel_Debug_v1",
                     "address": "0x0032"
                 },
                 {
                     "name": "ch4Debug",
+                    "title": "Channel 4",
                     "object": "ULSDVOBJ_RX_Channel_Debug_v1",
                     "address": "0x0033"
                 },
                 {
                     "name": "fftbuf",
+                    "title": "FFT",
                     "object": "ULSQR1R2FFT",
                     "address": "0x0100"
                 },
                 {
                     "name": "blitzDebug",
+                    "title": "Blitz",
                     "object": "ULSDVOBJ_BLITZ_Debug_v1",
                     "address": "0x0101"
                 }
@@ -206,42 +213,50 @@
                 },
                 {
                     "name": "cfg",
+                    "title": "Config",
                     "object": "ULSDVOBJ_RX_Config_v2",
                     "address": "0x0020",
                     "type": "config"
                 },
                 {
                     "name": "ch1Debug",
+                    "title": "Channel 1",
                     "object": "ULSDVOBJ_RX_Channel_Debug_v1",
                     "address": "0x0030"
                 },
                 {
                     "name": "ch2Debug",
+                    "title": "Channel 2",
                     "object": "ULSDVOBJ_RX_Channel_Debug_v1",
                     "address": "0x0031"
                 },
                 {
                     "name": "ch3Debug",
+                    "title": "Channel 3",
                     "object": "ULSDVOBJ_RX_Channel_Debug_v1",
                     "address": "0x0032"
                 },
                 {
                     "name": "ch4Debug",
+                    "title": "Channel 4",
                     "object": "ULSDVOBJ_RX_Channel_Debug_v1",
                     "address": "0x0033"
                 },
                 {
                     "name": "fftbuf",
+                    "title": "FFT",
                     "object": "ULSQR1R2FFT",
                     "address": "0x0100"
                 },
                 {
                     "name": "blitzDebug",
+                    "title": "Blitz",
                     "object": "ULSDVOBJ_BLITZ_Debug_v1",
                     "address": "0x0101"
                 },
                 {
                     "name": "emsg3Debug",
+                    "title": "EMS G3",
                     "object": "ULSDVOBJ_EMSG3_DPTF_Debug_v1",
                     "address": "0x0102"
                 }
@@ -532,42 +547,50 @@
                 },
                 {
                     "name": "cfg",
+                    "title": "Config",
                     "object": "ULSDVOBJ_RX_Config_v2",
                     "address": "0x0020",
                     "type": "config"
                 },
                 {
                     "name": "ch1Debug",
+                    "title": "Channel 1",
                     "object": "ULSDVOBJ_RX_Channel_Debug_v1",
                     "address": "0x0030"
                 },
                 {
                     "name": "ch2Debug",
+                    "title": "Channel 2",
                     "object": "ULSDVOBJ_RX_Channel_Debug_v1",
                     "address": "0x0031"
                 },
                 {
                     "name": "ch3Debug",
+                    "title": "Channel 3",
                     "object": "ULSDVOBJ_RX_Channel_Debug_v1",
                     "address": "0x0032"
                 },
                 {
                     "name": "ch4Debug",
+                    "title": "Channel 4",
                     "object": "ULSDVOBJ_RX_Channel_Debug_v1",
                     "address": "0x0033"
                 },
                 {
                     "name": "fftbuf",
+                    "title": "FFT",
                     "object": "ULSQR1R2FFT",
                     "address": "0x0100"
                 },
                 {
                     "name": "blitzDebug",
+                    "title": "Blitz",
                     "object": "ULSDVOBJ_BLITZ_Debug_v1",
                     "address": "0x0101"
                 },
                 {
                     "name": "emsg3Debug",
+                    "title": "EMS G3",
                     "object": "ULSDVOBJ_EMSG3_DPTF_Debug_v1",
                     "address": "0x0102"
                 }
@@ -730,6 +753,7 @@
                 },
                 {
                     "name": "cfg",
+                    "title": "Config",
                     "object": "ULSQR1R2Config",
                     "address": "0x0020",
                     "type": "config"
@@ -741,11 +765,13 @@
                 },
                 {
                     "name": "fftbuf",
+                    "title": "FFT",
                     "object": "ULSQR1R2FFT",
                     "address": "0x0100"
                 },
                 {
                     "name": "blitzDebug",
+                    "title": "Blitz",
                     "object": "ULSDVOBJ_BLITZ_Debug_v1",
                     "address": "0x0101"
                 }
@@ -916,6 +942,7 @@
                 },
                 {
                     "name": "cfg",
+                    "title": "Config",
                     "object": "ULSDVOBJ_TX_Config_v2",
                     "address": "0x0020",
                     "type": "config"
@@ -927,6 +954,7 @@
                 },
                 {
                     "name": "blitzDebug",
+                    "title": "Blitz",
                     "object": "ULSDVOBJ_BLITZ_Debug_v1",
                     "address": "0x0101"
                 }
@@ -1028,29 +1056,35 @@
                 },
                 {
                     "name": "cfg",
+                    "title": "Config",
                     "object": "ULSDVOBJ_EIGC_Config_v1",
                     "address": "0x0020",
                     "type": "config"
                 },
                 {
                     "name": "sensorsDebug",
+                    "title": "Sensors",
                     "object": "ULSDVOBJ_EIGC_Sensors_Debug_v1",
                     "address": "0x0030"
                 },
                 {
                     "name": "gnssDebug",
+                    "title": "GNSS",
                     "object": "ULSDVOBJ_EIGC_GNSS_Debug_v1",
                     "address": "0x0031"
                 },
                 {
                     "name": "peerDebug",
+                    "title": "Peer",
                     "object": "ULSDVOBJ_EIGC_Peer_v1",
                     "address": "0x0032"
                 },
                 {
                     "name": "bleDebug",
+                    "title": "BLE",
                     "object": "ULSDVOBJ_EIGC_BLE_Debug_v1",
-                    "address": "0x0033"
+                    "address": "0x0033",
+                    "level": "service"
                 }
             ],
             "dashboard": {
@@ -1289,12 +1323,14 @@
                 },
                 {
                     "name": "cfg",
+                    "title": "Config",
                     "object": "ULSDVOBJ_EIGC_BLE_Config_v1",
                     "address": "0x0020",
                     "type": "config"
                 },
                 {
                     "name": "key",
+                    "title": "Keys",
                     "object": "ULSDVOBJ_EIGC_BLE_Key_v1",
                     "address": "0x0021"
                 }

@@ -5,6 +5,7 @@
             "name": "ULSDVOBJ_RX_Channel_Debug_v1",
             "description": "Receiver Debug data",
             "access": "read",
+            "level": "service",
             "variables": [
                 {
                     "name": "beansA",

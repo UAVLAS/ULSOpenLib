@@ -60,6 +60,27 @@ class LibrarySchemas(unittest.TestCase):
             self.assertEqual(decoded["device"]["dashboard"], dev["dashboard"],
                              dev["name"])
 
+    def test_levels_and_titles_travel_in_the_schema(self):
+        for dev in self.devices:
+            schema = uls_schema.build_device_schema(dev, self.objects)
+            _, decoded = uls_schema.unpack_blob(uls_schema.pack_schema(schema))
+            for ref, inst in zip(dev["objects"], decoded["objects"]):
+                self.assertEqual(inst.get("title"), ref.get("title"))
+                self.assertEqual(inst.get("level"), ref.get("level"))
+            for name, t in decoded["types"].items():
+                self.assertEqual(t.get("level"), self.objects[name].get("level"))
+                for var, src in zip(t["variables"],
+                                    self.objects[name]["variables"]):
+                    self.assertEqual(var.get("level"), src.get("level"))
+
+    def test_an_ordinary_variable_carries_no_level(self):
+        # Absent is the common case and must stay absent: the schema is paged
+        # over the bus and flashed into every device.
+        plain = [v for _, o in self.objects.items()
+                 for v in uls_schema.build_object_type(o)["variables"]
+                 if "level" not in v]
+        self.assertTrue(plain)
+
     def test_layout_is_packed_and_matches_type_sizes(self):
         for name, obj in self.objects.items():
             t = uls_schema.build_object_type(obj)
@@ -145,6 +166,32 @@ class Rejects(unittest.TestCase):
         bad["variables"][0]["type"] = "double"
         with self.assertRaises(ValueError):
             uls_schema.build_object_type(bad)
+
+    def test_unknown_level_is_refused(self):
+        for spot in ("object", "variable", "instance"):
+            obj = copy.deepcopy(self.OBJ)
+            dev = self.device()
+            if spot == "object":
+                obj["level"] = "expert"
+            elif spot == "variable":
+                obj["variables"][0]["level"] = "expert"
+            else:
+                dev["objects"][0]["level"] = "expert"
+            with self.assertRaises(ValueError, msg=spot):
+                uls_schema.build_device_schema(dev, {"T_v1": obj})
+
+    def test_known_levels_are_accepted(self):
+        for level in uls_schema.LEVELS:
+            obj = copy.deepcopy(self.OBJ)
+            obj["variables"][0]["level"] = level
+            obj["level"] = level
+            dev = self.device()
+            dev["objects"][0]["level"] = level
+            schema = uls_schema.build_device_schema(dev, {"T_v1": obj})
+            self.assertEqual(schema["types"]["T_v1"]["level"], level)
+            self.assertEqual(
+                schema["types"]["T_v1"]["variables"][0]["level"], level)
+            self.assertEqual(schema["objects"][0]["level"], level)
 
     def test_bad_dashboard_is_refused(self):
         dev = self.device()
