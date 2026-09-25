@@ -54,8 +54,20 @@ columns), `height` (px) and `rate` (ms, overrides the dashboard's).
 | `bar` | `series` | `labels`, `min`, `max` | one bar per series |
 | `cartesian` | `x`, `y` (single values) | `trace` (points), `limit` (± axis), `labels` (axis names) | XY position with trace |
 | `waterfall` | `source` (whole array) | `min`, `max`, `history` (rows) | spectrum over time |
+| `dptf` | `chips`, `slots` (whole arrays) | `margin`, `payload`, `expected` (whole arrays), `flags`, `active`, `inactive`, `stats`, `guard`, `ppm`, `marks`, `good`, `weak` | a pulse-position receiver's last capture |
 | `map` | `lat`, `lon` (deg, single values) | `alt`, `fix` (0/1), `hAcc`, `vAcc`, `vel` (3-element NED), `numSV`, `heading` | position on a map |
 | `compass` | `field` (3-element), `offset`, `scale` (3-element float config variables) | `normalize`, `limit` | magnetometer calibration |
+
+`dptf` shows one capture of a pulse-position packet, not a history: the chip
+magnitude envelope (`chips`), the slot each symbol was decoded from (`slots`),
+and what came out (`payload`, beside the `expected` one a device transmitting
+into its own receiver knows). The envelope is read as `guard` chips, then a
+preamble - whatever is left over, with its expected `marks` drawn - then `ppm`
+chips per symbol, of which exactly one should be bright. `margin`, one value
+per symbol, is how far the winning slot beat the runner-up: at or above `good`
+the decision was decisive, below `weak` it is an erasure. `flags` names the
+bits it has set, `stats` is a list of references shown as a readout, and while
+`active` reads zero the widget says `inactive` instead of judging the capture.
 
 `compass` writes `offset` and `scale` back to the device and saves the config.
 With `normalize: true` the field is scaled to a unit sphere (devices that

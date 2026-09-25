@@ -144,6 +144,9 @@ DASHBOARD_WIDGETS = {
     "bar": (("series",), ("labels", "min", "max")),
     "cartesian": (("x", "y"), ("trace", "limit", "labels")),
     "waterfall": (("source",), ("min", "max", "history")),
+    "dptf": (("chips", "slots"), ("margin", "payload", "expected", "flags",
+                                  "active", "inactive", "stats", "guard",
+                                  "ppm", "marks", "good", "weak")),
     "map": (("lat", "lon"), ("alt", "fix", "hAcc", "vAcc", "vel", "numSV",
                              "heading")),
     "compass": (("field", "offset", "scale"), ("normalize", "limit")),
@@ -182,6 +185,14 @@ def _scalar_ref(ref, instances, types, where):
     inst, var, index, bit = _resolve_ref(ref, instances, types, where)
     if index is None and var["count"] != 1:
         raise ValueError("%s: %s is an array; pick an element" % (where, ref))
+    return inst, var
+
+
+def _array_ref(ref, instances, types, where, key="reference"):
+    """A whole array variable: no element, no bit, more than one element."""
+    inst, var, index, bit = _resolve_ref(ref, instances, types, where)
+    if index is not None or bit is not None or var["count"] < 2:
+        raise ValueError("%s: %s must be a whole array" % (where, key))
     return inst, var
 
 
@@ -233,11 +244,9 @@ def _validate_widget(kind, widget, instances, types, where):
         _scalar_ref(widget["x"], instances, types, where)
         _scalar_ref(widget["y"], instances, types, where)
     elif kind == "waterfall":
-        _, var, index, bit = _resolve_ref(widget["source"], instances, types,
-                                          where)
-        if index is not None or bit is not None or var["count"] < 2:
-            raise ValueError("%s: waterfall source must be a whole array" %
-                             where)
+        _array_ref(widget["source"], instances, types, where, "source")
+    elif kind == "dptf":
+        _validate_dptf(widget, instances, types, where)
     elif kind == "map":
         for key in ("lat", "lon", "alt", "fix", "hAcc", "vAcc", "numSV",
                     "heading"):
@@ -256,6 +265,49 @@ def _validate_widget(kind, widget, instances, types, where):
             if var["type"] != "float" or inst.get("type") != "config":
                 raise ValueError("%s: %s must be a float config variable" %
                                  (where, key))
+
+
+def _validate_dptf(widget, instances, types, where):
+    """A pulse-position receiver's capture: envelope, symbols, payload."""
+    _, chips = _array_ref(widget["chips"], instances, types, where, "chips")
+    _, slots = _array_ref(widget["slots"], instances, types, where, "slots")
+    if "margin" in widget:
+        _, margin = _array_ref(widget["margin"], instances, types, where,
+                               "margin")
+        if margin["count"] != slots["count"]:
+            raise ValueError("%s: margin must have %d elements, as slots does"
+                             % (where, slots["count"]))
+    for key in ("payload", "expected"):
+        if key in widget:
+            _array_ref(widget[key], instances, types, where, key)
+    if "flags" in widget:
+        _, var, index, bit = _resolve_ref(widget["flags"], instances, types,
+                                          where)
+        if index is not None or bit is not None or var["count"] != 1 or \
+                not var["type"].startswith("flags_"):
+            raise ValueError("%s: flags must be a whole flags variable" % where)
+    if "active" in widget:
+        _scalar_ref(widget["active"], instances, types, where)
+    for entry in widget.get("stats", []):
+        ref = entry.get("ref") if isinstance(entry, dict) else entry
+        _resolve_ref(ref, instances, types, where)
+    guard = widget.get("guard", 0)
+    ppm = widget.get("ppm", 8)
+    for key, value in (("guard", guard), ("ppm", ppm)):
+        if not isinstance(value, int) or value < 0:
+            raise ValueError("%s: %s must be a whole number" % (where, key))
+    if ppm < 2:
+        raise ValueError("%s: ppm must be at least 2" % where)
+    payload_chips = slots["count"] * ppm
+    if chips["count"] < guard + payload_chips:
+        raise ValueError("%s: chips holds %d, too few for %d guard and %d "
+                         "symbols of %d" % (where, chips["count"], guard,
+                                            slots["count"], ppm))
+    preamble = chips["count"] - guard - payload_chips
+    for mark in widget.get("marks", []):
+        if not isinstance(mark, int) or not 0 <= mark < preamble:
+            raise ValueError("%s: mark %r is outside the %d preamble chips" %
+                             (where, mark, preamble))
 
 
 def build_device_schema(dev, objects_by_name, strip_descriptions=False):
