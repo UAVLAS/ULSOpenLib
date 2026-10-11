@@ -37,6 +37,16 @@
                     "level": "advanced"
                 },
                 {
+                    "name": "rxGain",
+                    "type": "float",
+                    "description": "Analog gain of the receiver front end. Lower it when the emitter is close enough to saturate the input stage, raise it for range. Distance and DACS calibration are corrected for this automatically, so changing it does not re-scale the reported position.",
+                    "units": "dB",
+                    "default": 40.0,
+                    "min": 0.0,
+                    "max": 42.0,
+                    "level": "advanced"
+                },
+                {
                     "name": "rxOffsetF",
                     "type": "float",
                     "description": "Receiver offset (front)",
