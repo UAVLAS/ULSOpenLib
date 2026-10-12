@@ -828,6 +828,120 @@
             }
         },
         {
+            "name": "ULSDV_PC_G3_TX",
+            "description": "UAVLAS ProCopter G3 transmitter",
+            "type": "0x0064",
+            "objects": [
+                {
+                    "name": "status",
+                    "object": "ULSDVOBJ_TX_Status_v1",
+                    "address": "0x0010"
+                },
+                {
+                    "name": "cfg",
+                    "title": "Config",
+                    "object": "ULSDVOBJ_TX_Config_v2",
+                    "address": "0x0020",
+                    "type": "config"
+                },
+                {
+                    "name": "control",
+                    "object": "ULSDVOBJ_TX_Control_v1",
+                    "address": "0x0030"
+                },
+                {
+                    "name": "blitzDebug",
+                    "title": "Blitz",
+                    "object": "ULSDVOBJ_BLITZ_Debug_v1",
+                    "address": "0x0101"
+                }
+            ],
+            "dashboard": {
+                "rate": 100,
+                "sections": [
+                    {
+                        "title": "Emitters",
+                        "widgets": [
+                            {
+                                "widget": "bar",
+                                "title": "Emitter currents",
+                                "span": 2,
+                                "series": [
+                                    "status.Iem"
+                                ]
+                            },
+                            {
+                                "widget": "realtime",
+                                "title": "Supply",
+                                "series": [
+                                    "status.Vs",
+                                    "status.Vsu",
+                                    "status.Vem"
+                                ],
+                                "labels": [
+                                    "Vs",
+                                    "Vsu",
+                                    "Vem"
+                                ]
+                            },
+                            {
+                                "widget": "realtime",
+                                "title": "Temperature",
+                                "series": [
+                                    "status.Tsys"
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "title": "IMU",
+                        "widgets": [
+                            {
+                                "widget": "realtime",
+                                "title": "Attitude",
+                                "series": [
+                                    "status.imu"
+                                ],
+                                "labels": [
+                                    "Roll",
+                                    "Pitch",
+                                    "Yaw"
+                                ]
+                            },
+                            {
+                                "widget": "realtime",
+                                "title": "Magnetometer",
+                                "series": [
+                                    "status.imum"
+                                ],
+                                "labels": [
+                                    "X",
+                                    "Y",
+                                    "Z"
+                                ]
+                            },
+                            {
+                                "widget": "compass",
+                                "title": "Compass calibration",
+                                "field": "status.imum",
+                                "offset": "cfg.magCalOffset",
+                                "scale": "cfg.magCalScale",
+                                "normalize": true
+                            },
+                            {
+                                "widget": "compass",
+                                "title": "External compass calibration",
+                                "field": "status.imum",
+                                "offset": "cfg.magCalOffsetEx",
+                                "scale": "cfg.magCalScaleEx",
+                                "normalize": true
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
             "name": "ULSDV_XC_G3_RX",
             "description": "UAVLAS XCopter G3 receiver",
             "type": "0x0022",
