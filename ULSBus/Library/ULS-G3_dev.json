@@ -418,6 +418,14 @@
                                     {
                                         "ref": "emsg3Debug.samples",
                                         "label": "Samples"
+                                    },
+                                    {
+                                        "ref": "emsg3Debug.adcOverruns",
+                                        "label": "ADC overruns"
+                                    },
+                                    {
+                                        "ref": "emsg3Debug.adcHalfMaxUs",
+                                        "label": "ADC half max us"
                                     }
                                 ],
                                 "guard": 8,
@@ -781,6 +789,14 @@
                                     {
                                         "ref": "emsg3Debug.samples",
                                         "label": "Samples"
+                                    },
+                                    {
+                                        "ref": "emsg3Debug.adcOverruns",
+                                        "label": "ADC overruns"
+                                    },
+                                    {
+                                        "ref": "emsg3Debug.adcHalfMaxUs",
+                                        "label": "ADC half max us"
                                     }
                                 ],
                                 "guard": 8,

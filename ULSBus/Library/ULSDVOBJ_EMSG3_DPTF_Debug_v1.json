@@ -106,6 +106,16 @@
                     "type": "uint16",
                     "lenght": 186,
                     "description": "Chip magnitude envelope of one stage: 8 guard, 32 sync (all lit), 18 ruler (6 marks), 128 payload"
+                },
+                {
+                    "name": "adcOverruns",
+                    "type": "uint32",
+                    "description": "ADC half-buffers lost because processing fell a whole half behind the DMA (non-zero means dropped samples)"
+                },
+                {
+                    "name": "adcHalfMaxUs",
+                    "type": "uint32",
+                    "description": "Longest time spent processing one ADC half-buffer, in microseconds; must stay under the half-buffer length"
                 }
             ]
         }
