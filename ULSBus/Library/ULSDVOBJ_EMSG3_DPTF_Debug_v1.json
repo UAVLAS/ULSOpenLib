@@ -104,8 +104,8 @@
                 {
                     "name": "chipMag",
                     "type": "uint16",
-                    "lenght": 154,
-                    "description": "Chip magnitude envelope of one stage: 8 guard, 18 preamble (6 ruler marks), 128 payload"
+                    "lenght": 186,
+                    "description": "Chip magnitude envelope of one stage: 8 guard, 32 sync (all lit), 18 ruler (6 marks), 128 payload"
                 }
             ]
         }
