@@ -1,0 +1,67 @@
+{
+    "BookVersion": "1.0",
+    "Objects": [
+        {
+            "name": "ULSDVOBJ_EMSG3_AdcCapture_Ctrl_v1",
+            "description": "EMSP G3 raw ADC capture request. Written only by the tool; the device reports in AdcCapture_Status",
+            "access": "read-write",
+            "level": "developer",
+            "variables": [
+                {
+                    "name": "armId",
+                    "type": "uint32",
+                    "description": "Write a new non-zero value to (re)arm with the settings below; 0 aborts. Status armId echoes it once taken",
+                    "default": 0
+                },
+                {
+                    "name": "trigger",
+                    "type": "opt_uint8",
+                    "description": "Event that freezes the capture",
+                    "default": 2,
+                    "opts": [
+                        "Immediate",
+                        "AnyPacket",
+                        "CrcFail",
+                        "CrcOk",
+                        "Missed"
+                    ]
+                },
+                {
+                    "name": "chMode",
+                    "type": "opt_uint8",
+                    "description": "Average: the 4-receiver mean the DPTF decoder sees. Single: one raw receiver. All: the 4 receivers interleaved",
+                    "default": 0,
+                    "opts": [
+                        "Average",
+                        "Single",
+                        "All"
+                    ]
+                },
+                {
+                    "name": "chSel",
+                    "type": "uint8",
+                    "description": "Receiver 0..3 for Single mode",
+                    "default": 0
+                },
+                {
+                    "name": "preTrigPct",
+                    "type": "uint8",
+                    "description": "Share of the buffer kept from before the trigger, percent",
+                    "default": 50
+                },
+                {
+                    "name": "missMs",
+                    "type": "uint16",
+                    "description": "Missed trigger: time without a good packet that counts as a miss",
+                    "units": "ms",
+                    "default": 100
+                },
+                {
+                    "name": "page",
+                    "type": "uint16",
+                    "description": "Page of the frozen capture to place in AdcCapture_Page"
+                }
+            ]
+        }
+    ]
+}

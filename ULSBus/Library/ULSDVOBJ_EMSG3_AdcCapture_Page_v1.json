@@ -1,0 +1,34 @@
+{
+    "BookVersion": "1.0",
+    "Objects": [
+        {
+            "name": "ULSDVOBJ_EMSG3_AdcCapture_Page_v1",
+            "description": "One page of a frozen EMSP G3 raw ADC capture, chosen by AdcCapture_Ctrl page",
+            "access": "read",
+            "level": "developer",
+            "variables": [
+                {
+                    "name": "seq",
+                    "type": "uint32",
+                    "description": "Capture this page belongs to. Acks carry no sequence number, so check it and page before using the data"
+                },
+                {
+                    "name": "page",
+                    "type": "uint16",
+                    "description": "Page index held in data"
+                },
+                {
+                    "name": "count",
+                    "type": "uint16",
+                    "description": "Valid words in data; the last page is short"
+                },
+                {
+                    "name": "data",
+                    "type": "int32",
+                    "lenght": 320,
+                    "description": "Signed 24-bit samples, oldest first; channels interleaved in All mode"
+                }
+            ]
+        }
+    ]
+}

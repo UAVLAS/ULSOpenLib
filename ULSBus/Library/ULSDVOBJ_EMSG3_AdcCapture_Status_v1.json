@@ -1,0 +1,135 @@
+{
+    "BookVersion": "1.0",
+    "Objects": [
+        {
+            "name": "ULSDVOBJ_EMSG3_AdcCapture_Status_v1",
+            "description": "EMSP G3 raw ADC capture state, and the DPTF receiver's verdict at the trigger",
+            "access": "read",
+            "level": "developer",
+            "variables": [
+                {
+                    "name": "state",
+                    "type": "opt_uint8",
+                    "description": "Capture state",
+                    "opts": [
+                        "Idle",
+                        "Armed",
+                        "Triggered",
+                        "Ready"
+                    ]
+                },
+                {
+                    "name": "trigger",
+                    "type": "uint8",
+                    "description": "Trigger the capture was armed with (Ctrl trigger option index)"
+                },
+                {
+                    "name": "chMode",
+                    "type": "uint8",
+                    "description": "Channel mode the capture was armed with (Ctrl chMode option index)"
+                },
+                {
+                    "name": "channels",
+                    "type": "uint8",
+                    "description": "Interleaved channels per sample: 1, or 4 in All mode"
+                },
+                {
+                    "name": "flags",
+                    "type": "flags_uint8",
+                    "description": "packet_ok,packet_bad,saturated",
+                    "flags": [
+                        "packet_ok",
+                        "packet_bad",
+                        "saturated"
+                    ]
+                },
+                {
+                    "name": "candidate",
+                    "type": "uint8",
+                    "description": "Ranked candidate that decoded the trigger packet (0 = best peak)"
+                },
+                {
+                    "name": "pageCount",
+                    "type": "uint16",
+                    "description": "Pages in the frozen capture"
+                },
+                {
+                    "name": "armId",
+                    "type": "uint32",
+                    "description": "Ctrl armId this capture was armed by"
+                },
+                {
+                    "name": "seq",
+                    "type": "uint32",
+                    "description": "Capture number, new for every arm"
+                },
+                {
+                    "name": "samples",
+                    "type": "uint32",
+                    "description": "Samples per channel in the frozen capture"
+                },
+                {
+                    "name": "fsHz",
+                    "type": "uint32",
+                    "description": "ADC sample rate",
+                    "units": "Hz"
+                },
+                {
+                    "name": "trigPos",
+                    "type": "uint32",
+                    "description": "Sample index of the trigger in the capture"
+                },
+                {
+                    "name": "peakPos",
+                    "type": "int32",
+                    "description": "Sample index of the DPTF guard start the receiver resolved to; negative if before the capture"
+                },
+                {
+                    "name": "trigTimeMs",
+                    "type": "uint32",
+                    "description": "Device uptime at the trigger",
+                    "units": "ms"
+                },
+                {
+                    "name": "metricQ8",
+                    "type": "uint32",
+                    "description": "DPTF detection metric at the trigger, 1/256ths"
+                },
+                {
+                    "name": "marginQ8",
+                    "type": "uint32",
+                    "description": "Worst per-symbol slot ratio of the last decoded packet, 1/256ths"
+                },
+                {
+                    "name": "noiseFloor",
+                    "type": "uint32",
+                    "description": "DPTF chip magnitude noise floor at the trigger"
+                },
+                {
+                    "name": "payload",
+                    "type": "uint8",
+                    "lenght": 6,
+                    "description": "Decoded payload, when packet_ok"
+                },
+                {
+                    "name": "chMin",
+                    "type": "int32",
+                    "lenght": 4,
+                    "description": "Smallest raw sample per receiver over the capture"
+                },
+                {
+                    "name": "chMax",
+                    "type": "int32",
+                    "lenght": 4,
+                    "description": "Largest raw sample per receiver over the capture"
+                },
+                {
+                    "name": "satCount",
+                    "type": "uint32",
+                    "lenght": 4,
+                    "description": "Samples per receiver at full scale over the capture"
+                }
+            ]
+        }
+    ]
+}
