@@ -16,7 +16,7 @@
                 {
                     "name": "ctrl",
                     "type": "flags_uint32",
-                    "description": "Module function enable bits. Default 15 = telemetry_enable | service_adv_enable | require_bonding | coded_phy_enable. require_bonding is on by default deliberately: the service link can write config and push firmware, so an unbonded peer must not have it",
+                    "description": "Module function enable bits. Default 15 = telemetry_enable | service_adv_enable | require_bonding | coded_phy_enable. require_bonding is not what guards the service link: servicePin is - a non-zero PIN requires an authenticated, bonded link",
                     "default": 15,
                     "flags": [
                         "telemetry_enable",
@@ -112,6 +112,14 @@
                         0,
                         0
                     ]
+                },
+                {
+                    "name": "servicePin",
+                    "type": "uint32",
+                    "description": "Six-digit PIN for the BLE service link. Zero means no PIN: anyone in range may connect, as before. Any other value turns on passkey pairing - the host types this number in its own Bluetooth pairing dialog, the link must be paired (LE Secure Connections, authenticated) before the ULS bus is carried, and a connection that has not paired within 15 s is dropped. Takes effect when the config is saved, and changing it forgets every bonded host except the one making the change over BLE, so those hosts must remove the module from their Bluetooth settings before pairing again. A forgotten PIN is recovered over the wire (USB or the STM32 link), which this setting never locks",
+                    "default": 0,
+                    "min": 0,
+                    "max": 999999
                 }
             ]
         }

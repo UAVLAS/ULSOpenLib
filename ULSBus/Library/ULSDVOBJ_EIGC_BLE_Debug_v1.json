@@ -24,7 +24,8 @@
                         "service_authenticated",
                         "coded_phy_active",
                         "fleet_key_present",
-                        "firmware_mismatch"
+                        "firmware_mismatch",
+                        "service_pin_set"
                     ]
                 },
                 {
