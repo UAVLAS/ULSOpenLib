@@ -1,0 +1,80 @@
+{
+    "BookVersion": "1.0",
+    "Objects": [
+        {
+            "name": "ULSDVOBJ_SYS_LogPage_v1",
+            "description": "One page of the F-RAM event log, newest first, chosen by SYS_LogCtrl page",
+            "access": "read",
+            "level": "service",
+            "variables": [
+                {
+                    "name": "cmdEcho",
+                    "type": "uint32",
+                    "description": "Last SYS_LogCtrl cmdId carried out"
+                },
+                {
+                    "name": "page",
+                    "type": "uint16",
+                    "description": "Page held below. Acks carry no sequence number, so check it before using the records"
+                },
+                {
+                    "name": "count",
+                    "type": "uint16",
+                    "description": "Valid records on this page; the last page is short"
+                },
+                {
+                    "name": "total",
+                    "type": "uint16",
+                    "description": "Records in the log"
+                },
+                {
+                    "name": "ready",
+                    "type": "uint8",
+                    "description": "1 when the F-RAM is present and the log is kept"
+                },
+                {
+                    "name": "reserved",
+                    "type": "uint8",
+                    "description": "Padding",
+                    "level": "developer"
+                },
+                {
+                    "name": "nextSeq",
+                    "type": "uint32",
+                    "description": "Sequence number the next record will get"
+                },
+                {
+                    "name": "seq",
+                    "type": "uint32",
+                    "lenght": 32,
+                    "description": "Record sequence number; 0 code with a seq marks a record lost to a torn write"
+                },
+                {
+                    "name": "uptime",
+                    "type": "uint32",
+                    "lenght": 32,
+                    "units": "ms",
+                    "description": "Time since that boot"
+                },
+                {
+                    "name": "boot",
+                    "type": "uint16",
+                    "lenght": 32,
+                    "description": "Boot number (low 16 bits of bootCount)"
+                },
+                {
+                    "name": "code",
+                    "type": "uint8",
+                    "lenght": 32,
+                    "description": "Event code: 1 Boot, 2 CfgLoaded, 3 CfgSaved, 4 CfgSaveFail, 5 CfgMigrated, 6 Fault, 7 FramError, 8 LogCleared, 9 CountersCleared, 10 LogOverflow, 11 Formatted, 128+ device specific"
+                },
+                {
+                    "name": "arg",
+                    "type": "uint32",
+                    "lenght": 32,
+                    "description": "Event argument"
+                }
+            ]
+        }
+    ]
+}

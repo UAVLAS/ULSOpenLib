@@ -1,0 +1,45 @@
+{
+    "BookVersion": "1.0",
+    "Objects": [
+        {
+            "name": "ULSDVOBJ_SYS_LogCtrl_v1",
+            "description": "Event log request: which page to place in SYS_LogPage, and maintenance commands. Written only by the tool",
+            "access": "read-write",
+            "level": "service",
+            "variables": [
+                {
+                    "name": "cmdId",
+                    "type": "uint32",
+                    "description": "Write a new value to run op once; SYS_LogPage cmdEcho echoes it when done",
+                    "default": 0
+                },
+                {
+                    "name": "op",
+                    "type": "opt_uint8",
+                    "description": "Command run when cmdId changes",
+                    "default": 0,
+                    "opts": [
+                        "None",
+                        "ClearLog",
+                        "ClearCounters",
+                        "ClearCrash",
+                        "TestFault"
+                    ]
+                },
+                {
+                    "name": "page",
+                    "type": "uint16",
+                    "description": "Page of the log to place in SYS_LogPage, 0 = newest",
+                    "default": 0
+                },
+                {
+                    "name": "key",
+                    "type": "uint32",
+                    "description": "Must be 0xFA175AFE for TestFault, which crashes the device on purpose",
+                    "default": 0,
+                    "level": "developer"
+                }
+            ]
+        }
+    ]
+}

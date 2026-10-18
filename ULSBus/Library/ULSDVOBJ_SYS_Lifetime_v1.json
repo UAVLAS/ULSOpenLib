@@ -1,0 +1,93 @@
+{
+    "BookVersion": "1.0",
+    "Objects": [
+        {
+            "name": "ULSDVOBJ_SYS_Lifetime_v1",
+            "description": "Lifetime counters kept in F-RAM",
+            "access": "read",
+            "level": "service",
+            "variables": [
+                {
+                    "name": "bootCount",
+                    "type": "uint32",
+                    "description": "Boots since the counters were last cleared"
+                },
+                {
+                    "name": "runSeconds",
+                    "type": "uint32",
+                    "units": "s",
+                    "description": "Powered time, banked once a minute"
+                },
+                {
+                    "name": "resetCount",
+                    "type": "uint32",
+                    "lenght": 8,
+                    "description": "Resets by cause: Unknown, Power, Pin, IWDG, WWDG, Software, LowPower, Other"
+                },
+                {
+                    "name": "faultCount",
+                    "type": "uint32",
+                    "description": "Sessions that ended in a fault handler"
+                },
+                {
+                    "name": "cfgSaveFails",
+                    "type": "uint32",
+                    "description": "Settings saves that did not read back"
+                },
+                {
+                    "name": "lastReset",
+                    "type": "opt_uint8",
+                    "description": "Cause of the current boot",
+                    "opts": [
+                        "Unknown",
+                        "Power",
+                        "Pin",
+                        "IWDG",
+                        "WWDG",
+                        "Software",
+                        "LowPower",
+                        "Other"
+                    ]
+                },
+                {
+                    "name": "cfgSource",
+                    "type": "opt_uint8",
+                    "description": "Where this boot's settings came from (Config.h CFG_LOAD_*)",
+                    "opts": [
+                        "Flash",
+                        "DefaultsSchema",
+                        "DefaultsCRC",
+                        "FRAM",
+                        "Migrated"
+                    ]
+                },
+                {
+                    "name": "framState",
+                    "type": "opt_uint8",
+                    "description": "F-RAM state",
+                    "opts": [
+                        "Absent",
+                        "Ok"
+                    ]
+                },
+                {
+                    "name": "reserved",
+                    "type": "uint8",
+                    "description": "Padding",
+                    "level": "developer"
+                },
+                {
+                    "name": "framErrors",
+                    "type": "uint32",
+                    "description": "F-RAM driver errors this boot"
+                },
+                {
+                    "name": "resetFlags",
+                    "type": "uint32",
+                    "description": "Raw RCC reset flags of this boot (RSR on H7, CSR on G0)",
+                    "level": "developer"
+                }
+            ]
+        }
+    ]
+}

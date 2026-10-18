@@ -596,6 +596,30 @@
                     "address": "0x0033"
                 },
                 {
+                    "name": "logCtrl",
+                    "title": "Log control",
+                    "object": "ULSDVOBJ_SYS_LogCtrl_v1",
+                    "address": "0x0040"
+                },
+                {
+                    "name": "logPage",
+                    "title": "Log",
+                    "object": "ULSDVOBJ_SYS_LogPage_v1",
+                    "address": "0x0041"
+                },
+                {
+                    "name": "lifetime",
+                    "title": "Lifetime",
+                    "object": "ULSDVOBJ_SYS_Lifetime_v1",
+                    "address": "0x0042"
+                },
+                {
+                    "name": "crash",
+                    "title": "Crash",
+                    "object": "ULSDVOBJ_SYS_Crash_v1",
+                    "address": "0x0043"
+                },
+                {
                     "name": "fftbuf",
                     "title": "FFT",
                     "object": "ULSQR1R2FFT",
@@ -948,6 +972,30 @@
                     "address": "0x0030"
                 },
                 {
+                    "name": "logCtrl",
+                    "title": "Log control",
+                    "object": "ULSDVOBJ_SYS_LogCtrl_v1",
+                    "address": "0x0040"
+                },
+                {
+                    "name": "logPage",
+                    "title": "Log",
+                    "object": "ULSDVOBJ_SYS_LogPage_v1",
+                    "address": "0x0041"
+                },
+                {
+                    "name": "lifetime",
+                    "title": "Lifetime",
+                    "object": "ULSDVOBJ_SYS_Lifetime_v1",
+                    "address": "0x0042"
+                },
+                {
+                    "name": "crash",
+                    "title": "Crash",
+                    "object": "ULSDVOBJ_SYS_Crash_v1",
+                    "address": "0x0043"
+                },
+                {
                     "name": "blitzDebug",
                     "title": "Blitz",
                     "object": "ULSDVOBJ_BLITZ_Debug_v1",
@@ -1251,6 +1299,30 @@
                     "address": "0x0030"
                 },
                 {
+                    "name": "logCtrl",
+                    "title": "Log control",
+                    "object": "ULSDVOBJ_SYS_LogCtrl_v1",
+                    "address": "0x0040"
+                },
+                {
+                    "name": "logPage",
+                    "title": "Log",
+                    "object": "ULSDVOBJ_SYS_LogPage_v1",
+                    "address": "0x0041"
+                },
+                {
+                    "name": "lifetime",
+                    "title": "Lifetime",
+                    "object": "ULSDVOBJ_SYS_Lifetime_v1",
+                    "address": "0x0042"
+                },
+                {
+                    "name": "crash",
+                    "title": "Crash",
+                    "object": "ULSDVOBJ_SYS_Crash_v1",
+                    "address": "0x0043"
+                },
+                {
                     "name": "blitzDebug",
                     "title": "Blitz",
                     "object": "ULSDVOBJ_BLITZ_Debug_v1",
@@ -1383,6 +1455,30 @@
                     "object": "ULSDVOBJ_EIGC_BLE_Debug_v1",
                     "address": "0x0033",
                     "level": "service"
+                },
+                {
+                    "name": "logCtrl",
+                    "title": "Log control",
+                    "object": "ULSDVOBJ_SYS_LogCtrl_v1",
+                    "address": "0x0040"
+                },
+                {
+                    "name": "logPage",
+                    "title": "Log",
+                    "object": "ULSDVOBJ_SYS_LogPage_v1",
+                    "address": "0x0041"
+                },
+                {
+                    "name": "lifetime",
+                    "title": "Lifetime",
+                    "object": "ULSDVOBJ_SYS_Lifetime_v1",
+                    "address": "0x0042"
+                },
+                {
+                    "name": "crash",
+                    "title": "Crash",
+                    "object": "ULSDVOBJ_SYS_Crash_v1",
+                    "address": "0x0043"
                 }
             ],
             "dashboard": {

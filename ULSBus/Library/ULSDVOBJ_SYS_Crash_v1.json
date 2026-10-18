@@ -1,0 +1,98 @@
+{
+    "BookVersion": "1.0",
+    "Objects": [
+        {
+            "name": "ULSDVOBJ_SYS_Crash_v1",
+            "description": "Last fault handler snapshot kept in F-RAM",
+            "access": "read",
+            "level": "service",
+            "variables": [
+                {
+                    "name": "valid",
+                    "type": "uint8",
+                    "description": "1 when a crash is recorded"
+                },
+                {
+                    "name": "type",
+                    "type": "opt_uint8",
+                    "description": "Handler that took the snapshot",
+                    "opts": [
+                        "HardFault",
+                        "MemManage",
+                        "BusFault",
+                        "UsageFault",
+                        "NMI"
+                    ]
+                },
+                {
+                    "name": "reserved",
+                    "type": "uint16",
+                    "description": "Padding",
+                    "level": "developer"
+                },
+                {
+                    "name": "boot",
+                    "type": "uint32",
+                    "description": "Boot number of the session that crashed"
+                },
+                {
+                    "name": "uptime",
+                    "type": "uint32",
+                    "units": "ms",
+                    "description": "Time since that boot"
+                },
+                {
+                    "name": "pc",
+                    "type": "uint32",
+                    "description": "Faulting instruction"
+                },
+                {
+                    "name": "lr",
+                    "type": "uint32",
+                    "description": "Return address at the fault"
+                },
+                {
+                    "name": "psr",
+                    "type": "uint32",
+                    "description": "xPSR at the fault"
+                },
+                {
+                    "name": "sp",
+                    "type": "uint32",
+                    "description": "Stack pointer before the exception frame"
+                },
+                {
+                    "name": "regs",
+                    "type": "uint32",
+                    "lenght": 5,
+                    "description": "r0, r1, r2, r3, r12"
+                },
+                {
+                    "name": "excReturn",
+                    "type": "uint32",
+                    "description": "EXC_RETURN"
+                },
+                {
+                    "name": "cfsr",
+                    "type": "uint32",
+                    "description": "Configurable fault status (0 on Cortex-M0+)"
+                },
+                {
+                    "name": "hfsr",
+                    "type": "uint32",
+                    "description": "HardFault status (0 on Cortex-M0+)"
+                },
+                {
+                    "name": "mmfar",
+                    "type": "uint32",
+                    "description": "MemManage address (0 on Cortex-M0+)"
+                },
+                {
+                    "name": "bfar",
+                    "type": "uint32",
+                    "description": "BusFault address (0 on Cortex-M0+)"
+                }
+            ]
+        }
+    ]
+}
