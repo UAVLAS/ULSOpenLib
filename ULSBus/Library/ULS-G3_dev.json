@@ -73,6 +73,29 @@
                                 "trace": 300
                             },
                             {
+                                "widget": "cartesian",
+                                "title": "Position in transmitter frame",
+                                "x": "status.pos[0]",
+                                "y": "status.pos[1]",
+                                "labels": [
+                                    "X",
+                                    "Y"
+                                ],
+                                "trace": 300
+                            },
+                            {
+                                "widget": "realtime",
+                                "title": "Position in transmitter frame XYZ",
+                                "series": [
+                                    "status.pos"
+                                ],
+                                "labels": [
+                                    "X",
+                                    "Y",
+                                    "Z"
+                                ]
+                            },
+                            {
                                 "widget": "realtime",
                                 "title": "Relative position NED",
                                 "series": [
@@ -277,6 +300,29 @@
                                     "North"
                                 ],
                                 "trace": 300
+                            },
+                            {
+                                "widget": "cartesian",
+                                "title": "Position in transmitter frame",
+                                "x": "status.pos[0]",
+                                "y": "status.pos[1]",
+                                "labels": [
+                                    "X",
+                                    "Y"
+                                ],
+                                "trace": 300
+                            },
+                            {
+                                "widget": "realtime",
+                                "title": "Position in transmitter frame XYZ",
+                                "series": [
+                                    "status.pos"
+                                ],
+                                "labels": [
+                                    "X",
+                                    "Y",
+                                    "Z"
+                                ]
                             },
                             {
                                 "widget": "realtime",
@@ -672,6 +718,29 @@
                                     "North"
                                 ],
                                 "trace": 300
+                            },
+                            {
+                                "widget": "cartesian",
+                                "title": "Position in transmitter frame",
+                                "x": "status.pos[0]",
+                                "y": "status.pos[1]",
+                                "labels": [
+                                    "X",
+                                    "Y"
+                                ],
+                                "trace": 300
+                            },
+                            {
+                                "widget": "realtime",
+                                "title": "Position in transmitter frame XYZ",
+                                "series": [
+                                    "status.pos"
+                                ],
+                                "labels": [
+                                    "X",
+                                    "Y",
+                                    "Z"
+                                ]
                             },
                             {
                                 "widget": "realtime",
@@ -1138,6 +1207,29 @@
                                     "North"
                                 ],
                                 "trace": 300
+                            },
+                            {
+                                "widget": "cartesian",
+                                "title": "Position in transmitter frame",
+                                "x": "status.pos[0]",
+                                "y": "status.pos[1]",
+                                "labels": [
+                                    "X",
+                                    "Y"
+                                ],
+                                "trace": 300
+                            },
+                            {
+                                "widget": "realtime",
+                                "title": "Position in transmitter frame XYZ",
+                                "series": [
+                                    "status.pos"
+                                ],
+                                "labels": [
+                                    "X",
+                                    "Y",
+                                    "Z"
+                                ]
                             },
                             {
                                 "widget": "realtime",
