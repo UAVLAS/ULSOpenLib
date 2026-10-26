@@ -217,6 +217,16 @@ class Rejects(unittest.TestCase):
              "scale": "cfg.b"},
             {"widget": "compass", "field": "cfg.b", "offset": "cfg.b*2",
              "scale": "cfg.b"},
+            {"widget": "receiver"},
+            {"widget": "receiver", "gauges": [{"ref": "cfg.b"}]},
+            {"widget": "receiver", "gauges": [{"ref": "cfg.a", "max": 0}]},
+            {"widget": "receiver", "gauges": [{"ref": "cfg.a", "colour": 1}]},
+            {"widget": "receiver", "gauges": [{"ref": "cfg.a",
+                                               "count": "cfg.b"}]},
+            {"widget": "receiver", "channels": ["cfg.a"]},
+            {"widget": "receiver", "channels": ["st.b"], "bins": 4},
+            {"widget": "receiver", "dacs": ["cfg.a"], "dacsBalance": 0.5},
+            {"widget": "receiver", "yaw": ["cfg.missing"]},
         ]
         for widget in bad:
             dev["dashboard"] = {"sections": [{"widgets": [widget]}]}
@@ -228,6 +238,13 @@ class Rejects(unittest.TestCase):
             {"widget": "waterfall", "source": "st.b"},
             {"widget": "compass", "field": "st.b", "offset": "cfg.b",
              "scale": "cfg.b"},
+            {"widget": "receiver",
+             "gauges": [{"ref": "cfg.a*0.5", "max": 2, "weak": 0.5,
+                         "good": 1, "count": ["cfg.b[0]", "cfg.b[1]"]}],
+             "dacs": ["cfg.b[0]", "cfg.b[1]", "cfg.b[2]", "cfg.a"],
+             "dacsLabels": ["1", "2", "3", "4"], "dacsBalance": 0.5,
+             "yaw": ["cfg.a", "st.b[0]"], "yawLabels": ["A", "B"],
+             "channels": ["st.b"], "bins": 2},
         ]}]}
         schema = uls_schema.build_device_schema(dev, {"T_v1": self.OBJ})
         self.assertEqual(schema["device"]["dashboard"], dev["dashboard"])

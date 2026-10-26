@@ -705,6 +705,103 @@
             "dashboard": {
                 "rate": 100,
                 "sections": [
+                     {
+                         "title": "Receiver",
+                         "widgets": [
+                             {
+                                 "widget": "receiver",
+                                 "title": "Receiver",
+                                 "span": 2,
+                                 "gauges": [
+                                     {
+                                         "ref": "emsg3Debug.metricQ8*0.00390625",
+                                         "label": "Sync",
+                                         "max": 2,
+                                         "weak": 0.45,
+                                         "good": 0.6,
+                                         "count": [
+                                             "emsg3Debug.packetsOk",
+                                             "emsg3Debug.packetsBad"
+                                         ]
+                                     },
+                                     {
+                                         "ref": "emsg3Debug.marginQ8*0.00390625",
+                                         "label": "Packet",
+                                         "max": 8,
+                                         "weak": 2,
+                                         "good": 4,
+                                         "count": "emsg3Debug.packetsOk"
+                                     }
+                                 ],
+                                 "dacs": [
+                                     "status.dacsPower[0]",
+                                     "status.dacsPower[1]",
+                                     "status.dacsPower[2]",
+                                     "status.dacsPower[3]"
+                                 ],
+                                 "dacsLabels": [
+                                     "1",
+                                     "2",
+                                     "3",
+                                     "4"
+                                 ],
+                                 "dacsBalance": 0.5,
+                                 "yaw": [
+                                     "status.correctedYaw",
+                                     "status.mrxYaw",
+                                     "status.dacsYaw"
+                                 ],
+                                 "yawLabels": [
+                                     "Corrected",
+                                     "MRX",
+                                     "DACS"
+                                 ],
+                                 "channels": [
+                                     "ch1Debug.beansA",
+                                     "ch2Debug.beansA",
+                                     "ch3Debug.beansA",
+                                     "ch4Debug.beansA"
+                                 ],
+                                 "channelLabels": [
+                                     "Channel 1",
+                                     "Channel 2",
+                                     "Channel 3",
+                                     "Channel 4"
+                                 ],
+                                 "bins": 32,
+                                 "stats": [
+                                     {
+                                         "ref": "status.emsPackets",
+                                         "label": "Packets"
+                                     },
+                                     {
+                                         "ref": "emsg3Debug.packetsBad",
+                                         "label": "CRC bad"
+                                     },
+                                     {
+                                         "ref": "status.distance",
+                                         "label": "Distance"
+                                     },
+                                     {
+                                         "ref": "status.dacsDistance[0]",
+                                         "label": "DACS distance"
+                                     },
+                                     {
+                                         "ref": "status.dacsYaw",
+                                         "label": "DACS yaw"
+                                     },
+                                     {
+                                         "ref": "status.snr[0]",
+                                         "label": "SNR"
+                                     },
+                                     {
+                                         "ref": "status.saturation[2]",
+                                         "label": "DPTF peak"
+                                     }
+                                 ]
+                             }
+                         ]
+                     },
                     {
                         "title": "Position",
                         "widgets": [
@@ -1079,10 +1176,208 @@
                         "widgets": [
                             {
                                 "widget": "bar",
-                                "title": "Emitter currents",
+                                "title": "LED current by section (median)",
                                 "span": 2,
+                                "min": 0,
                                 "series": [
-                                    "status.Iem"
+                                    {
+                                        "ref": "status.Iem[0]",
+                                        "label": "DPTF COM1",
+                                        "color": "blue"
+                                    },
+                                    {
+                                        "ref": "status.Iem[1]",
+                                        "label": "DPTF COM2",
+                                        "color": "orange"
+                                    },
+                                    {
+                                        "ref": "status.Iem[2]",
+                                        "label": "DACS COM1",
+                                        "color": "blue"
+                                    },
+                                    {
+                                        "ref": "status.Iem[3]",
+                                        "label": "DACS COM2",
+                                        "color": "orange"
+                                    },
+                                    {
+                                        "ref": "status.Iem[4]",
+                                        "label": "ADS COM1",
+                                        "color": "blue"
+                                    },
+                                    {
+                                        "ref": "status.Iem[5]",
+                                        "label": "ADS COM2",
+                                        "color": "orange"
+                                    },
+                                    {
+                                        "ref": "status.Iem[8]",
+                                        "label": "Set",
+                                        "color": "grey"
+                                    }
+                                ]
+                            },
+                            {
+                                "widget": "bar",
+                                "title": "Spread across slots (min / max)",
+                                "span": 2,
+                                "min": 0,
+                                "series": [
+                                    {
+                                        "ref": "status.Iem[9]",
+                                        "label": "DPTF COM1 min",
+                                        "color": "blue"
+                                    },
+                                    {
+                                        "ref": "status.Iem[15]",
+                                        "label": "DPTF COM1 max",
+                                        "color": "blue"
+                                    },
+                                    {
+                                        "ref": "status.Iem[10]",
+                                        "label": "DPTF COM2 min",
+                                        "color": "orange"
+                                    },
+                                    {
+                                        "ref": "status.Iem[16]",
+                                        "label": "DPTF COM2 max",
+                                        "color": "orange"
+                                    },
+                                    {
+                                        "ref": "status.Iem[11]",
+                                        "label": "DACS COM1 min",
+                                        "color": "blue"
+                                    },
+                                    {
+                                        "ref": "status.Iem[17]",
+                                        "label": "DACS COM1 max",
+                                        "color": "blue"
+                                    },
+                                    {
+                                        "ref": "status.Iem[12]",
+                                        "label": "DACS COM2 min",
+                                        "color": "orange"
+                                    },
+                                    {
+                                        "ref": "status.Iem[18]",
+                                        "label": "DACS COM2 max",
+                                        "color": "orange"
+                                    },
+                                    {
+                                        "ref": "status.Iem[13]",
+                                        "label": "ADS COM1 min",
+                                        "color": "blue"
+                                    },
+                                    {
+                                        "ref": "status.Iem[19]",
+                                        "label": "ADS COM1 max",
+                                        "color": "blue"
+                                    },
+                                    {
+                                        "ref": "status.Iem[14]",
+                                        "label": "ADS COM2 min",
+                                        "color": "orange"
+                                    },
+                                    {
+                                        "ref": "status.Iem[20]",
+                                        "label": "ADS COM2 max",
+                                        "color": "orange"
+                                    }
+                                ]
+                            },
+                            {
+                                "widget": "realtime",
+                                "title": "LED current",
+                                "span": 2,
+                                "min": 0,
+                                "series": [
+                                    {
+                                        "ref": "status.Iem[0]",
+                                        "label": "DPTF COM1",
+                                        "color": "blue"
+                                    },
+                                    {
+                                        "ref": "status.Iem[1]",
+                                        "label": "DPTF COM2",
+                                        "color": "orange"
+                                    },
+                                    {
+                                        "ref": "status.Iem[2]",
+                                        "label": "DACS COM1",
+                                        "color": "blue"
+                                    },
+                                    {
+                                        "ref": "status.Iem[3]",
+                                        "label": "DACS COM2",
+                                        "color": "orange"
+                                    },
+                                    {
+                                        "ref": "status.Iem[4]",
+                                        "label": "ADS COM1",
+                                        "color": "blue"
+                                    },
+                                    {
+                                        "ref": "status.Iem[5]",
+                                        "label": "ADS COM2",
+                                        "color": "orange"
+                                    },
+                                    {
+                                        "ref": "status.Iem[8]",
+                                        "label": "Set",
+                                        "color": "grey"
+                                    }
+                                ]
+                            },
+                            {
+                                "widget": "realtime",
+                                "title": "Hall sensor zero",
+                                "series": [
+                                    {
+                                        "ref": "status.Iem[6]",
+                                        "label": "COM1",
+                                        "color": "blue"
+                                    },
+                                    {
+                                        "ref": "status.Iem[7]",
+                                        "label": "COM2",
+                                        "color": "orange"
+                                    }
+                                ]
+                            },
+                            {
+                                "widget": "bar",
+                                "title": "Slots measured per burst",
+                                "series": [
+                                    {
+                                        "ref": "status.Iem[21]",
+                                        "label": "DPTF COM1",
+                                        "color": "blue"
+                                    },
+                                    {
+                                        "ref": "status.Iem[22]",
+                                        "label": "DPTF COM2",
+                                        "color": "orange"
+                                    },
+                                    {
+                                        "ref": "status.Iem[23]",
+                                        "label": "DACS COM1",
+                                        "color": "blue"
+                                    },
+                                    {
+                                        "ref": "status.Iem[24]",
+                                        "label": "DACS COM2",
+                                        "color": "orange"
+                                    },
+                                    {
+                                        "ref": "status.Iem[25]",
+                                        "label": "ADS COM1",
+                                        "color": "blue"
+                                    },
+                                    {
+                                        "ref": "status.Iem[26]",
+                                        "label": "ADS COM2",
+                                        "color": "orange"
+                                    }
                                 ]
                             },
                             {

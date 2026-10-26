@@ -80,7 +80,7 @@ def _strip_descriptions(item):
 # The values are ordered and each tier includes the ones before it. A tool that
 # meets a level it does not know must treat it as the most hidden one, so a
 # tier added here can never expose anything in tools already in the field.
-LEVELS = ("advanced", "service", "developer")
+LEVELS = ("advanced", "service", "developer", "reserved")
 
 
 def _check_level(item, where):
@@ -147,6 +147,9 @@ DASHBOARD_WIDGETS = {
     "dptf": (("chips", "slots"), ("margin", "payload", "expected", "flags",
                                   "active", "inactive", "stats", "guard",
                                   "ppm", "marks", "good", "weak")),
+    "receiver": ((), ("gauges", "dacs", "dacsLabels", "dacsBalance", "yaw",
+                      "yawLabels", "channels", "channelLabels", "bins", "min",
+                      "max", "stats")),
     "map": (("lat", "lon"), ("alt", "fix", "hAcc", "vAcc", "vel", "numSV",
                              "heading")),
     "compass": (("field", "offset", "scale"), ("normalize", "limit")),
@@ -247,6 +250,8 @@ def _validate_widget(kind, widget, instances, types, where):
         _array_ref(widget["source"], instances, types, where, "source")
     elif kind == "dptf":
         _validate_dptf(widget, instances, types, where)
+    elif kind == "receiver":
+        _validate_receiver(widget, instances, types, where)
     elif kind == "map":
         for key in ("lat", "lon", "alt", "fix", "hAcc", "vAcc", "numSV",
                     "heading"):
@@ -308,6 +313,56 @@ def _validate_dptf(widget, instances, types, where):
         if not isinstance(mark, int) or not 0 <= mark < preamble:
             raise ValueError("%s: mark %r is outside the %d preamble chips" %
                              (where, mark, preamble))
+
+
+_GAUGE_KEYS = ("ref", "label", "min", "max", "weak", "good", "count", "hold")
+
+
+def _validate_receiver(widget, instances, types, where):
+    """Sync / packet gauges, yaw, DACS levels and per-channel bins."""
+    gauges = widget.get("gauges", [])
+    dacs = widget.get("dacs", [])
+    yaw = widget.get("yaw", [])
+    channels = widget.get("channels", [])
+    for key, value in (("gauges", gauges), ("dacs", dacs), ("yaw", yaw),
+                       ("channels", channels)):
+        if not isinstance(value, list):
+            raise ValueError("%s: %s must be a list" % (where, key))
+    if not (gauges or dacs or yaw or channels):
+        raise ValueError("%s: needs at least one of gauges, dacs, yaw or "
+                         "channels" % where)
+    if "dacsBalance" in widget:
+        limit = widget["dacsBalance"]
+        if len(dacs) != 4 or not isinstance(limit, (int, float)) or limit <= 0:
+            raise ValueError("%s: dacsBalance needs 4 dacs values and a limit "
+                             "above 0" % where)
+    for g, gauge in enumerate(gauges):
+        at = "%s gauge %d" % (where, g)
+        if not isinstance(gauge, dict) or "ref" not in gauge:
+            raise ValueError("%s: needs a ref" % at)
+        for key in gauge:
+            if key not in _GAUGE_KEYS:
+                raise ValueError("%s: unknown key %r" % (at, key))
+        _scalar_ref(gauge["ref"], instances, types, at)
+        count = gauge.get("count", [])
+        for ref in count if isinstance(count, list) else [count]:
+            _scalar_ref(ref, instances, types, at)
+        lo, hi = gauge.get("min", 0), gauge.get("max", 1)
+        if hi <= lo:
+            raise ValueError("%s: max must be above min" % at)
+        if "weak" in gauge and "good" in gauge and \
+                gauge["good"] < gauge["weak"]:
+            raise ValueError("%s: good must not be below weak" % at)
+    for entry in dacs + yaw + widget.get("stats", []):
+        ref = entry.get("ref") if isinstance(entry, dict) else entry
+        _resolve_ref(ref, instances, types, where)
+    bins = widget.get("bins")
+    for c, ref in enumerate(channels):
+        _, var = _array_ref(ref, instances, types, where, "channels[%d]" % c)
+        if bins is not None and not (isinstance(bins, int) and
+                                     1 <= bins <= var["count"]):
+            raise ValueError("%s: bins %r is outside %s, which has %d" %
+                             (where, bins, ref, var["count"]))
 
 
 def build_device_schema(dev, objects_by_name, strip_descriptions=False):

@@ -20,9 +20,9 @@
                     "default": 1,
                     "flags": [
                         "transmitter_level_compensation",
-                        "noise_debug",
-                        "disable_imu",
-                        "disable_mrx",
+                        "reserved_noise_debug",
+                        "reserved_disable_imu",
+                        "reserved_disable_mrx",
                         "disable_dacs_yaw_correction",
                         "disable_indication"
                     ]
@@ -30,11 +30,11 @@
                 {
                     "name": "sensitivity",
                     "type": "float",
-                    "description": "Receiver sensitivity",
+                    "description": "Reserved, not used by the firmware yet. Receiver sensitivity",
                     "default": 1.0,
                     "min": 0.8,
                     "max": 1.2,
-                    "level": "advanced"
+                    "level": "reserved"
                 },
                 {
                     "name": "rxGain",
@@ -44,6 +44,16 @@
                     "default": 40.0,
                     "min": 0.0,
                     "max": 42.0,
+                    "level": "advanced"
+                },
+                {
+                    "name": "rxAmplification",
+                    "type": "float",
+                    "description": "Amplification of the measured signal, for signal lost in front of the receiver (a cover glass or window). The distance is computed from the signal level, so a loss makes it read long: raise this until the reported distance matches the true one. A distance that reads m times the true one needs 40*log10(m) dB (10% long: 1.7 dB). Unlike rxGain it does re-scale the distance, and it adds no range - raise rxGain for range.",
+                    "units": "dB",
+                    "default": 0.0,
+                    "min": -10.0,
+                    "max": 20.0,
                     "level": "advanced"
                 },
                 {
@@ -76,20 +86,22 @@
                 {
                     "name": "txOffsetF",
                     "type": "float",
-                    "description": "Transmitter offset (front)",
+                    "description": "Reserved, not used by the firmware yet. Transmitter offset (front)",
                     "units": "m",
                     "default": 0.0,
                     "min": -1.2,
-                    "max": 1.2
+                    "max": 1.2,
+                    "level": "reserved"
                 },
                 {
                     "name": "txOffsetR",
                     "type": "float",
-                    "description": "Transmitter offset (right)",
+                    "description": "Reserved, not used by the firmware yet. Transmitter offset (right)",
                     "units": "m",
                     "default": 0.0,
                     "min": -1.2,
-                    "max": 1.2
+                    "max": 1.2,
+                    "level": "reserved"
                 },
                 {
                     "name": "relPosGain",
@@ -99,6 +111,20 @@
                     "default": 1.0,
                     "min": 0.1,
                     "max": 5.0,
+                    "level": "advanced"
+                },
+                {
+                    "name": "angScale",
+                    "type": "float",
+                    "lenght": 2,
+                    "description": "Scale of the X and Y deviation angles from the transmitter's centre line (status ang[0], ang[1]). Raise an axis when its reported offset reads short of the true one, lower it when it reads long.",
+                    "units": "K",
+                    "default": [
+                        1.0,
+                        1.0
+                    ],
+                    "min": 0.5,
+                    "max": 2.0,
                     "level": "advanced"
                 },
                 {
@@ -124,12 +150,12 @@
                 {
                     "name": "platformAcc",
                     "type": "float",
-                    "description": "Ground platform acceleration",
+                    "description": "Reserved, not used by the firmware yet. Ground platform acceleration",
                     "units": "m/ss",
                     "default": 0.1,
                     "min": 0.01,
                     "max": 5.0,
-                    "level": "advanced"
+                    "level": "reserved"
                 },
                 {
                     "name": "positionFilterAcc",
@@ -172,7 +198,7 @@
                 {
                     "name": "serial1Options",
                     "type": "uint8",
-                    "description": "Serial port 1 Options",
+                    "description": "Reserved, not used by the firmware yet. Serial port 1 Options",
                     "default": 0,
                     "flags": [
                         "rx_enabled",
@@ -182,7 +208,7 @@
                         "rx_inverted",
                         "tx_inverted"
                     ],
-                    "level": "advanced"
+                    "level": "reserved"
                 },
                 {
                     "name": "serial2Protocol",
@@ -215,7 +241,7 @@
                 {
                     "name": "serial2Options",
                     "type": "uint8",
-                    "description": "Serial port 2 Options",
+                    "description": "Reserved, not used by the firmware yet. Serial port 2 Options",
                     "default": 0,
                     "flags": [
                         "rx_enabled",
@@ -225,7 +251,7 @@
                         "rx_inverted",
                         "tx_inverted"
                     ],
-                    "level": "advanced"
+                    "level": "reserved"
                 },
                 {
                     "name": "can1Address",
@@ -236,12 +262,13 @@
                 {
                     "name": "can1Protocol",
                     "type": "opt_uint8",
-                    "description": "CAN bus 1 protocol",
+                    "description": "Reserved, not used by the firmware yet. CAN bus 1 protocol",
                     "default": 0,
                     "opts": [
                         "ULSDECONET",
                         "SimpleCAN"
-                    ]
+                    ],
+                    "level": "reserved"
                 },
                 {
                     "name": "can1Speed",
@@ -258,50 +285,53 @@
                 {
                     "name": "can1Options",
                     "type": "uint8",
-                    "description": "CAN bus 1 Options",
+                    "description": "Reserved, not used by the firmware yet. CAN bus 1 Options",
                     "default": 0,
                     "flags": [
                         "termination_enabled"
                     ],
-                    "level": "advanced"
+                    "level": "reserved"
                 },
                 {
                     "name": "can2Address",
                     "type": "uint8",
-                    "description": "CAN bus 2 static address",
-                    "default": 0
+                    "description": "Reserved, not used by the firmware yet. CAN bus 2 static address",
+                    "default": 0,
+                    "level": "reserved"
                 },
                 {
                     "name": "can2Protocol",
                     "type": "opt_uint8",
-                    "description": "CAN bus 2 protocol",
+                    "description": "Reserved, not used by the firmware yet. CAN bus 2 protocol",
                     "default": 0,
                     "opts": [
                         "ULSDECONET",
                         "SimpleCAN"
-                    ]
+                    ],
+                    "level": "reserved"
                 },
                 {
                     "name": "can2Speed",
                     "type": "opt_uint8",
-                    "description": "CAN bus 2 speed",
+                    "description": "Reserved, not used by the firmware yet. CAN bus 2 speed",
                     "default": 4,
                     "opts": [
                         "1000000",
                         "500000",
                         "250000",
                         "125000"
-                    ]
+                    ],
+                    "level": "reserved"
                 },
                 {
                     "name": "can2Options",
                     "type": "uint8",
-                    "description": "CAN bus 2 Options",
+                    "description": "Reserved, not used by the firmware yet. CAN bus 2 Options",
                     "default": 0,
                     "flags": [
                         "termination_enabled"
                     ],
-                    "level": "advanced"
+                    "level": "reserved"
                 },
                 {
                     "name": "mavlinkFrames",
@@ -319,7 +349,7 @@
                     "name": "magCalOffset",
                     "type": "float",
                     "lenght": 3,
-                    "description": "Compass calibration offset",
+                    "description": "Reserved, not used by the firmware yet. Compass calibration offset",
                     "default": [
                         0,
                         0,
@@ -327,13 +357,13 @@
                     ],
                     "min": -30.0,
                     "max": 30.0,
-                    "level": "service"
+                    "level": "reserved"
                 },
                 {
                     "name": "magCalScale",
                     "type": "float",
                     "lenght": 3,
-                    "description": "Compass calibration scale",
+                    "description": "Reserved, not used by the firmware yet. Compass calibration scale",
                     "default": [
                         1,
                         1,
@@ -341,13 +371,13 @@
                     ],
                     "min": 0.01,
                     "max": 30.0,
-                    "level": "service"
+                    "level": "reserved"
                 },
                 {
                     "name": "magCalOffsetEx",
                     "type": "float",
                     "lenght": 3,
-                    "description": "External compass calibration offset",
+                    "description": "Reserved, not used by the firmware yet. External compass calibration offset",
                     "default": [
                         0,
                         0,
@@ -355,13 +385,13 @@
                     ],
                     "min": -100.0,
                     "max": 100.0,
-                    "level": "service"
+                    "level": "reserved"
                 },
                 {
                     "name": "magCalScaleEx",
                     "type": "float",
                     "lenght": 3,
-                    "description": "External compass calibration scale",
+                    "description": "Reserved, not used by the firmware yet. External compass calibration scale",
                     "default": [
                         1,
                         1,
@@ -369,7 +399,7 @@
                     ],
                     "min": 0.01,
                     "max": 100.0,
-                    "level": "service"
+                    "level": "reserved"
                 },
                 {
                     "name": "indicatorBrightness",
@@ -383,9 +413,9 @@
                 {
                     "name": "configCRC",
                     "type": "uint16",
-                    "description": "Configuration checksum",
+                    "description": "Reserved, not used by the firmware yet. Configuration checksum",
                     "default": 0,
-                    "level": "developer"
+                    "level": "reserved"
                 }
             ]
         }

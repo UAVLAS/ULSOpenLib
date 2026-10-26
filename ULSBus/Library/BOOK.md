@@ -33,7 +33,8 @@ device. It is a display hint that lets a tool keep the everyday page short:
 | *(absent)* | everyone | `name`, `rxOffsetF`, `rxYaw` |
 | `advanced` | integrators tuning a working install | `relPosGain`, `predictionTime` |
 | `service` | UAVLAS service; misuse breaks the unit | `magCalOffset`, `compass1Scale` |
-| `developer` | firmware work only | `configCRC`, `fftbuf`, `blitzDebug` |
+| `developer` | firmware work only | `fftbuf`, `blitzDebug` |
+| `reserved` | nobody: no firmware reads it yet | `ULSDVOBJ_RX_Config_v2.txOffsetF` |
 
 The levels are ordered and each includes the ones before it: a tool set to
 `service` shows everything except `developer`. Rules a tool must follow:
@@ -56,6 +57,15 @@ The levels are ordered and each includes the ones before it: a tool set to
   ```
 - **A value that is not its default stays visible.** Hiding a `service` field
   someone has already changed would make the page lie about the device.
+- **`reserved` is never shown, at any level, whatever its value.** It holds
+  space in the layout for a feature the firmware does not have yet, so a
+  value there changes nothing and showing it would only mislead. When the
+  firmware starts reading the field, give it its real level.
+- **A flag bit whose name starts with `reserved_` is reserved the same way.**
+  A level cannot sit on one bit of a flags variable, so the prefix does it:
+  `reserved_disable_imu` keeps the bit, its meaning and a unique generated
+  constant, and a tool leaves its checkbox out. Drop the prefix when the
+  firmware starts using the bit.
 
 `level` is not protection. Nothing stops a tool writing a `developer` field,
 and the schema is readable by anyone on the bus; what a device refuses is set
