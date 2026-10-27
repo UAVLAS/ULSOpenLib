@@ -705,6 +705,121 @@
             "dashboard": {
                 "rate": 100,
                 "sections": [
+                    {
+                        "title": "Status",
+                        "widgets": [
+                            {
+                                "widget": "health",
+                                "title": "Receiver hardware",
+                                "span": 2,
+                                "items": [
+                                    {
+                                        "ref": "status.error#0",
+                                        "label": "ADC configuration",
+                                        "history": "status.error#16"
+                                    },
+                                    {
+                                        "ref": "status.error#1",
+                                        "label": "ADC A (I2C)",
+                                        "history": "status.error#17"
+                                    },
+                                    {
+                                        "ref": "status.error#3",
+                                        "label": "ADC A (clocks)",
+                                        "history": "status.error#19"
+                                    },
+                                    {
+                                        "ref": "status.error#2",
+                                        "label": "ADC B (I2C)",
+                                        "history": "status.error#18"
+                                    },
+                                    {
+                                        "ref": "status.error#4",
+                                        "label": "ADC B (clocks)",
+                                        "history": "status.error#20"
+                                    },
+                                {
+                                    "ref": "status.error#12",
+                                    "label": "F-RAM (config memory)",
+                                    "history": "status.error#28"
+                                },
+                                {
+                                    "ref": "status.error#13",
+                                    "label": "ADC sample stream (overruns)",
+                                    "history": "status.error#29"
+                                },
+                                {
+                                    "ref": "status.error#14",
+                                    "label": "UART (receive errors)",
+                                    "history": "status.error#30"
+                                },
+                                {
+                                    "ref": "status.error#15",
+                                    "label": "MCU temperature",
+                                    "history": "status.error#31"
+                                }
+                                ]
+                            },
+                            {
+                                "widget": "health",
+                                "title": "Landing solution",
+                                "span": 2,
+                                "items": [
+                                    {
+                                        "ref": "status.error#5",
+                                        "label": "Signal"
+                                    },
+                                    {
+                                        "ref": "status.error#6",
+                                        "label": "Position in transmitter frame"
+                                    },
+                                    {
+                                        "ref": "status.error#8",
+                                        "label": "Ground unit attitude"
+                                    },
+                                    {
+                                        "ref": "status.error#9",
+                                        "label": "Vehicle attitude"
+                                    },
+                                    {
+                                        "ref": "status.error#10",
+                                        "label": "MRX yaw"
+                                    },
+                                    {
+                                        "ref": "status.error#11",
+                                        "label": "Yaw resolved"
+                                    },
+                                    {
+                                        "ref": "status.error#7",
+                                        "label": "Landing position (receiver frame)"
+                                    }
+                                ]
+                            },
+                        {
+                            "widget": "health",
+                            "title": "System",
+                            "span": 2,
+                            "items": [
+                                {
+                                    "ref": "status.error#21",
+                                    "label": "Stored config"
+                                },
+                                {
+                                    "ref": "status.error#22",
+                                    "label": "Config save"
+                                },
+                                {
+                                    "ref": "status.error#23",
+                                    "label": "Reset cause"
+                                },
+                                {
+                                    "ref": "status.error#24",
+                                    "label": "Crash record"
+                                }
+                            ]
+                        }
+                        ]
+                    },
                      {
                          "title": "Receiver",
                          "widgets": [
