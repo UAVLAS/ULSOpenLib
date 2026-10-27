@@ -1,0 +1,116 @@
+{
+    "BookVersion": "1.0",
+    "Objects": [
+        {
+            "name": "ULSDVOBJ_MAV_Debug_v1",
+            "description": "MAVLink traffic on one serial port, counted since boot: what the vehicle sends and what the receiver sends back",
+            "access": "read",
+            "level": "advanced",
+            "variables": [
+                {
+                    "name": "rxMsg",
+                    "type": "uint32",
+                    "lenght": 5,
+                    "description": "Messages received by type: HEARTBEAT, ATTITUDE, LOCAL_POSITION_NED, PARAM_EXT_REQUEST_LIST, any other"
+                },
+                {
+                    "name": "txMsg",
+                    "type": "uint32",
+                    "lenght": 7,
+                    "description": "Messages sent by type: HEARTBEAT, REQUEST_DATA_STREAM, LANDING_TARGET in BODY_FRD, LOCAL_OFFSET_NED and LOCAL_NED, VISION_POSITION_ESTIMATE, PARAM_EXT_VALUE"
+                },
+                {
+                    "name": "otherId",
+                    "type": "uint32",
+                    "lenght": 8,
+                    "description": "Ids of the messages received but not used, the first 8 seen"
+                },
+                {
+                    "name": "otherCount",
+                    "type": "uint32",
+                    "lenght": 8,
+                    "description": "How many of each otherId were received"
+                },
+                {
+                    "name": "rxBytes",
+                    "type": "uint32",
+                    "description": "Bytes received",
+                    "units": "B"
+                },
+                {
+                    "name": "rxDrops",
+                    "type": "uint32",
+                    "description": "Frames lost to a bad checksum or a sequence gap"
+                },
+                {
+                    "name": "hbSysId",
+                    "type": "uint8",
+                    "description": "System id of the autopilot's last HEARTBEAT"
+                },
+                {
+                    "name": "hbCompId",
+                    "type": "uint8",
+                    "description": "Component id of the autopilot's last HEARTBEAT"
+                },
+                {
+                    "name": "hbType",
+                    "type": "uint8",
+                    "description": "MAV_TYPE in the last HEARTBEAT (2 quadrotor, 1 fixed wing, ...)"
+                },
+                {
+                    "name": "hbAutopilot",
+                    "type": "uint8",
+                    "description": "MAV_AUTOPILOT in the last HEARTBEAT (3 ArduPilot, 12 PX4)"
+                },
+                {
+                    "name": "hbBaseMode",
+                    "type": "uint8",
+                    "description": "MAV_MODE_FLAG bits in the last HEARTBEAT (128 armed)"
+                },
+                {
+                    "name": "hbSystemStatus",
+                    "type": "uint8",
+                    "description": "MAV_STATE in the last HEARTBEAT (4 active)"
+                },
+                {
+                    "name": "hbMavlinkVersion",
+                    "type": "uint8",
+                    "description": "MAVLink version in the last HEARTBEAT"
+                },
+                {
+                    "name": "hbCustomMode",
+                    "type": "uint32",
+                    "description": "Autopilot-specific flight mode in the last HEARTBEAT"
+                },
+                {
+                    "name": "ltBodyFrd",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "Last LANDING_TARGET sent in MAV_FRAME_BODY_FRD (x, y, z)",
+                    "units": "m"
+                },
+                {
+                    "name": "ltOffsetNed",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "Last LANDING_TARGET sent in MAV_FRAME_LOCAL_OFFSET_NED (x, y, z)",
+                    "units": "m"
+                },
+                {
+                    "name": "ltLocalNed",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "Last LANDING_TARGET sent in MAV_FRAME_LOCAL_NED (x, y, z)",
+                    "units": "m"
+                },
+                {
+                    "name": "visionPos",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "Last VISION_POSITION_ESTIMATE sent (x, y, z)",
+                    "units": "m"
+                }
+            ]
+        }
+    ]
+}

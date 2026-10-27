@@ -149,13 +149,14 @@ DASHBOARD_WIDGETS = {
                                   "ppm", "marks", "good", "weak")),
     "receiver": ((), ("gauges", "dacs", "dacsLabels", "dacsBalance", "yaw",
                       "yawLabels", "channels", "channelLabels", "bins", "min",
-                      "max", "stats")),
+                      "max", "saturation", "saturationLimit", "stats")),
     "map": (("lat", "lon"), ("alt", "fix", "hAcc", "vAcc", "vel", "numSV",
                              "heading")),
     "compass": ((), ("field", "offset", "scale", "normalize", "limit",
                      "sources")),
     "imu": (("sources",), ()),
     "health": (("items",), ()),
+    "counters": (("rows", "columns"), ()),
 }
 
 
@@ -264,6 +265,8 @@ def _validate_widget(kind, widget, instances, types, where):
             _vector_ref(widget["vel"], instances, types, where)
     elif kind == "health":
         _validate_health(widget, instances, types, where)
+    elif kind == "counters":
+        _validate_counters(widget, instances, types, where)
     elif kind == "compass":
         _validate_compass(widget, instances, types, where)
     elif kind == "imu":
@@ -397,6 +400,31 @@ def _validate_imu(widget, instances, types, where):
 _HEALTH_ITEM_KEYS = ("ref", "label", "ok", "history")
 
 
+_COUNTER_COLUMN_KEYS = ("ref", "label", "errors", "rate")
+
+
+def _validate_counters(widget, instances, types, where):
+    """A table of counters: row i reads element i of every column array."""
+    rows, columns = widget["rows"], widget["columns"]
+    if not isinstance(rows, list) or not rows:
+        raise ValueError("%s: rows must be a non-empty list" % where)
+    if not isinstance(columns, list) or not columns:
+        raise ValueError("%s: columns must be a non-empty list" % where)
+    for i, col in enumerate(columns):
+        at = "%s column %d" % (where, i)
+        col = col if isinstance(col, dict) else {"ref": col}
+        for key in col:
+            if key not in _COUNTER_COLUMN_KEYS:
+                raise ValueError("%s: unknown key %r" % (at, key))
+        _, var = _array_ref(col.get("ref"), instances, types, at, "ref")
+        if var["count"] < len(rows):
+            raise ValueError("%s: %s has %d elements for %d rows" %
+                             (at, col["ref"], var["count"], len(rows)))
+        for key in ("errors", "rate"):
+            if not isinstance(col.get(key, False), bool):
+                raise ValueError("%s: %s must be true or false" % (at, key))
+
+
 def _validate_health(widget, instances, types, where):
     """One lamp per part: a value that reads `ok` when it works."""
     items = widget["items"]
@@ -425,8 +453,9 @@ def _validate_receiver(widget, instances, types, where):
     dacs = widget.get("dacs", [])
     yaw = widget.get("yaw", [])
     channels = widget.get("channels", [])
+    saturation = widget.get("saturation", [])
     for key, value in (("gauges", gauges), ("dacs", dacs), ("yaw", yaw),
-                       ("channels", channels)):
+                       ("channels", channels), ("saturation", saturation)):
         if not isinstance(value, list):
             raise ValueError("%s: %s must be a list" % (where, key))
     if not (gauges or dacs or yaw or channels):
@@ -454,7 +483,10 @@ def _validate_receiver(widget, instances, types, where):
         if "weak" in gauge and "good" in gauge and \
                 gauge["good"] < gauge["weak"]:
             raise ValueError("%s: good must not be below weak" % at)
-    for entry in dacs + yaw + widget.get("stats", []):
+    limit = widget.get("saturationLimit", 100)
+    if not isinstance(limit, (int, float)) or limit <= 0:
+        raise ValueError("%s: saturationLimit must be above 0" % where)
+    for entry in dacs + yaw + saturation + widget.get("stats", []):
         ref = entry.get("ref") if isinstance(entry, dict) else entry
         _resolve_ref(ref, instances, types, where)
     bins = widget.get("bins")

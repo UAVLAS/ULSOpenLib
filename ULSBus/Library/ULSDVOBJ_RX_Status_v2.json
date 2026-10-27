@@ -272,6 +272,13 @@
                     "type": "float",
                     "description": "Vehicle heading information",
                     "units": "deg"
+                },
+                {
+                    "name": "vehicle_att",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "Vehicle attitude (roll, pitch, yaw) from the autopilot; 0 while none is received",
+                    "units": "deg"
                 }
             ]
         }

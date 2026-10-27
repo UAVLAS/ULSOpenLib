@@ -55,11 +55,12 @@ columns), `height` (px) and `rate` (ms, overrides the dashboard's).
 | `cartesian` | `x`, `y` (single values) | `trace` (points), `limit` (± axis), `labels` (axis names) | XY position with trace |
 | `waterfall` | `source` (whole array) | `min`, `max`, `history` (rows) | spectrum over time |
 | `dptf` | `chips`, `slots` (whole arrays) | `margin`, `payload`, `expected` (whole arrays), `flags`, `active`, `inactive`, `stats`, `guard`, `ppm`, `marks`, `good`, `weak` | a pulse-position receiver's last capture |
-| `receiver` | at least one of `gauges`, `dacs`, `yaw`, `channels` | `dacsLabels`, `dacsBalance`, `yawLabels`, `channelLabels`, `bins`, `min`, `max`, `stats` | a receiver's main parameters on one card |
+| `receiver` | at least one of `gauges`, `dacs`, `yaw`, `channels` | `dacsLabels`, `dacsBalance`, `yawLabels`, `channelLabels`, `bins`, `min`, `max`, `saturation`, `saturationLimit`, `stats` | a receiver's main parameters on one card |
 | `map` | `lat`, `lon` (deg, single values) | `alt`, `fix` (0/1), `hAcc`, `vAcc`, `vel` (3-element NED), `numSV`, `heading` | position on a map |
 | `compass` | `field` (3-element), `offset`, `scale` (3-element float config variables), or `sources` | `normalize`, `limit` | magnetometer calibration, one tab per source |
 | `imu` | `sources` | | each IMU source's acc, gyro, field and attitude, one tab per source |
 | `health` | `items` | | one lamp per part of the board |
+| `counters` | `rows`, `columns` | | a table of counters, each with its rate |
 
 `dptf` shows one capture of a pulse-position packet, not a history: the chip
 magnitude envelope (`chips`), the slot each symbol was decoded from (`slots`),
@@ -90,7 +91,11 @@ the first series is the bold needle) and named by `yawLabels`. `channels` is a l
 each with numbered columns and the peak picked out, all on one scale (`min`,
 `max`, else autoscaled) so the channels compare at a glance; `bins` shows only
 the first so many elements, for an object sized for more than the firmware
-fills. `channelLabels` names the charts. `stats` is a readout, as in `dptf`.
+fills. `channelLabels` names the charts. `saturation` is a series list, in %,
+one per channel in order (a whole array expands to one per element): each
+chart's header carries its channel's value, green with headroom, amber from
+80 % of `saturationLimit` (100) and red once it clips. `stats` is a readout,
+as in `dptf`.
 
 ```json
 { "widget": "receiver", "title": "Receiver", "span": 2,
@@ -104,7 +109,25 @@ fills. `channelLabels` names the charts. `stats` is a readout, as in `dptf`.
            "status.dacsPower[2]", "status.dacsPower[3]"], "dacsBalance": 0.5,
   "yaw": ["status.correctedYaw", "status.mrxYaw", "status.dacsYaw"],
   "yawLabels": ["Corrected", "MRX", "DACS"],
-  "channels": ["ch1Debug.beansA", "ch2Debug.beansA"], "bins": 32 }
+  "channels": ["ch1Debug.beansA", "ch2Debug.beansA"], "bins": 32,
+  "saturation": ["status.saturation[0]", "status.saturation[1]"] }
+```
+
+`counters` is a table: `rows` names the rows, and each of `columns` -
+`{"ref", "label", "errors", "rate"}`, or a bare reference - is a whole array whose
+element `i` is row `i`'s counter. Each cell shows the running total and the
+rate it rises at, measured over at least a second; a counter that goes
+backwards, as after a restart, starts the rate over. A column with
+`"errors": true` counts failures: it reads amber once non-zero and red while
+rising. `"rate": false` drops the rate from a column that holds ids or
+settings rather than counts. A row whose counters are all 0 is greyed, an
+interface not in use.
+
+```json
+{ "widget": "counters", "title": "Links",
+  "rows": ["Serial 1", "Serial 2", "CAN 1", "CAN 2", "USB"],
+  "columns": [{ "ref": "links.rxPackets", "label": "Rx packets" },
+              { "ref": "links.rxErrors", "label": "Rx errors", "errors": true }] }
 ```
 
 `compass` writes `offset` and `scale` back to the device; saving the config

@@ -12,6 +12,24 @@
                     "address": "0x0010"
                 },
                 {
+                    "name": "links",
+                    "title": "Links",
+                    "object": "ULSDVOBJ_SYS_Links_v1",
+                    "address": "0x0011"
+                },
+                {
+                    "name": "mav1",
+                    "title": "MAVLink serial 1",
+                    "object": "ULSDVOBJ_MAV_Debug_v1",
+                    "address": "0x0012"
+                },
+                {
+                    "name": "mav2",
+                    "title": "MAVLink serial 2",
+                    "object": "ULSDVOBJ_MAV_Debug_v1",
+                    "address": "0x0013"
+                },
+                {
                     "name": "cfg",
                     "title": "Config",
                     "object": "ULSDVOBJ_RX_Config_v2",
@@ -139,6 +157,211 @@
                         ]
                     },
                     {
+                        "title": "Vehicle",
+                        "widgets": [
+                            {
+                                "widget": "realtime",
+                                "title": "Vehicle position NED",
+                                "series": [
+                                    "status.vehicle_abs_pos_ned"
+                                ],
+                                "labels": [
+                                    "North",
+                                    "East",
+                                    "Down"
+                                ]
+                            },
+                            {
+                                "widget": "realtime",
+                                "title": "Vehicle velocity NED",
+                                "series": [
+                                    "status.vehicle_abs_vel_ned"
+                                ],
+                                "labels": [
+                                    "North",
+                                    "East",
+                                    "Down"
+                                ]
+                            },
+                            {
+                                "widget": "realtime",
+                                "title": "Vehicle attitude",
+                                "series": [
+                                    "status.vehicle_att"
+                                ],
+                                "labels": [
+                                    "Roll",
+                                    "Pitch",
+                                    "Yaw"
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "title": "Ground unit",
+                        "widgets": [
+                            {
+                                "widget": "realtime",
+                                "title": "Ground unit attitude",
+                                "series": [
+                                    "status.gimu"
+                                ],
+                                "labels": [
+                                    "Roll",
+                                    "Pitch",
+                                    "Yaw"
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "title": "MAVLink",
+                        "widgets": [
+                            {
+                                "widget": "counters",
+                                "title": "Received from the vehicle",
+                                "rows": [
+                                    "HEARTBEAT",
+                                    "ATTITUDE",
+                                    "LOCAL_POSITION_NED",
+                                    "PARAM_EXT_REQUEST_LIST",
+                                    "Other"
+                                ],
+                                "columns": [
+                                    {
+                                        "ref": "mav1.rxMsg",
+                                        "label": "Serial 1"
+                                    },
+                                    {
+                                        "ref": "mav2.rxMsg",
+                                        "label": "Serial 2"
+                                    }
+                                ]
+                            },
+                            {
+                                "widget": "counters",
+                                "title": "Sent to the vehicle",
+                                "rows": [
+                                    "HEARTBEAT",
+                                    "REQUEST_DATA_STREAM",
+                                    "LANDING_TARGET BODY_FRD",
+                                    "LANDING_TARGET LOCAL_OFFSET_NED",
+                                    "LANDING_TARGET LOCAL_NED",
+                                    "VISION_POSITION_ESTIMATE",
+                                    "PARAM_EXT_VALUE"
+                                ],
+                                "columns": [
+                                    {
+                                        "ref": "mav1.txMsg",
+                                        "label": "Serial 1"
+                                    },
+                                    {
+                                        "ref": "mav2.txMsg",
+                                        "label": "Serial 2"
+                                    }
+                                ]
+                            },
+                            {
+                                "widget": "counters",
+                                "title": "Other messages received (not used)",
+                                "rows": [
+                                    "1",
+                                    "2",
+                                    "3",
+                                    "4",
+                                    "5",
+                                    "6",
+                                    "7",
+                                    "8"
+                                ],
+                                "columns": [
+                                    {
+                                        "ref": "mav1.otherId",
+                                        "label": "Serial 1 id",
+                                        "rate": false
+                                    },
+                                    {
+                                        "ref": "mav1.otherCount",
+                                        "label": "Count"
+                                    },
+                                    {
+                                        "ref": "mav2.otherId",
+                                        "label": "Serial 2 id",
+                                        "rate": false
+                                    },
+                                    {
+                                        "ref": "mav2.otherCount",
+                                        "label": "Count"
+                                    }
+                                ]
+                            },
+                            {
+                                "widget": "realtime",
+                                "title": "LANDING_TARGET sent, BODY_FRD",
+                                "series": [
+                                    "mav1.ltBodyFrd",
+                                    "mav2.ltBodyFrd"
+                                ],
+                                "labels": [
+                                    "Serial 1 X",
+                                    "Serial 1 Y",
+                                    "Serial 1 Z",
+                                    "Serial 2 X",
+                                    "Serial 2 Y",
+                                    "Serial 2 Z"
+                                ]
+                            },
+                            {
+                                "widget": "realtime",
+                                "title": "LANDING_TARGET sent, LOCAL_OFFSET_NED",
+                                "series": [
+                                    "mav1.ltOffsetNed",
+                                    "mav2.ltOffsetNed"
+                                ],
+                                "labels": [
+                                    "Serial 1 North",
+                                    "Serial 1 East",
+                                    "Serial 1 Down",
+                                    "Serial 2 North",
+                                    "Serial 2 East",
+                                    "Serial 2 Down"
+                                ]
+                            },
+                            {
+                                "widget": "realtime",
+                                "title": "LANDING_TARGET sent, LOCAL_NED",
+                                "series": [
+                                    "mav1.ltLocalNed",
+                                    "mav2.ltLocalNed"
+                                ],
+                                "labels": [
+                                    "Serial 1 North",
+                                    "Serial 1 East",
+                                    "Serial 1 Down",
+                                    "Serial 2 North",
+                                    "Serial 2 East",
+                                    "Serial 2 Down"
+                                ]
+                            },
+                            {
+                                "widget": "realtime",
+                                "title": "VISION_POSITION_ESTIMATE sent",
+                                "series": [
+                                    "mav1.visionPos",
+                                    "mav2.visionPos"
+                                ],
+                                "labels": [
+                                    "Serial 1 North",
+                                    "Serial 1 East",
+                                    "Serial 1 Down",
+                                    "Serial 2 North",
+                                    "Serial 2 East",
+                                    "Serial 2 Down"
+                                ]
+                            }
+                        ]
+                    },
+                    {
                         "title": "Signal",
                         "widgets": [
                             {
@@ -236,6 +459,38 @@
                                 "series": [
                                     "status.Vsys"
                                 ]
+                            },
+                            {
+                                "widget": "counters",
+                                "title": "Links",
+                                "span": 2,
+                                "rows": [
+                                    "Serial 1",
+                                    "Serial 2",
+                                    "CAN 1",
+                                    "CAN 2",
+                                    "USB"
+                                ],
+                                "columns": [
+                                    {
+                                        "ref": "links.rxPackets",
+                                        "label": "Rx packets"
+                                    },
+                                    {
+                                        "ref": "links.txPackets",
+                                        "label": "Tx packets"
+                                    },
+                                    {
+                                        "ref": "links.rxErrors",
+                                        "label": "Rx errors",
+                                        "errors": true
+                                    },
+                                    {
+                                        "ref": "links.txErrors",
+                                        "label": "Tx errors",
+                                        "errors": true
+                                    }
+                                ]
                             }
                         ]
                     }
@@ -251,6 +506,24 @@
                     "name": "status",
                     "object": "ULSDVOBJ_RX_Status_v2",
                     "address": "0x0010"
+                },
+                {
+                    "name": "links",
+                    "title": "Links",
+                    "object": "ULSDVOBJ_SYS_Links_v1",
+                    "address": "0x0011"
+                },
+                {
+                    "name": "mav1",
+                    "title": "MAVLink serial 1",
+                    "object": "ULSDVOBJ_MAV_Debug_v1",
+                    "address": "0x0012"
+                },
+                {
+                    "name": "mav2",
+                    "title": "MAVLink serial 2",
+                    "object": "ULSDVOBJ_MAV_Debug_v1",
+                    "address": "0x0013"
                 },
                 {
                     "name": "cfg",
@@ -381,6 +654,211 @@
                                     "Corrected",
                                     "MRX",
                                     "DACS"
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "title": "Vehicle",
+                        "widgets": [
+                            {
+                                "widget": "realtime",
+                                "title": "Vehicle position NED",
+                                "series": [
+                                    "status.vehicle_abs_pos_ned"
+                                ],
+                                "labels": [
+                                    "North",
+                                    "East",
+                                    "Down"
+                                ]
+                            },
+                            {
+                                "widget": "realtime",
+                                "title": "Vehicle velocity NED",
+                                "series": [
+                                    "status.vehicle_abs_vel_ned"
+                                ],
+                                "labels": [
+                                    "North",
+                                    "East",
+                                    "Down"
+                                ]
+                            },
+                            {
+                                "widget": "realtime",
+                                "title": "Vehicle attitude",
+                                "series": [
+                                    "status.vehicle_att"
+                                ],
+                                "labels": [
+                                    "Roll",
+                                    "Pitch",
+                                    "Yaw"
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "title": "Ground unit",
+                        "widgets": [
+                            {
+                                "widget": "realtime",
+                                "title": "Ground unit attitude",
+                                "series": [
+                                    "status.gimu"
+                                ],
+                                "labels": [
+                                    "Roll",
+                                    "Pitch",
+                                    "Yaw"
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "title": "MAVLink",
+                        "widgets": [
+                            {
+                                "widget": "counters",
+                                "title": "Received from the vehicle",
+                                "rows": [
+                                    "HEARTBEAT",
+                                    "ATTITUDE",
+                                    "LOCAL_POSITION_NED",
+                                    "PARAM_EXT_REQUEST_LIST",
+                                    "Other"
+                                ],
+                                "columns": [
+                                    {
+                                        "ref": "mav1.rxMsg",
+                                        "label": "Serial 1"
+                                    },
+                                    {
+                                        "ref": "mav2.rxMsg",
+                                        "label": "Serial 2"
+                                    }
+                                ]
+                            },
+                            {
+                                "widget": "counters",
+                                "title": "Sent to the vehicle",
+                                "rows": [
+                                    "HEARTBEAT",
+                                    "REQUEST_DATA_STREAM",
+                                    "LANDING_TARGET BODY_FRD",
+                                    "LANDING_TARGET LOCAL_OFFSET_NED",
+                                    "LANDING_TARGET LOCAL_NED",
+                                    "VISION_POSITION_ESTIMATE",
+                                    "PARAM_EXT_VALUE"
+                                ],
+                                "columns": [
+                                    {
+                                        "ref": "mav1.txMsg",
+                                        "label": "Serial 1"
+                                    },
+                                    {
+                                        "ref": "mav2.txMsg",
+                                        "label": "Serial 2"
+                                    }
+                                ]
+                            },
+                            {
+                                "widget": "counters",
+                                "title": "Other messages received (not used)",
+                                "rows": [
+                                    "1",
+                                    "2",
+                                    "3",
+                                    "4",
+                                    "5",
+                                    "6",
+                                    "7",
+                                    "8"
+                                ],
+                                "columns": [
+                                    {
+                                        "ref": "mav1.otherId",
+                                        "label": "Serial 1 id",
+                                        "rate": false
+                                    },
+                                    {
+                                        "ref": "mav1.otherCount",
+                                        "label": "Count"
+                                    },
+                                    {
+                                        "ref": "mav2.otherId",
+                                        "label": "Serial 2 id",
+                                        "rate": false
+                                    },
+                                    {
+                                        "ref": "mav2.otherCount",
+                                        "label": "Count"
+                                    }
+                                ]
+                            },
+                            {
+                                "widget": "realtime",
+                                "title": "LANDING_TARGET sent, BODY_FRD",
+                                "series": [
+                                    "mav1.ltBodyFrd",
+                                    "mav2.ltBodyFrd"
+                                ],
+                                "labels": [
+                                    "Serial 1 X",
+                                    "Serial 1 Y",
+                                    "Serial 1 Z",
+                                    "Serial 2 X",
+                                    "Serial 2 Y",
+                                    "Serial 2 Z"
+                                ]
+                            },
+                            {
+                                "widget": "realtime",
+                                "title": "LANDING_TARGET sent, LOCAL_OFFSET_NED",
+                                "series": [
+                                    "mav1.ltOffsetNed",
+                                    "mav2.ltOffsetNed"
+                                ],
+                                "labels": [
+                                    "Serial 1 North",
+                                    "Serial 1 East",
+                                    "Serial 1 Down",
+                                    "Serial 2 North",
+                                    "Serial 2 East",
+                                    "Serial 2 Down"
+                                ]
+                            },
+                            {
+                                "widget": "realtime",
+                                "title": "LANDING_TARGET sent, LOCAL_NED",
+                                "series": [
+                                    "mav1.ltLocalNed",
+                                    "mav2.ltLocalNed"
+                                ],
+                                "labels": [
+                                    "Serial 1 North",
+                                    "Serial 1 East",
+                                    "Serial 1 Down",
+                                    "Serial 2 North",
+                                    "Serial 2 East",
+                                    "Serial 2 Down"
+                                ]
+                            },
+                            {
+                                "widget": "realtime",
+                                "title": "VISION_POSITION_ESTIMATE sent",
+                                "series": [
+                                    "mav1.visionPos",
+                                    "mav2.visionPos"
+                                ],
+                                "labels": [
+                                    "Serial 1 North",
+                                    "Serial 1 East",
+                                    "Serial 1 Down",
+                                    "Serial 2 North",
+                                    "Serial 2 East",
+                                    "Serial 2 Down"
                                 ]
                             }
                         ]
@@ -630,6 +1108,38 @@
                                 "series": [
                                     "status.Vsys"
                                 ]
+                            },
+                            {
+                                "widget": "counters",
+                                "title": "Links",
+                                "span": 2,
+                                "rows": [
+                                    "Serial 1",
+                                    "Serial 2",
+                                    "CAN 1",
+                                    "CAN 2",
+                                    "USB"
+                                ],
+                                "columns": [
+                                    {
+                                        "ref": "links.rxPackets",
+                                        "label": "Rx packets"
+                                    },
+                                    {
+                                        "ref": "links.txPackets",
+                                        "label": "Tx packets"
+                                    },
+                                    {
+                                        "ref": "links.rxErrors",
+                                        "label": "Rx errors",
+                                        "errors": true
+                                    },
+                                    {
+                                        "ref": "links.txErrors",
+                                        "label": "Tx errors",
+                                        "errors": true
+                                    }
+                                ]
                             }
                         ]
                     }
@@ -645,6 +1155,24 @@
                     "name": "status",
                     "object": "ULSDVOBJ_RX_Status_v2",
                     "address": "0x0010"
+                },
+                {
+                    "name": "links",
+                    "title": "Links",
+                    "object": "ULSDVOBJ_SYS_Links_v1",
+                    "address": "0x0011"
+                },
+                {
+                    "name": "mav1",
+                    "title": "MAVLink serial 1",
+                    "object": "ULSDVOBJ_MAV_Debug_v1",
+                    "address": "0x0012"
+                },
+                {
+                    "name": "mav2",
+                    "title": "MAVLink serial 2",
+                    "object": "ULSDVOBJ_MAV_Debug_v1",
+                    "address": "0x0013"
                 },
                 {
                     "name": "cfg",
@@ -853,7 +1381,39 @@
                                     "label": "Crash record"
                                 }
                             ]
-                        }
+                        },
+                            {
+                                "widget": "counters",
+                                "title": "Links",
+                                "span": 2,
+                                "rows": [
+                                    "Serial 1",
+                                    "Serial 2",
+                                    "CAN 1",
+                                    "CAN 2",
+                                    "USB"
+                                ],
+                                "columns": [
+                                    {
+                                        "ref": "links.rxPackets",
+                                        "label": "Rx packets"
+                                    },
+                                    {
+                                        "ref": "links.txPackets",
+                                        "label": "Tx packets"
+                                    },
+                                    {
+                                        "ref": "links.rxErrors",
+                                        "label": "Rx errors",
+                                        "errors": true
+                                    },
+                                    {
+                                        "ref": "links.txErrors",
+                                        "label": "Tx errors",
+                                        "errors": true
+                                    }
+                                ]
+                            }
                         ]
                     },
                      {
@@ -920,6 +1480,9 @@
                                      "Channel 4"
                                  ],
                                  "bins": 32,
+                                 "saturation": [
+                                     "status.saturation"
+                                 ],
                                  "stats": [
                                      {
                                          "ref": "status.emsPackets",
@@ -1029,6 +1592,211 @@
                                     "Corrected",
                                     "MRX",
                                     "DACS"
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "title": "Vehicle",
+                        "widgets": [
+                            {
+                                "widget": "realtime",
+                                "title": "Vehicle position NED",
+                                "series": [
+                                    "status.vehicle_abs_pos_ned"
+                                ],
+                                "labels": [
+                                    "North",
+                                    "East",
+                                    "Down"
+                                ]
+                            },
+                            {
+                                "widget": "realtime",
+                                "title": "Vehicle velocity NED",
+                                "series": [
+                                    "status.vehicle_abs_vel_ned"
+                                ],
+                                "labels": [
+                                    "North",
+                                    "East",
+                                    "Down"
+                                ]
+                            },
+                            {
+                                "widget": "realtime",
+                                "title": "Vehicle attitude",
+                                "series": [
+                                    "status.vehicle_att"
+                                ],
+                                "labels": [
+                                    "Roll",
+                                    "Pitch",
+                                    "Yaw"
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "title": "Ground unit",
+                        "widgets": [
+                            {
+                                "widget": "realtime",
+                                "title": "Ground unit attitude",
+                                "series": [
+                                    "status.gimu"
+                                ],
+                                "labels": [
+                                    "Roll",
+                                    "Pitch",
+                                    "Yaw"
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "title": "MAVLink",
+                        "widgets": [
+                            {
+                                "widget": "counters",
+                                "title": "Received from the vehicle",
+                                "rows": [
+                                    "HEARTBEAT",
+                                    "ATTITUDE",
+                                    "LOCAL_POSITION_NED",
+                                    "PARAM_EXT_REQUEST_LIST",
+                                    "Other"
+                                ],
+                                "columns": [
+                                    {
+                                        "ref": "mav1.rxMsg",
+                                        "label": "Serial 1"
+                                    },
+                                    {
+                                        "ref": "mav2.rxMsg",
+                                        "label": "Serial 2"
+                                    }
+                                ]
+                            },
+                            {
+                                "widget": "counters",
+                                "title": "Sent to the vehicle",
+                                "rows": [
+                                    "HEARTBEAT",
+                                    "REQUEST_DATA_STREAM",
+                                    "LANDING_TARGET BODY_FRD",
+                                    "LANDING_TARGET LOCAL_OFFSET_NED",
+                                    "LANDING_TARGET LOCAL_NED",
+                                    "VISION_POSITION_ESTIMATE",
+                                    "PARAM_EXT_VALUE"
+                                ],
+                                "columns": [
+                                    {
+                                        "ref": "mav1.txMsg",
+                                        "label": "Serial 1"
+                                    },
+                                    {
+                                        "ref": "mav2.txMsg",
+                                        "label": "Serial 2"
+                                    }
+                                ]
+                            },
+                            {
+                                "widget": "counters",
+                                "title": "Other messages received (not used)",
+                                "rows": [
+                                    "1",
+                                    "2",
+                                    "3",
+                                    "4",
+                                    "5",
+                                    "6",
+                                    "7",
+                                    "8"
+                                ],
+                                "columns": [
+                                    {
+                                        "ref": "mav1.otherId",
+                                        "label": "Serial 1 id",
+                                        "rate": false
+                                    },
+                                    {
+                                        "ref": "mav1.otherCount",
+                                        "label": "Count"
+                                    },
+                                    {
+                                        "ref": "mav2.otherId",
+                                        "label": "Serial 2 id",
+                                        "rate": false
+                                    },
+                                    {
+                                        "ref": "mav2.otherCount",
+                                        "label": "Count"
+                                    }
+                                ]
+                            },
+                            {
+                                "widget": "realtime",
+                                "title": "LANDING_TARGET sent, BODY_FRD",
+                                "series": [
+                                    "mav1.ltBodyFrd",
+                                    "mav2.ltBodyFrd"
+                                ],
+                                "labels": [
+                                    "Serial 1 X",
+                                    "Serial 1 Y",
+                                    "Serial 1 Z",
+                                    "Serial 2 X",
+                                    "Serial 2 Y",
+                                    "Serial 2 Z"
+                                ]
+                            },
+                            {
+                                "widget": "realtime",
+                                "title": "LANDING_TARGET sent, LOCAL_OFFSET_NED",
+                                "series": [
+                                    "mav1.ltOffsetNed",
+                                    "mav2.ltOffsetNed"
+                                ],
+                                "labels": [
+                                    "Serial 1 North",
+                                    "Serial 1 East",
+                                    "Serial 1 Down",
+                                    "Serial 2 North",
+                                    "Serial 2 East",
+                                    "Serial 2 Down"
+                                ]
+                            },
+                            {
+                                "widget": "realtime",
+                                "title": "LANDING_TARGET sent, LOCAL_NED",
+                                "series": [
+                                    "mav1.ltLocalNed",
+                                    "mav2.ltLocalNed"
+                                ],
+                                "labels": [
+                                    "Serial 1 North",
+                                    "Serial 1 East",
+                                    "Serial 1 Down",
+                                    "Serial 2 North",
+                                    "Serial 2 East",
+                                    "Serial 2 Down"
+                                ]
+                            },
+                            {
+                                "widget": "realtime",
+                                "title": "VISION_POSITION_ESTIMATE sent",
+                                "series": [
+                                    "mav1.visionPos",
+                                    "mav2.visionPos"
+                                ],
+                                "labels": [
+                                    "Serial 1 North",
+                                    "Serial 1 East",
+                                    "Serial 1 Down",
+                                    "Serial 2 North",
+                                    "Serial 2 East",
+                                    "Serial 2 Down"
                                 ]
                             }
                         ]

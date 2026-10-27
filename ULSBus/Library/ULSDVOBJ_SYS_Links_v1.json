@@ -1,0 +1,41 @@
+{
+    "BookVersion": "1.0",
+    "Objects": [
+        {
+            "name": "ULSDVOBJ_SYS_Links_v1",
+            "description": "Packet statistics per communication interface, counted since boot (index: 0 Serial 1, 1 Serial 2, 2 CAN 1, 3 CAN 2, 4 USB); an interface the board does not have stays 0",
+            "access": "read",
+            "variables": [
+                {
+                    "name": "rxPackets",
+                    "type": "uint32",
+                    "lenght": 5,
+                    "description": "Packets received: UART protocol frames on the serial ports (MAVLink, APx or ASCII as configured), ULSBus packets on CAN and USB, heartbeats included"
+                },
+                {
+                    "name": "txPackets",
+                    "type": "uint32",
+                    "lenght": 5,
+                    "description": "Packets sent, counted as rxPackets"
+                },
+                {
+                    "name": "rxErrors",
+                    "type": "uint32",
+                    "lenght": 5,
+                    "description": "Receive errors: UART framing, noise and overrun on the serial ports; packets dropped as incomplete or for a full buffer on CAN and USB"
+                },
+                {
+                    "name": "txErrors",
+                    "type": "uint32",
+                    "lenght": 5,
+                    "description": "Packets that could not be sent (CAN and USB; serial ports report 0)"
+                },
+                {
+                    "name": "blitzRx",
+                    "type": "uint32",
+                    "description": "Blitz messages received from other receivers (MRX), any CAN"
+                }
+            ]
+        }
+    ]
+}
