@@ -8,7 +8,7 @@
             "objects": [
                 {
                     "name": "status",
-                    "object": "ULSDVOBJ_RX_Status_v1",
+                    "object": "ULSDVOBJ_RX_Status_v2",
                     "address": "0x0010"
                 },
                 {
@@ -146,6 +146,12 @@
                                 "title": "Level",
                                 "series": [
                                     "status.level"
+                                ],
+                                "labels": [
+                                    "RX0",
+                                    "RX1",
+                                    "RX2",
+                                    "RX3"
                                 ]
                             },
                             {
@@ -153,6 +159,12 @@
                                 "title": "SNR",
                                 "series": [
                                     "status.snr"
+                                ],
+                                "labels": [
+                                    "RX0",
+                                    "RX1",
+                                    "RX2",
+                                    "RX3"
                                 ]
                             },
                             {
@@ -167,6 +179,12 @@
                                 "title": "Saturation",
                                 "series": [
                                     "status.saturation"
+                                ],
+                                "labels": [
+                                    "RX0",
+                                    "RX1",
+                                    "RX2",
+                                    "RX3"
                                 ]
                             }
                         ]
@@ -231,7 +249,7 @@
             "objects": [
                 {
                     "name": "status",
-                    "object": "ULSDVOBJ_RX_Status_v1",
+                    "object": "ULSDVOBJ_RX_Status_v2",
                     "address": "0x0010"
                 },
                 {
@@ -375,6 +393,12 @@
                                 "title": "Level",
                                 "series": [
                                     "status.level"
+                                ],
+                                "labels": [
+                                    "RX0",
+                                    "RX1",
+                                    "RX2",
+                                    "RX3"
                                 ]
                             },
                             {
@@ -382,6 +406,12 @@
                                 "title": "SNR",
                                 "series": [
                                     "status.snr"
+                                ],
+                                "labels": [
+                                    "RX0",
+                                    "RX1",
+                                    "RX2",
+                                    "RX3"
                                 ]
                             },
                             {
@@ -396,6 +426,12 @@
                                 "title": "Saturation",
                                 "series": [
                                     "status.saturation"
+                                ],
+                                "labels": [
+                                    "RX0",
+                                    "RX1",
+                                    "RX2",
+                                    "RX3"
                                 ]
                             }
                         ]
@@ -607,7 +643,7 @@
             "objects": [
                 {
                     "name": "status",
-                    "object": "ULSDVOBJ_RX_Status_v1",
+                    "object": "ULSDVOBJ_RX_Status_v2",
                     "address": "0x0010"
                 },
                 {
@@ -910,7 +946,7 @@
                                          "label": "SNR"
                                      },
                                      {
-                                         "ref": "status.saturation[2]",
+                                         "ref": "status.dptfPeak",
                                          "label": "DPTF peak"
                                      }
                                  ]
@@ -1005,6 +1041,12 @@
                                 "title": "Level",
                                 "series": [
                                     "status.level"
+                                ],
+                                "labels": [
+                                    "RX0",
+                                    "RX1",
+                                    "RX2",
+                                    "RX3"
                                 ]
                             },
                             {
@@ -1012,6 +1054,12 @@
                                 "title": "SNR",
                                 "series": [
                                     "status.snr"
+                                ],
+                                "labels": [
+                                    "RX0",
+                                    "RX1",
+                                    "RX2",
+                                    "RX3"
                                 ]
                             },
                             {
@@ -1026,6 +1074,12 @@
                                 "title": "Saturation",
                                 "series": [
                                     "status.saturation"
+                                ],
+                                "labels": [
+                                    "RX0",
+                                    "RX1",
+                                    "RX2",
+                                    "RX3"
                                 ]
                             }
                         ]
