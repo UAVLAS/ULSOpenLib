@@ -255,6 +255,15 @@ class ULSBusInterface {
 
   _uls_if_callback ifclbkBlitzReceived;
 
+  /* Link statistics, free-running since boot: every packet the link layer
+   * delivered or sent, network-management heartbeats included, and every
+   * one it dropped (a broken CAN frame set, a full buffer) or failed to
+   * send. Read-only to users; nothing here resets them. */
+  uint32_t ifRxPackets;
+  uint32_t ifTxPackets;
+  uint32_t ifRxErrors;
+  uint32_t ifTxErrors;
+
   uint8_t ifid() { return (_did & 0x3f); }
   void ifid(uint8_t did) { _did = (did & 0x3f); }
 

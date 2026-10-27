@@ -28,6 +28,10 @@
 
 ULSBusInterface::ULSBusInterface(const char* name, uint8_t did)
     : ifclbkBlitzReceived(nullptr),
+      ifRxPackets(0),
+      ifTxPackets(0),
+      ifRxErrors(0),
+      ifTxErrors(0),
       _name(name),
       _did(did),
       _static_did(255),
@@ -203,13 +207,23 @@ _io_op_result ULSBusInterface::send() {
     DEBUG_PACKET(_name, "Tx", ifTxBuf, ifTxLen);
   }
   _io_op_result rez = sendPacket();
-  if (rez == IO_OK) _nm_timeout = IF_NM_PING_HB_TIMEOUT;
+  if (rez == IO_OK) {
+    _nm_timeout = IF_NM_PING_HB_TIMEOUT;
+    ifTxPackets++;
+  } else if (rez != IO_ERROR_REMOTE_HOST_NOT_CONNECTED) {
+    ifTxErrors++;  // nobody listening (USB unplugged) is not a link error
+  }
   return rez;
 }
 _io_op_result ULSBusInterface::receive() {
   while (ifRxLen == 0) {
     _io_op_result rez = receivePacket();
-    if (rez != IO_OK) return rez;
+    if (rez != IO_OK) {
+      if (rez != IO_NO_DATA && rez != IO_ERROR_REMOTE_HOST_NOT_CONNECTED)
+        ifRxErrors++;
+      return rez;
+    }
+    ifRxPackets++;
     DEBUG_MSG("%s: Received lid: 0x%.2X cmd: 0x%.2X len: %d", _name,
               ifRxPacket->src_lid, ifRxPacket->cmd, ifRxLen);
     if (ifRxPacket->cmd != IF_CMD_NM_HB) {
