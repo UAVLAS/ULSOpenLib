@@ -1,0 +1,118 @@
+{
+    "BookVersion": "1.0",
+    "Objects": [
+        {
+            "name": "ULSDVOBJ_TX_Status_v2",
+            "description": "Transmitter status information. LED current is in TX_LedCurrent, each IMU source's readings in IMU_Source; this keeps what the board does with them.",
+            "access": "read",
+            "variables": [
+                {
+                    "name": "status",
+                    "type": "uint32",
+                    "description": "Device status bits field",
+                    "flags": [
+                        "power_ok",
+                        "step_up_ok",
+                        "compass_ok",
+                        "emitter_ok",
+                        "emitter_on_charge",
+                        "external_compass_override_mode",
+                        "external_imu_override_mode"
+                    ]
+                },
+                {
+                    "name": "error",
+                    "type": "uint32",
+                    "description": "Device active error bits field",
+                    "default": 0,
+                    "flags": [
+                        "emitter_task_error",
+                        "illumination_error",
+                        "compass_error",
+                        "uart_rx_error",
+                        "uart_tx_error",
+                        "can_error",
+                        "acc_error",
+                        "gyro_error",
+                        "mag_error",
+                        "fram_error"
+                    ]
+                },
+                {
+                    "name": "error_history",
+                    "type": "uint32",
+                    "description": "Device errors history bits field",
+                    "default": 0,
+                    "flags": [
+                        "emitter_task_error",
+                        "illumination_error",
+                        "compass_error",
+                        "uart_rx_error",
+                        "uart_tx_error",
+                        "can_error",
+                        "acc_error",
+                        "gyro_error",
+                        "mag_error",
+                        "fram_error"
+                    ]
+                },
+                {
+                    "name": "vled_control_errors",
+                    "type": "uint8",
+                    "description": "Device vled line errors bits field",
+                    "default": 0
+                },
+                {
+                    "name": "Vs",
+                    "type": "float",
+                    "description": "Supply Voltage",
+                    "units": "V",
+                    "min": 0.0,
+                    "max": 30.0
+                },
+                {
+                    "name": "Vsu",
+                    "type": "float",
+                    "description": "Step up converter Voltage",
+                    "units": "V",
+                    "min": 0.0,
+                    "max": 100.0
+                },
+                {
+                    "name": "Vem",
+                    "type": "float",
+                    "description": "Emitter board Voltage",
+                    "units": "V",
+                    "min": 0.0,
+                    "max": 100.0
+                },
+                {
+                    "name": "Tsys",
+                    "type": "float",
+                    "lenght": 4,
+                    "description": "System temperatures",
+                    "units": "C"
+                },
+                {
+                    "name": "att",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "Attitude the board transmits, roll pitch yaw, from the source attSource names",
+                    "units": "deg"
+                },
+                {
+                    "name": "attSource",
+                    "type": "opt_uint8",
+                    "description": "Where att comes from: the board's own IMU, its IMU with an external magnetometer, an external attitude override, or the compass override value",
+                    "default": 0,
+                    "opts": [
+                        "InternalIMU",
+                        "ExternalMag",
+                        "ExternalAttitude",
+                        "CompassOverride"
+                    ]
+                }
+            ]
+        }
+    ]
+}

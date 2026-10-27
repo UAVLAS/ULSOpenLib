@@ -1122,7 +1122,7 @@
             "objects": [
                 {
                     "name": "status",
-                    "object": "ULSDVOBJ_TX_Status_v1",
+                    "object": "ULSDVOBJ_TX_Status_v2",
                     "address": "0x0010"
                 },
                 {
@@ -1166,11 +1166,77 @@
                     "title": "Blitz",
                     "object": "ULSDVOBJ_BLITZ_Debug_v1",
                     "address": "0x0101"
+                },
+                {
+                    "name": "ledCurrent",
+                    "title": "LED current",
+                    "object": "ULSDVOBJ_TX_LedCurrent_v1",
+                    "address": "0x0102"
+                },
+                {
+                    "name": "imuInt",
+                    "title": "IMU internal",
+                    "object": "ULSDVOBJ_IMU_Source_v1",
+                    "address": "0x0103"
+                },
+                {
+                    "name": "imuExt1",
+                    "title": "IMU external primary",
+                    "object": "ULSDVOBJ_IMU_Source_v1",
+                    "address": "0x0104"
+                },
+                {
+                    "name": "imuExt2",
+                    "title": "IMU external secondary",
+                    "object": "ULSDVOBJ_IMU_Source_v1",
+                    "address": "0x0105"
                 }
             ],
             "dashboard": {
                 "rate": 100,
                 "sections": [
+                    {
+                        "title": "Board",
+                        "widgets": [
+                            {
+                                "widget": "health",
+                                "title": "Board health",
+                                "span": 2,
+                                "items": [
+                                    {
+                                        "ref": "status.error#6",
+                                        "label": "Accelerometer (BMI323)",
+                                        "history": "status.error_history#6"
+                                    },
+                                    {
+                                        "ref": "status.error#7",
+                                        "label": "Gyroscope (BMI323)",
+                                        "history": "status.error_history#7"
+                                    },
+                                    {
+                                        "ref": "status.error#8",
+                                        "label": "Magnetometer (BMM350)",
+                                        "history": "status.error_history#8"
+                                    },
+                                    {
+                                        "ref": "status.error#9",
+                                        "label": "F-RAM",
+                                        "history": "status.error_history#9"
+                                    },
+                                    {
+                                        "ref": "status.status#2",
+                                        "label": "Compass field",
+                                        "ok": 1
+                                    },
+                                    {
+                                        "ref": "status.status#1",
+                                        "label": "Step-up converter",
+                                        "ok": 1
+                                    }
+                                ]
+                            }
+                        ]
+                    },
                     {
                         "title": "Emitters",
                         "widgets": [
@@ -1181,37 +1247,37 @@
                                 "min": 0,
                                 "series": [
                                     {
-                                        "ref": "status.Iem[0]",
+                                        "ref": "ledCurrent.median[0]",
                                         "label": "DPTF COM1",
                                         "color": "blue"
                                     },
                                     {
-                                        "ref": "status.Iem[1]",
+                                        "ref": "ledCurrent.median[1]",
                                         "label": "DPTF COM2",
                                         "color": "orange"
                                     },
                                     {
-                                        "ref": "status.Iem[2]",
+                                        "ref": "ledCurrent.median[2]",
                                         "label": "DACS COM1",
                                         "color": "blue"
                                     },
                                     {
-                                        "ref": "status.Iem[3]",
+                                        "ref": "ledCurrent.median[3]",
                                         "label": "DACS COM2",
                                         "color": "orange"
                                     },
                                     {
-                                        "ref": "status.Iem[4]",
+                                        "ref": "ledCurrent.median[4]",
                                         "label": "ADS COM1",
                                         "color": "blue"
                                     },
                                     {
-                                        "ref": "status.Iem[5]",
+                                        "ref": "ledCurrent.median[5]",
                                         "label": "ADS COM2",
                                         "color": "orange"
                                     },
                                     {
-                                        "ref": "status.Iem[8]",
+                                        "ref": "ledCurrent.set",
                                         "label": "Set",
                                         "color": "grey"
                                     }
@@ -1224,62 +1290,62 @@
                                 "min": 0,
                                 "series": [
                                     {
-                                        "ref": "status.Iem[9]",
+                                        "ref": "ledCurrent.min[0]",
                                         "label": "DPTF COM1 min",
                                         "color": "blue"
                                     },
                                     {
-                                        "ref": "status.Iem[15]",
+                                        "ref": "ledCurrent.max[0]",
                                         "label": "DPTF COM1 max",
                                         "color": "blue"
                                     },
                                     {
-                                        "ref": "status.Iem[10]",
+                                        "ref": "ledCurrent.min[1]",
                                         "label": "DPTF COM2 min",
                                         "color": "orange"
                                     },
                                     {
-                                        "ref": "status.Iem[16]",
+                                        "ref": "ledCurrent.max[1]",
                                         "label": "DPTF COM2 max",
                                         "color": "orange"
                                     },
                                     {
-                                        "ref": "status.Iem[11]",
+                                        "ref": "ledCurrent.min[2]",
                                         "label": "DACS COM1 min",
                                         "color": "blue"
                                     },
                                     {
-                                        "ref": "status.Iem[17]",
+                                        "ref": "ledCurrent.max[2]",
                                         "label": "DACS COM1 max",
                                         "color": "blue"
                                     },
                                     {
-                                        "ref": "status.Iem[12]",
+                                        "ref": "ledCurrent.min[3]",
                                         "label": "DACS COM2 min",
                                         "color": "orange"
                                     },
                                     {
-                                        "ref": "status.Iem[18]",
+                                        "ref": "ledCurrent.max[3]",
                                         "label": "DACS COM2 max",
                                         "color": "orange"
                                     },
                                     {
-                                        "ref": "status.Iem[13]",
+                                        "ref": "ledCurrent.min[4]",
                                         "label": "ADS COM1 min",
                                         "color": "blue"
                                     },
                                     {
-                                        "ref": "status.Iem[19]",
+                                        "ref": "ledCurrent.max[4]",
                                         "label": "ADS COM1 max",
                                         "color": "blue"
                                     },
                                     {
-                                        "ref": "status.Iem[14]",
+                                        "ref": "ledCurrent.min[5]",
                                         "label": "ADS COM2 min",
                                         "color": "orange"
                                     },
                                     {
-                                        "ref": "status.Iem[20]",
+                                        "ref": "ledCurrent.max[5]",
                                         "label": "ADS COM2 max",
                                         "color": "orange"
                                     }
@@ -1292,37 +1358,37 @@
                                 "min": 0,
                                 "series": [
                                     {
-                                        "ref": "status.Iem[0]",
+                                        "ref": "ledCurrent.median[0]",
                                         "label": "DPTF COM1",
                                         "color": "blue"
                                     },
                                     {
-                                        "ref": "status.Iem[1]",
+                                        "ref": "ledCurrent.median[1]",
                                         "label": "DPTF COM2",
                                         "color": "orange"
                                     },
                                     {
-                                        "ref": "status.Iem[2]",
+                                        "ref": "ledCurrent.median[2]",
                                         "label": "DACS COM1",
                                         "color": "blue"
                                     },
                                     {
-                                        "ref": "status.Iem[3]",
+                                        "ref": "ledCurrent.median[3]",
                                         "label": "DACS COM2",
                                         "color": "orange"
                                     },
                                     {
-                                        "ref": "status.Iem[4]",
+                                        "ref": "ledCurrent.median[4]",
                                         "label": "ADS COM1",
                                         "color": "blue"
                                     },
                                     {
-                                        "ref": "status.Iem[5]",
+                                        "ref": "ledCurrent.median[5]",
                                         "label": "ADS COM2",
                                         "color": "orange"
                                     },
                                     {
-                                        "ref": "status.Iem[8]",
+                                        "ref": "ledCurrent.set",
                                         "label": "Set",
                                         "color": "grey"
                                     }
@@ -1333,12 +1399,12 @@
                                 "title": "Hall sensor zero",
                                 "series": [
                                     {
-                                        "ref": "status.Iem[6]",
+                                        "ref": "ledCurrent.zero[0]",
                                         "label": "COM1",
                                         "color": "blue"
                                     },
                                     {
-                                        "ref": "status.Iem[7]",
+                                        "ref": "ledCurrent.zero[1]",
                                         "label": "COM2",
                                         "color": "orange"
                                     }
@@ -1349,32 +1415,32 @@
                                 "title": "Slots measured per burst",
                                 "series": [
                                     {
-                                        "ref": "status.Iem[21]",
+                                        "ref": "ledCurrent.slots[0]",
                                         "label": "DPTF COM1",
                                         "color": "blue"
                                     },
                                     {
-                                        "ref": "status.Iem[22]",
+                                        "ref": "ledCurrent.slots[1]",
                                         "label": "DPTF COM2",
                                         "color": "orange"
                                     },
                                     {
-                                        "ref": "status.Iem[23]",
+                                        "ref": "ledCurrent.slots[2]",
                                         "label": "DACS COM1",
                                         "color": "blue"
                                     },
                                     {
-                                        "ref": "status.Iem[24]",
+                                        "ref": "ledCurrent.slots[3]",
                                         "label": "DACS COM2",
                                         "color": "orange"
                                     },
                                     {
-                                        "ref": "status.Iem[25]",
+                                        "ref": "ledCurrent.slots[4]",
                                         "label": "ADS COM1",
                                         "color": "blue"
                                     },
                                     {
-                                        "ref": "status.Iem[26]",
+                                        "ref": "ledCurrent.slots[5]",
                                         "label": "ADS COM2",
                                         "color": "orange"
                                     }
@@ -1404,13 +1470,157 @@
                         ]
                     },
                     {
+                        "title": "LED channels",
+                        "widgets": [
+                            {
+                                "widget": "bar",
+                                "title": "ADS channels, COM1",
+                                "span": 2,
+                                "min": 0,
+                                "series": [
+                                    "ledCurrent.adsCom1"
+                                ],
+                                "labels": [
+                                    "1",
+                                    "2",
+                                    "3",
+                                    "4",
+                                    "5",
+                                    "6",
+                                    "7",
+                                    "8",
+                                    "9",
+                                    "10",
+                                    "11",
+                                    "12",
+                                    "13",
+                                    "14",
+                                    "15",
+                                    "16",
+                                    "17",
+                                    "18",
+                                    "19",
+                                    "20",
+                                    "21",
+                                    "22",
+                                    "23",
+                                    "24",
+                                    "25",
+                                    "26",
+                                    "27",
+                                    "28",
+                                    "29",
+                                    "30",
+                                    "31",
+                                    "32"
+                                ]
+                            },
+                            {
+                                "widget": "bar",
+                                "title": "ADS channels, COM2",
+                                "span": 2,
+                                "min": 0,
+                                "series": [
+                                    "ledCurrent.adsCom2"
+                                ],
+                                "labels": [
+                                    "1",
+                                    "2",
+                                    "3",
+                                    "4",
+                                    "5",
+                                    "6",
+                                    "7",
+                                    "8",
+                                    "9",
+                                    "10",
+                                    "11",
+                                    "12",
+                                    "13",
+                                    "14",
+                                    "15",
+                                    "16",
+                                    "17",
+                                    "18",
+                                    "19",
+                                    "20",
+                                    "21",
+                                    "22",
+                                    "23",
+                                    "24",
+                                    "25",
+                                    "26",
+                                    "27",
+                                    "28",
+                                    "29",
+                                    "30",
+                                    "31",
+                                    "32"
+                                ]
+                            },
+                            {
+                                "widget": "bar",
+                                "title": "DACS slots",
+                                "span": 2,
+                                "min": 0,
+                                "series": [
+                                    {
+                                        "ref": "ledCurrent.dacsCom1[0]",
+                                        "label": "DACS1 COM1",
+                                        "color": "blue"
+                                    },
+                                    {
+                                        "ref": "ledCurrent.dacsCom1[1]",
+                                        "label": "DACS2 COM1",
+                                        "color": "blue"
+                                    },
+                                    {
+                                        "ref": "ledCurrent.dacsCom1[2]",
+                                        "label": "DACS3 COM1",
+                                        "color": "blue"
+                                    },
+                                    {
+                                        "ref": "ledCurrent.dacsCom1[3]",
+                                        "label": "DACS4 COM1",
+                                        "color": "blue"
+                                    },
+                                    {
+                                        "ref": "ledCurrent.dacsCom2[0]",
+                                        "label": "DACS1 COM2",
+                                        "color": "orange"
+                                    },
+                                    {
+                                        "ref": "ledCurrent.dacsCom2[1]",
+                                        "label": "DACS2 COM2",
+                                        "color": "orange"
+                                    },
+                                    {
+                                        "ref": "ledCurrent.dacsCom2[2]",
+                                        "label": "DACS3 COM2",
+                                        "color": "orange"
+                                    },
+                                    {
+                                        "ref": "ledCurrent.dacsCom2[3]",
+                                        "label": "DACS4 COM2",
+                                        "color": "orange"
+                                    },
+                                    {
+                                        "ref": "ledCurrent.set",
+                                        "label": "Set",
+                                        "color": "grey"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
                         "title": "IMU",
                         "widgets": [
                             {
                                 "widget": "realtime",
-                                "title": "Attitude",
+                                "title": "Attitude transmitted",
                                 "series": [
-                                    "status.imu"
+                                    "status.att"
                                 ],
                                 "labels": [
                                     "Roll",
@@ -1420,31 +1630,76 @@
                             },
                             {
                                 "widget": "realtime",
-                                "title": "Magnetometer",
+                                "title": "Heading by source",
                                 "series": [
-                                    "status.imum"
-                                ],
-                                "labels": [
-                                    "X",
-                                    "Y",
-                                    "Z"
+                                    {
+                                        "ref": "imuInt.att[2]",
+                                        "label": "Internal"
+                                    },
+                                    {
+                                        "ref": "imuExt1.att[2]",
+                                        "label": "External primary"
+                                    },
+                                    {
+                                        "ref": "imuExt2.att[2]",
+                                        "label": "External secondary"
+                                    }
+                                ]
+                            },
+                            {
+                                "widget": "imu",
+                                "title": "IMU sources",
+                                "span": 2,
+                                "sources": [
+                                    {
+                                        "label": "Internal",
+                                        "acc": "imuInt.acc",
+                                        "gyr": "imuInt.gyr",
+                                        "mag": "imuInt.mag",
+                                        "att": "imuInt.att",
+                                        "status": "imuInt.status"
+                                    },
+                                    {
+                                        "label": "External primary",
+                                        "acc": "imuExt1.acc",
+                                        "gyr": "imuExt1.gyr",
+                                        "mag": "imuExt1.mag",
+                                        "att": "imuExt1.att",
+                                        "status": "imuExt1.status"
+                                    },
+                                    {
+                                        "label": "External secondary",
+                                        "acc": "imuExt2.acc",
+                                        "gyr": "imuExt2.gyr",
+                                        "mag": "imuExt2.mag",
+                                        "att": "imuExt2.att",
+                                        "status": "imuExt2.status"
+                                    }
                                 ]
                             },
                             {
                                 "widget": "compass",
                                 "title": "Compass calibration",
-                                "field": "status.imum",
-                                "offset": "cfg.magCalOffset",
-                                "scale": "cfg.magCalScale",
-                                "normalize": true
-                            },
-                            {
-                                "widget": "compass",
-                                "title": "External compass calibration",
-                                "field": "status.imum",
-                                "offset": "cfg.magCalOffsetEx",
-                                "scale": "cfg.magCalScaleEx",
-                                "normalize": true
+                                "span": 2,
+                                "normalize": true,
+                                "sources": [
+                                    {
+                                        "label": "Internal",
+                                        "field": "imuInt.mag",
+                                        "offset": "cfg.magCalOffset",
+                                        "scale": "cfg.magCalScale"
+                                    },
+                                    {
+                                        "label": "External primary",
+                                        "field": "imuExt1.mag",
+                                        "offset": "cfg.magCalOffsetEx",
+                                        "scale": "cfg.magCalScaleEx"
+                                    },
+                                    {
+                                        "label": "External secondary",
+                                        "field": "imuExt2.mag"
+                                    }
+                                ]
                             }
                         ]
                     }

@@ -57,7 +57,9 @@ columns), `height` (px) and `rate` (ms, overrides the dashboard's).
 | `dptf` | `chips`, `slots` (whole arrays) | `margin`, `payload`, `expected` (whole arrays), `flags`, `active`, `inactive`, `stats`, `guard`, `ppm`, `marks`, `good`, `weak` | a pulse-position receiver's last capture |
 | `receiver` | at least one of `gauges`, `dacs`, `yaw`, `channels` | `dacsLabels`, `dacsBalance`, `yawLabels`, `channelLabels`, `bins`, `min`, `max`, `stats` | a receiver's main parameters on one card |
 | `map` | `lat`, `lon` (deg, single values) | `alt`, `fix` (0/1), `hAcc`, `vAcc`, `vel` (3-element NED), `numSV`, `heading` | position on a map |
-| `compass` | `field` (3-element), `offset`, `scale` (3-element float config variables) | `normalize`, `limit` | magnetometer calibration |
+| `compass` | `field` (3-element), `offset`, `scale` (3-element float config variables), or `sources` | `normalize`, `limit` | magnetometer calibration, one tab per source |
+| `imu` | `sources` | | each IMU source's acc, gyro, field and attitude, one tab per source |
+| `health` | `items` | | one lamp per part of the board |
 
 `dptf` shows one capture of a pulse-position packet, not a history: the chip
 magnitude envelope (`chips`), the slot each symbol was decoded from (`slots`),
@@ -105,7 +107,42 @@ fills. `channelLabels` names the charts. `stats` is a readout, as in `dptf`.
   "channels": ["ch1Debug.beansA", "ch2Debug.beansA"], "bins": 32 }
 ```
 
-`compass` writes `offset` and `scale` back to the device and saves the config.
+`compass` writes `offset` and `scale` back to the device; saving the config
+to flash is a separate step the tool asks to confirm. A device with several
+compasses lists them in `sources`, each `{"label", "field", "offset",
+"scale", "normalize", "limit"}`, and the widget shows one tab per source;
+`normalize` and `limit` on the widget apply to every source that does not set
+its own. A source with no `offset` and `scale` - a compass another device
+calibrates and sends - is captured and checked but not written.
+
+```json
+{ "widget": "compass", "title": "Compass calibration", "normalize": true,
+  "sources": [
+    { "label": "Internal", "field": "imuInt.mag",
+      "offset": "cfg.magCalOffset", "scale": "cfg.magCalScale" },
+    { "label": "External secondary", "field": "imuExt2.mag" } ] }
+```
+
+`imu` shows one IMU source at a time, chosen by tab: each source is
+`{"label", "acc", "gyr", "mag", "att", "status", "window"}`, every sensor a
+whole 3-element variable and each optional, drawn as a scrolling chart in that
+order. `status`, a whole flags variable, shows its bits beside the tabs. Every
+source keeps recording while hidden.
 With `normalize: true` the field is scaled to a unit sphere (devices that
 report a unitless magnetometer); with `false` only the axes are equalised and
 the radius kept (field already in uT). No `limit` means autoscale.
+
+`health` shows which part of a board works. Each item is `{"ref", "label",
+"ok", "history"}`: `ref` is a single value that reads `ok` (0 by default)
+while the part works, so an error bit (`status.error#8`) needs no `ok` and a
+good bit (`status.status#2`) takes `"ok": 1`. `history`, a value that turns
+non-zero once the part has failed since the device started, makes a lamp
+that is fine now read amber rather than green. Red is failing now.
+
+```json
+{ "widget": "health", "title": "Board health", "span": 2,
+  "items": [
+    { "ref": "status.error#8", "label": "Magnetometer (BMM350)",
+      "history": "status.error_history#8" },
+    { "ref": "status.status#2", "label": "Compass field", "ok": 1 } ] }
+```

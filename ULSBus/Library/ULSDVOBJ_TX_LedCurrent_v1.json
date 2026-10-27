@@ -1,0 +1,86 @@
+{
+    "BookVersion": "1.0",
+    "Objects": [
+        {
+            "name": "ULSDVOBJ_TX_LedCurrent_v1",
+            "description": "LED current from the hall monitors on both regulators (COM1, COM2), refreshed once per complete burst. A slot's value is its peak current - twice its mean, since the carrier is 0.5 + 0.5 sin of the peak - so a lit slot should read the set current. Section summaries come first, then every slot: a slot that lights no string on a regulator reads near 0, which is how a stuck-on or dead string shows.",
+            "access": "read",
+            "level": "service",
+            "variables": [
+                {
+                    "name": "bursts",
+                    "type": "uint32",
+                    "description": "Bursts measured since power on; it steps each time the values below are refreshed"
+                },
+                {
+                    "name": "set",
+                    "type": "float",
+                    "description": "Set peak current per regulator",
+                    "units": "A"
+                },
+                {
+                    "name": "zero",
+                    "type": "float",
+                    "lenght": 2,
+                    "description": "Hall sensor reading at no current, COM1 and COM2; subtracted from every value below",
+                    "units": "A"
+                },
+                {
+                    "name": "median",
+                    "type": "float",
+                    "lenght": 6,
+                    "description": "Median slot current per section: DPTF COM1, DPTF COM2, DACS COM1, DACS COM2, ADS COM1, ADS COM2. The section's current; 0 with no settled slot",
+                    "units": "A"
+                },
+                {
+                    "name": "min",
+                    "type": "float",
+                    "lenght": 6,
+                    "description": "Lowest slot current per section, same order as median",
+                    "units": "A"
+                },
+                {
+                    "name": "max",
+                    "type": "float",
+                    "lenght": 6,
+                    "description": "Highest slot current per section, same order as median",
+                    "units": "A"
+                },
+                {
+                    "name": "slots",
+                    "type": "uint8",
+                    "lenght": 6,
+                    "description": "Lit slots measured per section in the burst, same order as median"
+                },
+                {
+                    "name": "adsCom1",
+                    "type": "float",
+                    "lenght": 32,
+                    "description": "ADS channels 1..32, COM1 regulator",
+                    "units": "A"
+                },
+                {
+                    "name": "adsCom2",
+                    "type": "float",
+                    "lenght": 32,
+                    "description": "ADS channels 1..32, COM2 regulator",
+                    "units": "A"
+                },
+                {
+                    "name": "dacsCom1",
+                    "type": "float",
+                    "lenght": 4,
+                    "description": "DACS slots 1..4, COM1 regulator",
+                    "units": "A"
+                },
+                {
+                    "name": "dacsCom2",
+                    "type": "float",
+                    "lenght": 4,
+                    "description": "DACS slots 1..4, COM2 regulator",
+                    "units": "A"
+                }
+            ]
+        }
+    ]
+}

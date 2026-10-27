@@ -227,6 +227,30 @@ class Rejects(unittest.TestCase):
             {"widget": "receiver", "channels": ["st.b"], "bins": 4},
             {"widget": "receiver", "dacs": ["cfg.a"], "dacsBalance": 0.5},
             {"widget": "receiver", "yaw": ["cfg.missing"]},
+            {"widget": "compass", "sources": []},
+            {"widget": "compass", "field": "st.b", "sources": [
+                {"field": "st.b"}]},
+            {"widget": "compass", "sources": [{"offset": "cfg.b"}]},
+            {"widget": "compass", "sources": [{"field": "st.b",
+                                               "offset": "cfg.b"}]},
+            {"widget": "compass", "sources": [{"field": "st.b",
+                                               "colour": 1}]},
+            {"widget": "compass", "field": "st.b"},
+            {"widget": "imu"},
+            {"widget": "imu", "sources": []},
+            {"widget": "imu", "sources": [{"label": "A"}]},
+            {"widget": "imu", "sources": [{"acc": "cfg.a"}]},
+            {"widget": "imu", "sources": [{"acc": "st.b", "colour": 1}]},
+            {"widget": "imu", "sources": [{"acc": "st.b",
+                                           "status": "cfg.a"}]},
+            {"widget": "health"},
+            {"widget": "health", "items": []},
+            {"widget": "health", "items": [{"label": "A"}]},
+            {"widget": "health", "items": [{"ref": "cfg.b"}]},
+            {"widget": "health", "items": [{"ref": "cfg.a", "colour": 1}]},
+            {"widget": "health", "items": [{"ref": "cfg.a", "ok": "yes"}]},
+            {"widget": "health", "items": [{"ref": "cfg.a",
+                                            "history": "cfg.b"}]},
         ]
         for widget in bad:
             dev["dashboard"] = {"sections": [{"widgets": [widget]}]}
@@ -245,6 +269,17 @@ class Rejects(unittest.TestCase):
              "dacsLabels": ["1", "2", "3", "4"], "dacsBalance": 0.5,
              "yaw": ["cfg.a", "st.b[0]"], "yawLabels": ["A", "B"],
              "channels": ["st.b"], "bins": 2},
+            {"widget": "compass", "normalize": True, "sources": [
+                {"label": "Own", "field": "st.b", "offset": "cfg.b",
+                 "scale": "cfg.b"},
+                {"label": "Peer", "field": "cfg.b", "limit": 2}]},
+            {"widget": "imu", "sources": [
+                {"label": "Own", "acc": "st.b", "gyr": "cfg.b",
+                 "window": 100},
+                {"att": "cfg.b"}]},
+            {"widget": "health", "items": [
+                {"ref": "cfg.a#6", "label": "Gyro", "history": "cfg.a#7"},
+                {"ref": "st.b[1]", "ok": 1}]},
         ]}]}
         schema = uls_schema.build_device_schema(dev, {"T_v1": self.OBJ})
         self.assertEqual(schema["device"]["dashboard"], dev["dashboard"])

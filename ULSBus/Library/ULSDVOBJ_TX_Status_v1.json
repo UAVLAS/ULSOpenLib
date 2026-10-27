@@ -13,9 +13,9 @@
                     "flags": [
                         "power_ok",
                         "step_up_ok",
-                        "emitter_on_charge",
-                        "emitter_ok",
                         "compass_ok",
+                        "emitter_ok",
+                        "emitter_on_charge",
                         "external_compass_override_mode",
                         "external_imu_override_mode"
                     ]
@@ -31,7 +31,11 @@
                         "compass_error",
                         "uart_rx_error",
                         "uart_tx_error",
-                        "can_error"
+                        "can_error",
+                        "acc_error",
+                        "gyro_error",
+                        "mag_error",
+                        "fram_error"
                     ]
                 },
                 {
@@ -45,7 +49,11 @@
                         "compass_error",
                         "uart_rx_error",
                         "uart_tx_error",
-                        "can_error"
+                        "can_error",
+                        "acc_error",
+                        "gyro_error",
+                        "mag_error",
+                        "fram_error"
                     ]
                 },
                 {

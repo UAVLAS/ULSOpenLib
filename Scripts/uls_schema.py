@@ -152,7 +152,10 @@ DASHBOARD_WIDGETS = {
                       "max", "stats")),
     "map": (("lat", "lon"), ("alt", "fix", "hAcc", "vAcc", "vel", "numSV",
                              "heading")),
-    "compass": (("field", "offset", "scale"), ("normalize", "limit")),
+    "compass": ((), ("field", "offset", "scale", "normalize", "limit",
+                     "sources")),
+    "imu": (("sources",), ()),
+    "health": (("items",), ()),
 }
 
 
@@ -259,17 +262,12 @@ def _validate_widget(kind, widget, instances, types, where):
                 _scalar_ref(widget[key], instances, types, where)
         if "vel" in widget:
             _vector_ref(widget["vel"], instances, types, where)
+    elif kind == "health":
+        _validate_health(widget, instances, types, where)
     elif kind == "compass":
-        _vector_ref(widget["field"], instances, types, where)
-        for key in ("offset", "scale"):
-            ref = widget[key]
-            if "*" in ref:
-                raise ValueError("%s: %s is written back; no scale" %
-                                 (where, key))
-            inst, var = _vector_ref(ref, instances, types, where)
-            if var["type"] != "float" or inst.get("type") != "config":
-                raise ValueError("%s: %s must be a float config variable" %
-                                 (where, key))
+        _validate_compass(widget, instances, types, where)
+    elif kind == "imu":
+        _validate_imu(widget, instances, types, where)
 
 
 def _validate_dptf(widget, instances, types, where):
@@ -313,6 +311,109 @@ def _validate_dptf(widget, instances, types, where):
         if not isinstance(mark, int) or not 0 <= mark < preamble:
             raise ValueError("%s: mark %r is outside the %d preamble chips" %
                              (where, mark, preamble))
+
+
+_COMPASS_SOURCE_KEYS = ("label", "field", "offset", "scale", "normalize",
+                        "limit")
+
+
+def _validate_compass_source(source, instances, types, where):
+    if "field" not in source:
+        raise ValueError("%s: missing 'field'" % where)
+    _vector_ref(source["field"], instances, types, where)
+    if ("offset" in source) != ("scale" in source):
+        raise ValueError("%s: offset and scale go together" % where)
+    config = set()
+    for key in ("offset", "scale"):
+        if key not in source:
+            continue
+        ref = source[key]
+        if "*" in ref:
+            raise ValueError("%s: %s is written back; no scale" % (where, key))
+        inst, var = _vector_ref(ref, instances, types, where)
+        if var["type"] != "float" or inst.get("type") != "config":
+            raise ValueError("%s: %s must be a float config variable" %
+                             (where, key))
+        config.add(inst["name"])
+    if len(config) > 1:
+        raise ValueError("%s: offset and scale must be in one config object" %
+                         where)
+
+
+def _validate_compass(widget, instances, types, where):
+    """One compass, or `sources`: one tab each. A source without offset and
+    scale is calibrated elsewhere and only captured."""
+    if "sources" not in widget:
+        if "offset" not in widget:
+            raise ValueError("%s: missing 'offset'" % where)
+        _validate_compass_source(widget, instances, types, where)
+        return
+    if any(k in widget for k in ("field", "offset", "scale")):
+        raise ValueError("%s: field, offset and scale go in sources" % where)
+    sources = widget["sources"]
+    if not isinstance(sources, list) or not sources:
+        raise ValueError("%s: sources must be a non-empty list" % where)
+    for i, source in enumerate(sources):
+        at = "%s source %d" % (where, i)
+        if not isinstance(source, dict):
+            raise ValueError("%s: must be an object" % at)
+        for key in source:
+            if key not in _COMPASS_SOURCE_KEYS:
+                raise ValueError("%s: unknown key %r" % (at, key))
+        _validate_compass_source(source, instances, types, at)
+
+
+_IMU_SENSORS = ("acc", "gyr", "mag", "att")
+_IMU_SOURCE_KEYS = ("label", "status", "window") + _IMU_SENSORS
+
+
+def _validate_imu(widget, instances, types, where):
+    """Each source's acc, gyr, mag and att charts, one source per tab."""
+    sources = widget["sources"]
+    if not isinstance(sources, list) or not sources:
+        raise ValueError("%s: sources must be a non-empty list" % where)
+    for i, source in enumerate(sources):
+        at = "%s source %d" % (where, i)
+        if not isinstance(source, dict):
+            raise ValueError("%s: must be an object" % at)
+        for key in source:
+            if key not in _IMU_SOURCE_KEYS:
+                raise ValueError("%s: unknown key %r" % (at, key))
+        if not any(k in source for k in _IMU_SENSORS):
+            raise ValueError("%s: needs at least one of acc, gyr, mag or att"
+                             % at)
+        for key in _IMU_SENSORS:
+            if key in source:
+                _vector_ref(source[key], instances, types, at)
+        if "status" in source:
+            _, var, index, bit = _resolve_ref(source["status"], instances,
+                                              types, at)
+            if index is not None or bit is not None or var["count"] != 1 or \
+                    not var.get("flags"):
+                raise ValueError("%s: status must be a whole flags variable"
+                                 % at)
+
+
+_HEALTH_ITEM_KEYS = ("ref", "label", "ok", "history")
+
+
+def _validate_health(widget, instances, types, where):
+    """One lamp per part: a value that reads `ok` when it works."""
+    items = widget["items"]
+    if not isinstance(items, list) or not items:
+        raise ValueError("%s: items must be a non-empty list" % where)
+    for i, item in enumerate(items):
+        at = "%s item %d" % (where, i)
+        if not isinstance(item, dict) or "ref" not in item:
+            raise ValueError("%s: needs a ref" % at)
+        for key in item:
+            if key not in _HEALTH_ITEM_KEYS:
+                raise ValueError("%s: unknown key %r" % (at, key))
+        _scalar_ref(item["ref"], instances, types, at)
+        if "history" in item:
+            _scalar_ref(item["history"], instances, types, at)
+        if not isinstance(item.get("ok", 0), (int, float)):
+            raise ValueError("%s: ok must be a number" % at)
 
 
 _GAUGE_KEYS = ("ref", "label", "min", "max", "weak", "good", "count", "hold")

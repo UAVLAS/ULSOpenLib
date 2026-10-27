@@ -1,0 +1,65 @@
+{
+    "BookVersion": "1.0",
+    "Objects": [
+        {
+            "name": "ULSDVOBJ_IMU_Source_v1",
+            "description": "One IMU source as the device sees it: its own sensor, or an external one heard over the bus. A device carries one instance per source, so each can be shown and calibrated on its own whichever one the device uses. Values not received read 0 with their valid flag clear.",
+            "access": "read",
+            "level": "service",
+            "variables": [
+                {
+                    "name": "status",
+                    "type": "flags_uint8",
+                    "description": "Which values are current, and whether the device uses this source",
+                    "default": 0,
+                    "flags": [
+                        "present",
+                        "acc_valid",
+                        "gyr_valid",
+                        "mag_valid",
+                        "att_valid",
+                        "in_use"
+                    ]
+                },
+                {
+                    "name": "packets",
+                    "type": "uint32",
+                    "description": "Updates received from this source since power on"
+                },
+                {
+                    "name": "acc",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "Accelerations X Y Z, body frame",
+                    "units": "m/ss"
+                },
+                {
+                    "name": "gyr",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "Angular rates X Y Z, body frame",
+                    "units": "deg/s"
+                },
+                {
+                    "name": "mag",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "Magnetic field X Y Z, body frame, with this source's calibration applied; about 1 long when calibrated"
+                },
+                {
+                    "name": "att",
+                    "type": "float",
+                    "lenght": 3,
+                    "description": "Attitude roll pitch yaw",
+                    "units": "deg"
+                },
+                {
+                    "name": "temp",
+                    "type": "float",
+                    "description": "Sensor temperature",
+                    "units": "C"
+                }
+            ]
+        }
+    ]
+}
