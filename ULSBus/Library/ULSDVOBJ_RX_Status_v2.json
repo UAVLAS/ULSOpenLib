@@ -14,7 +14,7 @@
                 {
                     "name": "error",
                     "type": "uint32",
-                    "description": "Device error bits field. Bits 0-15: failing now, held over the indicator's 1 s cycle; bits 16-20 and 28-31: the same fault as bit n-16, seen since start; bits 21-24: this boot's state (config source, last save, reset cause, crash record)",
+                    "description": "Device error bits field. Bits 0-15: failing now, held over the indicator's 1 s cycle; bits 16-20 and 28-31: the same fault as bit n-16, seen since start; bits 21-24: this boot's state (config source, last save, reset cause, crash record); bits 25-26: signal faults now (DACS pairs unbalanced, a receiver level off the median)",
                     "flags": [
                         "adc_config_error",
                         "adc_a_i2c_error",
@@ -41,8 +41,8 @@
                         "config_save_error",
                         "watchdog_reset",
                         "crash_recorded",
-                        "reserved_25",
-                        "reserved_26",
+                        "dacs_unbalanced",
+                        "level_mismatch",
                         "reserved_27",
                         "fram_error_history",
                         "adc_overrun_history",

@@ -1334,6 +1334,14 @@
                                         "label": "Signal"
                                     },
                                     {
+                                        "ref": "status.error#25",
+                                        "label": "DACS balance"
+                                    },
+                                    {
+                                        "ref": "status.error#26",
+                                        "label": "Receiver levels"
+                                    },
+                                    {
                                         "ref": "status.error#6",
                                         "label": "Position in transmitter frame"
                                     },
