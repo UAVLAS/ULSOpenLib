@@ -1,0 +1,48 @@
+{
+    "BookVersion": "1.0",
+    "Objects": [
+        {
+            "name": "ULSDVOBJ_TX_EmsG2_v1",
+            "description": "G2 emitter telemetry (DPTF / DACS / ADS / ESTS frame, as ULS-QT1-R2): the current of every emitter from the VLED shunt, measured in its own slot of the frame, and the VLED trim codes the regulator loop chose. Refreshed once per frame.",
+            "access": "read",
+            "level": "service",
+            "variables": [
+                {
+                    "name": "frames",
+                    "type": "uint32",
+                    "description": "Frames emitted since power on; it steps each time the values below are refreshed"
+                },
+                {
+                    "name": "Ialed",
+                    "type": "float",
+                    "lenght": 37,
+                    "description": "ADS emitters 1..37 (SFH4248), current in their ADS slot",
+                    "units": "A"
+                },
+                {
+                    "name": "Idled",
+                    "type": "float",
+                    "lenght": 4,
+                    "description": "DACS emitters 1..4 (LUXEON IR), current in their DACS slot",
+                    "units": "A"
+                },
+                {
+                    "name": "Vled",
+                    "type": "float",
+                    "description": "LED rail voltage",
+                    "units": "V"
+                },
+                {
+                    "name": "Va_lvl",
+                    "type": "uint8",
+                    "description": "VLED trim code used for the ADS emitters, 0..63"
+                },
+                {
+                    "name": "Vd_lvl",
+                    "type": "uint8",
+                    "description": "VLED trim code used for the DACS emitters, 0..63"
+                }
+            ]
+        }
+    ]
+}
