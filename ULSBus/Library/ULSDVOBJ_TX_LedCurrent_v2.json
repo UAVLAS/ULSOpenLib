@@ -1,0 +1,94 @@
+{
+    "BookVersion": "1.0",
+    "Objects": [
+        {
+            "name": "ULSDVOBJ_TX_LedCurrent_v2",
+            "description": "LED current from the four hall monitors the TXC reads on EM_IFB1..4, one per emitter regulator, refreshed once per complete burst. Which emitter group each regulator drives belongs to the emitter, so the device's dashboard names them. A slot's value is its peak current - twice its mean, since the carrier is 0.5 + 0.5 sin of the peak - so a lit slot should read its regulator's set current. Section summaries come first, then every slot on every regulator: a slot that lights no string on a regulator reads near 0, which is how a stuck-on or dead string shows.",
+            "access": "read",
+            "level": "service",
+            "variables": [
+                {
+                    "name": "bursts",
+                    "type": "uint32",
+                    "description": "Bursts measured since power on; it steps each time the values below are refreshed"
+                },
+                {
+                    "name": "set",
+                    "type": "float",
+                    "lenght": 4,
+                    "description": "Set peak current per regulator, EM_IFB1..4: the one DAC reference through each regulator's own sense resistor",
+                    "units": "A"
+                },
+                {
+                    "name": "zero",
+                    "type": "float",
+                    "lenght": 4,
+                    "description": "Hall sensor reading at no current per regulator, EM_IFB1..4; subtracted from every value below",
+                    "units": "A"
+                },
+                {
+                    "name": "median",
+                    "type": "float",
+                    "lenght": 12,
+                    "description": "Median slot current per section and regulator: DPTF R1..R4, DACS R1..R4, ADS R1..R4. The section's current on that regulator; 0 with no settled slot",
+                    "units": "A"
+                },
+                {
+                    "name": "min",
+                    "type": "float",
+                    "lenght": 12,
+                    "description": "Lowest slot current per section and regulator, same order as median",
+                    "units": "A"
+                },
+                {
+                    "name": "max",
+                    "type": "float",
+                    "lenght": 12,
+                    "description": "Highest slot current per section and regulator, same order as median",
+                    "units": "A"
+                },
+                {
+                    "name": "slots",
+                    "type": "uint8",
+                    "lenght": 12,
+                    "description": "Lit slots measured per section and regulator in the burst, same order as median"
+                },
+                {
+                    "name": "ads1",
+                    "type": "float",
+                    "lenght": 32,
+                    "description": "ADS channels 1..32, regulator 1 (EM_IFB1)",
+                    "units": "A"
+                },
+                {
+                    "name": "ads2",
+                    "type": "float",
+                    "lenght": 32,
+                    "description": "ADS channels 1..32, regulator 2 (EM_IFB2)",
+                    "units": "A"
+                },
+                {
+                    "name": "ads3",
+                    "type": "float",
+                    "lenght": 32,
+                    "description": "ADS channels 1..32, regulator 3 (EM_IFB3)",
+                    "units": "A"
+                },
+                {
+                    "name": "ads4",
+                    "type": "float",
+                    "lenght": 32,
+                    "description": "ADS channels 1..32, regulator 4 (EM_IFB4)",
+                    "units": "A"
+                },
+                {
+                    "name": "dacs",
+                    "type": "float",
+                    "lenght": 16,
+                    "description": "DACS slots 1..4 per regulator: R1 slots 1..4, then R2, R3, R4",
+                    "units": "A"
+                }
+            ]
+        }
+    ]
+}
