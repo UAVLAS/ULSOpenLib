@@ -340,8 +340,10 @@ def generate(objects, devices, output):
 
         book_file.write("  };\n")
         for obj_ref in dev["objects"]:
-            book_file.write("  " + _obj_class_name_prefix +
-                            obj_ref["object"] + " o_" + obj_ref["name"] + ";\n")
+            member_class = generate_structures.write_device_defaults(
+                book_file, _obj_class_name_prefix + obj_ref["object"], obj_ref,
+                objects)
+            book_file.write("  " + member_class + " o_" + obj_ref["name"] + ";\n")
 
         book_file.write("};\n")
         book_file.write("// End of " + dev_class + "\n\n")

@@ -23,6 +23,21 @@ Without a `title` a tool capitalises the name, so `status` needs no key and
 `cfg` does. Write one wherever the name is an abbreviation, carries a number,
 or reads as code.
 
+## `defaults` — a device's own starting values
+
+Object types are shared, so a device that should start differently says so on
+its instance, for scalar variables:
+
+```json
+{ "name": "cfg", "title": "Config", "object": "ULSDVOBJ_RX_Config_v2",
+  "address": "0x0020", "type": "config", "defaults": { "rxGain": 20.0 } }
+```
+
+The firmware's fallback to defaults, a tool's "Load defaults" and what the tool
+calls the default all follow it. It does not change the layout: `layoutHash`
+ignores it and stored settings stay valid. A board with saved settings keeps
+them until someone loads defaults.
+
 ## `level` — who it is for
 
 `level` goes on a variable, on an object type, or on one object instance of a

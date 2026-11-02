@@ -530,7 +530,10 @@
                     "title": "Config",
                     "object": "ULSDVOBJ_RX_Config_v2",
                     "address": "0x0020",
-                    "type": "config"
+                    "type": "config",
+                    "defaults": {
+                        "rxGain": 20.0
+                    }
                 },
                 {
                     "name": "ch1Debug",
@@ -1444,7 +1447,10 @@
                     "title": "Config",
                     "object": "ULSDVOBJ_RX_Config_v2",
                     "address": "0x0020",
-                    "type": "config"
+                    "type": "config",
+                    "defaults": {
+                        "rxGain": 30.0
+                    }
                 },
                 {
                     "name": "ch1Debug",

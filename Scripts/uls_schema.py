@@ -514,10 +514,25 @@ def build_device_schema(dev, objects_by_name, strip_descriptions=False):
                                                    address))
         inst = dict(ref)
         inst["address"] = address
+        defaults = inst.pop("defaults", None)
         instances.append(inst)
         if type_name not in types:
             types[type_name] = build_object_type(objects_by_name[type_name],
                                                  strip_descriptions)
+        elif defaults:
+            raise ValueError("Device %s object %s: defaults need the only "
+                             "instance of %s" % (dev["name"], ref["name"],
+                                                 type_name))
+        # The schema is per device, so its copy of the type can say them. A
+        # tool's "Load defaults" reads this; layoutHash ignores it.
+        for name, value in (defaults or {}).items():
+            var = next((v for v in types[type_name]["variables"]
+                        if v["name"] == name and v["count"] == 1), None)
+            if var is None:
+                raise ValueError("Device %s object %s defaults: %s is not a "
+                                 "scalar variable of %s" %
+                                 (dev["name"], ref["name"], name, type_name))
+            var["default"] = value
 
     device = {"name": dev["name"],
               "description": dev.get("description", ""),

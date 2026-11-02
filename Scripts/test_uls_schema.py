@@ -50,6 +50,25 @@ class LibrarySchemas(unittest.TestCase):
             self.assertEqual(decoded, schema, dev["name"])
             self.assertEqual(header["devType"], int(dev["type"], 0))
 
+    def test_a_device_can_override_a_default(self):
+        obj = {"name": "T", "access": "config", "variables": [
+            {"name": "a", "type": "float", "default": 40.0},
+            {"name": "b", "type": "float", "default": 1.0}]}
+        ref = {"name": "cfg", "object": "T", "address": "0x0020"}
+        dev = {"name": "D", "type": "0x0001", "objects": [ref]}
+        plain = uls_schema.build_device_schema(dev, {"T": obj})
+        dev["objects"] = [dict(ref, defaults={"a": 20.0})]
+        over = uls_schema.build_device_schema(dev, {"T": obj})
+        self.assertEqual(over["types"]["T"]["variables"][0]["default"], 20.0)
+        self.assertEqual(over["types"]["T"]["variables"][1]["default"], 1.0)
+        self.assertEqual(obj["variables"][0]["default"], 40.0)
+        self.assertEqual(over["types"]["T"]["layoutHash"],
+                         plain["types"]["T"]["layoutHash"])
+        self.assertNotIn("defaults", over["objects"][0])
+        dev["objects"] = [dict(ref, defaults={"nope": 1})]
+        with self.assertRaises(ValueError):
+            uls_schema.build_device_schema(dev, {"T": obj})
+
     def test_dashboards_travel_in_the_schema(self):
         with_dashboard = [d for d in self.devices if "dashboard" in d]
         self.assertTrue(with_dashboard)
