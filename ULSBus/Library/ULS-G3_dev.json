@@ -523,7 +523,8 @@
                     "name": "mav2",
                     "title": "MAVLink serial 2",
                     "object": "ULSDVOBJ_MAV_Debug_v1",
-                    "address": "0x0013"
+                    "address": "0x0013",
+                    "level": "reserved"
                 },
                 {
                     "name": "cfg",
@@ -532,8 +533,13 @@
                     "address": "0x0020",
                     "type": "config",
                     "defaults": {
-                        "rxGain": 20.0
-                    }
+                        "rxGain": 20.0,
+                        "serial2Protocol": 0
+                    },
+                    "hide": [
+                        "serial2Protocol",
+                        "serial2Brt"
+                    ]
                 },
                 {
                     "name": "ch1Debug",
@@ -750,7 +756,7 @@
                                 "span": 2,
                                 "rows": [
                                     "Serial 1",
-                                    "Serial 2",
+                                    "",
                                     "CAN 1",
                                     "CAN 2",
                                     "USB"
@@ -1033,10 +1039,6 @@
                                     {
                                         "ref": "mav1.rxMsg",
                                         "label": "Serial 1"
-                                    },
-                                    {
-                                        "ref": "mav2.rxMsg",
-                                        "label": "Serial 2"
                                     }
                                 ]
                             },
@@ -1056,10 +1058,6 @@
                                     {
                                         "ref": "mav1.txMsg",
                                         "label": "Serial 1"
-                                    },
-                                    {
-                                        "ref": "mav2.txMsg",
-                                        "label": "Serial 2"
                                     }
                                 ]
                             },
@@ -1085,15 +1083,6 @@
                                     {
                                         "ref": "mav1.otherCount",
                                         "label": "Count"
-                                    },
-                                    {
-                                        "ref": "mav2.otherId",
-                                        "label": "Serial 2 id",
-                                        "rate": false
-                                    },
-                                    {
-                                        "ref": "mav2.otherCount",
-                                        "label": "Count"
                                     }
                                 ]
                             },
@@ -1101,64 +1090,48 @@
                                 "widget": "realtime",
                                 "title": "LANDING_TARGET sent, BODY_FRD",
                                 "series": [
-                                    "mav1.ltBodyFrd",
-                                    "mav2.ltBodyFrd"
+                                    "mav1.ltBodyFrd"
                                 ],
                                 "labels": [
                                     "Serial 1 X",
                                     "Serial 1 Y",
-                                    "Serial 1 Z",
-                                    "Serial 2 X",
-                                    "Serial 2 Y",
-                                    "Serial 2 Z"
+                                    "Serial 1 Z"
                                 ]
                             },
                             {
                                 "widget": "realtime",
                                 "title": "LANDING_TARGET sent, LOCAL_OFFSET_NED",
                                 "series": [
-                                    "mav1.ltOffsetNed",
-                                    "mav2.ltOffsetNed"
+                                    "mav1.ltOffsetNed"
                                 ],
                                 "labels": [
                                     "Serial 1 North",
                                     "Serial 1 East",
-                                    "Serial 1 Down",
-                                    "Serial 2 North",
-                                    "Serial 2 East",
-                                    "Serial 2 Down"
+                                    "Serial 1 Down"
                                 ]
                             },
                             {
                                 "widget": "realtime",
                                 "title": "LANDING_TARGET sent, LOCAL_NED",
                                 "series": [
-                                    "mav1.ltLocalNed",
-                                    "mav2.ltLocalNed"
+                                    "mav1.ltLocalNed"
                                 ],
                                 "labels": [
                                     "Serial 1 North",
                                     "Serial 1 East",
-                                    "Serial 1 Down",
-                                    "Serial 2 North",
-                                    "Serial 2 East",
-                                    "Serial 2 Down"
+                                    "Serial 1 Down"
                                 ]
                             },
                             {
                                 "widget": "realtime",
                                 "title": "VISION_POSITION_ESTIMATE sent",
                                 "series": [
-                                    "mav1.visionPos",
-                                    "mav2.visionPos"
+                                    "mav1.visionPos"
                                 ],
                                 "labels": [
                                     "Serial 1 North",
                                     "Serial 1 East",
-                                    "Serial 1 Down",
-                                    "Serial 2 North",
-                                    "Serial 2 East",
-                                    "Serial 2 Down"
+                                    "Serial 1 Down"
                                 ]
                             }
                         ]

@@ -515,14 +515,15 @@ def build_device_schema(dev, objects_by_name, strip_descriptions=False):
         inst = dict(ref)
         inst["address"] = address
         defaults = inst.pop("defaults", None)
+        hide = inst.pop("hide", None)
         instances.append(inst)
         if type_name not in types:
             types[type_name] = build_object_type(objects_by_name[type_name],
                                                  strip_descriptions)
-        elif defaults:
-            raise ValueError("Device %s object %s: defaults need the only "
-                             "instance of %s" % (dev["name"], ref["name"],
-                                                 type_name))
+        elif defaults or hide:
+            raise ValueError("Device %s object %s: defaults and hide need the "
+                             "only instance of %s" % (dev["name"], ref["name"],
+                                                      type_name))
         # The schema is per device, so its copy of the type can say them. A
         # tool's "Load defaults" reads this; layoutHash ignores it.
         for name, value in (defaults or {}).items():
@@ -533,6 +534,16 @@ def build_device_schema(dev, objects_by_name, strip_descriptions=False):
                                  "scalar variable of %s" %
                                  (dev["name"], ref["name"], name, type_name))
             var["default"] = value
+        # The same copy, for a variable this device has no use for. reserved
+        # is the level no tool shows; layoutHash ignores it.
+        for name in hide or ():
+            var = next((v for v in types[type_name]["variables"]
+                        if v["name"] == name), None)
+            if var is None:
+                raise ValueError("Device %s object %s hide: %s is not a "
+                                 "variable of %s" %
+                                 (dev["name"], ref["name"], name, type_name))
+            var["level"] = "reserved"
 
     device = {"name": dev["name"],
               "description": dev.get("description", ""),

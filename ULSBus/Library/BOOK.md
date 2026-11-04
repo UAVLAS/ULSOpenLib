@@ -38,6 +38,26 @@ calls the default all follow it. It does not change the layout: `layoutHash`
 ignores it and stored settings stay valid. A board with saved settings keeps
 them until someone loads defaults.
 
+## `hide` — variables this device has no use for
+
+A shared object can hold settings for hardware one device does not bring out.
+That device lists them on its instance, and no tool shows them on it:
+
+```json
+{ "name": "cfg", "title": "Config", "object": "ULSDVOBJ_RX_Config_v2",
+  "address": "0x0020", "type": "config",
+  "defaults": { "serial2Protocol": 0 },
+  "hide": ["serial2Protocol", "serial2Brt"] }
+```
+
+A hidden variable gets the `reserved` level in that device's schema, so tools
+already in the field follow it with no change, and the other devices sharing
+the object keep it. The variable stays in the layout: `layoutHash` ignores
+`hide` and stored settings stay valid, so whatever a board has saved there
+stays in force. Give it a harmless value in `defaults`, as above. To hide a
+whole object on a device, use `"level": "reserved"` on its instance, and take
+its references out of that device's dashboard.
+
 ## `level` — who it is for
 
 `level` goes on a variable, on an object type, or on one object instance of a

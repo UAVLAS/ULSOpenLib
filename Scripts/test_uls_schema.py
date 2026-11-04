@@ -69,6 +69,29 @@ class LibrarySchemas(unittest.TestCase):
         with self.assertRaises(ValueError):
             uls_schema.build_device_schema(dev, {"T": obj})
 
+    def test_a_device_can_hide_a_variable(self):
+        obj = {"name": "T", "access": "config", "variables": [
+            {"name": "a", "type": "float", "default": 40.0},
+            {"name": "b", "type": "float", "default": 1.0}]}
+        ref = {"name": "cfg", "object": "T", "address": "0x0020"}
+        dev = {"name": "D", "type": "0x0001", "objects": [ref]}
+        plain = uls_schema.build_device_schema(dev, {"T": obj})
+        dev["objects"] = [dict(ref, hide=["b"])]
+        over = uls_schema.build_device_schema(dev, {"T": obj})
+        self.assertEqual(over["types"]["T"]["variables"][1]["level"], "reserved")
+        self.assertNotIn("level", over["types"]["T"]["variables"][0])
+        self.assertNotIn("level", obj["variables"][1])
+        self.assertEqual(over["types"]["T"]["layoutHash"],
+                         plain["types"]["T"]["layoutHash"])
+        self.assertNotIn("hide", over["objects"][0])
+        dev["objects"] = [dict(ref, hide=["nope"])]
+        with self.assertRaises(ValueError):
+            uls_schema.build_device_schema(dev, {"T": obj})
+        second = dict(ref, name="cfg2", address="0x0021", hide=["b"])
+        dev["objects"] = [ref, second]
+        with self.assertRaises(ValueError):
+            uls_schema.build_device_schema(dev, {"T": obj})
+
     def test_dashboards_travel_in_the_schema(self):
         with_dashboard = [d for d in self.devices if "dashboard" in d]
         self.assertTrue(with_dashboard)
@@ -83,6 +106,8 @@ class LibrarySchemas(unittest.TestCase):
         for dev in self.devices:
             schema = uls_schema.build_device_schema(dev, self.objects)
             _, decoded = uls_schema.unpack_blob(uls_schema.pack_schema(schema))
+            hidden = {(ref["object"], name) for ref in dev["objects"]
+                      for name in ref.get("hide", ())}
             for ref, inst in zip(dev["objects"], decoded["objects"]):
                 self.assertEqual(inst.get("title"), ref.get("title"))
                 self.assertEqual(inst.get("level"), ref.get("level"))
@@ -90,7 +115,9 @@ class LibrarySchemas(unittest.TestCase):
                 self.assertEqual(t.get("level"), self.objects[name].get("level"))
                 for var, src in zip(t["variables"],
                                     self.objects[name]["variables"]):
-                    self.assertEqual(var.get("level"), src.get("level"))
+                    self.assertEqual(var.get("level"),
+                                     "reserved" if (name, var["name"]) in hidden
+                                     else src.get("level"))
 
     def test_an_ordinary_variable_carries_no_level(self):
         # Absent is the common case and must stay absent: the schema is paged

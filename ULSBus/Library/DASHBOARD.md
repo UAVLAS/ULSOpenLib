@@ -121,7 +121,9 @@ backwards, as after a restart, starts the rate over. A column with
 `"errors": true` counts failures: it reads amber once non-zero and red while
 rising. `"rate": false` drops the rate from a column that holds ids or
 settings rather than counts. A row whose counters are all 0 is greyed, an
-interface not in use.
+interface not in use. An empty row name, `""`, leaves that element out, for an
+interface a device does not bring out: the rows after it still read their own
+elements.
 
 ```json
 { "widget": "counters", "title": "Links",
